@@ -4,17 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.util;
 
 /**
  * Class that offers instances to save information about a possible drawing. Can be used to return multiple values that
  * are calculated for a possible drawing in a method for example.
- * 
- * @author dalu
  */
 public class DrawingData {
     //////////////////////////////////////////////////////////////////
@@ -32,7 +27,7 @@ public class DrawingData {
     /** Desired aspect ratio. */
     private double dar;
     /** Indicates what placement option this data belongs to or whether it belongs to a whole drawing. */
-    private DrawingDataDescriptor plaOpt;
+    private DrawingDataDescriptor placementOption;
     /**
      * If a this object contains information about a possible drawing, this field contains the potential x-coordinate
      * for the new rectangle.
@@ -56,15 +51,11 @@ public class DrawingData {
      * @param drawingHeight
      *            drawing height.
      * @param placementOption
-     *            placement Option.
+     *            placement option.
      */
     public DrawingData(final double dar, final double drawingWidth, final double drawingHeight,
             final DrawingDataDescriptor placementOption) {
-        this.dar = dar;
-        this.drawingWidth = drawingWidth;
-        this.drawingHeight = drawingHeight;
-        this.plaOpt = placementOption;
-        calcAreaAspectRatioScaleMeasure();
+        this(dar, drawingWidth, drawingHeight, placementOption, 0.0, 0.0);
     }
 
     /**
@@ -77,7 +68,7 @@ public class DrawingData {
      * @param drawingHeight
      *            drawing height.
      * @param placementOption
-     *            placement Option.
+     *            placement option.
      * @param nextXcoord
      *            x-coordinate for rectangle to place.
      * @param nextYcoord
@@ -88,11 +79,10 @@ public class DrawingData {
         this.dar = dar;
         this.drawingWidth = drawingWidth;
         this.drawingHeight = drawingHeight;
-        this.plaOpt = placementOption;
+        this.placementOption = placementOption;
         this.nextXcoordinate = nextXcoord;
         this.nextYcoordinate = nextYcoord;
         calcAreaAspectRatioScaleMeasure();
-
     }
 
     //////////////////////////////////////////////////////////////////
@@ -100,17 +90,12 @@ public class DrawingData {
 
     /**
      * Calculates the area, aspect ratio, and scale measure. Sets the respective fields accordingly.
-     * 
-     * @return Returns true, if calculations were successful and false otherwise.
      */
-    private boolean calcAreaAspectRatioScaleMeasure() {
+    private void calcAreaAspectRatioScaleMeasure() {
         if (this.drawingWidth > 0 && this.drawingHeight > 0) {
             this.area = this.drawingWidth * this.drawingHeight;
             this.aspectRatio = this.drawingWidth / this.drawingHeight;
             this.scaleMeasure = DrawingUtil.computeScaleMeasure(this.drawingWidth, this.drawingHeight, this.dar);
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -171,15 +156,15 @@ public class DrawingData {
     /**
      * Gets placement option.
      */
-    public DrawingDataDescriptor getPlaOpt() {
-        return plaOpt;
+    public DrawingDataDescriptor getPlacementOption() {
+        return placementOption;
     }
 
     /**
      * Sets placement option.
      */
-    public void setPlaOpt(final DrawingDataDescriptor plaOpt) {
-        this.plaOpt = plaOpt;
+    public void setPlacementOption(final DrawingDataDescriptor placementOption) {
+        this.placementOption = placementOption;
     }
 
     /**

@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.util;
 
@@ -16,8 +13,6 @@ import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Class that offers different methods related to coordinates.
- * 
- * @author dalu
  */
 public final class DrawingUtil {
 

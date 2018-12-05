@@ -4,11 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.elk.alg.packing.rectangles.util;
 
 import java.util.ArrayList;
@@ -19,26 +15,24 @@ import org.eclipse.elk.graph.ElkNode;
  * An object that abstracts a stack of rectangles (for example inside a row). This abstraction makes it easier to handle
  * the rectangles as one as well as expanding the nodes to its border.
  * <p>
- * Do not confuse this with the data type {@link Stack}. Here, Stack means vertically arranged rectangles.
+ * Do not confuse this with the data type {@link java.util.Stack}. Here, Stack means vertically arranged rectangles.
  * </p>
  * 
  * @see RectRow
- * 
- * @author dalu
  */
 public class RectStack {
     //////////////////////////////////////////////////////////////////
     // Fields
     /** Stack width, given by the widest child rectangle. */
-    private double stackWidth;
+    private double width;
     /** Stack height, given by the sum of the children's height. */
-    private double stackHeight;
+    private double height;
     /** Rectangles contained in this stack. */
     private final List<ElkNode> children = new ArrayList<ElkNode>();
     /** X coordinate of this stack. */
-    private double xCoord;
+    private double x;
     /** Y coordinate of this stack. */
-    private double yCoord;
+    private double y;
     /** The row this stack is assigned to. */
     private RectRow parentRow;
 
@@ -60,11 +54,11 @@ public class RectStack {
     public RectStack(final ElkNode first, final double xCoord, final double yCoord, final RectRow parentRow) {
         this.parentRow = parentRow;
         this.children.add(first);
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
+        this.x = xCoord;
+        this.y = yCoord;
 
-        this.stackWidth = findMaxWidth();
-        this.stackHeight = findTotalHeight();
+        this.width = findMaxWidth();
+        this.height = findTotalHeight();
     }
 
     //////////////////////////////////////////////////////////////////
@@ -129,9 +123,9 @@ public class RectStack {
      *            The new adjusted x-coordinate.
      */
     public void adjustXRecursively(final double newXCoordinate) {
-        this.xCoord = newXCoordinate;
+        this.x = newXCoordinate;
         for (ElkNode rect : this.children) {
-            rect.setX(this.xCoord);
+            rect.setX(this.x);
         }
     }
 
@@ -162,14 +156,14 @@ public class RectStack {
     /**
      * Relocates this stack by adjusting its x- and y-coordinate. Passes this change to this stack's children.
      * 
-     * @param xCoordinate
+     * @param xCoord
      *            new x-coordinate of this stack.
-     * @param yCoordinate
+     * @param yCoord
      *            new y-coordinate of this stack.
      */
-    public void relocateStack(final double xCoordinate, final double yCoordinate) {
-        this.xCoord = xCoordinate;
-        this.yCoord = yCoordinate;
+    public void relocateStack(final double xCoord, final double yCoord) {
+        this.x = xCoord;
+        this.y = yCoord;
         adjustChildrensXandY();
     }
 
@@ -179,7 +173,7 @@ public class RectStack {
      * Gets width of the stack.
      */
     public double getWidth() {
-        return stackWidth;
+        return width;
     }
 
     /**
@@ -189,14 +183,14 @@ public class RectStack {
      *            new width of this stack.
      */
     public void setWidth(final double width) {
-        this.stackWidth = width;
+        this.width = width;
     }
 
     /**
      * Gets height of the stack.
      */
     public double getHeight() {
-        return stackHeight;
+        return height;
     }
 
     /**
@@ -206,7 +200,7 @@ public class RectStack {
      *            new height of this stack.
      */
     public void setHeight(final double height) {
-        this.stackHeight = height;
+        this.height = height;
     }
 
     /**
@@ -220,7 +214,7 @@ public class RectStack {
      * Gets this stack's x-coordinate.
      */
     public double getX() {
-        return xCoord;
+        return x;
     }
 
     /**
@@ -230,14 +224,14 @@ public class RectStack {
      *            new x-coordinate.
      */
     public void setX(final double xCoordinate) {
-        this.xCoord = xCoordinate;
+        this.x = xCoordinate;
     }
 
     /**
      * Gets this stack's y/coordinate.
      */
     public double getY() {
-        return yCoord;
+        return y;
     }
 
     /**
@@ -247,7 +241,7 @@ public class RectStack {
      *            new y-coordinate.
      */
     public void setY(final double yCoordinate) {
-        this.yCoord = yCoordinate;
+        this.y = yCoordinate;
     }
 
     /**
@@ -277,7 +271,7 @@ public class RectStack {
     private void adjustChildrensXandY() {
         double currentYcoord = this.getY();
         for (ElkNode rect : this.children) {
-            rect.setLocation(this.xCoord, currentYcoord);
+            rect.setLocation(this.x, currentYcoord);
             currentYcoord += rect.getHeight();
         }
     }
@@ -289,8 +283,8 @@ public class RectStack {
      *            the rectangle that was assigned to this stack.
      */
     private void adjustSizeAdd(final ElkNode rect) {
-        this.stackWidth = Math.max(this.stackWidth, rect.getWidth());
-        this.stackHeight += rect.getHeight();
+        this.width = Math.max(this.width, rect.getWidth());
+        this.height += rect.getHeight();
         this.parentRow.notifyAboutNodeChange();
     }
 
@@ -298,8 +292,8 @@ public class RectStack {
      * Adjusts size of stack after the removal of a rectangle. Notifies parent.
      */
     private void adjustSizeRem() {
-        this.stackWidth = findMaxWidth();
-        this.stackHeight = findTotalHeight();
+        this.width = findMaxWidth();
+        this.height = findTotalHeight();
         this.parentRow.notifyAboutNodeChange();
     }
 
@@ -307,7 +301,7 @@ public class RectStack {
      * Finds maximum width of this object's children.
      */
     private double findMaxWidth() {
-        double maxStackWidth = Double.MIN_VALUE;
+        double maxStackWidth = Double.NEGATIVE_INFINITY;
         for (ElkNode element : this.children) {
             maxStackWidth = Math.max(maxStackWidth, element.getWidth());
         }
@@ -318,10 +312,10 @@ public class RectStack {
      * Finds total height of this object's children.
      */
     private double findTotalHeight() {
-        double height = 0;
+        double totalHeight = 0;
         for (ElkNode element : this.children) {
-            height += element.getHeight();
+            totalHeight += element.getHeight();
         }
-        return height;
+        return totalHeight;
     }
 }

@@ -4,10 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.specialcase;
 
 import java.util.ArrayList;
@@ -20,8 +17,6 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Class that offers a method for placing rectangles in the special case where one big rectangle and other smaller
  * rectangles exists.
- * 
- * @author dalu
  */
 public final class SpecialCasePlacer {
 
@@ -79,18 +74,18 @@ public final class SpecialCasePlacer {
             currWidth = howManyColumnsBefore * widestRectBefore.getWidth();
         }
 
-        // place BiggestRect
+        // place BiggestRect.
         biggestRect.setLocation(currWidth, 0);
         currWidth += biggestRect.getWidth();
 
-        // Place after
+        // Place after.
         if (afterBiggest.size() > 0) {
             placeRects(currWidth, afterBiggest, widestRectAfter.getWidth(), widestRectAfter.getHeight(),
                     howManyColumnsAfter, howManyRows);
             currWidth += howManyColumnsAfter * widestRectAfter.getWidth();
         }
 
-        // expand nodes
+        // expand nodes.
         if (expandNodes) {
             ExpandNodesSpecialCase.expand(beforeBiggest, afterBiggest, biggestRect.getHeight(), howManyColumnsBefore,
                     howManyColumnsAfter, widestRectBefore.getWidth(), widestRectAfter.getWidth());

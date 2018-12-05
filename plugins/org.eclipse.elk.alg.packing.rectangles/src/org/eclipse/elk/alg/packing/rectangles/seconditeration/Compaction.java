@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
@@ -17,11 +14,9 @@ import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Class that offers methods that help calculating the compaction phase of {@link SecondIteration}.
+ * Class that offers methods that help calculating the compaction phase of {@link RowFillingAndCompaction}.
  * 
- * @see SecondIteration
- * 
- * @author dalu
+ * @see RowFillingAndCompaction
  */
 public final class Compaction {
 
@@ -281,7 +276,7 @@ public final class Compaction {
     private static double calcPotDecreaseYieldingStackWidth(final RectStack yieldingStack) {
         double movingRectWidth = yieldingStack.getFirstRectangle().getWidth();
         if (yieldingStack.getNumberOfRectangles() > 1) {
-            double newWidth = Double.MIN_VALUE;
+            double newWidth = Double.NEGATIVE_INFINITY;
             List<ElkNode> rectangles = yieldingStack.getChildren();
 
             for (int rectIdx = 1; rectIdx < yieldingStack.getNumberOfRectangles(); rectIdx++) {

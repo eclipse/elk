@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
@@ -18,7 +15,7 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Offer method to expand rectangles after the calculations of the second iteration.
  * 
- * @author dalu
+ * @see RowFillingAndCompaction
  */
 public final class RectangleExpansion {
 
@@ -51,17 +48,15 @@ public final class RectangleExpansion {
      *            the {@link RectRow}, whose children are to be expanded.
      */
     private static void expandStacks(final RectRow row) {
-        double rowWidth = row.getWidth();
-        double rowHeight = row.getHeight();
-
         RectStack lastStackOfRow = row.getLastStack();
+
         double lastStackRightBorder = lastStackOfRow.getX() + lastStackOfRow.getWidth();
-        double broadenFactor = rowWidth / lastStackRightBorder;
+        double broadenFactor = row.getWidth() / lastStackRightBorder;
 
         double totalShift = 0;
 
         for (RectStack stack : row.getChildren()) {
-            stack.setHeight(rowHeight);
+            stack.setHeight(row.getHeight());
 
             if (broadenFactor > 1) {
                 double oldStackWidth = stack.getWidth();
@@ -82,18 +77,15 @@ public final class RectangleExpansion {
      *            the {@link RectStack}, whose children are to be expanded.
      */
     private static void expandRectangles(final RectStack stack) {
-        double stackWidth = stack.getWidth();
-        double stackHeight = stack.getHeight();
-
         ElkNode lastRect = stack.getLastRectangle();
 
         double heightOfRectangles = lastRect.getY() + lastRect.getHeight() - stack.getY();
-        double raisingFactor = stackHeight / heightOfRectangles;
+        double raisingFactor = stack.getHeight() / heightOfRectangles;
 
         double totalShift = 0;
 
         for (ElkNode rect : stack.getChildren()) {
-            rect.setWidth(stackWidth);
+            rect.setWidth(stack.getWidth());
 
             if (raisingFactor > 0) {
                 double oldRectHeight = rect.getHeight();

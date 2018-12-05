@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.util;
 
@@ -19,8 +16,6 @@ import org.eclipse.elk.graph.ElkNode;
  * A row of rectangles inside a given bounding box. Tracks the rectangles inside the row and the row's width and height.
  * 
  * @see RectStack
- * 
- * @author dalu
  */
 public class RectRow {
     //////////////////////////////////////////////////////////////////
@@ -30,7 +25,7 @@ public class RectRow {
     /** Sum of this row's stack's widths. */
     private double width = 0;
     /** Y-coordinate of this row. */
-    private double yCoord;
+    private double y;
     /** This row's stacks. */
     private final List<RectStack> children = new ArrayList<RectStack>();
 
@@ -44,7 +39,7 @@ public class RectRow {
      *            y-coordinate of the row.
      */
     public RectRow(final double yCoord) {
-        this.yCoord = yCoord;
+        this.y = yCoord;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -57,7 +52,7 @@ public class RectRow {
      */
     protected void notifyAboutNodeChange() {
         double totalStackWidth = 0;
-        double newMaxHeight = Double.MIN_VALUE;
+        double newMaxHeight = Double.NEGATIVE_INFINITY;
 
         for (RectStack child : this.children) {
             totalStackWidth += child.getWidth();
@@ -75,7 +70,7 @@ public class RectRow {
      *            amount by which this row's children's y-coordinates should be decreased.
      */
     public void decreaseYRecursively(final double verticalDecrease) {
-        this.yCoord -= verticalDecrease;
+        this.y -= verticalDecrease;
         for (RectStack stack : this.children) {
             stack.setY(stack.getY() - verticalDecrease);
             stack.decreaseChildrensY(verticalDecrease);
@@ -89,7 +84,7 @@ public class RectRow {
      *            amount by which this row's children's y-coordinates should be increased.
      */
     public void increaseYRecursively(final double verticalIncrease) {
-        this.yCoord += verticalIncrease;
+        this.y += verticalIncrease;
         for (RectStack stack : this.children) {
             stack.setY(stack.getY() + verticalIncrease);
             stack.increaseChildrensY(verticalIncrease);
@@ -203,7 +198,7 @@ public class RectRow {
         this.children.remove(stack);
         this.width -= stack.getWidth();
 
-        double newMaxHeight = Double.MIN_VALUE;
+        double newMaxHeight = Double.NEGATIVE_INFINITY;
         for (RectStack child : this.children) {
             newMaxHeight = Math.max(newMaxHeight, child.getHeight());
         }
@@ -259,17 +254,17 @@ public class RectRow {
      * Gets y-coordinate of this row.
      */
     public double getY() {
-        return yCoord;
+        return y;
     }
 
     /**
      * Sets y-coordinate of this row.
      * 
-     * @param yCoordinate
+     * @param yCoord
      *            new y-coordinate of this row.
      */
-    public void setY(final double yCoordinate) {
-        this.yCoord = yCoordinate;
+    public void setY(final double yCoord) {
+        this.y = yCoord;
     }
 
     /**

@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
@@ -18,11 +15,9 @@ import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Class that offers methods that calculate the initial placement of rectangles of {@link SecondIteration}.
+ * Class that offers methods that calculate the initial placement of rectangles in {@link RowFillingAndCompaction}.
  * 
- * @see SecondIteration
- * 
- * @author dalu
+ * @see RowFillingAndCompaction
  */
 public final class InitialPlacement {
 

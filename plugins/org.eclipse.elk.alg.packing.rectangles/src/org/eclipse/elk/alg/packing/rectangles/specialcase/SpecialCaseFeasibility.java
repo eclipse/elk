@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.specialcase;
 
@@ -17,8 +14,6 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Class that offers a method for detecting the special case where one big rectangle and other smaller rectangles
  * exists.
- * 
- * @author dalu
  */
 public final class SpecialCaseFeasibility {
 
@@ -53,8 +48,7 @@ public final class SpecialCaseFeasibility {
                 continue;
             }
 
-            // the biggerRect is assigned as soon as a second height is found that is different from the first found
-            // height.
+            // biggerRect is assigned as soon as a second height is found that is different from the first found height.
             if (theBiggerRect == null) {
                 if (rect.getHeight() > aSmallerRect.getHeight()) {
                     theBiggerRect = rect;

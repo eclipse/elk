@@ -12,9 +12,9 @@ package org.eclipse.elk.alg.packing.rectangles;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.packing.rectangles.firstiteration.FirstIteration;
+import org.eclipse.elk.alg.packing.rectangles.firstiteration.AreaApproximation;
 import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions;
-import org.eclipse.elk.alg.packing.rectangles.seconditeration.SecondIteration;
+import org.eclipse.elk.alg.packing.rectangles.seconditeration.RowFillingAndCompaction;
 import org.eclipse.elk.alg.packing.rectangles.specialcase.SpecialCaseFeasibility;
 import org.eclipse.elk.alg.packing.rectangles.specialcase.SpecialCasePlacer;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
@@ -31,8 +31,11 @@ import org.eclipse.elk.graph.ElkNode;
  * <p>
  * Nodes are viewed as rectangles and so {@link ElkNode}s are referred to as rectangles in the comments.
  * </p>
- * 
- * @author dalu
+ * <p>
+ * Depending on the settings, checks for a specified special case, calculates a layout with a approximation algorithm or
+ * uses that approximation algorithm for the needed area of the rectangles and places the rectangles nicely aligned on
+ * the drawing area according to that approximation.
+ * </p>
  */
 public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     /** Desired aspect ratio. */
@@ -40,7 +43,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     /** Packing Strategy. */
     private PackingStrategy packingStrat;
     /** Shift when placing behind or below the last placed rectangle. */
-    private boolean lpShift;
+    private boolean lastPlaceShift;
     /** Only first iteration. */
     private boolean onlyFirstIteration;
     /** Check for special case. */
@@ -55,10 +58,10 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Rect Packing", 1);
+        progressMonitor.begin("Rectangle Packing", 1);
         dar = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
         packingStrat = layoutGraph.getProperty(RectPackingOptions.STRATEGY);
-        lpShift = layoutGraph.getProperty(RectPackingOptions.LP_SHIFT);
+        lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
         onlyFirstIteration = layoutGraph.getProperty(RectPackingOptions.ONLY_FIRST_ITERATION);
         checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.CHECK_FOR_SPECIAL_CASE);
         expandNodes = layoutGraph.getProperty(RectPackingOptions.EXPAND_NODES);
@@ -72,17 +75,17 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         if (checkSpecialCase && SpecialCaseFeasibility.confirm(rectangles)) {
             drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes);
         } else {
-            FirstIteration firstIt = new FirstIteration(dar, packingStrat, lpShift);
+            AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
             drawing = firstIt.approxBoundingBox(rectangles);
             if (!onlyFirstIteration) {
                 DrawingUtil.resetCoordinates(rectangles);
-                SecondIteration secondIt = new SecondIteration(dar, expandNodes);
+                RowFillingAndCompaction secondIt = new RowFillingAndCompaction(dar, expandNodes);
                 drawing = secondIt.start(rectangles, drawing.getDrawingWidth());
             }
         }
 
         // FINAL TOUCH
-        enforcePadding(rectangles);
+        applyPadding(rectangles);
         layoutGraph.setDimensions(drawing.getDrawingWidth() + padding.getHorizontal(),
                 drawing.getDrawingHeight() + padding.getVertical());
 
@@ -95,7 +98,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
      * @param rectangles
      *            list of rectangles that have been placed.
      */
-    private void enforcePadding(final List<ElkNode> rectangles) {
+    private void applyPadding(final List<ElkNode> rectangles) {
         for (ElkNode rect : rectangles) {
             rect.setLocation(rect.getX() + padding.getLeft(), rect.getY() + padding.getTop());
         }

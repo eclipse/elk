@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.firstiteration;
 
@@ -19,7 +16,7 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Class that offers methods for small operations in the first iteration.
  * 
- * @author dalu
+ * @see AreaApproximation
  */
 public final class Calculations {
 
@@ -32,7 +29,7 @@ public final class Calculations {
      * @param drawingWidth
      *            width of drawing before placement of new rectangle.
      * @param xCoord
-     *            potential x coordinate of new rectangle.
+     *            potential x-coordinate of new rectangle.
      * @param toPlaceWidth
      *            width of new rectangle.
      * @return width of drawing including new rectangle in case LPR and LPB.
@@ -48,7 +45,7 @@ public final class Calculations {
      * @param drawingHeight
      *            height of drawing before placement of new rectangle.
      * @param yCoord
-     *            potential y coordinate of new rectangle.
+     *            potential y-coordinate of new rectangle.
      * @param toPlaceHeight
      *            height of new rectangle.
      * @return height of drawing including new rectangle in case LPR and LPB.

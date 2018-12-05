@@ -4,10 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
- *******************************************************************************/ 
+ *******************************************************************************/
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
 import java.util.List;
@@ -22,10 +19,8 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Second iteration of the algorithm. Actual placement of the boxes inside the approximated bounding box. Rectangles are
  * placed in rows, which are compacted and then filled with elements from the subsequent row.
- * 
- * @author dalu
  */
-public class SecondIteration {
+public class RowFillingAndCompaction {
     //////////////////////////////////////////////////////////////////
     // Fields
     /** Current drawing width. */
@@ -46,14 +41,14 @@ public class SecondIteration {
     //////////////////////////////////////////////////////////////////
     // Constructor
     /**
-     * Creates an {@link SecondIteration} object to execute the second iteration on.
+     * Creates an {@link RowFillingAndCompaction} object to execute the second iteration on.
      * 
      * @param desiredAr
      *            desired aspect ratio.
      * @param expandNodes
      *            indicates whether to expand the nodes in the end.
      */
-    public SecondIteration(final double desiredAr, final boolean expandNodes) {
+    public RowFillingAndCompaction(final double desiredAr, final boolean expandNodes) {
         this.dar = desiredAr;
         this.expandNodes = expandNodes;
         this.compactRepeat = true;
@@ -108,7 +103,7 @@ public class SecondIteration {
      */
     private void calculateDimensions(final List<RectRow> rows) {
         // new calculation of drawings dimensions.
-        double maxWidth = Double.MIN_VALUE;
+        double maxWidth = Double.NEGATIVE_INFINITY;
         double newHeight = 0;
         for (RectRow row : rows) {
             maxWidth = Math.max(maxWidth, row.getWidth());
@@ -144,8 +139,6 @@ public class SecondIteration {
     // Helping enumerate.
     /**
      * Enumerate to identify a row-filling strategy.
-     * 
-     * @author dalu
      */
     protected enum RowFillStrat {
         /** Fill row with whole stacks. */
