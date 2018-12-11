@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
-import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingDataDescriptor;
+import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -258,7 +258,6 @@ public class AreaApproximation {
         double width, height;
         switch (option) {
         case CANDIDATE_POSITION_LAST_PLACED_RIGHT:
-
             potentialXvalue = lastPlaced.getX() + lastPlaced.getWidth();
             if (lpShift) {
                 potentialYvalue = Calculations.calculateYforLPR(potentialXvalue, placedRects, lastPlaced);
@@ -269,8 +268,8 @@ public class AreaApproximation {
             width = Calculations.getWidthLPRorLPB(currDrawingWidth, potentialXvalue, widthToPlace);
             height = Calculations.getHeightLPRorLPB(currDrawingHeight, potentialYvalue, heightToPlace);
             break;
+            
         case CANDIDATE_POSITION_LAST_PLACED_BELOW:
-
             potentialYvalue = lastPlaced.getY() + lastPlaced.getHeight();
             if (lpShift) {
                 potentialXvalue = Calculations.calculateXforLPB(potentialYvalue, placedRects, lastPlaced);
@@ -281,16 +280,16 @@ public class AreaApproximation {
             width = Calculations.getWidthLPRorLPB(currDrawingWidth, potentialXvalue, widthToPlace);
             height = Calculations.getHeightLPRorLPB(currDrawingHeight, potentialYvalue, heightToPlace);
             break;
+            
         case CANDIDATE_POSITION_WHOLE_DRAWING_RIGHT:
-
             potentialXvalue = currDrawingWidth;
             potentialYvalue = 0;
 
             width = currDrawingWidth + widthToPlace;
             height = Math.max(currDrawingHeight, heightToPlace);
             break;
+            
         case CANDIDATE_POSITION_WHOLE_DRAWING_BELOW:
-
             potentialXvalue = 0;
             potentialYvalue = currDrawingHeight;
 

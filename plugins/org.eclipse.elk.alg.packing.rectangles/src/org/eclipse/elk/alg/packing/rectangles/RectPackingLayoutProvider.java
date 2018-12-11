@@ -18,8 +18,8 @@ import org.eclipse.elk.alg.packing.rectangles.seconditeration.RowFillingAndCompa
 import org.eclipse.elk.alg.packing.rectangles.specialcase.SpecialCaseFeasibility;
 import org.eclipse.elk.alg.packing.rectangles.specialcase.SpecialCasePlacer;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
-import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingUtil;
+import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -54,7 +54,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     private ElkPadding padding;
 
     /**
-     * {@inheritDoc}
+     * Calculating and applaying layout to the model.
      */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {

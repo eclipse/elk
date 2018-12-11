@@ -77,8 +77,7 @@ public final class Calculations {
                 // is closest neighbor?
                 if (closestUpperNeighbor == null) {
                     closestUpperNeighbor = placedRect;
-                } else if (lastPlaced.getY() - placedRectBottomBorder < lastPlaced.getY()
-                        - closestNeighborBottomBorder) {
+                } else if (lastPlaced.getY() - placedRectBottomBorder < lastPlaced.getY() - closestNeighborBottomBorder) {
                     closestUpperNeighbor = placedRect;
                 }
                 closestNeighborBottomBorder = closestUpperNeighbor.getY() + closestUpperNeighbor.getHeight();

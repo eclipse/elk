@@ -21,9 +21,6 @@ import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
  */
 public class AreaFilter implements BestCandidateFilter {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<DrawingData> filterList(final List<DrawingData> candidates, final double dar) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
