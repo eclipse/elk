@@ -32,7 +32,7 @@ class MetaDataFormatter extends AbstractFormatter2 {
 
     @Inject extension MetaDataGrammarAccess
     
-    def dispatch void format (MdBundleMember bundleMember, extension IFormattableDocument document){
+    def dispatch void format (MdBundleMember bundleMember, extension IFormattableDocument document){      
         if(bundleMember instanceof MdAlgorithm){
             bundleMember.format
         }else if(bundleMember instanceof MdCategory){

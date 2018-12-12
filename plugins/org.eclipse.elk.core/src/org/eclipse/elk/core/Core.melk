@@ -30,11 +30,14 @@ import org.eclipse.elk.core.util.RandomLayoutProvider
 /**
  * Core definitions of the Eclipse Layout Kernel.
  */
-bundle{label "ELK"  metadataClass core.options.CoreOptions 
+bundle{
+    label "ELK"  
+    metadataClass core.options.CoreOptions 
 	idPrefix org.eclipse.elk 
 }
 
-category layered {	label "Layered"	description
+category layered {	
+    label "Layered"	description
 		"The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes
 		the direction of edges by pointing as many edges as possible into the same direction.
 		The nodes are arranged in layers, which are sometimes called \"hierarchies\", and then
@@ -42,7 +45,8 @@ category layered {	label "Layered"	description
 		coordinates are computed for the nodes and edge bend points."
 }
 
-category orthogonal {	label "Orthogonal"
+category orthogonal {	
+    label "Orthogonal"
 	description
 		"Orthogonal methods that follow the \"topology-shape-metrics\" approach by Batini,
 		Nardelli and Tamassia '86. The first phase determines the topology of the drawing by
