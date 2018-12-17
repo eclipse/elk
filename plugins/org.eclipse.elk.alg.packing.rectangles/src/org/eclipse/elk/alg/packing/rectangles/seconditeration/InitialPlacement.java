@@ -1,0 +1,79 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eclipse.elk.alg.packing.rectangles.seconditeration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
+import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
+import org.eclipse.elk.graph.ElkNode;
+
+/**
+ * Class that offers methods that calculate the initial placement of rectangles in {@link RowFillingAndCompaction}.
+ * 
+ * @see RowFillingAndCompaction
+ */
+public final class InitialPlacement {
+
+    //////////////////////////////////////////////////////////////////
+    // Private Constructor.
+    private InitialPlacement() {
+    }
+
+    //////////////////////////////////////////////////////////////////
+    // Main method.
+    /**
+     * Simply places the rectangles as {@link RectRow}s onto the drawing area, bounded by the calculated bounding box
+     * width.
+     * 
+     * @param rectangles
+     *            rectangles to be placed.
+     * @param boundingWidth
+     *            bounding box width.
+     * @return returns the rows in which the rectangles were placed.
+     */
+    protected static List<RectRow> place(final List<ElkNode> rectangles, final double boundingWidth) {
+        List<RectRow> rows = new ArrayList<RectRow>();
+        RectRow currRow = new RectRow(0);
+        double currDrawingHeight = 0;
+
+        for (ElkNode currRect : rectangles) {
+            double potentialRowWidth = currRow.getWidth() + currRect.getWidth();
+            if (potentialRowWidth > boundingWidth) {
+                currDrawingHeight += currRow.getHeight();
+                rows.add(currRow);
+                currRow = new RectRow(currDrawingHeight);
+            }
+            createNewStackAndAddToRow(currRect, currRow);
+        }
+        rows.add(currRow);
+        return rows;
+    }
+
+    //////////////////////////////////////////////////////////////////
+    // Helping methods.
+
+    /**
+     * Method that creates a new {@link RectStack}, adds the given {@link ElkNode} to the {@link RectStack}, and adds
+     * the created {@link RectStack} to the given {@link RectRow}. The new {@link RectStack} and given {@link ElkNode}
+     * will be at the end of the {@link RectRow}.
+     * 
+     * @param rect
+     *            Rectangle to add to a {@link RectStack}.
+     * @param row
+     *            The {@link ElkNode} the new {@link RectStack} is added to.
+     * @return returns the newly created {@link RectStack}.
+     */
+    private static RectStack createNewStackAndAddToRow(final ElkNode rect, final RectRow row) {
+        rect.setLocation(row.getWidth(), row.getY());
+        RectStack newStack = new RectStack(rect, rect.getX(), rect.getY(), row);
+        row.assignStack(newStack);
+        return newStack;
+    }
+}
