@@ -31,25 +31,25 @@ class MetaDataFormatter extends AbstractFormatter2 {
     static val Procedure1<? super IHiddenRegionFormatter> indention = [indent]
 
     @Inject extension MetaDataGrammarAccess
-    
-    def dispatch void format (MdBundleMember bundleMember, extension IFormattableDocument document){      
-        if(bundleMember instanceof MdAlgorithm){
+
+    def dispatch void format(MdBundleMember bundleMember, extension IFormattableDocument document) {
+        if (bundleMember instanceof MdAlgorithm) {
             bundleMember.format
-        }else if(bundleMember instanceof MdCategory){
+        } else if (bundleMember instanceof MdCategory) {
             bundleMember.format
-        } else if(bundleMember instanceof MdGroupOrOption){
+        } else if (bundleMember instanceof MdGroupOrOption) {
             bundleMember.format
         }
     }
-    
-        def dispatch void format (MdGroupOrOption grOpt, extension IFormattableDocument document){
-        if(grOpt instanceof MdGroup){
+
+    def dispatch void format(MdGroupOrOption grOpt, extension IFormattableDocument document) {
+        if (grOpt instanceof MdGroup) {
             grOpt.format
-        }else if(grOpt instanceof MdOption){
+        } else if (grOpt instanceof MdOption) {
             grOpt.format
         }
     }
-    
+
     def dispatch void format(MdBundle bundle, extension IFormattableDocument document) {
         bundle.regionFor.keyword(mdBundleAccess.bundleKeyword_1_0).append(one_space)
         interior(

@@ -48,7 +48,7 @@ Workflow {
 		language = StandardLanguage {
 			name = "org.eclipse.elk.core.meta.MetaData"
 			fileExtensions = "melk"
-            
+			
             formatter =  {
                 generateStub = true
             }
