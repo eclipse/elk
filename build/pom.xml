@@ -317,15 +317,6 @@
               </goals>
             </execution>
           </executions>
-          <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
-          <dependencies>
-            <dependency>
-              <groupId>org.eclipse.platform</groupId>
-              <artifactId>org.eclipse.equinox.common</artifactId>
-              <version>3.10.0</version>
-            </dependency>
-          </dependencies>
-          <!-- End Workaround -->
         </plugin>
 
         <!-- Add src-gen and xtend-gen to source-directories -->
