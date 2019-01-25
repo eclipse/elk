@@ -591,7 +591,7 @@ public class ComponentsCompactor {
         private List<IComponent<LNode, Set<LEdge>>> components = Lists.newArrayList();
         private boolean containsExternalPorts = false;
         
-        public InternalConnectedComponents() { }
+        InternalConnectedComponents() { }
         
         @Override
         public Iterator<IComponent<LNode, Set<LEdge>>> iterator() {
@@ -621,7 +621,7 @@ public class ComponentsCompactor {
         private List<ElkRectangle> rectilinearConvexHull;
         private List<IExternalExtension<Set<LEdge>>> externalExtensions = Lists.newArrayList();
         
-        public InternalComponent(final LGraph graph) {
+        InternalComponent(final LGraph graph) {
             this.graph = graph;
             
             containsRegularNodes = false;
@@ -718,7 +718,7 @@ public class ComponentsCompactor {
         private ElkRectangle externalExtension;
         private ElkRectangle parent;
         
-        public InternalExternalExtension(final LEdge edge) {
+        InternalExternalExtension(final LEdge edge) {
             // housekeeping
             this.edge = edge;
             if (edge.getSource().getNode().getType() == NodeType.EXTERNAL_PORT) {
@@ -808,7 +808,7 @@ public class ComponentsCompactor {
         private double[] max = new double[PortSide.values().length];
         private double[] extent = new double[PortSide.values().length];
 
-        public OuterSegments() {
+        OuterSegments() {
             // initialize with proper values
             Arrays.fill(min, Double.POSITIVE_INFINITY);
             Arrays.fill(max, Double.NEGATIVE_INFINITY);

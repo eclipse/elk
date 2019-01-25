@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -159,11 +160,11 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
             final LayerConstraint nodeLayerConstraint, final PortType type) {
         
         // Iterate through the node's edges and reverse them, if necessary
-        LPort[] ports = node.getPorts().toArray(new LPort[node.getPorts().size()]);
+        LPort[] ports = LGraphUtil.toPortArray(node.getPorts());
         for (LPort port : ports) {
             // Only incoming edges
             if (type != PortType.INPUT) {
-                LEdge[] outgoing = port.getOutgoingEdges().toArray(new LEdge[port.getOutgoingEdges().size()]);
+                LEdge[] outgoing = LGraphUtil.toEdgeArray(port.getOutgoingEdges());
                 
                 for (LEdge edge : outgoing) {
                     // Reverse the edge if we're allowed to do so
@@ -175,7 +176,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
             
             // Only outgoing edges
             if (type != PortType.OUTPUT) {
-                LEdge[] incoming = port.getIncomingEdges().toArray(new LEdge[port.getIncomingEdges().size()]);
+                LEdge[] incoming = LGraphUtil.toEdgeArray(port.getIncomingEdges());
                 
                 for (LEdge edge : incoming) {
                     // Reverse the edge if we're allowed to do so

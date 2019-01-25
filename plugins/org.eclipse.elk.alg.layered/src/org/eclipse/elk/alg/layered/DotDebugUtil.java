@@ -195,13 +195,13 @@ public final class DotDebugUtil {
             options.append("label=\"");
             if (node.getType() == NodeType.NORMAL) {
                 // Normal nodes display their name, if any
-                if (node.getName() != null) {
-                    options.append(node.getName().replace("\"", "\\\"") + " ");
+                if (node.getDesignation() != null) {
+                    options.append(node.getDesignation().replace("\"", "\\\"") + " ");
                 }
             } else {
                 // Dummy nodes show their name (if set), or their node ID
-                if (node.getName() != null) {
-                    options.append(node.getName().replace("\"", "\\\"") + " ");
+                if (node.getDesignation() != null) {
+                    options.append(node.getDesignation().replace("\"", "\\\"") + " ");
                 } else {
                     options.append("n_" + node.id + " ");
                 }

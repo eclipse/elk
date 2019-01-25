@@ -312,7 +312,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
         /**
          * Creates a new big node.
          */
-        public BigNode(final LNode node, final int chunks) {
+        BigNode(final LNode node, final int chunks) {
             this.node = node;
             this.chunks = chunks;
         }

@@ -282,7 +282,7 @@ public final class ElkLayered {
             LGraph nextGraph = continueSearchingTheseGraphs.pop();
             for (LNode node : nextGraph.getLayerlessNodes()) {
                 if (hasNestedGraph(node)) {
-                    LGraph nestedGraph = nestedGraphOf(node);
+                    LGraph nestedGraph = node.getNestedGraph();
                     collectedGraphs.push(nestedGraph);
                     continueSearchingTheseGraphs.push(nestedGraph);
                 }
@@ -328,19 +328,11 @@ public final class ElkLayered {
     }
 
     private boolean isRoot(final LGraph graph) {
-        return parentNodeOf(graph) == null;
-    }
-
-    private LNode parentNodeOf(final LGraph graph) {
-        return graph.getProperty(InternalProperties.PARENT_LNODE);
-    }
-
-    private LGraph nestedGraphOf(final LNode node) {
-        return node.getProperty(InternalProperties.NESTED_LGRAPH);
+        return graph.getParentNode() == null;
     }
 
     private boolean hasNestedGraph(final LNode node) {
-        return nestedGraphOf(node) != null;
+        return node.getNestedGraph() != null;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -15,6 +15,7 @@ import java.util.ListIterator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -123,7 +124,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
                     // a copy of the current list of edges, since the edges are modified when
                     // dummy nodes are created)
                     List<LEdge> edges = port.getIncomingEdges();
-                    LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
+                    LEdge[] edgeArray = LGraphUtil.toEdgeArray(edges);
                     
                     for (LEdge edge : edgeArray) {
                         createEastPortSideDummies(layeredGraph, port, edge, unassignedNodes);
@@ -136,7 +137,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
                     // a copy of the current list of edges, since the edges are modified when
                     // dummy nodes are created)
                     List<LEdge> edges = port.getOutgoingEdges();
-                    LEdge[] edgeArray = edges.toArray(new LEdge[edges.size()]);
+                    LEdge[] edgeArray = LGraphUtil.toEdgeArray(edges);
                     
                     for (LEdge edge : edgeArray) {
                         createWestPortSideDummies(layeredGraph, port, edge, unassignedNodes);

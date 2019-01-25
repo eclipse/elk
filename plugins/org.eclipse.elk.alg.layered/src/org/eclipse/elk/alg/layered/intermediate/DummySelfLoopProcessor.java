@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -76,8 +77,7 @@ public final class DummySelfLoopProcessor implements ILayoutProcessor<LGraph> {
             for (LNode node : layer) {
                 for (LPort port : node.getPorts()) {
                     // Go through the port's outgoing edges
-                    LEdge[] edges = port.getOutgoingEdges().toArray(
-                            new LEdge[port.getOutgoingEdges().size()]);
+                    LEdge[] edges = LGraphUtil.toEdgeArray(port.getOutgoingEdges());
                     
                     for (LEdge edge : edges) {
                         // We're only interested in edges whose source and target node are identical

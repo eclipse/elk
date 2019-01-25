@@ -25,6 +25,6 @@ public interface ICompactionAlgorithm {
      * @param compactor
      *            the instance of the surrounding {@link OneDimensionalCompactor}.
      */
-    void compact(final OneDimensionalCompactor compactor);
+    void compact(OneDimensionalCompactor compactor);
     
 }

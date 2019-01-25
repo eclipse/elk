@@ -477,7 +477,7 @@ public final class JsonDebugUtil {
             writeProperties(writer, node.getAllProperties(), indentation + 1);
             writer.write(",\n");
             writePorts(writer, node.getPorts(), indentation + 1);
-            final LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            final LGraph nestedGraph = node.getNestedGraph();
             if (nestedGraph != null) {
                 writeLgraph(nestedGraph, writer, indentation + 1);
             }
@@ -682,14 +682,14 @@ public final class JsonDebugUtil {
         String name = "";
         if (node.getType() == NodeType.NORMAL) {
             // Normal nodes display their name, if any
-            if (node.getName() != null) {
-                name = node.getName();
+            if (node.getDesignation() != null) {
+                name = node.getDesignation();
             }
             name += " (" + layer + "," + index + ")";
         } else {
             // Dummy nodes show their name (if set), or their node ID
-            if (node.getName() != null) {
-                name = node.getName();
+            if (node.getDesignation() != null) {
+                name = node.getDesignation();
             } else {
                 name = "n_" + node.id;
             }

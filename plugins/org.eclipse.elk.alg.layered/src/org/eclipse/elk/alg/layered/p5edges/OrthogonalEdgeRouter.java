@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -222,7 +221,6 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
         monitor.begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values
-        Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         double nodeNodeSpacing =
                 layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS).doubleValue();
         double edgeEdgeSpacing =

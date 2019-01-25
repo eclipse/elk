@@ -53,7 +53,7 @@ public class GreedyPortDistributor implements ISweepPortDistributor, IInitializa
             if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 continue;
             }
-            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            LGraph nestedGraph = node.getNestedGraph();
             boolean useHierarchicalCrossCounter = !node.getPortSideView(side).isEmpty() && nestedGraph != null;
             if (useHierarchicalCrossCounter) {
                 LNode[][] innerGraph = nestedGraph.toNodeArray();

@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -157,7 +158,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
             pointer = -1;
 
             // Iterate through the nodes (use an array to avoid concurrent modification exceptions)
-            LNode[] nodeArray = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
+            LNode[] nodeArray = LGraphUtil.toNodeArray(layer.getNodes());
             for (LNode node : nodeArray) {
                 pointer++;
 
@@ -539,8 +540,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
             dummyInputPort.setNode(dummy);
 
             // Reroute edges
-            LEdge[] edgeArray =
-                    inPort.getIncomingEdges().toArray(new LEdge[inPort.getIncomingEdges().size()]);
+            LEdge[] edgeArray = LGraphUtil.toEdgeArray(inPort.getIncomingEdges());
             for (LEdge edge : edgeArray) {
                 edge.setTarget(dummyInputPort);
             }
@@ -563,9 +563,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
             dummyOutputPort.setNode(dummy);
 
             // Reroute edges
-            LEdge[] edgeArray =
-                    outPort.getOutgoingEdges()
-                            .toArray(new LEdge[outPort.getOutgoingEdges().size()]);
+            LEdge[] edgeArray = LGraphUtil.toEdgeArray(outPort.getOutgoingEdges());
             for (LEdge edge : edgeArray) {
                 edge.setSource(dummyOutputPort);
             }

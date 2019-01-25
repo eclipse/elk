@@ -78,7 +78,7 @@ public class GraphInfoHolder implements IInitializable {
         currentNodeOrder = graph.toNodeArray();
         
         // Hierarchy information.
-        parent = lGraph.getProperty(InternalProperties.PARENT_LNODE);
+        parent = lGraph.getParentNode();
         hasParent = parent != null;
         parentGraphData = hasParent ? graphs.get(parent.getGraph().id) : null;
         Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
@@ -256,7 +256,7 @@ public class GraphInfoHolder implements IInitializable {
     @Override
     public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
         LNode node = nodeOrder[l][n];
-        LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+        LGraph nestedGraph = node.getNestedGraph();
         if (nestedGraph != null) {
             childGraphs.add(nestedGraph);
         }

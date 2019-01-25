@@ -62,13 +62,9 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor<LGrap
         graph.getLayers().clear();
         resizeGraph(graph);
         if (isNested(graph)) {
-            graphLayoutToNode(parentNodeOf(graph), graph);
+            graphLayoutToNode(graph.getParentNode(), graph);
         }
         progressMonitor.done();
-    }
-
-    private LNode parentNodeOf(final LGraph graph) {
-        return graph.getProperty(InternalProperties.PARENT_LNODE);
     }
 
     /**
@@ -110,7 +106,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor<LGrap
     }
 
     private boolean isNested(final LGraph graph) {
-        return parentNodeOf(graph) != null;
+        return graph.getParentNode() != null;
     }
 
     // //////////////////////////////////////////////////////////////////////////////

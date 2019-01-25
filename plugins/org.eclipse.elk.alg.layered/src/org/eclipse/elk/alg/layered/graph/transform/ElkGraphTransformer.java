@@ -11,7 +11,12 @@
 package org.eclipse.elk.alg.layered.graph.transform;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphElement;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
+
+import com.google.common.base.Strings;
 
 /**
  * Manages the transformation of ELK Graphs to LayeredGraphs. Sets the
@@ -37,6 +42,36 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
      */
     public void applyLayout(final LGraph layeredGraph) {
         new ElkGraphLayoutTransferrer().applyLayout(layeredGraph);
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utility
+    
+    /**
+     * Returns an identifier string for the original ElkGraph element.
+     * 
+     * @param element an LGraph element
+     * @return the original identifier, or {@code null} if none is defined
+     */
+    public static String getOriginIdentifier(final LGraphElement element) {
+        Object origin = element.getProperty(InternalProperties.ORIGIN);
+        if (origin instanceof ElkGraphElement) {
+            return getIdentifier((ElkGraphElement) origin);
+        }
+        return null;
+    }
+    
+    private static String getIdentifier(final ElkGraphElement element) {
+        String id = element.getIdentifier();
+        if (!Strings.isNullOrEmpty(id)) {
+            String parentId = getIdentifier((ElkGraphElement) element.eContainer());
+            if (parentId != null) {
+                return parentId + '.' + id;
+            }
+            return id;
+        }
+        return null;
     }
     
 }
