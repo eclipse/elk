@@ -98,7 +98,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor<LGraph> {
             LNode referenceNode = sourcePort.getNode();
             LGraph referenceGraph;
             if (LGraphUtil.isDescendant(targetPort.getNode(), referenceNode)) {
-                referenceGraph = referenceNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                referenceGraph = referenceNode.getNestedGraph();
             } else {
                 referenceGraph = referenceNode.getGraph();
             }

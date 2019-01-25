@@ -128,11 +128,11 @@ public class LayerSweepCrossingMinimizer
     private Consumer<GraphInfoHolder> chooseMinimizingMethod(final List<GraphInfoHolder> graphsToSweepOn) {
         GraphInfoHolder parent = graphsToSweepOn.get(0);
         if (!parent.crossMinDeterministic()) {
-            return g -> compareDifferentRandomizedLayouts(g);
+            return this::compareDifferentRandomizedLayouts;
         } else if (parent.crossMinAlwaysImproves()) {
-            return g -> minimizeCrossingsNoCounter(g);
+            return this::minimizeCrossingsNoCounter;
         } else {
-            return g -> minimizeCrossingsWithCounter(g);
+            return this::minimizeCrossingsWithCounter;
         }
     }
 
@@ -262,7 +262,7 @@ public class LayerSweepCrossingMinimizer
             final boolean isFirstSweep) {
         boolean improved = false;
         for (LNode node : layer) {
-            if (hasNestedGraph(node) && !graphInfoHolders.get(nestedGraphOf(node).id).dontSweepInto()) {
+            if (hasNestedGraph(node) && !graphInfoHolders.get(node.getNestedGraph().id).dontSweepInto()) {
                 improved |= sweepInHierarchicalNode(isForwardSweep, node, isFirstSweep);
             }
         }
@@ -271,7 +271,7 @@ public class LayerSweepCrossingMinimizer
 
     private boolean sweepInHierarchicalNode(final boolean isForwardSweep, final LNode node,
             final boolean isFirstSweep) {
-        LGraph nestedLGraph = nestedGraphOf(node);
+        LGraph nestedLGraph = node.getNestedGraph();
         GraphInfoHolder nestedGraph = graphInfoHolders.get(nestedLGraph.id);
         LNode[][] nestedGraphNodeOrder = nestedGraph.currentNodeOrder();
         int startIndex = firstIndex(isForwardSweep, nestedGraphNodeOrder.length);
@@ -359,12 +359,8 @@ public class LayerSweepCrossingMinimizer
         return isForwardSweep ? freeLayerIndex < length : freeLayerIndex >= 0;
     }
 
-    private LGraph nestedGraphOf(final LNode node) {
-        return node.getProperty(InternalProperties.NESTED_LGRAPH);
-    }
-
     private Boolean hasNestedGraph(final LNode node) {
-        return nestedGraphOf(node) != null;
+        return node.getNestedGraph() != null;
     }
 
     private PortSide sideOpposedSweepDirection(final boolean isForwardSweep) {

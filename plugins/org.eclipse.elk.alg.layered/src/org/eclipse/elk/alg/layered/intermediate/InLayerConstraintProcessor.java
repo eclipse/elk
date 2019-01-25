@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InLayerConstraint;
@@ -64,7 +65,7 @@ public final class InLayerConstraintProcessor implements ILayoutProcessor<LGraph
             List<LNode> bottomConstrainedNodes = Lists.newArrayList();
             
             // Iterate through an array of its nodes
-            LNode[] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
+            LNode[] nodes = LGraphUtil.toNodeArray(layer.getNodes());
             
             for (int i = 0; i < nodes.length; i++) {
                 InLayerConstraint constraint =

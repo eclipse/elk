@@ -28,7 +28,7 @@ public interface ISpacingsHandler<T extends CNode> {
      *            the second involved node.
      * @return the horizontal spacing that should be preserve between the two passed nodes.
      */
-    double getHorizontalSpacing(final T cNode1, final T cNode2);
+    double getHorizontalSpacing(T cNode1, T cNode2);
 
     /**
      * @param cNode1
@@ -37,7 +37,7 @@ public interface ISpacingsHandler<T extends CNode> {
      *            the second involved node.
      * @return the vertical spacing that should be preserved between the two passed nodes.
      */
-    double getVerticalSpacing(final T cNode1, final T cNode2);
+    double getVerticalSpacing(T cNode1, T cNode2);
 
     /**
      * A default implementation, returning for either spacing the maximum of the two desired

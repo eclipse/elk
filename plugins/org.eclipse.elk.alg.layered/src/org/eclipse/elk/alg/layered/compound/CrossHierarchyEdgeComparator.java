@@ -14,7 +14,6 @@ import java.util.Comparator;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.PortType;
 
 /**
@@ -72,7 +71,7 @@ final class CrossHierarchyEdgeComparator implements Comparator<CrossHierarchyEdg
             if (currentGraph == topLevelGraph) {
                 return level;
             }
-            LNode currentNode = currentGraph.getProperty(InternalProperties.PARENT_LNODE);
+            LNode currentNode = currentGraph.getParentNode();
             if (currentNode == null) {
                 // the given node is not an ancestor of the graph node
                 throw new IllegalArgumentException();

@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -413,7 +414,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         }
         
         // Turn the list into an array of dummy nodes and sort that by their x coordinate
-        LNode[] dummyArray = dummies.toArray(new LNode[dummies.size()]);
+        LNode[] dummyArray = LGraphUtil.toNodeArray(dummies);
         
         Arrays.sort(dummyArray, new Comparator<LNode>() {
             public int compare(final LNode a, final LNode b) {
@@ -438,7 +439,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         }
         
         // Turn the list into an array of dummy nodes and sort that by their original x coordinate
-        LNode[] dummyArray = dummies.toArray(new LNode[dummies.size()]);
+        LNode[] dummyArray = LGraphUtil.toNodeArray(dummies);
         
         Arrays.sort(dummyArray, new Comparator<LNode>() {
             public int compare(final LNode a, final LNode b) {
@@ -660,8 +661,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 }
                 
                 // Reroute all the output port's edges
-                edges = nodeOutPort.getOutgoingEdges().toArray(
-                        new LEdge[nodeOutPort.getOutgoingEdges().size()]);
+                edges = LGraphUtil.toEdgeArray(nodeOutPort.getOutgoingEdges());
                 
                 for (LEdge edge : edges) {
                     edge.setSource(replacedDummyPort);

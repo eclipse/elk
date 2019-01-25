@@ -19,6 +19,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -45,11 +46,30 @@ public final class LEdge extends LGraphElement {
      * {@inheritDoc}
      */
     public String toString() {
-        if (source != null && target != null) {
-            return source.getNode() + "(" + source + ")->" + target.getNode() + "(" + target + ")";
-        } else {
-            return "e_" + hashCode();
+        StringBuilder result = new StringBuilder();
+        result.append("e_");
+        String designation = getDesignation();
+        if (designation != null) {
+            result.append(designation);
         }
+        if (source != null && target != null) {
+            result.append(" ").append(source.getDesignation());
+            result.append("[").append(source.getNode()).append("]");
+            result.append(" -> ").append(target.getDesignation());
+            result.append("[").append(target.getNode()).append("]");
+        }
+        return result.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+   @Override
+    public String getDesignation() {
+       if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
+           return labels.get(0).getText();
+       }
+       return super.getDesignation();
     }
     
     /**
@@ -266,4 +286,5 @@ public final class LEdge extends LGraphElement {
             throw new IllegalArgumentException("'node' must either be the source node or target node of the edge.");
         }
     }
+    
 }

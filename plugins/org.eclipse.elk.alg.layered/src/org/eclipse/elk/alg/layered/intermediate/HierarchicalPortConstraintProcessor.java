@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -155,7 +156,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      */
     private void processEasternAndWesternPortDummies(final Layer layer) {
         // Put the nodes into an array
-        LNode[] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
+        LNode[] nodes = LGraphUtil.toNodeArray(layer.getNodes());
         
         // Sort the array; hierarchical port dummies are at the top, sorted by
         // position or ratio in ascending order

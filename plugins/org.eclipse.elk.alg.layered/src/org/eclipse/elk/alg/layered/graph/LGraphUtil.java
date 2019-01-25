@@ -45,6 +45,36 @@ public final class LGraphUtil {
      */
     private LGraphUtil() { }
     
+    /**
+     * Create a new array by copying the content of the given node collection.
+     * 
+     * @param nodes a collection of nodes
+     * @return an array of nodes
+     */
+    public static LNode[] toNodeArray(final Collection<LNode> nodes) {
+        return nodes.toArray(new LNode[nodes.size()]);
+    }
+    
+    /**
+     * Create a new array by copying the content of the given edge collection.
+     * 
+     * @param edges a collection of edges
+     * @return an array of edges
+     */
+    public static LEdge[] toEdgeArray(final Collection<LEdge> edges) {
+        return edges.toArray(new LEdge[edges.size()]);
+    }
+    
+    /**
+     * Create a new array by copying the content of the given port collection.
+     * 
+     * @param ports a collection of ports
+     * @return an array of ports
+     */
+    public static LPort[] toPortArray(final Collection<LPort> ports) {
+        return ports.toArray(new LPort[ports.size()]);
+    }
+    
     ///////////////////////////////////////////////////////////////////////////////
     // Node Resizing
 
@@ -963,13 +993,13 @@ public final class LGraphUtil {
      */
     public static boolean isDescendant(final LNode child, final LNode parent) {
         LNode current = child;
-        LNode next = current.getGraph().getProperty(InternalProperties.PARENT_LNODE);
+        LNode next = current.getGraph().getParentNode();
         while (next != null) {
             current = next;
             if (current == parent) {
                 return true;
             }
-            next = current.getGraph().getProperty(InternalProperties.PARENT_LNODE);
+            next = current.getGraph().getParentNode();
         }
         return false;
     }
@@ -996,7 +1026,7 @@ public final class LGraphUtil {
         LNode node;
         do {
             point.add(graph.getOffset());
-            node = graph.getProperty(InternalProperties.PARENT_LNODE);
+            node = graph.getParentNode();
             if (node != null) {
                 LPadding padding = graph.getPadding();
                 point.add(padding.left, padding.top);
@@ -1009,7 +1039,7 @@ public final class LGraphUtil {
         graph = newGraph;
         do {
             point.sub(graph.getOffset());
-            node = graph.getProperty(InternalProperties.PARENT_LNODE);
+            node = graph.getParentNode();
             if (node != null) {
                 LPadding padding = graph.getPadding();
                 point.sub(padding.left, padding.top);

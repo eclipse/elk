@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -50,8 +51,7 @@ public final class ReversedEdgeRestorer implements ILayoutProcessor<LGraph> {
                 // Iterate over all the ports, looking for outgoing edges that should be reversed
                 for (LPort port : node.getPorts()) {
                     // Iterate over a copy of the edges to avoid concurrent modification exceptions
-                    LEdge[] edgeArray = port.getOutgoingEdges().toArray(
-                            new LEdge[port.getOutgoingEdges().size()]);
+                    LEdge[] edgeArray = LGraphUtil.toEdgeArray(port.getOutgoingEdges());
                     
                     for (LEdge edge : edgeArray) {
                         if (edge.getProperty(InternalProperties.REVERSED)) {

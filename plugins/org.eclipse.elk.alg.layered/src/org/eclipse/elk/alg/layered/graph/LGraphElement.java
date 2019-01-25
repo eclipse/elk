@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
+import org.eclipse.elk.alg.layered.graph.transform.ElkGraphTransformer;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
+
+import com.google.common.base.Strings;
 
 /**
  * Abstract superclass for the layers, nodes, ports, and edges of a layered graph
@@ -37,5 +40,18 @@ public abstract class LGraphElement extends MapPropertyHolder {
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
     // CHECKSTYLEON VisibilityModifier
+    
+    /**
+     * Returns a string that is useful to identify the element while debugging.
+     * 
+     * @return the element's designation, or {@code null} if no meaningful designation can be provided
+     */
+    public String getDesignation() {
+        String identifier = ElkGraphTransformer.getOriginIdentifier(this);
+        if (!Strings.isNullOrEmpty(identifier)) {
+            return identifier;
+        }
+        return null;
+    }
     
 }

@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -59,7 +60,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
             // Iterate through the nodes (use an array to avoid concurrent modification exceptions)
-            LNode[] nodeArray = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
+            LNode[] nodeArray = LGraphUtil.toNodeArray(layer.getNodes());
             for (LNode node : nodeArray) {
                 // We only care for North/South Port dummy nodes
                 if (node.getType() != NodeType.NORTH_SOUTH_PORT) {
@@ -146,8 +147,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
         double y = inputPort.getNode().getPosition().y;
         
         // Reroute the edges, inserting a new bend point at the position of the dummy node
-        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(
-                new LEdge[inputPort.getIncomingEdges().size()]);
+        LEdge[] edgeArray = LGraphUtil.toEdgeArray(inputPort.getIncomingEdges());
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
             inEdge.getBendPoints().addLast(x, y);
@@ -183,8 +183,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
         double y = outputPort.getNode().getPosition().y;
         
         // Reroute the edges, inserting a new bend point at the position of the dummy node
-        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(
-                new LEdge[outputPort.getOutgoingEdges().size()]);
+        LEdge[] edgeArray = LGraphUtil.toEdgeArray(outputPort.getOutgoingEdges());
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
             outEdge.getBendPoints().addFirst(x, y);
@@ -240,8 +239,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
         originPort.setProperty(InternalProperties.SPLINE_NS_PORT_Y_COORD, inputPort.getNode().getPosition().y);
         
         // Reroute the edges
-        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(
-                new LEdge[inputPort.getIncomingEdges().size()]);
+        LEdge[] edgeArray = LGraphUtil.toEdgeArray(inputPort.getIncomingEdges());
         for (LEdge inEdge : edgeArray) {
             inEdge.setTarget(originPort);
         }
@@ -259,8 +257,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
         originPort.setProperty(InternalProperties.SPLINE_NS_PORT_Y_COORD, outputPort.getNode().getPosition().y);
 
         // Reroute the edges
-        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(
-                new LEdge[outputPort.getOutgoingEdges().size()]);
+        LEdge[] edgeArray = LGraphUtil.toEdgeArray(outputPort.getOutgoingEdges());
         for (LEdge outEdge : edgeArray) {
             outEdge.setSource(originPort);
         }

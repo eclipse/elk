@@ -85,17 +85,6 @@ public final class InternalProperties {
             "insideConnections", false);
 
     /**
-     * An LNode that represents a compound node can hold a reference to a nested LGraph which
-     * represents the graph that is contained within the compound node.
-     */
-    public static final IProperty<LGraph> NESTED_LGRAPH = new Property<LGraph>("nestedLGraph");
-
-    /**
-     * A nested LGraph has a reference to the LNode that contains it.
-     */
-    public static final IProperty<LNode> PARENT_LNODE = new Property<LNode>("parentLNode");
-
-    /**
      * The original bend points of an edge.
      */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(

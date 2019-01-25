@@ -238,6 +238,7 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
         return noSplitEdges;
     }
     
+    @SuppressWarnings("unused")
     private List<Integer> improveCuts(final LGraph graph, final List<Integer> cuts) {
         
         List<Integer> improvedCuts = Lists.newArrayList();

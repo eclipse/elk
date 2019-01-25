@@ -86,7 +86,7 @@ class SweepCopy {
     /**
      * @param lGraph
      */
-    public void transferNodeAndPortOrdersToGraph(final LGraph lGraph, boolean setPortContstraints) {
+    public void transferNodeAndPortOrdersToGraph(final LGraph lGraph, final boolean setPortContstraints) {
         
         // the 'NORTH_OR_SOUTH_PORT' option allows the crossing minimizer to decide 
         // the side a corresponding dummy node is placed on in order to reduce the number of crossings

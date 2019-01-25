@@ -201,7 +201,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor<LGraph> {
         /**
          * Creates a new big node.
          */
-        public BigNode(final LNode node, final int chunks, final double minWidth) {
+        BigNode(final LNode node, final int chunks, final double minWidth) {
             this.node = node;
             this.chunks = chunks;
             this.minWidth = minWidth;

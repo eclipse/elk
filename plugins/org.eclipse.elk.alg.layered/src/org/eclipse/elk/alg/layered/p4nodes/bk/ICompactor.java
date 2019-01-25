@@ -25,6 +25,6 @@ public interface ICompactor {
      * 
      * @param bal One of the four layouts which shall be used in this step
      */
-    void horizontalCompaction(final BKAlignedLayout bal);
+    void horizontalCompaction(BKAlignedLayout bal);
     
 }

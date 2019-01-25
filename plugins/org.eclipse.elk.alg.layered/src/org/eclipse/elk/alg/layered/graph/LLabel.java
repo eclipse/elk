@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
+import com.google.common.base.Strings;
+
 /**
  * A label in the layered graph structure.
  * 
@@ -43,11 +45,23 @@ public final class LLabel extends LShape {
      * {@inheritDoc}
      */
     public String toString() {
-        if (text == null) {
-            return "l_" + id;
+        String designation = getDesignation();
+        if (designation == null) {
+            return "label";
         } else {
-            return "l_" + text;
+            return "l_" + designation;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDesignation() {
+        if (!Strings.isNullOrEmpty(text)) {
+            return text;
+        }
+        return super.getDesignation();
     }
     
     /**

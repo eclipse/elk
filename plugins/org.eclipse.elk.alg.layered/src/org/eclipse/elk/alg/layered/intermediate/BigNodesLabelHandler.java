@@ -82,7 +82,7 @@ public final class BigNodesLabelHandler {
          * @param dummies
          *            the created dummy nodes
          */
-        private Handler(final LNode node, final List<LNode> dummies, final double chunkWidth) {
+        Handler(final LNode node, final List<LNode> dummies, final double chunkWidth) {
             this.node = node;
             this.chunks = dummies.size();
 
@@ -305,7 +305,8 @@ public final class BigNodesLabelHandler {
     private static final class CompoundFunction implements Function<Void, Void> {
         private Function<Void, Void>[] funs;
 
-        private CompoundFunction(final Function<Void, Void>... funs) {
+        @SuppressWarnings("unchecked")
+        CompoundFunction(final Function<Void, Void>... funs) {
             this.funs = funs;
         }
 

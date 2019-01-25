@@ -23,6 +23,6 @@ public interface IConstraintCalculationAlgorithm {
      * @param compactor
      *            the instance of the surrounding {@link OneDimensionalCompactor}.
      */
-    void calculateConstraints(final OneDimensionalCompactor compactor);
+    void calculateConstraints(OneDimensionalCompactor compactor);
     
 }
