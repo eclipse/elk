@@ -72,7 +72,41 @@ public final class KVectorChain extends LinkedList<KVector> implements IDataObje
         }
         return builder.append(")").toString();
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KVector[] toArray() {
+        int i = 0;
+        KVector[] result = new KVector[size()];
+        Iterator<KVector> iter = iterator();
+        while (iter.hasNext()) {
+            result[i++] = iter.next();
+        }
+        return result;
+    }
 
+    /**
+     * Returns an array containing a subsequence of the elements in this vector chain.
+     * 
+     * @param beginIndex
+     *            the index of the first element to include in the returned array
+     * @return an array containing the elements starting from the given index
+     */
+    public KVector[] toArray(final int beginIndex) {
+        if (beginIndex < 0 || beginIndex > size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        int i = 0;
+        KVector[] result = new KVector[size() - beginIndex];
+        Iterator<KVector> iter = listIterator(beginIndex);
+        while (iter.hasNext()) {
+            result[i++] = iter.next();
+        }
+        return result;
+    }
+    
     /**
      * {@inheritDoc}
      */

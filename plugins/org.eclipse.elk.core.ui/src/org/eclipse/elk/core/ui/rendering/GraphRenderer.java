@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.rendering;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.eclipse.elk.graph.ElkShape;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
@@ -370,24 +372,56 @@ public class GraphRenderer {
                 for (ElkEdgeSection edgeSection : edge.getSections()) {
                     KVectorChain bendPoints = ElkUtil.createVectorChain(edgeSection);
                     
-                    if (splineEdge) {
-                        bendPoints = ElkMath.approximateBezierSpline(bendPoints);
-                    }
-                    
                     bendPoints.scale(scale).offset(offset);
                     
                     // Draw the damn edge already...!
-                    KVector point1 = bendPoints.getFirst();
-                    for (KVector point2 : bendPoints) {
-                        graphics.drawLine(
-                                (int) Math.round(point1.x), (int) Math.round(point1.y),
-                                (int) Math.round(point2.x), (int) Math.round(point2.y));
-                        point1 = point2;
+                    Path path = new Path(graphics.getDevice());
+                    Iterator<KVector> pointIter = bendPoints.iterator();
+                    KVector startPoint = pointIter.next();
+                    path.moveTo((float) startPoint.x, (float) startPoint.y);
+                    KVector point1 = null;
+                    KVector point2 = null;
+                    while (pointIter.hasNext()) {
+                        if (splineEdge) {
+                            if (point1 == null) {
+                                point1 = pointIter.next();
+                            } else if (point2 == null) {
+                                point2 = pointIter.next();
+                            } else {
+                                KVector endPoint = pointIter.next();
+                                path.cubicTo((float) point1.x, (float) point1.y, (float) point2.x, (float) point2.y,
+                                        (float) endPoint.x, (float) endPoint.y);
+                                point1 = null;
+                                point2 = null;
+                            }
+                        } else {
+                            KVector nextPoint = pointIter.next();
+                            path.lineTo((float) nextPoint.x, (float) nextPoint.y);
+                        }
                     }
+                    if (splineEdge && point2 != null) {
+                        path.quadTo((float) point1.x, (float) point1.y, (float) point2.x, (float) point2.y);
+                    } else if (splineEdge && point1 != null) {
+                        path.lineTo((float) point1.x, (float) point1.y);
+                    }
+                    graphics.drawPath(path);
                     
                     if (directedEdge) {
-                        // draw an arrow at the last segment of the connection
-                        int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
+                        // Draw an arrow at the last segment of the connection
+                        KVector referencePoint;
+                        if (splineEdge && (bendPoints.size() - 1) % 3 != 1) {
+                            int beginIndex;
+                            if ((bendPoints.size() - 1) % 3 == 2) {
+                                beginIndex = bendPoints.size() - 2;
+                            } else {
+                                beginIndex = bendPoints.size() - 3;
+                            }
+                            referencePoint = ElkMath.getPointOnBezierSegment(0.5, bendPoints.toArray(beginIndex));
+                        } else {
+                            referencePoint = bendPoints.get(bendPoints.size() - 2);
+                        }
+                        
+                        int[] arrowPoly = makeArrow(referencePoint, bendPoints.getLast());
                         if (arrowPoly != null) {
                             graphics.fillPolygon(arrowPoly);
                         }
