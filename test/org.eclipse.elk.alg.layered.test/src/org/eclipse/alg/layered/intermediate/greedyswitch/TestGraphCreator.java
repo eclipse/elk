@@ -114,7 +114,7 @@ public class TestGraphCreator {
                 l.id = lId++;
                 int i = 0;
                 for (LNode n : l) {
-                    LGraph nestedGraph = n.getProperty(InternalProperties.NESTED_LGRAPH);
+                    LGraph nestedGraph = n.getNestedGraph();
                     if (nestedGraph != null) {
                         graphs.add(nestedGraph);
                     }
@@ -1261,12 +1261,12 @@ public class TestGraphCreator {
 
     protected LGraph nestedGraph(final LNode node) {
         node.setProperty(InternalProperties.COMPOUND_NODE, true);
-        LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+        LGraph nestedGraph = node.getNestedGraph();
         if (nestedGraph == null) {
             nestedGraph = new LGraph();
             setUpGraph(nestedGraph);
-            node.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
-            nestedGraph.setProperty(InternalProperties.PARENT_LNODE, node);
+            node.setNestedGraph(nestedGraph);
+            nestedGraph.setParentNode(node);
         }
         return nestedGraph;
     }
@@ -1372,7 +1372,7 @@ public class TestGraphCreator {
     protected <T> void setOnAllGraphs(final IProperty<T> prop, final T val, final LGraph graph) {
         graph.setProperty(prop, val);
         for (LNode node : Iterables.concat(graph)) {
-            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            LGraph nestedGraph = node.getNestedGraph();
             if (nestedGraph != null) {
                 setOnAllGraphs(prop, val, nestedGraph);
             }

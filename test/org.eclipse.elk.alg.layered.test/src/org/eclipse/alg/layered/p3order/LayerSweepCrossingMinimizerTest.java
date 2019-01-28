@@ -1398,9 +1398,9 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         
         setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1.0, graph);
         List<GraphInfoHolder> graphData = crossMin.getGraphData();
-        assertFalse(graphData.get(leftOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).dontSweepInto());
+        assertFalse(graphData.get(leftOuterNode.getNestedGraph().id).dontSweepInto());
         assertFalse(
-                graphData.get(rightOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).dontSweepInto());
+                graphData.get(rightOuterNode.getNestedGraph().id).dontSweepInto());
     }
 
     
