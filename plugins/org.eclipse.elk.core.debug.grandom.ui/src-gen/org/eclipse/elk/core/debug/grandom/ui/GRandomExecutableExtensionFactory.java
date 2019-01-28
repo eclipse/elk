@@ -8,6 +8,7 @@
 package org.eclipse.elk.core.debug.grandom.ui;
 
 import com.google.inject.Injector;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.elk.core.debug.grandom.ui.internal.GrandomActivator;
 import org.eclipse.xtext.ui.guice.AbstractGuiceAwareExecutableExtensionFactory;
 import org.osgi.framework.Bundle;
@@ -20,12 +21,13 @@ public class GRandomExecutableExtensionFactory extends AbstractGuiceAwareExecuta
 
 	@Override
 	protected Bundle getBundle() {
-		return GrandomActivator.getInstance().getBundle();
+		return Platform.getBundle(GrandomActivator.PLUGIN_ID);
 	}
 	
 	@Override
 	protected Injector getInjector() {
-		return GrandomActivator.getInstance().getInjector(GrandomActivator.ORG_ECLIPSE_ELK_CORE_DEBUG_GRANDOM_GRANDOM);
+		GrandomActivator activator = GrandomActivator.getInstance();
+		return activator != null ? activator.getInjector(GrandomActivator.ORG_ECLIPSE_ELK_CORE_DEBUG_GRANDOM_GRANDOM) : null;
 	}
-	
+
 }

@@ -20,5 +20,4 @@ public abstract class AbstractGRandomValidator extends AbstractDeclarativeValida
 		result.add(org.eclipse.elk.core.debug.grandom.gRandom.GRandomPackage.eINSTANCE);
 		return result;
 	}
-	
 }
