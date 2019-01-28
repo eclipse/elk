@@ -334,6 +334,8 @@
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
+            name="org.eclipse.lsp4j.sdk.feature.group"/>
+        <requirement
             name="org.eclipse.gmf.runtime.sdk.feature.group"/>
         <requirement
             name="org.eclipse.graphiti.sdk.feature.feature.group"/>
