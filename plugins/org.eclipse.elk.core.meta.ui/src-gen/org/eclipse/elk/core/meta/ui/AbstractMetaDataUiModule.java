@@ -20,6 +20,7 @@ import org.eclipse.elk.core.meta.ide.contentassist.antlr.MetaDataParser;
 import org.eclipse.elk.core.meta.ide.contentassist.antlr.PartialMetaDataContentAssistParser;
 import org.eclipse.elk.core.meta.ide.contentassist.antlr.internal.InternalMetaDataLexer;
 import org.eclipse.elk.core.meta.ui.contentassist.MetaDataProposalProvider;
+import org.eclipse.elk.core.meta.ui.editor.MetaDataEditor;
 import org.eclipse.elk.core.meta.ui.labeling.MetaDataDescriptionLabelProvider;
 import org.eclipse.elk.core.meta.ui.labeling.MetaDataLabelProvider;
 import org.eclipse.elk.core.meta.ui.outline.MetaDataOutlineTreeProvider;
@@ -103,7 +104,6 @@ import org.eclipse.xtext.xbase.imports.IUnresolvedTypeResolver;
 import org.eclipse.xtext.xbase.ui.DefaultXbaseUiModule;
 import org.eclipse.xtext.xbase.ui.contentassist.ImportingTypesProposalProvider;
 import org.eclipse.xtext.xbase.ui.editor.XbaseDocumentProvider;
-import org.eclipse.xtext.xbase.ui.editor.XbaseEditor;
 import org.eclipse.xtext.xbase.ui.generator.trace.XbaseOpenGeneratedFileHandler;
 import org.eclipse.xtext.xbase.ui.imports.InteractiveUnresolvedTypeResolver;
 import org.eclipse.xtext.xbase.ui.jvmmodel.findrefs.JvmModelFindReferenceHandler;
@@ -131,11 +131,6 @@ public abstract class AbstractMetaDataUiModule extends DefaultXbaseUiModule {
 	// contributed by org.eclipse.xtext.xtext.generator.ImplicitFragment
 	public Provider<? extends IAllContainersState> provideIAllContainersState() {
 		return Access.getJavaProjectsState();
-	}
-	
-	// contributed by org.eclipse.xtext.xtext.generator.ImplicitFragment
-	public Class<? extends XtextEditor> bindXtextEditor() {
-		return XbaseEditor.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ImplicitFragment
@@ -369,6 +364,11 @@ public abstract class AbstractMetaDataUiModule extends DefaultXbaseUiModule {
 	// contributed by org.eclipse.xtext.xtext.generator.xbase.XbaseGeneratorFragment2
 	public Class<? extends XtextTemplateContextType> bindXtextTemplateContextType() {
 		return XbaseTemplateContextType.class;
+	}
+	
+	// contributed by org.eclipse.xtext.xtext.generator.xbase.XbaseGeneratorFragment2
+	public Class<? extends XtextEditor> bindXtextEditor() {
+		return MetaDataEditor.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.templates.CodetemplatesGeneratorFragment2

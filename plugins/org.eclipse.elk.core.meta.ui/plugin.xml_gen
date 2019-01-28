@@ -205,6 +205,15 @@
 			</activeWhen>
 		</handler>
 	</extension>
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-extensions="melk"
+			id="org.eclipse.elk.core.meta.MetaData.contenttype"
+			name="MetaData File"
+			priority="normal">
+		</content-type>
+	</extension>
 	<!-- adding resource factories -->
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
@@ -447,7 +456,7 @@
 	</extension>
 	<extension point="org.eclipse.core.runtime.adapters">
 		<factory class="org.eclipse.elk.core.meta.ui.MetaDataExecutableExtensionFactory:org.eclipse.xtext.builder.smap.StratumBreakpointAdapterFactory"
-			adaptableType="org.eclipse.xtext.ui.editor.XtextEditor">
+			adaptableType="org.eclipse.elk.core.meta.ui.editor.MetaDataEditor">
 			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
 		</factory> 
 	</extension>
@@ -541,12 +550,18 @@
 			class="org.eclipse.elk.core.meta.ui.MetaDataExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="melk">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.elk.core.meta.MetaData.contenttype"
+			contentViewerId="org.eclipse.elk.core.meta.MetaData.compare.contentViewers" />
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.eclipse.elk.core.meta.MetaData.compare.contentMergeViewers"
 			class="org.eclipse.elk.core.meta.ui.MetaDataExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="melk" label="MetaData Compare">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.elk.core.meta.MetaData.contenttype"
+			contentMergeViewerId="org.eclipse.elk.core.meta.MetaData.compare.contentMergeViewers" />
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.eclipse.elk.core.meta.MetaData.editors.documentProviders"
