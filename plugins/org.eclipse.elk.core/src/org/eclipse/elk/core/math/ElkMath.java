@@ -197,8 +197,10 @@ public final class ElkMath {
      * resulting curve points includes the target point, but does not include the source point of
      * the curve.
      * 
-     * @param controlPoints the control points
-     * @param resultSize number of returned curve points
+     * @param controlPoints
+     *            the control points
+     * @param resultSize
+     *            number of returned curve points
      * @return points on the curve defined by the given control points
      */
     public static KVector[] approximateBezierSegment(final int resultSize,
@@ -207,19 +209,11 @@ public final class ElkMath {
             return new KVector[0];
         }
         KVector[] result = new KVector[resultSize];
-        int n = controlPoints.length - 1;
         double dt = (1.0 / resultSize);
         double t = 0;
         for (int i = 0; i < resultSize; i++) {
             t += dt;
-            KVector v = new KVector();
-            for (int j = 0; j <= n; j++) {
-                KVector p = controlPoints[j];
-                double factor = binomiald(n, j) * powd(1 - t, n - j) * powd(t, j);
-                v.x += p.x * factor;
-                v.y += p.y * factor;
-            }
-            result[i] = v;
+            result[i] = getPointOnBezierSegment(t, controlPoints);
         }
         return result;
     }
@@ -230,7 +224,8 @@ public final class ElkMath {
      * resulting curve points includes the target point, but does not include the source point of
      * the curve. The number of approximation points is derived from the given control points.
      * 
-     * @param controlPoints the control points
+     * @param controlPoints
+     *            the control points of the curve
      * @return points on the curve defined by the given control points
      */
     public static KVector[] approximateBezierSegment(final KVector... controlPoints) {
@@ -239,10 +234,37 @@ public final class ElkMath {
         int approximationCount = controlPoints.length + 1;
         return approximateBezierSegment(approximationCount, controlPoints);
     }
+    
+    /**
+     * Compute a point on the Bezier curve defined by the given control points. The value {@code t}
+     * determines the position of the returned point.
+     * 
+     * @param t
+     *            a value between 0 and 1, where 0 is the start point of the curve, and 1 is the
+     *            end point
+     * @param controlPoints
+     *            the control points of the curve
+     * @return the point at position {@code t}
+     */
+    public static KVector getPointOnBezierSegment(final double t, final KVector... controlPoints) {
+        int n = controlPoints.length - 1;
+        double px = 0;
+        double py = 0;
+        for (int j = 0; j <= n; j++) {
+            KVector p = controlPoints[j];
+            double factor = binomiald(n, j) * powd(1 - t, n - j) * powd(t, j);
+            px += p.x * factor;
+            py += p.y * factor;
+        }
+        return new KVector(px, py);
+    }
 
     /**
      * Compute an approximation for the spline that is defined by the given control points. The
      * control points are interpreted as a series of cubic Bezier curves.
+     * 
+     * <p><em>Note:</em> As a more powerful alternative, you might consider using
+     * {@link BezierSpline} instead.</p>
      * 
      * @param controlPoints
      *            control points of a piecewise cubic spline
@@ -260,8 +282,7 @@ public final class ElkMath {
                 spline.add(controlIter.next());
             } else if (remainingPoints == 2) {
                 // calculate a quadratic bezier curve
-                spline.addAll(approximateBezierSegment(currentPoint, controlIter.next(),
-                        controlIter.next()));
+                spline.addAll(approximateBezierSegment(currentPoint, controlIter.next(), controlIter.next()));
             } else {
                 // calculate a cubic bezier curve
                 KVector control1 = controlIter.next();
