@@ -323,6 +323,10 @@ public class LayerSweepCrossingMinimizer
             }
         }
 
+        if (i < layerCloseToNodeEdge.length) {
+            throw new IllegalStateException("Expected " + layerCloseToNodeEdge.length
+                    + " hierarchical ports, but found only " + i + ".");
+        }
         return sortedDummies;
     }
 

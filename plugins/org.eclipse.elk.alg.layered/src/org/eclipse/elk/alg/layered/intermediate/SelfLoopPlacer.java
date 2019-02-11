@@ -90,7 +90,12 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
                     SelfLoopLevelCalculator.calculateOpposingSegmentLevel(slNode);
 
                     // readd ports to port
-                    SelfLoopNodePortRestorator.restorePorts(node);
+                    if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                        // This might happen if port positions have been fixed for arranging a nested graph
+                        SelfLoopNodePortRestorator.restoreAndPlacePorts(node);
+                    } else {
+                        SelfLoopNodePortRestorator.restorePorts(node);
+                    }
                 }
             }
         }

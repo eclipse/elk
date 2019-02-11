@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
@@ -153,6 +154,22 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
 
         // remove collected ports from node
         node.getPorts().removeAll(selfLoopPorts);
+        
+        // Remove external port dummies connected to those ports (#352)
+        for (LPort port : selfLoopPorts) {
+            LNode dummy = port.getProperty(InternalProperties.PORT_DUMMY);
+            if (dummy != null) {
+                Layer layer = dummy.getLayer();
+                if (layer == null) {
+                    dummy.getGraph().getLayerlessNodes().remove(dummy);
+                } else {
+                    layer.getNodes().remove(dummy);
+                    if (layer.getNodes().isEmpty()) {
+                        layer.getGraph().getLayers().remove(layer);
+                    }
+                }
+            }
+        }
     }
 
 }
