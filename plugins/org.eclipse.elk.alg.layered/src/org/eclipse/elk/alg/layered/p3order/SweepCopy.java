@@ -114,7 +114,9 @@ class SweepCopy {
                 node.getPorts().clear();
                 node.getPorts().addAll(portOrders.get(i).get(j));
                 if (setPortContstraints) {
-                    node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+                    if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                        node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+                    }
                 }
             }
             
