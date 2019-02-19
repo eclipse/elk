@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 import org.eclipse.elk.core.util.ElkUtil;
 
 /**
- * A utility class for debug output of KLay Layered.
+ * A utility class for debug output of ELK Layered.
  * Currently it delegates to both {@link JsonDebugUtil} and {@link DotDebugUtil}.
  * 
  * @author csp

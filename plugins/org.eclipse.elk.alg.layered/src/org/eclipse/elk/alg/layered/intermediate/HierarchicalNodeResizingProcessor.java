@@ -118,7 +118,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor<LGrap
      *
      * <p>
      * Major parts of this method are adapted from
-     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean, boolean)}.
+     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.ElkNode, double, double, boolean, boolean)}.
      * </p>
      *
      * <p>

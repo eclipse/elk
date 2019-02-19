@@ -22,7 +22,7 @@ import org.eclipse.elk.core.options.EdgeRouting;
 
 /**
  * Factory for edge routers. This factory is necessary since the {@link EdgeRouting} enumeration is
- * defined outside of KLay Layered and can thus not be made into a factory.
+ * defined outside of ELK Layered and can thus not be made into a factory.
  * 
  * @author cds
  */

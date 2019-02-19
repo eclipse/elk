@@ -19,7 +19,7 @@ package org.eclipse.elk.alg.layered.options;
  * {@link LayeredOptions#GRAPH_PROPERTIES} property.</p>
  * 
  * <p>{@link org.eclipse.elk.graph.properties.GraphFeature GraphFeature} serves a similar purpose in ELK.
- * However, since this enumeration is more specific to what KLay Layered supports, the two should stay
+ * However, since this enumeration is more specific to what ELK Layered supports, the two should stay
  * separate.
  * 
  * @author cds

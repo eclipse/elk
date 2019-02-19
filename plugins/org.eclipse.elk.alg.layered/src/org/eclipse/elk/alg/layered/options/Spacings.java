@@ -20,7 +20,7 @@ import org.eclipse.elk.graph.properties.IPropertyHolder;
 /**
  * FIXME 
  * Container class for a variety of spacing values that are either specified in the general
- * {@link LayeredOptions} class or KLay Layered's dedicated {@link LayeredOptions} class.
+ * {@link LayeredOptions} class or ELK Layered's dedicated {@link LayeredOptions} class.
  * 
  * This class allows to either select the recorded spacing values directly or to query for spacing
  * values using one of the convenience methods. The methods do not provide results for every

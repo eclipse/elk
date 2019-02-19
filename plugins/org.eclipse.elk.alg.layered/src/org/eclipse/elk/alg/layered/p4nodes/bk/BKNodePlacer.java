@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
 
 /**
  * This algorithm is an implementation for solving the node placement problem
- * which is posed in phase 4 of the KLay Layered algorithm. Inspired by:
+ * which is posed in phase 4 of the ELK Layered algorithm. Inspired by:
  * <ul>
  *   <li> Ulrik Brandes and Boris K&ouml;pf, Fast and simple horizontal coordinate assignment.
  *     In <i>Proceedings of the 9th International Symposium on Graph Drawing (GD'01)</i>,
@@ -53,10 +53,10 @@ import com.google.common.collect.Sets;
  * are executed four times, traversing the graph in all combinations of TOP or BOTTOM and LEFT or
  * RIGHT.</p>
  * 
- * <p>In KLay Layered we have the general idea of layouting from left to right and
+ * <p>In ELK Layered we have the general idea of layouting from left to right and
  * transforming in the desired direction later. We decided to translate the terminology of the original
  * algorithm which thinks of a layout from top to bottom. When placing coordinates, we have to differ
- * from the original algorithm, since node placement in KLay Layered has to assign y-coordinates and not
+ * from the original algorithm, since node placement in ELK Layered has to assign y-coordinates and not
  * x-coordinates.</p>
  * 
  * <p>The variable naming in this code is mostly chosen for an iteration direction within our

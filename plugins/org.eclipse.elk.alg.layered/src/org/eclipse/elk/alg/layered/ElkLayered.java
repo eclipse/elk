@@ -45,7 +45,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
 /**
- * The main entry point into KLay Layered. KLay Layered is a layout algorithm after the layered
+ * The main entry point into ELK Layered. ELK Layered is a layout algorithm after the layered
  * layout method proposed by Sugiyama et al. It is structured into five main phases: cycle breaking,
  * layering, crossing minimization, node placement, and edge routing. Before these phases and after
  * the last phase so called intermediate layout processors can be inserted that do some kind of pre
@@ -66,7 +66,7 @@ import org.eclipse.elk.core.util.Pair;
  *   Phase 1   Phase 2   Phase 3   Phase 4   Phase 5
  * </pre>
  *
- * <p>To use KLay Layered to layout a given graph, there are three possibilities depending on the kind
+ * <p>To use ELK Layered to layout a given graph, there are three possibilities depending on the kind
  * of graph that is to be laid out:</p>
  * <ol>
  *   <li>{@link #doLayout(LGraph, IElkProgressMonitor)} computes a layout for the given graph, without
@@ -75,7 +75,7 @@ import org.eclipse.elk.core.util.Pair;
  *     and for its subgraphs, if any. (Subgraphs are attached to nodes through the
  *     {@link InternalProperties#NESTED_LGRAPH} property.)</li>
  *   <li>If you have an {@code ElkNode} instead of an {@code LGraph}, you might want to use
- *     {@link LayeredLayoutProvider#doLayout(org.eclipse.elk.graph.KNode, IElkProgressMonitor)}
+ *     {@link LayeredLayoutProvider#layout(org.eclipse.elk.graph.ElkNode, IElkProgressMonitor)}
  *     instead.</li>
  * </ol>
  * <p>In addition to regular layout runs, this class provides methods for automatic unit testing based
@@ -636,7 +636,7 @@ public final class ElkLayered {
      * Afterwards, the border spacing property is reset to 0.
      *
      * <p>Major parts of this method are adapted from
-     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean)}.</p>
+     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.ElkNode, double, double, boolean, boolean)}.</p>
      *
      * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
      * attached to the graph.</p>

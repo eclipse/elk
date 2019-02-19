@@ -347,7 +347,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
      * {@link #computeSuccessors()}.
      */
     private void minMaxNodeSize() {
-        // since in KLay all things are layered, left to right
+        // since in ELK all things are layered, left to right
         // a preprocessor also transposes the width and height and
         // we don't need to consider the layering direction and can take the
         // the y-size

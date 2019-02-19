@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * A utility class for debugging of KLay Layered.
+ * A utility class for debugging of ELK Layered.
  * 
  * @author msp
  * @author cds

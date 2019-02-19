@@ -27,7 +27,7 @@ import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.Dependency
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 
 /**
- * A utility class for debugging of KLay Layered.
+ * A utility class for debugging of ELK Layered.
  * 
  * @author msp
  * @author cds

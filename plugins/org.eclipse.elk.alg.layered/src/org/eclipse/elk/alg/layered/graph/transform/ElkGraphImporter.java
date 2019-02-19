@@ -424,10 +424,10 @@ class ElkGraphImporter {
     // Graph Transformation
 
     /**
-     * Create an LGraph from the given KNode.
+     * Create an LGraph from the given node.
      * 
      * @param elkgraph
-     *            the parent KNode from which to create the LGraph
+     *            the parent node from which to create the LGraph
      * @return a new LGraph instance
      */
     private LGraph createLGraph(final ElkNode elkgraph) {

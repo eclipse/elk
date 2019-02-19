@@ -414,7 +414,7 @@ public final class LGraphUtil {
     // Handling of Ports
 
     /**
-     * Create a port for an edge that is not connected to a port. This is necessary because KLay
+     * Create a port for an edge that is not connected to a port. This is necessary because ELK
      * Layered wants all edges to have a source port and a target port. The port side is computed
      * from the given absolute end point position of the edge.
      * 
