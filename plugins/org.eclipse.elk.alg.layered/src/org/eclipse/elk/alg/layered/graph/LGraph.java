@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,6 @@ import com.google.common.collect.Lists;
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * In contrast to the KGraph structure, the LGraph is not EMF-based, but plain Java.
  * It is optimized for being processed by a layer-based layout algorithm.
- * 
- * @author msp
  */
 public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
@@ -73,19 +71,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      */
     private LNode parentNode;
     
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        if (layers.isEmpty()) {
-            return "G-unlayered" + layerlessNodes.toString();
-        } else if (layerlessNodes.isEmpty()) {
-            return "G-layered" + layers.toString();
-        }
-        return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
-    }
     
     /**
      * Returns the size of the graph, that is the bounding box that covers the
@@ -201,6 +186,16 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
         }
         
         return lgraphArray;
+    }
+    
+    @Override
+    public String toString() {
+        if (layers.isEmpty()) {
+            return "G-unlayered" + layerlessNodes.toString();
+        } else if (layerlessNodes.isEmpty()) {
+            return "G-layered" + layers.toString();
+        }
+        return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
     }
     
 }

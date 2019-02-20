@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,6 @@ import com.google.common.base.Strings;
  * runs on the same graph. As a consequence, hash tables and hash sets would store their content
  * in different order, which can lead to different layouts in some cases. The deterministic hash
  * code implemented here guarantees that such effects will not occur.</p>
- *
- * @author msp
  */
 public abstract class LGraphElement extends MapPropertyHolder {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,6 @@ import com.google.common.collect.Lists;
  * GraphAdapters} interfaces for the LGraph. The adapted graph can then be fed to ELK's node size
  * calculation code, for example. To obtain an adapter for an {@link LGraph}, simply call
  * {@link #adapt(LGraph)}.
- * 
- * @author uru
  */
 public final class LGraphAdapters {
 
@@ -152,60 +150,44 @@ public final class LGraphAdapters {
         }
         
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public KVector getSize() {
             return element.getSize();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setSize(final KVector size) {
             element.getSize().x = size.x;
             element.getSize().y = size.y;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public KVector getPosition() {
             return element.getPosition();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setPosition(final KVector pos) {
             element.getPosition().x = pos.x;
             element.getPosition().y = pos.y;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public <P> P getProperty(final IProperty<P> prop) {
             return element.getProperty(prop);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public <P> boolean hasProperty(final IProperty<P> prop) {
             return element.hasProperty(prop);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int getVolatileId() {
             return element.id;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setVolatileId(final int volatileId) {
             element.id = volatileId;
         }
@@ -250,53 +232,39 @@ public final class LGraphAdapters {
             this.transparentCommentNodes = transparentCommentNodes;
             this.nodeFilter = nodeFilter;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public KVector getSize() {
             return element.getSize();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setSize(final KVector size) {
             element.getSize().x = size.x;
             element.getSize().y = size.y;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public KVector getPosition() {
             throw new UnsupportedOperationException("Not supported by LGraph");
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setPosition(final KVector pos) {
             throw new UnsupportedOperationException("Not supported by LGraph");
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public <P> P getProperty(final IProperty<P> prop) {
             return element.getProperty(prop);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public <P> boolean hasProperty(final IProperty<P> prop) {
             return element.hasProperty(prop);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<NodeAdapter<?>> getNodes() {
             if (nodeAdapters == null) {
                 nodeAdapters = Lists.newArrayList();
@@ -327,16 +295,12 @@ public final class LGraphAdapters {
             return nodeAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int getVolatileId() {
             return element.id;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setVolatileId(final int volatileId) {
             element.id = volatileId;
         }
@@ -375,17 +339,13 @@ public final class LGraphAdapters {
             this.transparentNorthSouthEdges = transparentNorthSouthEdges;
         }
         
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public GraphAdapter<?> getGraph() {
             return parentGraphAdapter;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithCapacity(element.getLabels().size());
@@ -396,9 +356,7 @@ public final class LGraphAdapters {
             return labelAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<PortAdapter<?>> getPorts() {
             if (portAdapters == null) {
                 portAdapters = Lists.newArrayListWithCapacity(element.getPorts().size());
@@ -408,33 +366,25 @@ public final class LGraphAdapters {
             }
             return portAdapters;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             // we have no directly connected edges
             return Collections.emptyList();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
          // we have no directly connected edges
             return Collections.emptyList();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void sortPortList() {
             sortPortList(DEFAULT_PORTLIST_SORTER);
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         @SuppressWarnings("unchecked")
         public void sortPortList(final Comparator<?> comparator) {
             if (element.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
@@ -442,25 +392,19 @@ public final class LGraphAdapters {
                 Collections.sort(element.getPorts(), (Comparator<LPort>) comparator);
             }
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public boolean isCompoundNode() {
             return element.getProperty(InternalProperties.COMPOUND_NODE);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public ElkPadding getPadding() {
             LPadding lPadding = element.getPadding();
             return new ElkPadding(lPadding.top, lPadding.right, lPadding.bottom, lPadding.left);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setPadding(final ElkPadding padding) {
             element.getPadding().left = padding.left;
             element.getPadding().top = padding.top;
@@ -468,17 +412,13 @@ public final class LGraphAdapters {
             element.getPadding().bottom = padding.bottom;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public ElkMargin getMargin() {
             LMargin lmargins = element.getMargin();
             return new ElkMargin(lmargins.top, lmargins.right, lmargins.bottom, lmargins.left);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setMargin(final ElkMargin margin) {
             element.getMargin().left = margin.left;
             element.getMargin().top = margin.top;
@@ -518,16 +458,12 @@ public final class LGraphAdapters {
         }
         
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public PortSide getSide() {
             return element.getSide();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithCapacity(element.getLabels().size());
@@ -538,17 +474,13 @@ public final class LGraphAdapters {
             return labelAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public ElkMargin getMargin() {
             LMargin lmargins = element.getMargin();
             return new ElkMargin(lmargins.top, lmargins.right, lmargins.bottom, lmargins.left);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setMargin(final ElkMargin margin) {
             element.getMargin().left = margin.left;
             element.getMargin().top = margin.top;
@@ -556,9 +488,7 @@ public final class LGraphAdapters {
             element.getMargin().bottom = margin.bottom;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             if (transparentNorthSouthEdges && element.getNode().getType() == NodeType.NORTH_SOUTH_PORT) {
                 return Collections.emptyList();
@@ -579,9 +509,7 @@ public final class LGraphAdapters {
             return incomingEdgeAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             if (transparentNorthSouthEdges && element.getNode().getType() == NodeType.NORTH_SOUTH_PORT) {
                 return Collections.emptyList();
@@ -602,9 +530,7 @@ public final class LGraphAdapters {
             return outgoingEdgeAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public boolean hasCompoundConnections() {
             return element.getProperty(InternalProperties.INSIDE_CONNECTIONS);
         }
@@ -626,9 +552,7 @@ public final class LGraphAdapters {
             super(element);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public LabelSide getSide() {
             return element.getProperty(LabelSide.LABEL_SIDE);
         }
@@ -655,9 +579,7 @@ public final class LGraphAdapters {
         }
         
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithCapacity(element.getLabels().size());
@@ -680,9 +602,7 @@ public final class LGraphAdapters {
      * clockwise order, beginning at the top left corner.
      */
     public static class PortComparator implements Comparator<LPort> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final LPort port1, final LPort port2) {
             int ordinalDifference = port1.getSide().ordinal() - port2.getSide().ordinal();
             

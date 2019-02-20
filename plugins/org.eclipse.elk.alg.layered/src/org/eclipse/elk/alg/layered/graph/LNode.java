@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,18 +29,11 @@ import com.google.common.collect.Maps;
 
 /**
  * A node in a layered graph.
- * 
- * @author msp
  */
 public final class LNode extends LShape {
     
     /**
      * Definition of node types used in the layered approach.
-     * 
-     * @author msp
-     * @author cds
-     * @author ima
-     * @author jjc
      */
     public static enum NodeType {
         
@@ -110,34 +103,6 @@ public final class LNode extends LShape {
      */
     public LNode(final LGraph graph) {
         this.graph = graph;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("n");
-        if (type != NodeType.NORMAL) {
-            result.append("(").append(type.toString().toLowerCase()).append(")");
-        }
-        result.append("_").append(getDesignation());
-        return result.toString();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDesignation() {
-        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
-            return labels.get(0).getText();
-        }
-        String id = super.getDesignation();
-        if (id != null) {
-            return id;
-        }
-        return Integer.toString(getIndex());
     }
 
     /**
@@ -559,6 +524,29 @@ public final class LNode extends LShape {
             }
         }
         portSideIndices.put(currentSide, Pair.of(firstIndexForCurrentSide, currentIndex));
+    }
+
+    @Override
+    public String getDesignation() {
+        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
+            return labels.get(0).getText();
+        }
+        String id = super.getDesignation();
+        if (id != null) {
+            return id;
+        }
+        return Integer.toString(getIndex());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("n");
+        if (type != NodeType.NORMAL) {
+            result.append("(").append(type.toString().toLowerCase()).append(")");
+        }
+        result.append("_").append(getDesignation());
+        return result.toString();
     }
 
 }

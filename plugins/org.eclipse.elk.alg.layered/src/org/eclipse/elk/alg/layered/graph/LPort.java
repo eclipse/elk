@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,6 @@ import com.google.common.collect.Lists;
  * <p>Port must be used even if the original graph does not reveal them. In this
  * case each edge has dedicated source and target ports, which are used to
  * determine the points where the edge touches the source and target nodes.</p>
- *
- * @author msp
  */
 public final class LPort extends LShape {
 
@@ -100,6 +98,7 @@ public final class LPort extends LShape {
     private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
     /** All connected edges in a combined iterable. */
     private Iterable<LEdge> connectedEdges = new CombineIter<LEdge>(incomingEdges, outgoingEdges);
+    
     /**
      * Returns the node that owns this port.
      * 
@@ -349,9 +348,18 @@ public final class LPort extends LShape {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public String getDesignation() {
+        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
+            return labels.get(0).getText();
+        }
+        String id = super.getDesignation();
+        if (id != null) {
+            return id;
+        }
+        return Integer.toString(getIndex());
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
@@ -370,21 +378,6 @@ public final class LPort extends LShape {
             result.append("[").append(target.owner).append("]");
         }
         return result.toString();
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDesignation() {
-        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
-            return labels.get(0).getText();
-        }
-        String id = super.getDesignation();
-        if (id != null) {
-            return id;
-        }
-        return Integer.toString(getIndex());
     }
 
     /**

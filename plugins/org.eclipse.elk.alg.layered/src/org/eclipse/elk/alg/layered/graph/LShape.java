@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import org.eclipse.elk.core.math.KVector;
 
 /**
  * Abstract superclass for {@link LGraphElement}s that can have a position and a size.
- * 
- * @author cds
  */
 public abstract class LShape extends LGraphElement {
     

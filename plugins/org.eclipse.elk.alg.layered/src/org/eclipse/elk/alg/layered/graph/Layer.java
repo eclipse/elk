@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 /**
  * A layer in a layered graph. A layer contains a list of nodes, which are
  * drawn in one column.
- *
- * @author msp
  */
 public final class Layer extends LGraphElement implements Iterable<LNode> {
 
@@ -43,14 +41,6 @@ public final class Layer extends LGraphElement implements Iterable<LNode> {
      */
     public Layer(final LGraph graph) {
         this.owner = graph;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "L_" + getIndex() + nodes.toString();
     }
     
     /**
@@ -101,6 +91,11 @@ public final class Layer extends LGraphElement implements Iterable<LNode> {
      */
     public int getIndex() {
         return owner.getLayers().indexOf(this);
+    }
+    
+    @Override
+    public String toString() {
+        return "L_" + getIndex() + nodes.toString();
     }
 
 }
