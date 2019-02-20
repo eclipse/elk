@@ -343,17 +343,6 @@
             rootFolder="${git.clone.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="Neon">
-          <repository
-              url="http://download.eclipse.org/releases/neon"/>
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/"/>
-          <repository
-              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
-        </repositoryList>
-        <repositoryList
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
