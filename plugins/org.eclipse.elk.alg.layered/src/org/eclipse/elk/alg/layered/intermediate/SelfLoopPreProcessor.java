@@ -20,9 +20,9 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
@@ -30,6 +30,7 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.math.DoubleMath;
@@ -57,6 +58,8 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Self-Loop pre-processing.", 1);
         
+        Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
+        
         // process all nodes
         for (final LNode node : layeredGraph.getLayerlessNodes()) {
             if (node.getType() == NodeType.NORMAL) {
@@ -68,7 +71,7 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 SelfLoopComponent.createSelfLoopComponents(slNode);
                 
                 // pre-process labels
-                preprocessLabels(slNode);
+                preprocessLabels(slNode, layoutDirection);
                 
                 // hide the ports which are non useful for the crossing minimization
                 hidePorts(node);
@@ -85,7 +88,8 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
      * For each component the labels of the contained edges are collected and put together to one label. This joint
      * label is stored in a SelfLoopLabel.
      */
-    public void preprocessLabels(final SelfLoopNode slNode) {
+    public void preprocessLabels(final SelfLoopNode slNode, final Direction layoutDirection) {
+        boolean verticalLayout = layoutDirection.isVertical();
         double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(
                 slNode.getNode(), LayeredOptions.SPACING_LABEL_LABEL);
         
@@ -106,23 +110,36 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 continue;
             }
             
-            // Since the labels will be stacked above one another, we calculate the width and the height required
-            double maxWidth = 0.0;
+            // Since the labels will be stacked above or nexat to one another, we calculate the width and the height
+            // required
+            double width = 0.0;
             double height = 0.0;
+            
             for (LLabel label : labels) {
                 KVector size = label.getSize();
-                maxWidth = Math.max(size.x, maxWidth);
-                height += size.y;
+                
+                if (verticalLayout) {
+                    width += size.x;
+                    height = Math.max(size.y, height);
+                } else {
+                    width = Math.max(size.x, width);
+                    height += size.y;
+                }
             }
             
             // Add label-label spacing between each pair of labels
-            height += Math.max(0, labelLabelSpacing * (labels.size() - 1));
+            double combinedLabelLabelSpacing = Math.max(0, labelLabelSpacing * (labels.size() - 1));
+            if (verticalLayout) {
+                width += combinedLabelLabelSpacing;
+            } else {
+                height += combinedLabelLabelSpacing;
+            }
 
             // Create a SelfLoopLabel for this component
             SelfLoopLabel label = new SelfLoopLabel();
             label.getLabels().addAll(labels);
             label.setHeight(height);
-            label.setWidth(maxWidth);
+            label.setWidth(width);
             component.setSelfLoopLabel(label);
         }
     }

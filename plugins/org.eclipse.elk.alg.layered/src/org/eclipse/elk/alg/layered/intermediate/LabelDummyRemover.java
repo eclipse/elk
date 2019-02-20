@@ -28,6 +28,8 @@ import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
+import com.google.common.collect.Lists;
+
 /**
  * <p>Processor that removes the inserted center label dummies and places the labels on their
  * position.</p>
@@ -94,7 +96,8 @@ public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
                                 currLabelPos,
                                 labelLabelSpacing,
                                 labelSpace,
-                                labelsBelowEdge);
+                                labelsBelowEdge,
+                                layoutDirection);
                     } else {
                         placeLabelsForHorizontalLayout(
                                 representedLabels,
@@ -133,9 +136,18 @@ public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
     }
 
     private void placeLabelsForVerticalLayout(final List<LLabel> labels, final KVector labelPos,
-            final double labelSpacing, final KVector labelSpace, final boolean leftAligned) {
+            final double labelSpacing, final KVector labelSpace, final boolean leftAligned,
+            final Direction layoutDirection) {
         
-        for (LLabel label : labels) {
+        // Due to the way layout directions work, we need to pay attention to the order in which we place labels. While
+        // we can simply place them as they come for the DOWN direction, doing the same for the UP direction will
+        // reverse the label order in the final result. Thus, in that case we iterate over the reversed label list
+        List<LLabel> effectiveLabels = labels;
+        if (layoutDirection == Direction.UP) {
+            effectiveLabels = Lists.reverse(effectiveLabels);
+        }
+        
+        for (LLabel label : effectiveLabels) {
             label.getPosition().x = labelPos.x;
             label.getPosition().y = leftAligned
                     ? labelPos.y
