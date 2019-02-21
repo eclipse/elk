@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Rectangle Packing Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.packing.rectangles;singleton:=true
-Bundle-Version: 0.5.0.qualifier
+Bundle-Version: 0.5.0
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.graph;bundle-version="0.5.0",

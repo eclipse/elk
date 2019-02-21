@@ -9,7 +9,7 @@
 <feature
       id="org.eclipse.elk.algorithms.feature"
       label="Eclipse Layout Kernel (Incubation) - Layout Algorithms"
-      version="0.5.0.qualifier"
+      version="0.5.0"
       provider-name="Eclipse Layout Kernel"
       plugin="org.eclipse.elk.core">
 
@@ -32,7 +32,7 @@ http://www.eclipse.org/legal/epl-v10.html.
    </license>
 
    <requires>
-      <import feature="org.eclipse.elk.feature" version="0.5.0.qualifier"/>
+      <import feature="org.eclipse.elk.feature" version="0.5.0"/>
    </requires>
 
    <plugin
