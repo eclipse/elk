@@ -41,9 +41,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
+
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF MethodName
+@SuppressWarnings("restriction")
 @RunWith(Parameterized.class)
 public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     private final CrossMinType crossMinType;

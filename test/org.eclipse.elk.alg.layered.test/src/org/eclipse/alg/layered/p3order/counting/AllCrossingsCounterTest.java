@@ -30,6 +30,7 @@ import org.junit.Test;
  * Test for extracted and modified AllCrossingsCounter.
  *
  */
+@SuppressWarnings("restriction")
 public class AllCrossingsCounterTest extends TestGraphCreator {
 
     // CHECKSTYLEOFF Javadoc

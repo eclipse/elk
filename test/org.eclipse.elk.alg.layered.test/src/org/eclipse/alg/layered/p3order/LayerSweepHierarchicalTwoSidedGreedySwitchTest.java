@@ -23,8 +23,10 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -32,7 +34,14 @@ import com.google.common.collect.Lists;
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF MethodName
+@SuppressWarnings("restriction")
 public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCreator {
+    
+    @BeforeClass
+    public static void initialize() {
+        LayoutMetaDataService.getInstance();
+    }
+    
     /**
      * <pre>
      * ______

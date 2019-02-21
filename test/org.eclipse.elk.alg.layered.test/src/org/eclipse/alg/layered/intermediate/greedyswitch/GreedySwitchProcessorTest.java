@@ -37,6 +37,7 @@ import org.junit.runners.Parameterized.Parameters;
  *
  * @author alan
  */
+@SuppressWarnings("restriction")
 @RunWith(Parameterized.class)
 public class GreedySwitchProcessorTest extends TestGraphCreator {
     private final LayerSweepCrossingMinimizer greedySwitcher;

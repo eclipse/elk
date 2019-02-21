@@ -27,6 +27,7 @@ import org.junit.Test;
  *
  * @author alan
  */
+@SuppressWarnings("restriction")
 public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSouthEdgeTestGraphCreator {
     private NorthSouthEdgeNeighbouringNodeCrossingsCounter counter;
     private LNode[] layer;

@@ -29,6 +29,7 @@ import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class GreedyPortDistributorTest extends TestGraphCreator {
     private GreedyPortDistributor portDist;
 
