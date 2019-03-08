@@ -178,7 +178,7 @@ public abstract class EMapPropertyHolderImpl extends MinimalEObjectImpl.Containe
         
         // check for unresolved properties
         for (Map.Entry<IProperty<?>, Object> entry : props) {
-            if (entry.getValue() instanceof IPropertyValueProxy) {
+            if (entry.getValue() instanceof IPropertyValueProxy && entry.getKey() != null) {
                 IPropertyValueProxy proxy = (IPropertyValueProxy) entry.getValue();
                 
                 // Try to resolve the proxy's value, maybe the layout option was 
