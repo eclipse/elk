@@ -10,7 +10,6 @@ package org.eclipse.elk.alg.layered.p5edges.loops;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -64,16 +63,18 @@ public class SelfLoopComponent {
         
         while (!nodePorts.isEmpty()) {
             // find all connected ports
-            List<LPort> ports = findAllConnectedPorts(lNode, nodePorts.get(0), new HashSet<LPort>());
+            Set<LPort> connectedPorts = new LinkedHashSet<>();
+            findAllConnectedPorts(lNode, nodePorts.get(0), connectedPorts);
             
             // sort the ports according to their original index at the node
-            ports.sort(Comparator.comparing(lNode.getPorts()::indexOf));
+            List<LPort> sortedPorts = new ArrayList<>(connectedPorts);
+            sortedPorts.sort(Comparator.comparing(lNode.getPorts()::indexOf));
             
             // create the actual component
-            SelfLoopComponent component = new SelfLoopComponent(ports);
+            SelfLoopComponent component = new SelfLoopComponent(sortedPorts);
             slNode.getSelfLoopComponents().add(component);
 
-            nodePorts.removeAll(ports);
+            nodePorts.removeAll(sortedPorts);
         }
     }
 
@@ -81,31 +82,28 @@ public class SelfLoopComponent {
      * Given a port this method searches via incoming and outgoing edges others port which can be reached. Pass in an
      * empty set as the last argument.
      */
-    private static List<LPort> findAllConnectedPorts(final LNode node, final LPort lPort,
-            final Set<LPort> visitedPorts) {
-
+    private static void findAllConnectedPorts(final LNode node, final LPort lPort,
+            final Set<LPort> connectedPorts) {
         // only process nodes which where not visited yet
-        if (!visitedPorts.contains(lPort)) {
-            visitedPorts.add(lPort);
-
-            //follow all incoming edges to find connected ports
-            for (LEdge edge : lPort.getIncomingEdges()) {
-                LPort source = edge.getSource();
-                if (source.getNode().equals(node) && !visitedPorts.contains(source)) {
-                    visitedPorts.addAll(findAllConnectedPorts(node, source, visitedPorts));
-                }
-            }
-            
-            //follow all outgoing edges to find connected ports
-            for (LEdge edge : lPort.getOutgoingEdges()) {
-                LPort target = edge.getTarget();
-                if (target.getNode().equals(node) && !visitedPorts.contains(target)) {
-                    visitedPorts.addAll(findAllConnectedPorts(node, target, visitedPorts));
-                }
-            }
+        if (!connectedPorts.add(lPort)) {
+            return;
         }
 
-        return new ArrayList<>(visitedPorts);
+        // follow all incoming edges to find connected ports
+        for (LEdge edge : lPort.getIncomingEdges()) {
+            LPort source = edge.getSource();
+            if (source.getNode().equals(node)) {
+                findAllConnectedPorts(node, source, connectedPorts);
+            }
+        }
+        
+        // follow all outgoing edges to find connected ports
+        for (LEdge edge : lPort.getOutgoingEdges()) {
+            LPort target = edge.getTarget();
+            if (target.getNode().equals(node)) {
+                findAllConnectedPorts(node, target, connectedPorts);
+            }
+        }
     }
 
     

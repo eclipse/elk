@@ -96,6 +96,7 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
         for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             // Retrieve all labels attached to edges that belong to this component
             List<LLabel> labels = component.getConnectedEdges().stream()
+                .filter(edge -> edge.getEdge().getSource().getNode().equals(edge.getEdge().getTarget().getNode()))
                 .flatMap(edge -> edge.getEdge().getLabels().stream())
                 .sorted(new Comparator<LLabel>() {
                     @Override
