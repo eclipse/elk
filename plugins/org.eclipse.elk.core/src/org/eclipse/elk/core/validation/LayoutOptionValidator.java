@@ -36,14 +36,17 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
     @Override
     public void visit(final ElkGraphElement element) {
         for (Map.Entry<IProperty<?>, Object> entry : element.getProperties()) {
-            Object value = entry.getValue();
-            if (value instanceof IPropertyValueProxy) {
-                value = ((IPropertyValueProxy) value).resolveValue(entry.getKey());
-                if (value != null) {
-                    entry.setValue(value);
+            IProperty<?> property = entry.getKey();
+            if (property != null) {
+                Object value = entry.getValue();
+                if (value instanceof IPropertyValueProxy) {
+                    value = ((IPropertyValueProxy) value).resolveValue(property);
+                    if (value != null) {
+                        entry.setValue(value);
+                    }
                 }
+                issues.addAll(checkProperty((IProperty<Object>) property, value, element));
             }
-            issues.addAll(checkProperty((IProperty<Object>) entry.getKey(), value, element));
         }
     }
     
