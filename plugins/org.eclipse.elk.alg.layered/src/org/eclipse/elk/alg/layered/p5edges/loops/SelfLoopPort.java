@@ -30,11 +30,11 @@ public class SelfLoopPort {
     /** The level of the edge segment. */
     private int maximumLevel = 0;
     /** Map about the different level for the different edges connected to this port. */
-    private Map<LEdge, Integer> edgeToLevelMap = new HashMap<>();
+    private final Map<LEdge, Integer> edgeToLevelMap = new HashMap<>();
     /** The SelfLoopComponent the port belongs to. */
     private SelfLoopComponent component;
     /** Self loops connected to this port. */
-    private List<SelfLoopEdge> connectedEdges = new ArrayList<>();
+    private final List<SelfLoopEdge> connectedEdges = new ArrayList<>();
     /** The port is connected to an edge connecting it to another node. */
     private boolean isNonLoopPort = false;
     /** The original index of the port before using the linear node representation or altering the port order. */

@@ -29,9 +29,9 @@ public class SelfLoopEdge {
     /** The component the self loop belongs to. */
     private final SelfLoopComponent component;
     /** Other self loops this self loop depends on. */
-    private Map<PortSide, List<SelfLoopEdge>> dependencyEdges = new HashMap<>();
+    private final Map<PortSide, List<SelfLoopEdge>> dependencyEdges = new HashMap<>();
     /** TODO Document. */
-    private Map<PortSide, Integer> edgeOrders = new HashMap<>();
+    private final Map<PortSide, Integer> edgeOrders = new HashMap<>();
 
     /**
      * Create a new self loop.

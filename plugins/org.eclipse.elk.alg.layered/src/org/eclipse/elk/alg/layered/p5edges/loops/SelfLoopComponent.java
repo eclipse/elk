@@ -30,13 +30,13 @@ import org.eclipse.elk.core.options.PortSide;
 public class SelfLoopComponent {
 
     /** The ports of the self loop component. They are all connected by at least one edge. */
-    private List<SelfLoopPort> ports = new ArrayList<>();
+    private final List<SelfLoopPort> ports;
     /** All center edge labels that occur at the component edges, if any. */
     private SelfLoopLabel selfLoopLabel;
     /** The components that the self loop component depends on. */
-    private Map<SelfLoopNodeSide, List<SelfLoopComponent>> dependencyComponents = new HashMap<>();
+    private final Map<SelfLoopNodeSide, List<SelfLoopComponent>> dependencyComponents = new HashMap<>();
     /** Any edges the component depends on. */
-    private Map<PortSide, List<SelfLoopEdge>> edgeDependencies = new HashMap<>();
+    private final Map<PortSide, List<SelfLoopEdge>> edgeDependencies = new HashMap<>();
 
     
     /**
@@ -46,6 +46,7 @@ public class SelfLoopComponent {
      *            Ports of the connected self loop component.
      */
     public SelfLoopComponent(final List<LPort> ports) {
+        this.ports = new ArrayList<>(ports.size());
         addAllPorts(ports);
         calculateConnectedEdges();
     }
@@ -113,7 +114,7 @@ public class SelfLoopComponent {
     /**
      * Adds a {@link SelfLoopPort} to the component that represents the given regular port.
      */
-    public void addPort(final LPort port) {
+    private void addPort(final LPort port) {
         ports.add(new SelfLoopPort(port, this));
     }
 
@@ -224,9 +225,9 @@ public class SelfLoopComponent {
         for (SelfLoopPort port : ports) {
             for (LEdge edge : port.getLPort().getOutgoingEdges()) {
                 SelfLoopPort targetPort = findPort(edge.getTarget());
-                SelfLoopEdge selfLoopEdge = new SelfLoopEdge(this, port, targetPort, edge);
-                port.getConnectedEdges().add(selfLoopEdge);
                 if (targetPort != null) {
+                    SelfLoopEdge selfLoopEdge = new SelfLoopEdge(this, port, targetPort, edge);
+                    port.getConnectedEdges().add(selfLoopEdge);
                     targetPort.getConnectedEdges().add(selfLoopEdge);
                 }
             }

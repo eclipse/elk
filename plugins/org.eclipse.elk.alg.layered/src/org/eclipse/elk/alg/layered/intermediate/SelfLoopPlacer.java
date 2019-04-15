@@ -119,10 +119,11 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
 
         case FIXED_ORDER:
         case FIXED_POS:
+        case FIXED_RATIO:
             return new FixedOrderSelfLoopPortPositioner();
 
         default:
-            return null;
+            throw new AssertionError("Unknown port constraint: " + constraint);
         }
 
     }
