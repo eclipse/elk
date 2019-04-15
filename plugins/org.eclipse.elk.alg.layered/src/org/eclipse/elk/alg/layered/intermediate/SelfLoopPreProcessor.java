@@ -98,7 +98,7 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
         for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             // Retrieve all labels attached to edges that belong to this component
             List<LLabel> labels = component.getConnectedEdges().stream()
-                .filter(edge -> edge.getEdge().getSource().getNode().equals(edge.getEdge().getTarget().getNode()))
+                .filter(edge -> edge.getEdge().isSelfLoop())
                 .flatMap(edge -> edge.getEdge().getLabels().stream())
                 .sorted(new Comparator<LLabel>() {
                     @Override
@@ -151,7 +151,7 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
      * Collect and remove ports that are only self-loop ports.
      */
     private void hidePorts(final LNode node) {
-        List<LPort> selfLoopPorts = new ArrayList<LPort>();
+        List<LPort> selfLoopPorts = new ArrayList<LPort>(node.getPorts().size());
 
         // check each port if has to be hidden
         for (LPort port : node.getPorts()) {

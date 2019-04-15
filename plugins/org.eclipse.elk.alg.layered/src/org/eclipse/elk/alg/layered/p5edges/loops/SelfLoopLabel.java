@@ -18,13 +18,13 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 public class SelfLoopLabel {
 
     /** The list of labels this self loop label consists of. */
-    private List<LLabel> labels = new ArrayList<>();
+    private final List<LLabel> labels = new ArrayList<>();
     /** The combined height of all labels. */
     private double height;
     /** The maximum width over all labels. */
     private double width;
     /** The candidate positions for this label. */
-    private List<SelfLoopLabelPosition> candidatePositions = new ArrayList<>();
+    private final List<SelfLoopLabelPosition> candidatePositions = new ArrayList<>();
     /** The position chosen for this label. */
     private SelfLoopLabelPosition labelPosition;
 
