@@ -74,7 +74,9 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 preprocessLabels(slNode, layoutDirection);
                 
                 // hide the ports which are non useful for the crossing minimization
-                hidePorts(node);
+                if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                    hidePorts(node);
+                }
             }
         }
 

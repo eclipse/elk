@@ -81,7 +81,7 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
 
                     // calculate dependency graph for components
                     SelfLoopComponentDependencyGraphCalculator.calculateComponentDependecies(slNode);
-                    //calculate a order for each edge in the components
+                    // calculate an order for each edge in the components
                     SelfLoopComponentDependencyGraphCalculator.calculateEdgeDependecies(components);
 
                     // assign levels
