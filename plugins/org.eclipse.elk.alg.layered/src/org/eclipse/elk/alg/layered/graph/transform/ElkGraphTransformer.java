@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Strings;
 
@@ -65,9 +66,12 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
     private static String getIdentifier(final ElkGraphElement element) {
         String id = element.getIdentifier();
         if (!Strings.isNullOrEmpty(id)) {
-            String parentId = getIdentifier((ElkGraphElement) element.eContainer());
-            if (parentId != null) {
-                return parentId + '.' + id;
+            EObject container = element.eContainer();
+            if (container instanceof ElkGraphElement) {
+                String parentId = getIdentifier((ElkGraphElement) container);
+                if (parentId != null) {
+                    return parentId + '.' + id;
+                }
             }
             return id;
         }
