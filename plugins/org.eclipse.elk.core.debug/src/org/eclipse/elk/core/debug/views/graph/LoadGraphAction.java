@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Kiel University and others.
+ * Copyright (c) 2011, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,14 +34,14 @@ import org.eclipse.swt.widgets.FileDialog;
  * An action for loading a KGraph and performing layout on it.
  */
 public class LoadGraphAction extends Action {
-    
+
     /** identifier string for this action. */
     private static final String ACTION_ID = "org.eclipse.elk.debug.loadGraph";
     /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/import.gif";
     /** preference identifier for the last used file name. */
-    private static final String LAST_FILE_NAME_PREF = "loadGraphAction.lastGraphFile";
-    
+    protected static final String LAST_FILE_NAME_PREF = "loadGraphAction.lastGraphFile";
+
     /**
      * Creates a load graph action.
      */
@@ -51,7 +51,7 @@ public class LoadGraphAction extends Action {
         setToolTipText("Load, layout, and display a saved ELK graph.");
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -67,24 +67,37 @@ public class LoadGraphAction extends Action {
 
         // open the file dialog and wait for file name
         String fileName = fileDialog.open();
-        
+
         if (fileName != null) {
             preferenceStore.setValue(LAST_FILE_NAME_PREF, fileName);
-            
-            // load the file content
-            ResourceSet resourceSet = new ResourceSetImpl();
-            URI uri = URI.createFileURI(fileName);
-            Resource resource = resourceSet.createResource(uri);
-            try {
-                resource.load(null);
-                ElkNode content = (ElkNode) resource.getContents().get(0);
-                layout(content);
-            } catch (IOException exception) {
-                throw new WrappedException(exception);
-            }
+
+            loadAndLayout(fileName);
         }
     }
-    
+
+    /**
+     * Load a file and layout the graph contained in it.
+     * 
+     * @param filePath
+     *            The path of the file containing a graph to layout.
+     * 
+     * @return The ElkNode layouted
+     */
+    protected ElkNode loadAndLayout(String filePath) {
+        // load the file content
+        ResourceSet resourceSet = new ResourceSetImpl();
+        URI uri = URI.createFileURI(filePath);
+        Resource resource = resourceSet.createResource(uri);
+        try {
+            resource.load(null);
+            ElkNode content = (ElkNode) resource.getContents().get(0);
+            layout(content);
+            return content;
+        } catch (IOException exception) {
+            throw new WrappedException(exception);
+        }
+    }
+
     /**
      * Perform layout and draw the resulting graph.
      * 
@@ -97,7 +110,7 @@ public class LoadGraphAction extends Action {
             IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
             layoutEngine.layout(graph, monitor);
         }
-        
+
         // draw the resulting layout on the canvas
         LayoutGraphView.updateWithGraph(graph);
     }
