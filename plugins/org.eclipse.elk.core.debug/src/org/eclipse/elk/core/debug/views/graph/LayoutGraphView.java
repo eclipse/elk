@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Kiel University and others.
+ * Copyright (c) 2008, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,6 @@ public class LayoutGraphView extends ViewPart {
     private ScrolledComposite scrolledComposite;
     /** the canvas used to draw layout graphs. */
     private GraphRenderingCanvas graphCanvas;
-    
 
     /**
      * Creates a layout graph view.
@@ -43,7 +42,7 @@ public class LayoutGraphView extends ViewPart {
     public LayoutGraphView() {
         super();
     }
-    
+
     /**
      * Updates the view by painting the given layout graph.
      * 
@@ -80,7 +79,7 @@ public class LayoutGraphView extends ViewPart {
         if (viewPart instanceof LayoutGraphView) {
             return (LayoutGraphView) viewPart;
         }
-        
+
         return null;
     }
 
@@ -91,6 +90,7 @@ public class LayoutGraphView extends ViewPart {
         // create actions in the view toolbar
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(new LoadGraphAction());
+        toolBarManager.add(new ReloadGraphAction());
         toolBarManager.add(new ImageExportAction(this));
 
         // create canvas for layout graphs
@@ -98,7 +98,6 @@ public class LayoutGraphView extends ViewPart {
         graphCanvas = new GraphRenderingCanvas(scrolledComposite);
         scrolledComposite.setContent(graphCanvas);
     }
-    
 
     /**
      * {@inheritDoc}
