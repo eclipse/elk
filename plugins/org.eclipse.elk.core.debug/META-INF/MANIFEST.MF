@@ -4,12 +4,18 @@ Bundle-Name: ELK Debugging Utilities
 Bundle-SymbolicName: org.eclipse.elk.core.debug;singleton:=true
 Bundle-Version: 0.6.0.qualifier
 Bundle-Activator: org.eclipse.elk.core.debug.ElkDebugPlugin
-Require-Bundle: org.eclipse.ui,
+Require-Bundle: com.google.guava,
+ org.eclipse.core.resources,
  org.eclipse.core.runtime,
- org.eclipse.elk.graph,
  org.eclipse.elk.core,
+ org.eclipse.elk.core.service,
  org.eclipse.elk.core.ui,
- org.eclipse.elk.core.service
+ org.eclipse.elk.graph,
+ org.eclipse.pde.ui,
+ org.eclipse.ui,
+ org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib.macro,
+ org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse Modeling Project
