@@ -32,8 +32,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 /**
  * Preference page for general ELK preferences.
- * 
- * @author msp
  */
 public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -43,8 +41,10 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private Button zoomCheckBox;
     /** checkbox for progress dialog. */
     private Button progressCheckBox;
-    /** checkbox for debug graph output. */
-    private Button debugCheckBox;
+    /** checkbox for whether logging should be enabled. */
+    private Button enableLoggingCheckBox;
+    /** checkbox for storing log output. */
+    private Button storeLogsCheckBox;
     /** checkbox for execution time measurement. */
     private Button execTimeCheckBox;
 
@@ -59,9 +59,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     /** vertical spacing between out group boxes. */
     private static final int VERTICAL_LAYOUT_SPACING = 10;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected Control createContents(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout compositeLayout = new GridLayout(1, false);
@@ -92,24 +90,24 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private Group createGeneralOptionsGroup(final Composite parent) {
         IPreferenceStore mainPrefStore = getPreferenceStore();
         Group generalGroup = new Group(parent, SWT.NONE);
-        generalGroup.setText(Messages.getString("elk.ui.35")); //$NON-NLS-1$
+        generalGroup.setText(Messages.getString("LayoutPreferencePage.generalGroup.text")); //$NON-NLS-1$
         
         // add checkbox for animation
         animationCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
-        animationCheckBox.setText(Messages.getString("elk.ui.64")); //$NON-NLS-1$
-        animationCheckBox.setToolTipText(Messages.getString("elk.ui.67")); //$NON-NLS-1$
+        animationCheckBox.setText(Messages.getString("LayoutPreferencePage.animations.text")); //$NON-NLS-1$
+        animationCheckBox.setToolTipText(Messages.getString("LayoutPreferencePage.animations.tip")); //$NON-NLS-1$
         animationCheckBox.setSelection(mainPrefStore.getBoolean(LayoutHandler.PREF_ANIMATION));
         
         // add checkbox for zoom-to-fit
         zoomCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
-        zoomCheckBox.setText(Messages.getString("elk.ui.65")); //$NON-NLS-1$
-        zoomCheckBox.setToolTipText(Messages.getString("elk.ui.68")); //$NON-NLS-1$
+        zoomCheckBox.setText(Messages.getString("LayoutPreferencePage.zoom.text")); //$NON-NLS-1$
+        zoomCheckBox.setToolTipText(Messages.getString("LayoutPreferencePage.zoom.tip")); //$NON-NLS-1$
         zoomCheckBox.setSelection(mainPrefStore.getBoolean(LayoutHandler.PREF_ZOOM));
         
         // add checkbox for progress dialog
         progressCheckBox = new Button(generalGroup, SWT.CHECK | SWT.LEFT);
-        progressCheckBox.setText(Messages.getString("elk.ui.66")); //$NON-NLS-1$
-        progressCheckBox.setToolTipText(Messages.getString("elk.ui.69")); //$NON-NLS-1$
+        progressCheckBox.setText(Messages.getString("LayoutPreferencePage.progress.text")); //$NON-NLS-1$
+        progressCheckBox.setToolTipText(Messages.getString("LayoutPreferencePage.progress.tip")); //$NON-NLS-1$
         progressCheckBox.setSelection(mainPrefStore.getBoolean(LayoutHandler.PREF_PROGRESS));
         
         FillLayout layout = new FillLayout(SWT.VERTICAL);
@@ -129,21 +127,30 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     private Group createDeveloperOptionsGroup(final Composite parent) {
         IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
         Group developerGroup = new Group(parent, SWT.NONE);
-        developerGroup.setText(Messages.getString("elk.ui.81")); //$NON-NLS-1$
+        developerGroup.setText(Messages.getString("LayoutPreferencePage.developerGroup.text")); //$NON-NLS-1$
         
         // add checkbox for execution time measurements
         execTimeCheckBox = new Button(developerGroup, SWT.CHECK | SWT.LEFT);
-        execTimeCheckBox.setText(Messages.getString("elk.ui.79")); //$NON-NLS-1$
-        execTimeCheckBox.setToolTipText(Messages.getString("elk.ui.80")); //$NON-NLS-1$
+        execTimeCheckBox.setText(Messages.getString("LayoutPreferencePage.execTime.text")); //$NON-NLS-1$
+        execTimeCheckBox.setToolTipText(Messages.getString("LayoutPreferencePage.execTime.tip")); //$NON-NLS-1$
         execTimeCheckBox.setSelection(servicePrefStore.getBoolean(
-                DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
+                DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
         
         // add checkbox for debug graph output
-        debugCheckBox = new Button(developerGroup, SWT.CHECK | SWT.LEFT);
-        debugCheckBox.setText(Messages.getString("elk.ui.71")); //$NON-NLS-1$
-        debugCheckBox.setToolTipText(Messages.getString("elk.ui.72")); //$NON-NLS-1$
-        debugCheckBox.setSelection(servicePrefStore.getBoolean(
-                DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
+        enableLoggingCheckBox = new Button(developerGroup, SWT.CHECK | SWT.LEFT);
+        enableLoggingCheckBox.setText(
+                Messages.getString("LayoutPreferencePage.enableLogging.text")); //$NON-NLS-1$
+        enableLoggingCheckBox.setToolTipText(
+                Messages.getString("LayoutPreferencePage.enableLogging.tip")); //$NON-NLS-1$
+        enableLoggingCheckBox.setSelection(servicePrefStore.getBoolean(
+                DiagramLayoutEngine.PREF_DEBUG_LOGGING));
+        
+        // add checkbox for debug graph output
+        storeLogsCheckBox = new Button(developerGroup, SWT.CHECK | SWT.LEFT);
+        storeLogsCheckBox.setText(Messages.getString("LayoutPreferencePage.storeLogs.text")); //$NON-NLS-1$
+        storeLogsCheckBox.setToolTipText(Messages.getString("LayoutPreferencePage.storeLogs.tip")); //$NON-NLS-1$
+        storeLogsCheckBox.setSelection(servicePrefStore.getBoolean(
+                DiagramLayoutEngine.PREF_DEBUG_STORE));
         
         FillLayout layout = new FillLayout(SWT.VERTICAL);
         layout.marginWidth = MARGIN_WIDTH;
@@ -153,16 +160,11 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         return developerGroup;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void init(final IWorkbench workbench) {
         setPreferenceStore(ElkUiPlugin.getInstance().getPreferenceStore());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void performDefaults() {
         super.performDefaults();
@@ -173,15 +175,14 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         animationCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
         zoomCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ZOOM));
         progressCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_PROGRESS));
-        debugCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
-                DiagramLayoutEngine.PREF_DEBUG_OUTPUT));
         execTimeCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
-                DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
+                DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
+        enableLoggingCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
+                DiagramLayoutEngine.PREF_DEBUG_LOGGING));
+        storeLogsCheckBox.setSelection(servicePrefStore.getDefaultBoolean(
+                DiagramLayoutEngine.PREF_DEBUG_STORE));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean performOk() {
         IPreferenceStore mainPrefStore = getPreferenceStore();
@@ -191,9 +192,9 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         mainPrefStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());
         mainPrefStore.setValue(LayoutHandler.PREF_ZOOM, zoomCheckBox.getSelection());
         mainPrefStore.setValue(LayoutHandler.PREF_PROGRESS, progressCheckBox.getSelection());
-        servicePrefStore.setValue(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, debugCheckBox.getSelection());
-        servicePrefStore.setValue(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT,
-                execTimeCheckBox.getSelection());
+        servicePrefStore.setValue(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME, execTimeCheckBox.getSelection());
+        servicePrefStore.setValue(DiagramLayoutEngine.PREF_DEBUG_LOGGING, enableLoggingCheckBox.getSelection());
+        servicePrefStore.setValue(DiagramLayoutEngine.PREF_DEBUG_STORE, storeLogsCheckBox.getSelection());
         
         LayoutViewPart layoutView = LayoutViewPart.findView();
         if (layoutView != null) {

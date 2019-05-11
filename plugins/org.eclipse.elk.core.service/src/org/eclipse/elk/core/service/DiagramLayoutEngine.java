@@ -49,6 +49,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -146,10 +147,12 @@ public class DiagramLayoutEngine {
         }
     }
     
-    /** preference identifier for debug graph output. */
-    public static final String PREF_DEBUG_OUTPUT = "elk.debug.graph";
+    /** preference identifier for whether logging is enabled on progress monitors. */
+    public static final String PREF_DEBUG_LOGGING = "elk.debug.logs";
+    /** preference identifier for whether logged data are to be persisted. */
+    public static final String PREF_DEBUG_STORE = "elk.debug.store";
     /** preference identifier for execution time measurement. */
-    public static final String PREF_EXEC_TIME_MEASUREMENT = "elk.exectime.measure";
+    public static final String PREF_DEBUG_EXEC_TIME = "elk.debug.exectime";
     
     /**
      * Filter for {@link LayoutConfigurator} that checks for each option whether its configured targets
@@ -495,8 +498,10 @@ public class DiagramLayoutEngine {
         
         final IElkProgressMonitor finalMonitor;
         if (progressMonitor == null) {
-            finalMonitor = new BasicProgressMonitor(0, ElkServicePlugin.getInstance().getPreferenceStore()
-                    .getBoolean(PREF_EXEC_TIME_MEASUREMENT));
+            IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+            finalMonitor = new BasicProgressMonitor(0)
+                    .withLogging(prefStore.getBoolean(PREF_DEBUG_LOGGING))
+                    .withExecutionTimeMeasurement(prefStore.getBoolean(PREF_DEBUG_EXEC_TIME));
         } else {
             finalMonitor = progressMonitor;
         }
@@ -710,7 +715,7 @@ public class DiagramLayoutEngine {
             }
             
             // Export the layout graph for debugging
-            if (ElkServicePlugin.getInstance().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
+            if (ElkServicePlugin.getInstance().getPreferenceStore().getBoolean(PREF_DEBUG_STORE)) {
                 exportLayoutGraph(mapping.getLayoutGraph());
             }
 
