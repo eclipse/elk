@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class GraphRenderingConfigurator {
     protected static final int MIN_FONT_HEIGHT = 3;
     
     // CHECKSTYLEOFF Visibility
-    // We think it alright for subclasses to directly set these.
+    // We think it is alright for subclasses to directly set these.
     
     /** border color for nodes. */
     protected Color nodeBorderColor;
@@ -56,6 +56,10 @@ public class GraphRenderingConfigurator {
     protected Color labelFillColor;
     /** text color for labels. */
     protected Color labelTextColor;
+    /** color for area out of bounds. */
+    protected Color outOfBoundsColor;
+    /** color for the parent node. */
+    protected Color rootNodeColor;
     
     // CHECKSTYLEON Visibility
     
@@ -119,6 +123,8 @@ public class GraphRenderingConfigurator {
         labelFillColor = null;
         labelTextColor = new Color(display, 2, 15, 3);
         
+        outOfBoundsColor = new Color(display, 255, 205, 210);
+        rootNodeColor = new Color(display, 240, 240, 240);
         // CHECKSTYLEON MagicNumber
     }
     
@@ -164,6 +170,14 @@ public class GraphRenderingConfigurator {
         
         if (edgeLabelFont != null) {
             edgeLabelFont.dispose();
+        }
+        
+        if (outOfBoundsColor != null) {
+            outOfBoundsColor.dispose();
+        }
+        
+        if (rootNodeColor != null) {
+            rootNodeColor.dispose();
         }
     }
     
@@ -218,4 +232,11 @@ public class GraphRenderingConfigurator {
         return labelTextColor;
     }
     
+    public final Color getOutOfBoundsColor() {
+        return outOfBoundsColor;
+    }
+    
+    public final Color getRootNodeColor() {
+        return rootNodeColor;
+    }
 }
