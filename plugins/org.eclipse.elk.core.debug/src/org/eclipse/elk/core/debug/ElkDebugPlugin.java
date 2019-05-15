@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug;
 
-import org.eclipse.elk.core.debug.views.execution.ExecutionView;
 import org.eclipse.elk.core.debug.views.graph.LayoutGraphView;
+import org.eclipse.elk.core.debug.views.time.ExecutionTimeView;
 import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
@@ -39,7 +39,7 @@ public class ElkDebugPlugin extends AbstractUIPlugin {
         public void layoutDone(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
             // Update our views
             LayoutGraphView.updateWithGraph(mapping.getLayoutGraph());
-            ExecutionView.addExecution(progressMonitor);
+            ExecutionTimeView.addExecution(progressMonitor);
         }
     };
 	
@@ -49,21 +49,15 @@ public class ElkDebugPlugin extends AbstractUIPlugin {
 	public ElkDebugPlugin() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
+    @Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 
         LayoutConnectorsService.getInstance().addLayoutListener(layoutListener);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
+    
+    @Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);

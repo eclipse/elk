@@ -24,14 +24,14 @@ public class ClearExecutionsAction extends Action {
     private static final String ICON_PATH = "icons/clear_exec.gif";
 
     /** the execution view associated with this action. */
-    private ExecutionView view;
+    private ExecutionTimeView view;
 
     /**
      * Creates an image export action for a given layout graph view.
      * 
      * @param theview execution view that created this action
      */
-    public ClearExecutionsAction(final ExecutionView theview) {
+    public ClearExecutionsAction(final ExecutionTimeView theview) {
         this.view = theview;
         setId(ACTION_ID);
         setText("&Clear");
@@ -39,9 +39,6 @@ public class ClearExecutionsAction extends Action {
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void run() {
         view.clearExecutions();

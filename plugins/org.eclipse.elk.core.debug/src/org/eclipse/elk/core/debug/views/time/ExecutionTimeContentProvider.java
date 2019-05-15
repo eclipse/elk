@@ -18,11 +18,9 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Content provider for Executions. The viewer input element is expected to be a list of {@link Execution} instances.
  */
-final class ExecutionContentProvider implements ITreeContentProvider {
+final class ExecutionTimeContentProvider implements ITreeContentProvider {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object[] getChildren(final Object parentElement) {
         if (parentElement instanceof Execution) {
             return ((Execution) parentElement).getChildren().toArray();
@@ -30,9 +28,7 @@ final class ExecutionContentProvider implements ITreeContentProvider {
         return new Execution[0];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getParent(final Object element) {
         if (element instanceof Execution) {
             return ((Execution) element).getParent();
@@ -40,17 +36,13 @@ final class ExecutionContentProvider implements ITreeContentProvider {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean hasChildren(final Object element) {
         return element instanceof Execution
                 && !((Execution) element).getChildren().isEmpty();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object[] getElements(final Object inputElement) {
         if (inputElement instanceof List<?>) {
             return ((List<?>) inputElement).toArray();
@@ -58,15 +50,11 @@ final class ExecutionContentProvider implements ITreeContentProvider {
         return new Object[0];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void dispose() {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
     }
 

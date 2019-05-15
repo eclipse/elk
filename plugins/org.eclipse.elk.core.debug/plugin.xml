@@ -25,7 +25,7 @@
       <view
             allowMultiple="false"
             category="org.eclipse.elk.core.layout"
-            class="org.eclipse.elk.core.debug.views.execution.ExecutionView"
+            class="org.eclipse.elk.core.debug.views.time.ExecutionTimeView"
             icon="icons/clock.gif"
             id="org.eclipse.elk.debug.executionView"
             name="Layout Time"

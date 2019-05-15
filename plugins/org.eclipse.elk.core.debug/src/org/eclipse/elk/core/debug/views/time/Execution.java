@@ -22,10 +22,10 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * execution is immutable.
  */
 final class Execution {
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Fields
-    
+
     /** The name of this execution. */
     private String name;
     /** Amount of time spent in this execution and its child executions. */
@@ -36,30 +36,35 @@ final class Execution {
     private Execution parent;
     /** Unmodifiable list of child executions. */
     private List<Execution> children;
-    
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Construction
-    
+
     /**
      * Private constructor.
      */
     private Execution() {
-        
+
     }
-    
-    
+
+    /**
+     * Create an Execution from a given {@link IElkProgressMonitor} without a parent monitor.
+     * 
+     * @param monitor
+     *            that holds information about execution time.
+     * @return the execution with its children.
+     */
     public static Execution fromProgressMonitor(final IElkProgressMonitor monitor) {
         Execution execution = new Execution();
-        
+
         execution.name = monitor.getTaskName() != null ? monitor.getTaskName() : "Unnamed";
         execution.executionTimeIncludingChildren = monitor.getExecutionTime();
         execution.parent = null;
-        
+
         // We compute the local execution time by starting with the total execution time and subtracting child
         // execution times as we iterate over them
         execution.executionTimeLocal = execution.executionTimeIncludingChildren;
-        
+
         // Add executions for child monitors
         List<Execution> childExecutions = new ArrayList<>(monitor.getSubMonitors().size());
         for (IElkProgressMonitor child : monitor.getSubMonitors()) {
@@ -67,21 +72,29 @@ final class Execution {
             execution.executionTimeLocal -= child.getExecutionTime();
         }
         execution.children = Collections.unmodifiableList(childExecutions);
-        
+
         // Ensure the local execution time does not drop below zero
         execution.executionTimeLocal = Math.max(execution.executionTimeLocal, 0.0);
-        
+
         return execution;
     }
-    
+
+    /**
+     * Create a child execution for the given parent.
+     * 
+     * @param monitor
+     *            that holds information about execution time.
+     * @param parent
+     *            for the child created from the given monitor.
+     * @return a child execution with its children.
+     */
     private static Execution fromProgressMonitor(final IElkProgressMonitor monitor, final Execution parent) {
         Execution execution = Execution.fromProgressMonitor(monitor);
         execution.parent = parent;
-        
+
         return execution;
     }
-    
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Accessors
 
@@ -129,5 +142,5 @@ final class Execution {
     public List<Execution> getChildren() {
         return children;
     }
-    
+
 }

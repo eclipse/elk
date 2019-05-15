@@ -29,7 +29,7 @@ import org.eclipse.ui.part.ViewPart;
  * View that can be used to display execution results of an algorithm. Use {@link #addExecution(IElkProgressMonitor)}
  * and {@link #clearExecutions()} to manipulate the view.
  */
-public class ExecutionView extends ViewPart {
+public class ExecutionTimeView extends ViewPart {
 
     /** the view identifier. */
     public static final String VIEW_ID = "org.eclipse.elk.debug.executionView";
@@ -43,10 +43,33 @@ public class ExecutionView extends ViewPart {
     /**
      * Creates an execution view.
      */
-    public ExecutionView() {
+    public ExecutionTimeView() {
         super();
     }
-    
+
+
+    /**
+     * Tries to find the relevant currently open view.
+     */
+    private static ExecutionTimeView findView() {
+        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (activeWindow == null) {
+            return null;
+        }
+
+        IWorkbenchPage activePage = activeWindow.getActivePage();
+        if (activePage == null) {
+            return null;
+        }
+
+        // find execution view
+        IViewPart viewPart = activePage.findView(ExecutionTimeView.VIEW_ID);
+        if (viewPart instanceof ExecutionTimeView) {
+            return (ExecutionTimeView) viewPart;
+        }
+        
+        return null;
+    }
 
     /**
      * Adds an execution and updates the tree viewer of the currently active execution view.
@@ -56,7 +79,7 @@ public class ExecutionView extends ViewPart {
     public static void addExecution(final IElkProgressMonitor progressMonitor) {
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
-                ExecutionView activeView = findView();
+                ExecutionTimeView activeView = findView();
                 if (progressMonitor != null && activeView != null) {
                     activeView.executions.add(Execution.fromProgressMonitor(progressMonitor));
                     activeView.viewer.refresh();
@@ -73,32 +96,6 @@ public class ExecutionView extends ViewPart {
         viewer.refresh();
     }
 
-    /**
-     * Tries to find the relevant currently open view.
-     */
-    private static ExecutionView findView() {
-        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (activeWindow == null) {
-            return null;
-        }
-
-        IWorkbenchPage activePage = activeWindow.getActivePage();
-        if (activePage == null) {
-            return null;
-        }
-
-        // find execution view
-        IViewPart viewPart = activePage.findView(ExecutionView.VIEW_ID);
-        if (viewPart instanceof ExecutionView) {
-            return (ExecutionView) viewPart;
-        }
-        
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void createPartControl(final Composite parent) {
         // create actions in the view toolbar
@@ -106,7 +103,7 @@ public class ExecutionView extends ViewPart {
 
         // create tree viewer
         viewer = new TreeViewer(parent);
-        viewer.setContentProvider(new ExecutionContentProvider());
+        viewer.setContentProvider(new ExecutionTimeContentProvider());
         viewer.setInput(executions);
         
         // setup tree columns
@@ -114,28 +111,25 @@ public class ExecutionView extends ViewPart {
         
         TreeViewerColumn nameColumn = new TreeViewerColumn(viewer, SWT.NONE);
         nameColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
-                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.NAME)));
+                new ExecutionTimeLabelProvider(ExecutionTimeLabelProvider.DisplayMode.NAME)));
         nameColumn.getColumn().setText("Name");
         nameColumn.getColumn().setWidth(500);
         
         TreeViewerColumn timeColumn = new TreeViewerColumn(viewer, SWT.NONE);
         timeColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
-                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.TIME_TOTAL)));
+                new ExecutionTimeLabelProvider(ExecutionTimeLabelProvider.DisplayMode.TIME_TOTAL)));
         timeColumn.getColumn().setAlignment(SWT.RIGHT);
         timeColumn.getColumn().setText("Time [ms]");
         timeColumn.getColumn().setWidth(100);
         
         TreeViewerColumn localTimeColumn = new TreeViewerColumn(viewer, SWT.NONE);
         localTimeColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
-                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.TIME_LOCAL)));
+                new ExecutionTimeLabelProvider(ExecutionTimeLabelProvider.DisplayMode.TIME_LOCAL)));
         localTimeColumn.getColumn().setAlignment(SWT.RIGHT);
         localTimeColumn.getColumn().setText("Local Time [ms]");
         localTimeColumn.getColumn().setWidth(100);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setFocus() {
         viewer.getControl().setFocus();

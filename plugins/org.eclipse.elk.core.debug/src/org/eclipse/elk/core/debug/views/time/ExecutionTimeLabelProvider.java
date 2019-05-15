@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 /**
  * Label provider for executions.
  */
-final class ExecutionLabelProvider extends LabelProvider implements IStyledLabelProvider {
+final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledLabelProvider {
     
     /** What the label provider can display. */
     public static enum DisplayMode { NAME, TIME_TOTAL, TIME_LOCAL };
@@ -39,14 +39,11 @@ final class ExecutionLabelProvider extends LabelProvider implements IStyledLabel
      * @param displayMode
      *            What this label provider should display.
      */
-    public ExecutionLabelProvider(final DisplayMode displayMode) {
+    public ExecutionTimeLabelProvider(final DisplayMode displayMode) {
         elementImage = ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
         this.displayMode = displayMode;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Image getImage(final Object element) {
         if (displayMode == DisplayMode.NAME && element instanceof Execution) {
@@ -56,9 +53,6 @@ final class ExecutionLabelProvider extends LabelProvider implements IStyledLabel
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
-     */
     @Override
     public StyledString getStyledText(Object element) {
         if (element instanceof Execution) {
@@ -92,9 +86,6 @@ final class ExecutionLabelProvider extends LabelProvider implements IStyledLabel
         return String.format("%1$.3f", time * 1000);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void dispose() {
         super.dispose();
