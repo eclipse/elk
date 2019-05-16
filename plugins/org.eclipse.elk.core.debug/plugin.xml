@@ -31,6 +31,15 @@
             name="Layout Time"
             restorable="true">
       </view>
+      <view
+            allowMultiple="false"
+            category="org.eclipse.elk.core.layout"
+            class="org.eclipse.elk.core.debug.views.log.LayoutLogView"
+            icon="icons/graph.gif"
+            id="org.eclipse.elk.core.debug.logView"
+            name="Layout Log"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.pde.ui.pluginContent">

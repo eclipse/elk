@@ -11,6 +11,7 @@
 package org.eclipse.elk.core.debug;
 
 import org.eclipse.elk.core.debug.views.graph.LayoutGraphView;
+import org.eclipse.elk.core.debug.views.log.LayoutLogView;
 import org.eclipse.elk.core.debug.views.time.ExecutionTimeView;
 import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
@@ -40,6 +41,7 @@ public class ElkDebugPlugin extends AbstractUIPlugin {
             // Update our views
             LayoutGraphView.updateWithGraph(mapping.getLayoutGraph());
             ExecutionTimeView.addExecution(progressMonitor);
+            LayoutLogView.addLogs(progressMonitor);
         }
     };
 	
