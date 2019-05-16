@@ -548,17 +548,17 @@ public final class ElkLayered {
         List<ILayoutProcessor<LGraph>> algorithm = lgraph.getProperty(InternalProperties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
-        if (lgraph.getProperty(LayeredOptions.DEBUG_MODE)) {
+        if (monitor.isLoggingEnabled()) {
             // Debug Mode!
             // Print the algorithm configuration and output the whole graph to a file
             // before each slot execution
 
-            System.out.println("ELK Layered uses the following " + algorithm.size() + " modules:");
+            monitor.log("ELK Layered uses the following " + algorithm.size() + " modules:");
             int slot = 0;
             for (ILayoutProcessor<LGraph> processor : algorithm) {
                 // SUPPRESS CHECKSTYLE NEXT MagicNumber
                 String gwtDoesntSupportPrintf = (slot < 10 ? "0" : "") + (slot++);
-                System.out.println("   Slot " + gwtDoesntSupportPrintf + ": " + processor.getClass().getName());
+                monitor.log("   Slot " + gwtDoesntSupportPrintf + ": " + processor.getClass().getName());
             }
 
             // Invoke each layout processor
