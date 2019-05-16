@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Kiel University and others.
+ * Copyright (c) 2009, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.debug.views.execution;
+package org.eclipse.elk.core.debug.views.time;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.jface.action.Action;
@@ -21,7 +21,7 @@ public class ClearExecutionsAction extends Action {
     /** identifier string for this action. */
     private static final String ACTION_ID = "org.eclipse.elk.debug.clearExecutions";
     /** relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/clear_exec.gif";
+    private static final String ICON_PATH = "icons/clear.gif";
 
     /** the execution view associated with this action. */
     private ExecutionTimeView view;

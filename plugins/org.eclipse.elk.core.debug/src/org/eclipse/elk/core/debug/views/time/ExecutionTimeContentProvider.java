@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Kiel University and others.
+ * Copyright (c) 2009, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,38 +8,39 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.debug.views.execution;
+package org.eclipse.elk.core.debug.views.time;
 
 import java.util.List;
 
+import org.eclipse.elk.core.debug.LayoutExecutionInfo;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Content provider for Executions. The viewer input element is expected to be a list of {@link Execution} instances.
+ * Content provider for Executions. The viewer input element is expected to be a list of {@link LayoutExecutionInfo} instances.
  */
 final class ExecutionTimeContentProvider implements ITreeContentProvider {
 
     @Override
     public Object[] getChildren(final Object parentElement) {
-        if (parentElement instanceof Execution) {
-            return ((Execution) parentElement).getChildren().toArray();
+        if (parentElement instanceof LayoutExecutionInfo) {
+            return ((LayoutExecutionInfo) parentElement).getChildren().toArray();
         }
-        return new Execution[0];
+        return new LayoutExecutionInfo[0];
     }
 
     @Override
     public Object getParent(final Object element) {
-        if (element instanceof Execution) {
-            return ((Execution) element).getParent();
+        if (element instanceof LayoutExecutionInfo) {
+            return ((LayoutExecutionInfo) element).getParent();
         }
         return null;
     }
 
     @Override
     public boolean hasChildren(final Object element) {
-        return element instanceof Execution
-                && !((Execution) element).getChildren().isEmpty();
+        return element instanceof LayoutExecutionInfo
+                && !((LayoutExecutionInfo) element).getChildren().isEmpty();
     }
 
     @Override

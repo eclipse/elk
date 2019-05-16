@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Kiel University and others.
+ * Copyright (c) 2009, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,10 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.debug.views.execution;
+package org.eclipse.elk.core.debug.views.time;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
+import org.eclipse.elk.core.debug.LayoutExecutionInfo;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -46,7 +47,7 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
     
     @Override
     public Image getImage(final Object element) {
-        if (displayMode == DisplayMode.NAME && element instanceof Execution) {
+        if (displayMode == DisplayMode.NAME && element instanceof LayoutExecutionInfo) {
             return elementImage;
         } else {
             return null;
@@ -55,8 +56,8 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
 
     @Override
     public StyledString getStyledText(Object element) {
-        if (element instanceof Execution) {
-            Execution execution = (Execution) element;
+        if (element instanceof LayoutExecutionInfo) {
+            LayoutExecutionInfo execution = (LayoutExecutionInfo) element;
             
             switch (displayMode) {
             case NAME:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Kiel University and others.
+ * Copyright (c) 2009, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,12 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.debug.views.execution;
+package org.eclipse.elk.core.debug.views.time;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.core.debug.LayoutExecutionInfo;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -37,7 +38,7 @@ public class ExecutionTimeView extends ViewPart {
     /** the tree viewer used to display content. */
     private TreeViewer viewer;
     /** the list of executions. */
-    private List<Execution> executions = new ArrayList<>();
+    private List<LayoutExecutionInfo> executions = new ArrayList<>();
     
 
     /**
@@ -81,7 +82,7 @@ public class ExecutionTimeView extends ViewPart {
             public void run() {
                 ExecutionTimeView activeView = findView();
                 if (progressMonitor != null && activeView != null) {
-                    activeView.executions.add(Execution.fromProgressMonitor(progressMonitor));
+                    activeView.executions.add(LayoutExecutionInfo.fromProgressMonitor(progressMonitor));
                     activeView.viewer.refresh();
                 }
             }
