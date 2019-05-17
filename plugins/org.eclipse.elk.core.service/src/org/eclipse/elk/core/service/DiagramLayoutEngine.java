@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Kiel University and others.
+ * Copyright (c) 2011, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -679,6 +679,9 @@ public class DiagramLayoutEngine {
                 }
             }
             progressMonitor.done();
+            
+            // Log the final result to be displayed in our debug views
+            progressMonitor.logGraph(mapping.getLayoutGraph(), "Result");
         }
 
         mapping.setProperty(MAPPING_STATUS, status);
@@ -724,6 +727,9 @@ public class DiagramLayoutEngine {
             
             if (newTask) {
                 progressMonitor.done();
+                
+                // Log the final result to be displayed in our debug views
+                progressMonitor.logGraph(mapping.getLayoutGraph(), "Result");
             }
             if (progressMonitor.isCanceled()) {
                 return Status.CANCEL_STATUS;
