@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.LoggedGraph;
 
 import com.google.common.collect.Lists;
 
@@ -45,7 +46,12 @@ public final class ExecutionInfo {
     /** List of log messages. */
     private List<String> logMessages;
     /** Whether there are any descendants that have a non-empty list of log messages. */
-    private boolean hasDescendantsWithLogs;
+    private boolean hasDescendantsWithLogMessages;
+    
+    /** List of logged graphs. */
+    private List<LoggedGraph> logGraphs;
+    /** Whether there are any descendants that have a non-empty list of logged graphs. */
+    private boolean hasDescendantsWithLogGraphs;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Construction
@@ -91,6 +97,10 @@ public final class ExecutionInfo {
         // Log messages
         List<String> log = Lists.newArrayList(monitor.getLogs());
         execution.logMessages = Collections.unmodifiableList(log);
+        
+        // Log graphs
+        List<LoggedGraph> graphs = Lists.newArrayList(monitor.getLoggedGraphs());
+        execution.logGraphs = Collections.unmodifiableList(graphs);
 
         // We compute the local execution time by starting with the total execution time and subtracting child
         // execution times as we iterate over them
@@ -103,8 +113,10 @@ public final class ExecutionInfo {
             childExecutions.add(childExecution);
             
             execution.executionTimeLocal -= child.getExecutionTime();
-            execution.hasDescendantsWithLogs |=
+            execution.hasDescendantsWithLogMessages |=
                     childExecution.hasLogMessages() || childExecution.hasDescendantsWithLogMessages();
+            execution.hasDescendantsWithLogGraphs |=
+                    childExecution.hasLoggedGraphs() || childExecution.hasDescendantsWithLoggedGraphs();
         }
         execution.children = childExecutions;
 
@@ -183,7 +195,31 @@ public final class ExecutionInfo {
      * {@link #hasLogMessages()}.
      */
     public boolean hasDescendantsWithLogMessages() {
-        return hasDescendantsWithLogs;
+        return hasDescendantsWithLogMessages;
+    }
+    
+    /**
+     * Returns the list of logged graphs.
+     * 
+     * @return the list of logged graphs, as an unmodifiable list.
+     */
+    public List<LoggedGraph> getLoggedGraphs() {
+        return logGraphs;
+    }
+    
+    /**
+     * Returns whether or not this execution info contains at least one logged graph.
+     */
+    public boolean hasLoggedGraphs() {
+        return !logGraphs.isEmpty();
+    }
+    
+    /**
+     * Returns whether or not any descendants of this execution would return {@code true} upon a call to
+     * {@link #hasLoggedGraphs()}.
+     */
+    public boolean hasDescendantsWithLoggedGraphs() {
+        return hasDescendantsWithLogGraphs;
     }
 
 }

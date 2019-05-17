@@ -23,6 +23,7 @@ import org.eclipse.elk.core.debug.model.IExecutionInfoModelListener;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -155,6 +156,9 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     private void setupToolBar() {
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         
+        // Let subclasses add stuff to the toolbar
+        customizeToolBar(toolBarManager);
+        
         // Install custom actions
         toolBarManager.add(filterTreeAction);
         toolBarManager.add(clearExecutionsAction);
@@ -206,6 +210,11 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         super.dispose();
         
         getSite().getWorkbenchWindow().removePerspectiveListener(viewCloseListener);
+        
+        IBaseLabelProvider treeLabelProvider = treeViewer.getLabelProvider();
+        if (treeLabelProvider != null) {
+            treeLabelProvider.dispose();
+        }
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

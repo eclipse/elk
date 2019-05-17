@@ -1,120 +1,217 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Kiel University and others.
+ * Copyright (c) 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.debug.views.graph;
 
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.eclipse.elk.core.debug.model.ExecutionInfo;
+import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
 import org.eclipse.elk.core.ui.rendering.GraphRenderingCanvas;
+import org.eclipse.elk.core.util.LoggedGraph;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.swt.widgets.Text;
 
 /**
- * A viewer for layout graphs.
+ * A viewer for (intermediate) graphs.
  */
-public class LayoutGraphView extends ViewPart {
+public class LayoutGraphView extends AbstractLayoutDebugView {
 
-    /** the view identifier. */
+    /** The view identifier. */
     public static final String VIEW_ID = "org.eclipse.elk.debug.graphView"; //$NON-NLS-1$
-
-    /** the scrolled composite that contains the graph canvas. */
-    private ScrolledComposite scrolledComposite;
-    /** the canvas used to draw layout graphs. */
-    private GraphRenderingCanvas graphCanvas;
     
-
+    // Actions
+    private final LoadGraphAction loadGraphAction = new LoadGraphAction();
+    private final ImageExportAction saveImageAction = new ImageExportAction(this);
+    
+    // UI Controls
+    private GraphListLabelProvider graphListLabelProvider = new GraphListLabelProvider();
+    private TableViewer graphListViewer;
+    private Composite canvasStackComposite;
+    private StackLayout canvasStackLayout;
+    private ScrolledComposite visualGraphCanvasComposite;
+    private GraphRenderingCanvas visualGraphCanvas;
+    private Text textualGraphCanvas;
+    
     /**
      * Creates a layout graph view.
      */
     public LayoutGraphView() {
-        super();
+        super(VIEW_ID);
+    }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        
+        graphListLabelProvider.dispose();
     }
     
     /**
-     * Updates the view by painting the given layout graph.
-     * 
-     * @param graph the graph to be drawn.
+     * Returns the graph rendering canvas if it currently shows anything meaningful.
      */
-    public static void updateWithGraph(final ElkNode graph) {
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-            public void run() {
-                LayoutGraphView activeView = findView();
-                if (graph != null && activeView != null) {
-                    ElkNode nodeCopy = EcoreUtil.copy(graph);
-                    activeView.getCanvas().setLayoutGraph(nodeCopy);
-                }
+    public GraphRenderingCanvas getCanvas() {
+        if (visualGraphCanvas.getLayoutGraph() != null && canvasStackLayout.topControl == visualGraphCanvasComposite) {
+            return visualGraphCanvas;
+        } else {
+            return null;
+        }
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Execution Tree Handling
+    
+    @Override
+    protected void treeSelectionChanged() {
+        // Retrieve all logged graphs from all selected elements
+        List<LoggedGraph> loggedGraphs = getSelectedExecutionInfos().stream()
+            .flatMap(info -> info.getLoggedGraphs().stream())
+            .collect(Collectors.toList());
+        
+        graphListViewer.setInput(loggedGraphs);
+        
+        if (!loggedGraphs.isEmpty()) {
+            graphListViewer.setSelection(new StructuredSelection(loggedGraphs.get(0)), true);
+        }
+        
+        updateActionEnablement();
+    }
+
+    @Override
+    protected Predicate<ExecutionInfo> getTreeFilter() {
+        return info -> info.hasLoggedGraphs() || info.hasDescendantsWithLoggedGraphs();
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph List Handling
+    
+    /**
+     * Called when the selection is changed on our list of logged graphs.
+     */
+    private void listSelectionChanged() {
+        IStructuredSelection selection = graphListViewer.getStructuredSelection();
+        if (selection.isEmpty()) {
+            visualGraphCanvas.setLayoutGraph(null);
+            textualGraphCanvas.setText("");
+        } else {
+            // We only put LoggedGraph instances into the list, so this cast should never fail
+            showLoggedGraph((LoggedGraph) selection.getFirstElement());
+        }
+        
+        updateActionEnablement();
+    }
+
+    /**
+     * Fills the graph view depending on the graph's type.
+     */
+    private void showLoggedGraph(LoggedGraph graphInfo) {
+        switch (graphInfo.getGraphType()) {        
+        case ELK:
+            showGraphOnCanvas((ElkNode) graphInfo.getGraph());
+            break;
+            
+        default:
+            showTextOnCanvas(graphInfo.getGraph().toString());
+            break;
+        }
+    }
+
+    private void showGraphOnCanvas(ElkNode graph) {
+        // putting visual graph view in front and set graph
+        canvasStackLayout.topControl = visualGraphCanvasComposite;
+        canvasStackComposite.layout();
+        visualGraphCanvas.setLayoutGraph(graph);
+        textualGraphCanvas.setText("");
+    }
+
+    private void showTextOnCanvas(String text) {
+        canvasStackLayout.topControl = textualGraphCanvas;
+        canvasStackComposite.layout();
+        textualGraphCanvas.setText(text);
+        visualGraphCanvas.setLayoutGraph(null);
+    }
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UI Setup
+    
+    @Override
+    protected void customizeToolBar(IToolBarManager toolBarManager) {
+        toolBarManager.add(loadGraphAction);
+        toolBarManager.add(saveImageAction);
+        toolBarManager.add(new Separator());
+    }
+    
+    @Override
+    protected void customizeTreeViewer(TreeViewer treeViewer) {
+        treeViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new GraphTreeLabelProvider()));
+    }
+    
+    @Override
+    protected void setupRemainingControls(Composite parent) {
+        setupGraphListViewer(parent);
+        setupCanvasStack(parent);
+        
+        updateActionEnablement();
+    }
+
+    private void setupGraphListViewer(Composite parent) {
+        graphListViewer = new TableViewer(parent);
+        graphListViewer.setContentProvider(ArrayContentProvider.getInstance());
+        graphListViewer.setLabelProvider(graphListLabelProvider);
+        
+        graphListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                listSelectionChanged();
             }
         });
     }
 
-    /**
-     * Tries to find the relevant currently open view.
-     */
-    private static LayoutGraphView findView() {
-        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (activeWindow == null) {
-            return null;
-        }
-
-        IWorkbenchPage activePage = activeWindow.getActivePage();
-        if (activePage == null) {
-            return null;
-        }
-
-        // find layout graph view
-        IViewPart viewPart = activePage.findView(LayoutGraphView.VIEW_ID);
-        if (viewPart instanceof LayoutGraphView) {
-            return (LayoutGraphView) viewPart;
-        }
+    private void setupCanvasStack(Composite parent) {
+        canvasStackComposite = new Composite(parent, SWT.NONE);
         
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void createPartControl(final Composite parent) {
-        // create actions in the view toolbar
-        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        toolBarManager.add(new LoadGraphAction());
-        toolBarManager.add(new ImageExportAction(this));
-
-        // create canvas for layout graphs
-        scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        graphCanvas = new GraphRenderingCanvas(scrolledComposite);
-        scrolledComposite.setContent(graphCanvas);
+        // Setup textual graph view
+        textualGraphCanvas = new Text(canvasStackComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+        textualGraphCanvas.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
+        
+        // Setup visual graph view
+        visualGraphCanvasComposite = new ScrolledComposite(canvasStackComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+        visualGraphCanvas = new GraphRenderingCanvas(visualGraphCanvasComposite);
+        visualGraphCanvasComposite.setContent(visualGraphCanvas);
+        
+        // The layout can later be used to switch between the graph viewers
+        canvasStackLayout = new StackLayout();
+        canvasStackComposite.setLayout(canvasStackLayout);
+        canvasStackLayout.topControl = null;
     }
     
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setFocus() {
-        scrolledComposite.setFocus();
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Events
+    
+    private void updateActionEnablement() {
+        // Check if we currently display anything in the visual graph view
+        saveImageAction.setEnabled(getCanvas() != null);
     }
-
-    /**
-     * Returns the layout graph canvas.
-     * 
-     * @return the layout graph canvas
-     */
-    public GraphRenderingCanvas getCanvas() {
-        return graphCanvas;
-    }
-
+    
 }

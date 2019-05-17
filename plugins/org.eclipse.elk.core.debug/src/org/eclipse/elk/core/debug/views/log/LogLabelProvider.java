@@ -29,15 +29,27 @@ public class LogLabelProvider extends LabelProvider implements IStyledLabelProvi
     /** The image used for execution infos without logs. */
     private Image noLogImage;
 
-    /**
-     * Creates an debug logs label provider.
-     */
     public LogLabelProvider() {
         // loading icons for different log containers
         logImage =
                 ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, LOG_IMAGE_PATH).createImage();
         noLogImage =
                 ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, NO_LOG_IMAGE_PATH).createImage();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        
+        if (noLogImage != null) {
+            noLogImage.dispose();
+            noLogImage = null;
+        }
+        
+        if (logImage != null) {
+            logImage.dispose();
+            logImage = null;
+        }
     }
 
     @Override
@@ -57,21 +69,6 @@ public class LogLabelProvider extends LabelProvider implements IStyledLabelProvi
                     : noLogImage;
         } else {
             return null;
-        }
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        
-        if (noLogImage != null) {
-            noLogImage.dispose();
-            noLogImage = null;
-        }
-        
-        if (logImage != null) {
-            logImage.dispose();
-            logImage = null;
         }
     }
     
