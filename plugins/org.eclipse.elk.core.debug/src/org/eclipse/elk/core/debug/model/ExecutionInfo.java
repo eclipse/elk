@@ -35,6 +35,8 @@ public final class ExecutionInfo {
     /** Unmodifiable list of child executions. */
     private List<ExecutionInfo> children;
 
+    /** Whether execution times were measured. */
+    private boolean executionTimeMeasured;
     /** Amount of time spent in this execution and its child executions. */
     private double executionTimeIncludingChildren;
     /** Amount of time spent in this execution locally, without its child executions. */
@@ -82,6 +84,7 @@ public final class ExecutionInfo {
 
         // Basic properties
         execution.name = monitor.getTaskName() != null ? monitor.getTaskName() : "Unnamed";
+        execution.executionTimeMeasured = monitor.isExecutionTimeMeasured();
         execution.executionTimeIncludingChildren = monitor.getExecutionTime();
         execution.parent = parent;
 
@@ -135,6 +138,14 @@ public final class ExecutionInfo {
      */
     public List<ExecutionInfo> getChildren() {
         return children;
+    }
+    
+    /**
+     * Returns whether execution times were measured. That is, if calls to {@link #getExecutionTimeLocal()} and
+     * {@link #getExecutionTimeIncludingChildren()} return anything meaningful.
+     */
+    public boolean isExecutionTimeMeasured() {
+        return executionTimeMeasured;
     }
 
     /**

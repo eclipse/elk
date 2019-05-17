@@ -172,7 +172,6 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     private void setupTreeViewer(Composite parent) {
         treeViewer = new TreeViewer(parent);
         treeViewer.setContentProvider(treeContentProvider);
-        treeViewer.setInput(ElkDebugPlugin.getDefault().getModel().getExecutionInfos());
         
         // React to selection changes by 
         treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -183,6 +182,8 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         });
         
         customizeTreeViewer(treeViewer);
+        
+        treeViewer.setInput(ElkDebugPlugin.getDefault().getModel().getExecutionInfos());
     }
     
     /**
@@ -193,8 +194,11 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     
     /**
      * Called once the tree viewer has been installed to add any remaining controls that need to be added to the view.
+     * The default implementation does nothing.
      */
-    protected abstract void setupRemainingControls(Composite parent);
+    protected void setupRemainingControls(Composite parent) {
+        // Do nothing
+    }
     
     @Override
     public void dispose() {

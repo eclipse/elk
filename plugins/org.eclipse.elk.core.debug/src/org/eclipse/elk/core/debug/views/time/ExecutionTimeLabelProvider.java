@@ -24,10 +24,10 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
     
     /** What the label provider can display. */
     public static enum DisplayMode { NAME, TIME_TOTAL, TIME_LOCAL };
-    
 
     /** Path to the image used for elements. */
     private static final String IMAGE_PATH = "/icons/execution.gif";
+    
     /** The image used for each element. */
     private Image elementImage;
     /** What we should display. */
@@ -62,25 +62,30 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
             switch (displayMode) {
             case NAME:
                 return new StyledString(execution.getName());
+                
             case TIME_TOTAL:
-                return new StyledString(timeToString(execution.getExecutionTimeIncludingChildren()));
+                if (execution.isExecutionTimeMeasured()) {
+                    return new StyledString(timeToString(execution.getExecutionTimeIncludingChildren()));
+                } else {
+                    return new StyledString("–");
+                }
+                
             case TIME_LOCAL:
-                return execution.getChildren().isEmpty()
-                        ? new StyledString("")
-                        : new StyledString(timeToString(execution.getExecutionTimeLocal()));
-            default:
-                return null;
+                if (execution.isExecutionTimeMeasured()) {
+                    return execution.getChildren().isEmpty()
+                            ? new StyledString("")
+                            : new StyledString(timeToString(execution.getExecutionTimeLocal()));
+                } else {
+                    return new StyledString("");
+                }
             }
-        } else {
-            return null;
         }
+        
+        return null;
     }
     
     /**
      * Convert the given time (in seconds) into a string.
-     * 
-     * @param time time in seconds
-     * @return a string representation
      */
     private String timeToString(final double time) {
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
@@ -90,6 +95,7 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
     @Override
     public void dispose() {
         super.dispose();
+        
         if (elementImage != null) {
             elementImage.dispose();
             elementImage = null;
