@@ -12,8 +12,8 @@ package org.eclipse.elk.core.debug.views.time;
 
 import java.util.function.Predicate;
 
-import org.eclipse.elk.core.debug.AbstractLayoutDebugView;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
+import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;

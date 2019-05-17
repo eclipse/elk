@@ -9,8 +9,8 @@ package org.eclipse.elk.core.debug.views.log;
 
 import java.util.function.Predicate;
 
-import org.eclipse.elk.core.debug.AbstractLayoutDebugView;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
+import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;

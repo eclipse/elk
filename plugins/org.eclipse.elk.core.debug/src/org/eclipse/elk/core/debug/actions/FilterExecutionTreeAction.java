@@ -7,8 +7,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.actions;
 
-import org.eclipse.elk.core.debug.AbstractLayoutDebugView;
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
+import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 

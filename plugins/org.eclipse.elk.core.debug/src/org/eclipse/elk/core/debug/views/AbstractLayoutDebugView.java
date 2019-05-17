@@ -5,13 +5,14 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.core.debug;
+package org.eclipse.elk.core.debug.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.debug.actions.ClearExecutionsAction;
 import org.eclipse.elk.core.debug.actions.CollapseExecutionTreeAction;
 import org.eclipse.elk.core.debug.actions.ExpandExecutionTreeAction;
