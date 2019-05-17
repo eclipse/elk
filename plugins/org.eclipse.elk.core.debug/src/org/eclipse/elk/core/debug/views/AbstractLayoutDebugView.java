@@ -20,6 +20,7 @@ import org.eclipse.elk.core.debug.actions.FilterExecutionTreeAction;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.model.ExecutionInfoContentProvider;
 import org.eclipse.elk.core.debug.model.IExecutionInfoModelListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -32,6 +33,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PerspectiveAdapter;
@@ -134,7 +136,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         gl.marginWidth = 0;
         parent.setLayout(gl);
 
-        setupToolBar();
+        setupActionBars();
         updateActionEnablement();
         
         sashForm = new SashForm(parent, SWT.HORIZONTAL);
@@ -153,17 +155,29 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         ElkDebugPlugin.getDefault().getModel().addExecutionInfoModelListener(this);
     }
     
-    private void setupToolBar() {
-        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+    private void setupActionBars() {
+        IActionBars actionBars = getViewSite().getActionBars();
         
-        // Let subclasses add stuff to the toolbar
+        // Let subclasses setup the menu
+        customizeMenu(actionBars.getMenuManager());
+        
+        // Setup the tool bar and let subclasses be the first to add actions to it
+        IToolBarManager toolBarManager = actionBars.getToolBarManager();
+        
         customizeToolBar(toolBarManager);
         
-        // Install custom actions
         toolBarManager.add(filterTreeAction);
         toolBarManager.add(clearExecutionsAction);
         toolBarManager.add(expandTreeAction);
         toolBarManager.add(collapseTreeAction);
+    }
+    
+    /**
+     * Called before common view menu actions are added. Subclasses can override and add custom actions. The default
+     * implementation does nothing.
+     */
+    protected void customizeMenu(IMenuManager menuManager) {
+        // Do nothing
     }
     
     /**

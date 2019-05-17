@@ -16,6 +16,7 @@ import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
 import org.eclipse.elk.core.ui.rendering.GraphRenderingCanvas;
 import org.eclipse.elk.core.util.LoggedGraph;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
@@ -42,6 +43,7 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     public static final String VIEW_ID = "org.eclipse.elk.debug.graphView"; //$NON-NLS-1$
     
     // Actions
+    private final LayoutUponLoadSettingAction layoutUponLoadSettingAction = new LayoutUponLoadSettingAction();
     private final LoadGraphAction loadGraphAction = new LoadGraphAction();
     private final ImageExportAction saveImageAction = new ImageExportAction(this);
     
@@ -154,6 +156,11 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // UI Setup
+    
+    @Override
+    protected void customizeMenu(IMenuManager menuManager) {
+        menuManager.add(layoutUponLoadSettingAction);
+    }
     
     @Override
     protected void customizeToolBar(IToolBarManager toolBarManager) {

@@ -97,8 +97,8 @@ public class LoadGraphAction extends Action {
                 .withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
         monitor.begin(fileName, 1);
         
-        // perform layout using a graph layout engine
-        if (!graph.getProperty(CoreOptions.NO_LAYOUT)) {
+        // Perform layout using a graph layout engine, if enabled
+        if (LayoutUponLoadSettingAction.shouldLayoutUponLoad()) {
             IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
             layoutEngine.layout(graph, monitor.subTask(1));
         }
