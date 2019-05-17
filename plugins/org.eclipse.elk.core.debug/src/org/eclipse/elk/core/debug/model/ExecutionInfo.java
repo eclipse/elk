@@ -8,7 +8,7 @@
  * Contributors:
  *    Christoph Daniel Schulze - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.debug;
+package org.eclipse.elk.core.debug.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,7 @@ import com.google.common.collect.Lists;
  * Since progress monitors can form a hierarchy, so can executions. Once constructed based on a progress monitor, an
  * execution is immutable.
  */
-public final class LayoutExecutionInfo {
+public final class ExecutionInfo {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Fields
@@ -31,9 +31,9 @@ public final class LayoutExecutionInfo {
     /** The name of this execution. */
     private String name;
     /** Our parent execution, if any. */
-    private LayoutExecutionInfo parent;
+    private ExecutionInfo parent;
     /** Unmodifiable list of child executions. */
-    private List<LayoutExecutionInfo> children;
+    private List<ExecutionInfo> children;
 
     /** Amount of time spent in this execution and its child executions. */
     private double executionTimeIncludingChildren;
@@ -51,7 +51,7 @@ public final class LayoutExecutionInfo {
     /**
      * Private constructor.
      */
-    private LayoutExecutionInfo() {
+    private ExecutionInfo() {
 
     }
 
@@ -62,7 +62,7 @@ public final class LayoutExecutionInfo {
      *            that holds information about execution time.
      * @return the execution with its children.
      */
-    public static LayoutExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor) {
+    public static ExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor) {
         return fromProgressMonitor(monitor, null);
     }
 
@@ -75,10 +75,10 @@ public final class LayoutExecutionInfo {
      *            for the child created from the given monitor.
      * @return a child execution with its children.
      */
-    private static LayoutExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor,
-            final LayoutExecutionInfo parent) {
+    private static ExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor,
+            final ExecutionInfo parent) {
 
-        LayoutExecutionInfo execution = new LayoutExecutionInfo();
+        ExecutionInfo execution = new ExecutionInfo();
 
         // Basic properties
         execution.name = monitor.getTaskName() != null ? monitor.getTaskName() : "Unnamed";
@@ -94,16 +94,16 @@ public final class LayoutExecutionInfo {
         execution.executionTimeLocal = execution.executionTimeIncludingChildren;
 
         // Add executions for child monitors
-        List<LayoutExecutionInfo> childExecutions = new ArrayList<>(monitor.getSubMonitors().size());
+        List<ExecutionInfo> childExecutions = new ArrayList<>(monitor.getSubMonitors().size());
         for (IElkProgressMonitor child : monitor.getSubMonitors()) {
-            LayoutExecutionInfo childExecution = LayoutExecutionInfo.fromProgressMonitor(child, execution);
+            ExecutionInfo childExecution = ExecutionInfo.fromProgressMonitor(child, execution);
             childExecutions.add(childExecution);
             
             execution.executionTimeLocal -= child.getExecutionTime();
             execution.hasDescendantsWithLogs |=
                     childExecution.hasLogMessages() || childExecution.hasDescendantsWithLogMessages();
         }
-        execution.children = Collections.unmodifiableList(childExecutions);
+        execution.children = childExecutions;
 
         // Ensure the local execution time does not drop below zero due to double arithmetic
         execution.executionTimeLocal = Math.max(execution.executionTimeLocal, 0.0);
@@ -126,16 +126,14 @@ public final class LayoutExecutionInfo {
      * 
      * @return the parent, or {@code null} if there is none.
      */
-    public LayoutExecutionInfo getParent() {
+    public ExecutionInfo getParent() {
         return parent;
     }
 
     /**
-     * Returns the children of this execution.
-     * 
-     * @return the children, as an unmodifiable list.
+     * Returns the children of this execution. Can be modified.
      */
-    public List<LayoutExecutionInfo> getChildren() {
+    public List<ExecutionInfo> getChildren() {
         return children;
     }
 

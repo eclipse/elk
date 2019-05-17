@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.debug.views.time;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.debug.LayoutExecutionInfo;
+import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -47,7 +47,7 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
     
     @Override
     public Image getImage(final Object element) {
-        if (displayMode == DisplayMode.NAME && element instanceof LayoutExecutionInfo) {
+        if (displayMode == DisplayMode.NAME && element instanceof ExecutionInfo) {
             return elementImage;
         } else {
             return null;
@@ -56,8 +56,8 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
 
     @Override
     public StyledString getStyledText(Object element) {
-        if (element instanceof LayoutExecutionInfo) {
-            LayoutExecutionInfo execution = (LayoutExecutionInfo) element;
+        if (element instanceof ExecutionInfo) {
+            ExecutionInfo execution = (ExecutionInfo) element;
             
             switch (displayMode) {
             case NAME:

@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug;
 
-import org.eclipse.elk.core.debug.views.graph.LayoutGraphView;
-import org.eclipse.elk.core.debug.views.log.LayoutLogView;
-import org.eclipse.elk.core.debug.views.time.ExecutionTimeView;
+import org.eclipse.elk.core.debug.model.ExecutionInfo;
+import org.eclipse.elk.core.debug.model.ExecutionInfoModel;
 import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
@@ -30,6 +29,8 @@ public class ElkDebugPlugin extends AbstractUIPlugin {
 	/** The shared instance. */
 	private static ElkDebugPlugin plugin;
 	
+	/** Our central execution info model that feeds our debug views. */
+	private ExecutionInfoModel model = new ExecutionInfoModel();
 	/** The layout listener we will be using to update the view we are contributing. */
 	private ILayoutListener layoutListener = new ILayoutListener() {
         @Override
@@ -38,19 +39,10 @@ public class ElkDebugPlugin extends AbstractUIPlugin {
         
         @Override
         public void layoutDone(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
-            // Update our views
-            LayoutGraphView.updateWithGraph(mapping.getLayoutGraph());
-            ExecutionTimeView.addExecution(progressMonitor);
-            LayoutLogView.addLogs(progressMonitor);
+            model.addExecution(ExecutionInfo.fromProgressMonitor(progressMonitor));
         }
     };
 	
-	/**
-	 * The constructor
-	 */
-	public ElkDebugPlugin() {
-	}
-
     @Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -74,6 +66,13 @@ public class ElkDebugPlugin extends AbstractUIPlugin {
 	 */
 	public static ElkDebugPlugin getDefault() {
 		return plugin;
+	}
+	
+	/**
+	 * Returns our central execution info model.
+	 */
+	public ExecutionInfoModel getModel() {
+	    return model;
 	}
 
 }

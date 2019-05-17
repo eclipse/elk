@@ -12,35 +12,35 @@ package org.eclipse.elk.core.debug.views.time;
 
 import java.util.List;
 
-import org.eclipse.elk.core.debug.LayoutExecutionInfo;
+import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Content provider for Executions. The viewer input element is expected to be a list of {@link LayoutExecutionInfo} instances.
+ * Content provider for Executions. The viewer input element is expected to be a list of {@link ExecutionInfo} instances.
  */
 final class ExecutionTimeContentProvider implements ITreeContentProvider {
 
     @Override
     public Object[] getChildren(final Object parentElement) {
-        if (parentElement instanceof LayoutExecutionInfo) {
-            return ((LayoutExecutionInfo) parentElement).getChildren().toArray();
+        if (parentElement instanceof ExecutionInfo) {
+            return ((ExecutionInfo) parentElement).getChildren().toArray();
         }
-        return new LayoutExecutionInfo[0];
+        return new ExecutionInfo[0];
     }
 
     @Override
     public Object getParent(final Object element) {
-        if (element instanceof LayoutExecutionInfo) {
-            return ((LayoutExecutionInfo) element).getParent();
+        if (element instanceof ExecutionInfo) {
+            return ((ExecutionInfo) element).getParent();
         }
         return null;
     }
 
     @Override
     public boolean hasChildren(final Object element) {
-        return element instanceof LayoutExecutionInfo
-                && !((LayoutExecutionInfo) element).getChildren().isEmpty();
+        return element instanceof ExecutionInfo
+                && !((ExecutionInfo) element).getChildren().isEmpty();
     }
 
     @Override
