@@ -218,7 +218,7 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     
     private void updateActionEnablement() {
         // Check if we currently display anything in the visual graph view
-        saveImageAction.setEnabled(getCanvas() != null);
+        saveImageAction.updateEnablement();
     }
     
 }

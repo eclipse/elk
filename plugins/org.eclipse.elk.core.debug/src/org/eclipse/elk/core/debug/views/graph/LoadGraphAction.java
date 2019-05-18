@@ -16,7 +16,6 @@ import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
@@ -41,7 +40,7 @@ import org.eclipse.swt.widgets.FileDialog;
 public class LoadGraphAction extends Action {
     
     /** identifier string for this action. */
-    private static final String ACTION_ID = "org.eclipse.elk.debug.loadGraph";
+    private static final String ACTION_ID = "org.eclipse.elk.debug.actions.loadGraph";
     
     /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/import.gif";

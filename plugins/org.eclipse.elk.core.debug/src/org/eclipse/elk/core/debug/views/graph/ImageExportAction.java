@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.FileDialog;
 public class ImageExportAction extends Action {
 
     /** identifier string for this action. */
-    private static final String ACTION_ID = "org.eclipse.elk.debug.imageExport";
+    private static final String ACTION_ID = "org.eclipse.elk.debug.actions.imageExport";
     
     /** relative path to the icon to use for this action. */
     private static final String ICON_PATH = "icons/export.gif";
@@ -57,6 +57,13 @@ public class ImageExportAction extends Action {
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
         
         this.view = theview;
+    }
+    
+    /**
+     * Updates the enabled property of this action.
+     */
+    public void updateEnablement() {
+        setEnabled(view.getCanvas() != null);
     }
 
     @Override

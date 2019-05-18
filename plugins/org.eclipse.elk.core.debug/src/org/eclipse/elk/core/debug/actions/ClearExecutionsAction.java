@@ -27,6 +27,13 @@ public class ClearExecutionsAction extends Action {
         setToolTipText("Clears all layout executions.");
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
     }
+    
+    /**
+     * Updates the enabled property of this action.
+     */
+    public void updateEnablement() {
+        setEnabled(!ElkDebugPlugin.getDefault().getModel().getExecutionInfos().isEmpty());
+    }
 
     @Override
     public void run() {

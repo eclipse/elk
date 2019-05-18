@@ -300,7 +300,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
      * Updates the enabled state of our actions depending on the tree viewer's state.
      */
     private void updateActionEnablement() {
-        clearExecutionsAction.setEnabled(!ElkDebugPlugin.getDefault().getModel().getExecutionInfos().isEmpty());
+        clearExecutionsAction.updateEnablement();
     }
 
     @Override
