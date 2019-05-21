@@ -87,6 +87,8 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     
     @Override
     protected void treeSelectionChanged() {
+        super.treeSelectionChanged();
+        
         // Retrieve all logged graphs from all selected elements
         List<LoggedGraph> loggedGraphs = getSelectedExecutionInfos().stream()
             .flatMap(info -> info.getLoggedGraphs().stream())

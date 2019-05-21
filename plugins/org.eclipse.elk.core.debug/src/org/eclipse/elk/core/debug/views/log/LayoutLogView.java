@@ -35,6 +35,8 @@ public class LayoutLogView extends AbstractLayoutDebugView {
 
     @Override
     protected void treeSelectionChanged() {
+        super.treeSelectionChanged();
+        
         String text = "";
 
         for (ExecutionInfo info : getSelectedExecutionInfos()) {
