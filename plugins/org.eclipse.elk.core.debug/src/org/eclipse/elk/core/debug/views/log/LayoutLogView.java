@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -30,7 +31,7 @@ public class LayoutLogView extends AbstractLayoutDebugView {
     private Text logViewer;
     
     public LayoutLogView() {
-        super(VIEW_ID);
+        super(VIEW_ID, DiagramLayoutEngine.PREF_DEBUG_LOGGING);
     }
 
     @Override

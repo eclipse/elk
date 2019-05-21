@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.ui.rendering.GraphRenderingCanvas;
 import org.eclipse.elk.core.util.LoggedGraph;
 import org.eclipse.elk.graph.ElkNode;
@@ -61,7 +62,7 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
      * Creates a layout graph view.
      */
     public LayoutGraphView() {
-        super(VIEW_ID);
+        super(VIEW_ID, DiagramLayoutEngine.PREF_DEBUG_LOGGING);
     }
     
     @Override

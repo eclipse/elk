@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -37,7 +38,7 @@ public class ExecutionTimeView extends AbstractLayoutDebugView {
      * Creates an execution view.
      */
     public ExecutionTimeView() {
-        super(VIEW_ID);
+        super(VIEW_ID, DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME);
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

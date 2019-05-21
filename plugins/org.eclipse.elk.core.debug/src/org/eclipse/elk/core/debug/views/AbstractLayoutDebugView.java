@@ -18,6 +18,7 @@ import org.eclipse.elk.core.debug.actions.ClearExecutionsAction;
 import org.eclipse.elk.core.debug.actions.CollapseExecutionTreeAction;
 import org.eclipse.elk.core.debug.actions.ExpandExecutionTreeAction;
 import org.eclipse.elk.core.debug.actions.FilterExecutionTreeAction;
+import org.eclipse.elk.core.debug.actions.PreferenceAction;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.model.ExecutionInfoContentProvider;
 import org.eclipse.elk.core.debug.model.IExecutionInfoModelListener;
@@ -25,6 +26,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -58,9 +60,10 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     private final ExecutionInfoContentProvider treeContentProvider = new ExecutionInfoContentProvider();
     
     // Actions
+    private final PreferenceAction preferenceAction;
+    private final FilterExecutionTreeAction filterTreeAction = new FilterExecutionTreeAction(this);
     private final ClearExecutionAction clearExecutionAction = new ClearExecutionAction(this);
     private final ClearExecutionsAction clearExecutionsAction = new ClearExecutionsAction();
-    private final FilterExecutionTreeAction filterTreeAction = new FilterExecutionTreeAction(this);
     private final CollapseExecutionTreeAction collapseTreeAction = new CollapseExecutionTreeAction(this);
     private final ExpandExecutionTreeAction expandTreeAction = new ExpandExecutionTreeAction(this);
     
@@ -72,10 +75,13 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     private TreeViewer treeViewer;
     
     /**
-     * Creates a new instance with the given view ID.
+     * Creates a new instance with the given view ID which displays information whose logging is controlled by the given
+     * preference ID.
      */
-    public AbstractLayoutDebugView(String viewId) {
+    public AbstractLayoutDebugView(String viewId, String preferenceId) {
         this.viewId = viewId;
+        
+        preferenceAction = new PreferenceAction(preferenceId);
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,11 +188,12 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         
         customizeToolBar(toolBarManager);
         
+        toolBarManager.add(preferenceAction);
         toolBarManager.add(filterTreeAction);
-        toolBarManager.add(clearExecutionAction);
-        toolBarManager.add(clearExecutionsAction);
-        toolBarManager.add(expandTreeAction);
-        toolBarManager.add(collapseTreeAction);
+//        toolBarManager.add(clearExecutionAction);
+//        toolBarManager.add(clearExecutionsAction);
+//        toolBarManager.add(expandTreeAction);
+//        toolBarManager.add(collapseTreeAction);
     }
     
     /**
@@ -211,7 +218,13 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         
         // Setup a context menu with a delete item
         MenuManager contextMenu = new MenuManager();
+        
         contextMenu.add(clearExecutionAction);
+        contextMenu.add(clearExecutionsAction);
+        contextMenu.add(new Separator());
+        contextMenu.add(expandTreeAction);
+        contextMenu.add(collapseTreeAction);
+        
         contextMenu.addMenuListener(new IMenuListener() {
             @Override
             public void menuAboutToShow(IMenuManager manager) {
@@ -269,6 +282,8 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         if (treeLabelProvider != null) {
             treeLabelProvider.dispose();
         }
+        
+        preferenceAction.dispose();
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
