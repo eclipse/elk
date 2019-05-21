@@ -21,10 +21,6 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * 
- * TODO Add a button to each view that allows to enable or disable the option that feeds that view.
- * TODO Add a single-execution-removal button incl. support to pressing the delete / backspace key in the tree viewer.
- * TODO Add a reload button to the graph view when files are selected.
  */
 public class ElkDebugPlugin extends AbstractUIPlugin {
 

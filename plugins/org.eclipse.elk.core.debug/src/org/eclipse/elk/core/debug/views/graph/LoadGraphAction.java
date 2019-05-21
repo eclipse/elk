@@ -42,7 +42,7 @@ public class LoadGraphAction extends Action {
     private static final String ACTION_ID = "org.eclipse.elk.debug.actions.loadGraph";
 
     /** relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/import.gif";
+    private static final String ICON_PATH = "icons/import.png";
     /** preference identifier for the last used file name. */
     private static final String LAST_FILE_NAME_PREF = "loadGraphAction.lastGraphFile";
 
