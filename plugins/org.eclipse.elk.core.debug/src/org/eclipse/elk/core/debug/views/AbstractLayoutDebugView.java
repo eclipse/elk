@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
+import org.eclipse.elk.core.debug.actions.ClearExecutionAction;
 import org.eclipse.elk.core.debug.actions.ClearExecutionsAction;
 import org.eclipse.elk.core.debug.actions.CollapseExecutionTreeAction;
 import org.eclipse.elk.core.debug.actions.ExpandExecutionTreeAction;
@@ -20,8 +21,10 @@ import org.eclipse.elk.core.debug.actions.FilterExecutionTreeAction;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.model.ExecutionInfoContentProvider;
 import org.eclipse.elk.core.debug.model.IExecutionInfoModelListener;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -31,6 +34,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -53,6 +58,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     private final ExecutionInfoContentProvider treeContentProvider = new ExecutionInfoContentProvider();
     
     // Actions
+    private final ClearExecutionAction clearExecutionAction = new ClearExecutionAction(this);
     private final ClearExecutionsAction clearExecutionsAction = new ClearExecutionsAction();
     private final FilterExecutionTreeAction filterTreeAction = new FilterExecutionTreeAction(this);
     private final CollapseExecutionTreeAction collapseTreeAction = new CollapseExecutionTreeAction(this);
@@ -146,7 +152,6 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         parent.setLayout(gl);
 
         setupActionBars();
-        updateActionEnablement();
         
         sashForm = new SashForm(parent, SWT.HORIZONTAL);
         sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -162,6 +167,8 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         
         // Register for changes to the execution info model
         ElkDebugPlugin.getDefault().getModel().addExecutionInfoModelListener(this);
+        
+        updateActionEnablement();
     }
     
     private void setupActionBars() {
@@ -176,6 +183,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         customizeToolBar(toolBarManager);
         
         toolBarManager.add(filterTreeAction);
+        toolBarManager.add(clearExecutionAction);
         toolBarManager.add(clearExecutionsAction);
         toolBarManager.add(expandTreeAction);
         toolBarManager.add(collapseTreeAction);
@@ -201,11 +209,34 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         treeViewer = new TreeViewer(parent);
         treeViewer.setContentProvider(treeContentProvider);
         
-        // React to selection changes by 
+        // Setup a context menu with a delete item
+        MenuManager contextMenu = new MenuManager();
+        contextMenu.add(clearExecutionAction);
+        contextMenu.addMenuListener(new IMenuListener() {
+            @Override
+            public void menuAboutToShow(IMenuManager manager) {
+                // Update our remove action because it is not updated before the menu is shown
+                clearExecutionAction.updateEnablement();
+            }
+        });
+        
+        treeViewer.getTree().setMenu(contextMenu.createContextMenu(treeViewer.getControl()));
+        
+        // React to selection changes
         treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 treeSelectionChanged();
+            }
+        });
+        
+        // React to key presses
+        treeViewer.getTree().addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == SWT.BS || e.keyCode == SWT.DEL) {
+                    clearExecutionAction.run();
+                }
             }
         });
         
@@ -309,6 +340,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
      * Updates the enabled state of our actions depending on the tree viewer's state.
      */
     private void updateActionEnablement() {
+        clearExecutionAction.updateEnablement();
         clearExecutionsAction.updateEnablement();
     }
 
