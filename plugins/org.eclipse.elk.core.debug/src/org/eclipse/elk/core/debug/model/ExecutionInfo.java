@@ -117,12 +117,18 @@ public final class ExecutionInfo {
         execution.parent = parent;
 
         // Log messages
-        List<String> log = Lists.newArrayList(monitor.getLogs());
-        execution.logMessages = Collections.unmodifiableList(log);
+        List<String> log = monitor.getLogs();
+        if (log == null) {
+            log = Collections.emptyList();
+        }
+        execution.logMessages = Collections.unmodifiableList(Lists.newArrayList(log));
 
         // Log graphs
-        List<LoggedGraph> graphs = Lists.newArrayList(monitor.getLoggedGraphs());
-        execution.logGraphs = Collections.unmodifiableList(graphs);
+        List<LoggedGraph> graphs = monitor.getLoggedGraphs();
+        if (graphs == null) {
+            graphs = Collections.emptyList();
+        }
+        execution.logGraphs = Collections.unmodifiableList(Lists.newArrayList(graphs));
 
         // We compute the local execution time by starting with the total execution time and subtracting child
         // execution times as we iterate over them
