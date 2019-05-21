@@ -7,9 +7,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.actions;
 
-import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.debug.views.AbstractLayoutDebugView;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for collapsing all elements of the tree view in the debug log view.
@@ -18,8 +19,6 @@ public class CollapseExecutionTreeAction extends Action {
     
     /** Identifier string for this action. */
     private static final String ACTION_ID = "org.eclipse.elk.debug.actions.collapseAll";
-    /** Relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/collapse_all.gif";
     
     /** The debug view associated with this action. */
     private final AbstractLayoutDebugView view;
@@ -28,7 +27,8 @@ public class CollapseExecutionTreeAction extends Action {
         setId(ACTION_ID);
         setText("&Collapse All");
         setToolTipText("Collapses every element of the tree viewer.");
-        setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+                ISharedImages.IMG_ELCL_COLLAPSEALL));
         
         this.view = view;
     }

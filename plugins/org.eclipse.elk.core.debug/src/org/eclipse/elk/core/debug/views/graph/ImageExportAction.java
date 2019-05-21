@@ -28,6 +28,8 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that exports the currently displayed layout graph into an image file.
@@ -37,8 +39,6 @@ public class ImageExportAction extends Action {
     /** identifier string for this action. */
     private static final String ACTION_ID = "org.eclipse.elk.debug.actions.imageExport";
     
-    /** relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/export.gif";
     /** preference identifier for the last used file name. */
     private static final String LAST_FILE_NAME_PREF = "imageExportAction.lastImageFile";
 
@@ -54,7 +54,8 @@ public class ImageExportAction extends Action {
         setId(ACTION_ID);
         setText("&Export PNG");
         setToolTipText("Export the current graph as a PNG image file.");
-        setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+                ISharedImages.IMG_ETOOL_SAVE_EDIT));
         
         this.view = theview;
     }

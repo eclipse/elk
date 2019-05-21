@@ -9,6 +9,8 @@ package org.eclipse.elk.core.debug.actions;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that clears all execution infos. The debug views are automatically updated since they listen for model
@@ -18,14 +20,13 @@ public class ClearExecutionsAction extends Action {
 
     /** Identifier string for this action. */
     private static final String ACTION_ID = "org.eclipse.elk.debug.actions.clearExecutions";
-    /** Relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/clear.gif";
     
     public ClearExecutionsAction() {
         setId(ACTION_ID);
-        setText("&Clear");
-        setToolTipText("Clears all layout executions.");
-        setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
+        setText("&Remove All");
+        setToolTipText("Removes all layout executions.");
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+                ISharedImages.IMG_ELCL_REMOVEALL));
     }
     
     /**
