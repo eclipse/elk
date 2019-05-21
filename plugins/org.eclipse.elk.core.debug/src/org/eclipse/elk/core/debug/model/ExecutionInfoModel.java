@@ -25,7 +25,7 @@ public class ExecutionInfoModel {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Model Access
-    
+
     /**
      * Returns an unmodifiable view on our list of execution infos.
      */
@@ -43,6 +43,22 @@ public class ExecutionInfoModel {
     }
 
     /**
+     * Replaces an existing execution by a new one. Used to reload graphs loaded from file.
+     * 
+     * @param oldInfo
+     *            old execution to replace.
+     * @param newInfo
+     *            new execution.
+     */
+    public void replaceExecution(final ExecutionInfo oldInfo, final ExecutionInfo newInfo) {
+        int index = executions.indexOf(oldInfo);
+        if (index >= 0) {
+            executions.set(index, newInfo);
+            notifyListeners();
+        }
+    }
+
+    /**
      * Removes the execution info's sub tree from our execution infos and notifies any listeners.
      * 
      * @param info
@@ -56,10 +72,10 @@ public class ExecutionInfoModel {
             // This is not a top-level element, so simply remove it from the parent
             info.getParent().getChildren().remove(info);
         }
-        
+
         notifyListeners();
     }
-    
+
     /**
      * Removes all execution infos and notifies any listeners.
      */

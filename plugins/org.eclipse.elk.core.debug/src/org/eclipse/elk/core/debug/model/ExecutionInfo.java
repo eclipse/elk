@@ -36,6 +36,11 @@ public final class ExecutionInfo {
     /** Unmodifiable list of child executions. */
     private List<ExecutionInfo> children;
 
+    /** If this execution represents a graph loaded from a file, this is the file name. */
+    private String fileName;
+    /** If layout was performed on the graph after it was loaded. */
+    private boolean laidOutAfterLoad;
+
     /** Whether execution times were measured. */
     private boolean executionTimeMeasured;
     /** Amount of time spent in this execution and its child executions. */
@@ -47,7 +52,7 @@ public final class ExecutionInfo {
     private List<String> logMessages;
     /** Whether there are any descendants that have a non-empty list of log messages. */
     private boolean hasDescendantsWithLogMessages;
-    
+
     /** List of logged graphs. */
     private List<LoggedGraph> logGraphs;
     /** Whether there are any descendants that have a non-empty list of logged graphs. */
@@ -64,7 +69,7 @@ public final class ExecutionInfo {
     }
 
     /**
-     * Create an Execution from a given {@link IElkProgressMonitor} without a parent monitor.
+     * Create an Execution from a given {@link IElkProgressMonitor}.
      * 
      * @param monitor
      *            that holds information about execution time.
@@ -72,6 +77,25 @@ public final class ExecutionInfo {
      */
     public static ExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor) {
         return fromProgressMonitor(monitor, null);
+    }
+
+    /**
+     * Create an execution from a given {@link IElkProgressMonitor} and set the file name attribute. Used by the layout
+     * graph view to indicate executions loaded through the load graph action.
+     * 
+     * @param monitor
+     *            monitor that holds information about execution time.
+     * @param fileName
+     *            absolute path to the file this execution is based on.
+     * @return the execution with its children.
+     */
+    public static ExecutionInfo fromProgressMonitorAndFile(final IElkProgressMonitor monitor, String fileName,
+            boolean laidOutAfterLoad) {
+        
+        ExecutionInfo info = fromProgressMonitor(monitor);
+        info.fileName = fileName;
+        info.laidOutAfterLoad = laidOutAfterLoad;
+        return info;
     }
 
     /**
@@ -83,9 +107,7 @@ public final class ExecutionInfo {
      *            for the child created from the given monitor.
      * @return a child execution with its children.
      */
-    private static ExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor,
-            final ExecutionInfo parent) {
-
+    private static ExecutionInfo fromProgressMonitor(final IElkProgressMonitor monitor, final ExecutionInfo parent) {
         ExecutionInfo execution = new ExecutionInfo();
 
         // Basic properties
@@ -97,7 +119,7 @@ public final class ExecutionInfo {
         // Log messages
         List<String> log = Lists.newArrayList(monitor.getLogs());
         execution.logMessages = Collections.unmodifiableList(log);
-        
+
         // Log graphs
         List<LoggedGraph> graphs = Lists.newArrayList(monitor.getLoggedGraphs());
         execution.logGraphs = Collections.unmodifiableList(graphs);
@@ -111,7 +133,7 @@ public final class ExecutionInfo {
         for (IElkProgressMonitor child : monitor.getSubMonitors()) {
             ExecutionInfo childExecution = ExecutionInfo.fromProgressMonitor(child, execution);
             childExecutions.add(childExecution);
-            
+
             execution.executionTimeLocal -= child.getExecutionTime();
             execution.hasDescendantsWithLogMessages |=
                     childExecution.hasLogMessages() || childExecution.hasDescendantsWithLogMessages();
@@ -153,6 +175,29 @@ public final class ExecutionInfo {
     }
     
     /**
+     * Returns {@code true} if this execution was based on a graph loaded from a file. If this method returns
+     * {@code true}, {@link #getFileName()} will return a non-{@code null} value.
+     */
+    public boolean isLoadedFromFile() {
+        return fileName != null;
+    }
+    
+    /**
+     * Returns the path to the file this execution was based on or {@code null}.
+     */
+    public String getFileName() {
+        return fileName;
+    }
+    
+    /**
+     * Returns whether, if this execution was based on a file, the graph loaded from that file was laid out after having
+     * been loaded or not.
+     */
+    public boolean isLaidOutAfterLoad() {
+        return laidOutAfterLoad;
+    }
+
+    /**
      * Returns whether execution times were measured. That is, if calls to {@link #getExecutionTimeLocal()} and
      * {@link #getExecutionTimeIncludingChildren()} return anything meaningful.
      */
@@ -173,7 +218,7 @@ public final class ExecutionInfo {
     public double getExecutionTimeLocal() {
         return executionTimeLocal;
     }
-    
+
     /**
      * Returns the list of log messages.
      * 
@@ -182,14 +227,14 @@ public final class ExecutionInfo {
     public List<String> getLogMessages() {
         return logMessages;
     }
-    
+
     /**
      * Returns whether or not this execution info contains at least one log message.
      */
     public boolean hasLogMessages() {
         return !logMessages.isEmpty();
     }
-    
+
     /**
      * Returns whether or not any descendants of this execution would return {@code true} upon a call to
      * {@link #hasLogMessages()}.
@@ -197,7 +242,7 @@ public final class ExecutionInfo {
     public boolean hasDescendantsWithLogMessages() {
         return hasDescendantsWithLogMessages;
     }
-    
+
     /**
      * Returns the list of logged graphs.
      * 
@@ -206,14 +251,14 @@ public final class ExecutionInfo {
     public List<LoggedGraph> getLoggedGraphs() {
         return logGraphs;
     }
-    
+
     /**
      * Returns whether or not this execution info contains at least one logged graph.
      */
     public boolean hasLoggedGraphs() {
         return !logGraphs.isEmpty();
     }
-    
+
     /**
      * Returns whether or not any descendants of this execution would return {@code true} upon a call to
      * {@link #hasLoggedGraphs()}.

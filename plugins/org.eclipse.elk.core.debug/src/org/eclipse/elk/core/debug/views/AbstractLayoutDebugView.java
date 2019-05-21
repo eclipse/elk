@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -95,6 +96,14 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         }
         
         return result;
+    }
+    
+    /**
+     * Updates the selection of the tree viewer and calls {@link #treeSelectionChanged()}.
+     */
+    public void setSelectedExecutionInfos(List<ExecutionInfo> infos) {
+        treeViewer.setSelection(new StructuredSelection(infos), true);
+        treeSelectionChanged();
     }
     
     public void setFilterTree(final boolean filter) {

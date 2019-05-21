@@ -45,6 +45,7 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     // Actions
     private final LayoutUponLoadSettingAction layoutUponLoadSettingAction = new LayoutUponLoadSettingAction();
     private final LoadGraphAction loadGraphAction = new LoadGraphAction();
+    private final ReloadFromFileAction reloadFromFileAction = new ReloadFromFileAction(this);
     private final ImageExportAction saveImageAction = new ImageExportAction(this);
     
     // UI Controls
@@ -165,6 +166,7 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     @Override
     protected void customizeToolBar(IToolBarManager toolBarManager) {
         toolBarManager.add(loadGraphAction);
+        toolBarManager.add(reloadFromFileAction);
         toolBarManager.add(saveImageAction);
         toolBarManager.add(new Separator());
     }
@@ -216,8 +218,11 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Events
     
+    /**
+     * Enables or disables our actions as required.
+     */
     private void updateActionEnablement() {
-        // Check if we currently display anything in the visual graph view
+        reloadFromFileAction.updateEnablement();
         saveImageAction.updateEnablement();
     }
     
