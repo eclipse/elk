@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Kiel University and others.
+ * Copyright (c) 2008, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -461,7 +461,8 @@ public final class ElkUtil {
                 }
 
                 KVector offset = reverse
-                        ? new KVector(sectionPoints.get(sectionPoints.size() - 1)).sub(otherPoints.get(otherPoints.size() - 1))
+                        ? new KVector(sectionPoints.get(sectionPoints.size() - 1))
+                                .sub(otherPoints.get(otherPoints.size() - 1))
                         : new KVector(sectionPoints.get(0)).sub(otherPoints.get(0));
 
                 offsetMap.put(otherSection, offset);
