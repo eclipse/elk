@@ -136,7 +136,7 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
     /**
      * Saves the given ElkGraph together with its tag.
      * 
-     * @param graph a graph.
+     * @param graph the graph to be logged.
      * @param tag for identifying the graph.
      */
     void logGraph(ElkNode graph, String tag);
@@ -144,7 +144,7 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
     /**
      * Saves the given graph together with its tag and type.
      * 
-     * @param graph
+     * @param graph the graph to be logged.
      * @param tag for identifying the graph.
      * @param graphType of the given graph.
      * @throws ClassCastException if {@code graph} does not conform to the expected type.
@@ -159,11 +159,9 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
     List<LoggedGraph> getLoggedGraphs();
     
     /**
-     * Returns the path where this monitor will put debug files. Clients can put custom debug files there as well. The
-     * path is {@code null} if {@link #isLoggingEnabled()} returns {@code false}. If the method returns {@code true},
-     * the path can be {@code null} as well in case the path couldn't be created or written to. If the path is
-     * non-{@code null}, the path is required to exist and be writable at least after this method was called the first
-     * time.
+     * Returns the path where this monitor would put debug files. Clients can put custom debug files there as well. The
+     * path is {@code null} if {@link #isLoggingEnabled()} or {@link #isLogPersistenceEnabled()} return {@code false}.
+     * If the path is non-{@code null}, it is not required to exist yet.
      * 
      * @return debug path.
      */

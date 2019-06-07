@@ -10,19 +10,27 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.preferences;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.views.LayoutViewPart;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,18 +43,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  */
 public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-    /** checkbox for animation. */
     private Button animationCheckBox;
-    /** checkbox for zoom-to-fit. */
     private Button zoomCheckBox;
-    /** checkbox for progress dialog. */
     private Button progressCheckBox;
-    /** checkbox for whether logging should be enabled. */
     private Button enableLoggingCheckBox;
-    /** checkbox for storing log output. */
     private Button storeLogsCheckBox;
-    /** checkbox for execution time measurement. */
     private Button execTimeCheckBox;
+    private Button openLogFolderButton;
 
     /**
      * Creates the layout preference page.
@@ -126,8 +129,17 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      */
     private Group createDeveloperOptionsGroup(final Composite parent) {
         IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        
         Group developerGroup = new Group(parent, SWT.NONE);
         developerGroup.setText(Messages.getString("LayoutPreferencePage.developerGroup.text")); //$NON-NLS-1$
+        
+        GridLayout layout = new GridLayout(1, false);
+        layout.marginWidth = MARGIN_WIDTH;
+        layout.marginHeight = MARGIN_HEIGHT;
+        layout.verticalSpacing = LayoutConstants.getSpacing().y;
+        developerGroup.setLayout(layout);
+        
+        GridData layoutData;
         
         // add checkbox for execution time measurements
         execTimeCheckBox = new Button(developerGroup, SWT.CHECK | SWT.LEFT);
@@ -152,11 +164,28 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
         storeLogsCheckBox.setSelection(servicePrefStore.getBoolean(
                 DiagramLayoutEngine.PREF_DEBUG_STORE));
         
-        FillLayout layout = new FillLayout(SWT.VERTICAL);
-        layout.marginWidth = MARGIN_WIDTH;
-        layout.marginHeight = MARGIN_HEIGHT;
-        layout.spacing = LayoutConstants.getSpacing().y;
-        developerGroup.setLayout(layout);
+        layoutData = new GridData();
+        layoutData.horizontalIndent = LayoutConstants.getIndent();
+        storeLogsCheckBox.setLayoutData(layoutData);
+        
+        // add button to open the ELK debug folder
+        openLogFolderButton = new Button(developerGroup, SWT.PUSH);
+        openLogFolderButton.setText(Messages.getString("LayoutPreferencePage.openLogFolder.text")); //$NON-NLS-1$
+        openLogFolderButton.setToolTipText(Messages.getString("LayoutPreferencePage.openLogFolder.tip")); //$NON-NLS-1$
+        openLogFolderButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent event) {
+                Path debugPath = Paths.get(ElkUtil.debugFolderPath());
+                if (Files.isDirectory(debugPath)) {
+                    Program.launch(debugPath.toString());
+                }
+            }
+        });
+
+        layoutData = new GridData();
+        layoutData.verticalIndent = LayoutConstants.getIndent();
+        openLogFolderButton.setLayoutData(layoutData);
+        
         return developerGroup;
     }
     

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.model;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,9 @@ public final class ExecutionInfo {
     private double executionTimeIncludingChildren;
     /** Amount of time spent in this execution locally, without its child executions. */
     private double executionTimeLocal;
+    
+    /** Folder the monitor would save debugging information to. */
+    private Path debugFolder;
 
     /** List of log messages. */
     private List<String> logMessages;
@@ -114,6 +118,7 @@ public final class ExecutionInfo {
         execution.name = monitor.getTaskName() != null ? monitor.getTaskName() : "Unnamed";
         execution.executionTimeMeasured = monitor.isExecutionTimeMeasured();
         execution.executionTimeIncludingChildren = monitor.getExecutionTime();
+        execution.debugFolder = monitor.getDebugFolder();
         execution.parent = parent;
 
         // Log messages
@@ -223,6 +228,15 @@ public final class ExecutionInfo {
      */
     public double getExecutionTimeLocal() {
         return executionTimeLocal;
+    }
+    
+    /**
+     * Returns the path the execution's persisted debug files would be found in.
+     * 
+     * @return debug folder path.
+     */
+    public Path getDebugFolder() {
+        return debugFolder;
     }
 
     /**

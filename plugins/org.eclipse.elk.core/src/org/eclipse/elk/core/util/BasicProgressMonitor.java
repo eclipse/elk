@@ -359,14 +359,17 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
             // elkjs-exclude-start
             if (persistLogs) {
                 // Write to the log file
-                try {
-                    Files.write(
-                            retrieveLogFilePath(),
-                            Lists.newArrayList(logMessage),
-                            StandardOpenOption.APPEND,
-                            StandardOpenOption.CREATE);
-                } catch (IOException e) {
-                    // We ignore problems writing to the log file
+                Path outputFile = retrieveLogFilePath();
+                if (outputFile != null) {
+                    try {
+                        Files.write(
+                                outputFile,
+                                Lists.newArrayList(logMessage),
+                                StandardOpenOption.APPEND,
+                                StandardOpenOption.CREATE);
+                    } catch (IOException e) {
+                        // We ignore problems writing to the log file
+                    }
                 }
             }
             // elkjs-exclude-end
@@ -398,14 +401,16 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
                 Path filePath = retrieveFilePath(actualTag, graphType.getFileExtension());
                 
                 // Write to the file
-                try {
-                    Files.write(
-                            filePath,
-                            Lists.newArrayList(loggedGraph.serialize()),
-                            StandardOpenOption.WRITE,
-                            StandardOpenOption.CREATE);
-                } catch (IOException e) {
-                    // We ignore problems writing to the log file
+                if (filePath != null) {
+                    try {
+                        Files.write(
+                                filePath,
+                                Lists.newArrayList(loggedGraph.serialize()),
+                                StandardOpenOption.WRITE,
+                                StandardOpenOption.CREATE);
+                    } catch (IOException e) {
+                        // We ignore problems writing to the log file
+                    }
                 }
             }
             // elkjs-exclude-end
@@ -419,33 +424,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     
     @Override
     public Path getDebugFolder() {
-        // elkjs-exclude-start
-        if (recordLogs && persistLogs && debugFolder == null) {
-            // Our debug path hasn't been computed yet. How we do so depends on whether we have a parent or not
-            if (getParentMonitor() == null) {
-                createRootMonitorDebugFolder();
-            } else {
-                createChildMonitorDebugFolder();
-            }
-            
-            // Check various error conditions
-            if (Files.isRegularFile(debugFolder)) {
-                // The folder name refers to a file -- panic!
-                debugFolder = null;
-                recordLogs = false;
-                log("Debug folder '" + debugFolder.toString() + "' refers to a file! Not persisting logs.");
-            
-            } else if (!Files.exists(debugFolder)) {
-                debugFolder.toFile().mkdirs();
-            }
-            
-            // Only use the debug folder if it exists now
-            if (!Files.isDirectory(debugFolder)) {
-                debugFolder = null;
-            }
-        }
-        // elkjs-exclude-end
-        
+        initDebugFolder(false);
         return debugFolder;
     }
 
@@ -464,9 +443,47 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     // Debugging Persistence
     
     /**
-     * Creates a debug folder for a root monitor and sets {@link #debugFolder} accordingly.
+     * Initializes {@link #debugFolder}.
+     * 
+     * @param ensureExistence if {@code true}, tries to ensure that the folder exists.
      */
-    private void createRootMonitorDebugFolder() {
+    private void initDebugFolder(final boolean ensureExistence) {
+     // elkjs-exclude-start
+        if (recordLogs && persistLogs && debugFolder == null) {
+            // Our debug path hasn't been computed yet. How we do so depends on whether we have a parent or not
+            if (getParentMonitor() == null) {
+                initRootMonitorDebugFolder();
+            } else {
+                initChildMonitorDebugFolder();
+            }
+            
+            if (ensureExistence) {
+                // Check various error conditions
+                if (Files.isRegularFile(debugFolder)) {
+                    // The folder name refers to a file -- panic!
+                    recordLogs = false;
+                    log("Debug folder '" + debugFolder.toString() + "' refers to a file! Not persisting logs.");
+                    debugFolder = null;
+                    
+                } else if (!Files.exists(debugFolder)) {
+                    debugFolder.toFile().mkdirs();
+                }
+                
+                // Only use the debug folder if it exists now
+                if (!Files.isDirectory(debugFolder)) {
+                    recordLogs = false;
+                    log("Unable to create debug folder '" + debugFolder.toString() + "'! Not persisting logs.");
+                    debugFolder = null;
+                }
+            }
+        }
+        // elkjs-exclude-end
+    }
+    
+    /**
+     * Sets {@link #debugFolder} for a root monitor. Does not create the folder.
+     */
+    private void initRootMonitorDebugFolder() {
         // Retrieve the components of our name
         long timestamp = System.currentTimeMillis();
         
@@ -490,9 +507,9 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     }
     
     /**
-     * Creates a debug folder for a non-root monitor and sets {@link #debugFolder} accordingly.
+     * Sets {@link #debugFolder} for a non-root monitor. Does not create the folder.
      */
-    private void createChildMonitorDebugFolder() {
+    private void initChildMonitorDebugFolder() {
         // Retrieve the components of our name
         int index = getParentMonitor().getSubMonitors().indexOf(this);
         
@@ -531,14 +548,18 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
      * @return path to a file that doesn't exist.
      */
     private Path retrieveFilePath(final String name, final String extension) {
+        initDebugFolder(true);
+        if (debugFolder == null) {
+            return null;
+        }
+        
         // We try different file names until we find one that doesn't already exist
-        Path basePath = getDebugFolder();
-        Path filePath = basePath.resolve(name + "." + extension);
+        Path filePath = debugFolder.resolve(name + "." + extension);
         
         int number = 1;
         while (Files.exists(filePath)) {
             // Try the next possible file name
-            filePath = basePath.resolve(name + "-" + number + "." + extension);
+            filePath = debugFolder.resolve(name + "-" + number + "." + extension);
         }
         
         // We now have a path to a file that doesn't exist
