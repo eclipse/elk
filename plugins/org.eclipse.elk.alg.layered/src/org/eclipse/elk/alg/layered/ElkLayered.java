@@ -569,7 +569,7 @@ public final class ElkLayered {
                 }
                 // Graph debug output
                 // elkjs-exclude-start
-                DebugUtil.writeDebugGraph(lgraph, slotIndex++, processor.getClass().getSimpleName());
+                DebugUtil.logDebugGraph(monitor, lgraph, slotIndex++, processor.getClass().getSimpleName());
                 // elkjs-exclude-end
 
                 notifyProcessorReady(lgraph, processor);
@@ -579,7 +579,7 @@ public final class ElkLayered {
 
             // Graph debug output
             // elkjs-exclude-start
-            DebugUtil.writeDebugGraph(lgraph, slotIndex, "finished");
+            DebugUtil.logDebugGraph(monitor, lgraph, slotIndex, "finished");
             // elkjs-exclude-end
         } else {
             // Invoke each layout processor

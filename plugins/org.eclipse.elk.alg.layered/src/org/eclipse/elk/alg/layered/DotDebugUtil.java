@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,23 +18,17 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 
 /**
  * A utility class for debugging of ELK Layered.
- * 
- * @author msp
- * @author cds
  */
 public final class DotDebugUtil {
-    
-    /** File extension for dot debug files. */
-    private static final String FILE_EXTENSION = ".dot";
     
     
     /**
@@ -55,39 +48,33 @@ public final class DotDebugUtil {
      * 
      * @param lgraph
      *            the layered graph
-     * @param slotIndex
-     *            the slot before whose execution the graph is written.
-     * @param name
-     *            the name the slot before whose execution the graph is written.
+     * @return debug graph in DOT format.
      */
-    public static void writeDebugGraph(final LGraph lgraph, final int slotIndex, final String name) {
-        try {
-            Writer writer = DebugUtil.createWriter(lgraph, slotIndex, name, FILE_EXTENSION);
+    public static String createDebugGraph(final LGraph lgraph) {
+        StringWriter writer = new StringWriter();
                     
-            // Begin the digraph
-            writer.write("digraph {\n");
+        // Begin the digraph
+        writer.write("digraph {\n");
+        
+        // Digraph options
+        writer.write("    rankdir=LR;\n");
+        
+        // Write layerless nodes and edges
+        writeLayer(writer, -1, lgraph.getLayerlessNodes());
+        
+        // Go through the layers
+        int layerNumber = -1;
+        for (Layer layer : lgraph) {
+            layerNumber++;
             
-            // Digraph options
-            writer.write("    rankdir=LR;\n");
-            
-            // Write layerless nodes and edges
-            writeLayer(writer, -1, lgraph.getLayerlessNodes());
-            
-            // Go through the layers
-            int layerNumber = -1;
-            for (Layer layer : lgraph) {
-                layerNumber++;
-                
-                // Write the nodes and edges
-                writeLayer(writer, layerNumber, layer.getNodes());
-            }
-            
-            // Close the digraph. And the writer.
-            writer.write("}\n");
-            writer.close();
-        } catch (IOException exception) {
-            // Ignore the exception
+            // Write the nodes and edges
+            writeLayer(writer, layerNumber, layer.getNodes());
         }
+        
+        // Close the digraph. And the writer.
+        writer.write("}\n");
+        
+        return writer.toString();
     }
     
     /**
@@ -99,70 +86,63 @@ public final class DotDebugUtil {
      *            the list of linear segments.
      * @param outgoingList
      *            the list of successors for each linear segment.
+     * @return segments graph in DOT format.
      */
-    public static void writeDebugGraph(final LGraph layeredGraph,
-            final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
+    public static String createDebugGraph(final LGraph layeredGraph, final List<LinearSegment> segmentList,
+            final List<List<LinearSegment>> outgoingList) {
 
-        try {
-            Writer writer = DebugUtil.createWriter(layeredGraph, FILE_EXTENSION);
-            writer.write("digraph {\n");
+        StringWriter writer = new StringWriter();
+        
+        writer.write("digraph {\n");
 
-            Iterator<LinearSegment> segmentIterator = segmentList.iterator();
-            Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
+        Iterator<LinearSegment> segmentIterator = segmentList.iterator();
+        Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
 
-            while (segmentIterator.hasNext()) {
-                LinearSegment segment = segmentIterator.next();
-                List<LinearSegment> successors = successorsIterator.next();
+        while (segmentIterator.hasNext()) {
+            LinearSegment segment = segmentIterator.next();
+            List<LinearSegment> successors = successorsIterator.next();
 
-                writer.write("  " + segment.hashCode() + "[label=\"" + segment + "\"]\n");
+            writer.write("  " + segment.hashCode() + "[label=\"" + segment + "\"]\n");
 
-                for (LinearSegment successor : successors) {
-                    writer.write("  " + segment.hashCode() + "->" + successor.hashCode() + "\n");
-                }
+            for (LinearSegment successor : successors) {
+                writer.write("  " + segment.hashCode() + "->" + successor.hashCode() + "\n");
             }
-
-            writer.write("}\n");
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
         }
+
+        writer.write("}\n");
+        
+        return writer.toString();
     }
     
     /**
      * Writes a debug graph for the given list of hypernodes.
      * 
      * @param layeredGraph the layered graph
-     * @param layerIndex the currently processed layer's index
      * @param hypernodes a list of hypernodes
-     * @param debugPrefix prefix of debug output files
-     * @param label a label to append to the output files
+     * @return hypernodes graph in DOT format.
      */
-    public static void writeDebugGraph(final LGraph layeredGraph, final int layerIndex,
-            final List<HyperNode> hypernodes, final String debugPrefix, final String label) {
+    public static String createDebugGraph(final LGraph layeredGraph, final List<HyperNode> hypernodes) {
+        StringWriter writer = new StringWriter();
         
-        try {
-            Writer writer = DebugUtil.createWriter(layeredGraph, layerIndex, debugPrefix, label, FILE_EXTENSION);
-            writer.write("digraph {\n");
-            
-            // Write hypernode information
-            for (HyperNode hypernode : hypernodes) {
-                writer.write("  " + hypernode.hashCode() + "[label=\""
-                        + hypernode.toString() + "\"]\n");
-            }
-            
-            // Write dependency information
-            for (HyperNode hypernode : hypernodes) {
-                for (Dependency dependency : hypernode.getOutgoing()) {
-                    writer.write("  " + hypernode.hashCode() + "->" + dependency.getTarget().hashCode()
-                            + "[label=\"" + dependency.getWeight() + "\"]\n");
-                }
-            }
-            
-            writer.write("}\n");
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        writer.write("digraph {\n");
+        
+        // Write hypernode information
+        for (HyperNode hypernode : hypernodes) {
+            writer.write("  " + hypernode.hashCode() + "[label=\""
+                    + hypernode.toString() + "\"]\n");
         }
+        
+        // Write dependency information
+        for (HyperNode hypernode : hypernodes) {
+            for (Dependency dependency : hypernode.getOutgoing()) {
+                writer.write("  " + hypernode.hashCode() + "->" + dependency.getTarget().hashCode()
+                        + "[label=\"" + dependency.getWeight() + "\"]\n");
+            }
+        }
+        
+        writer.write("}\n");
+
+        return writer.toString();
     }
     
     /**
@@ -171,11 +151,8 @@ public final class DotDebugUtil {
      * @param writer writer to write to.
      * @param layerNumber the layer number. {@code -1} for layerless nodes.
      * @param nodes the nodes in the layer.
-     * @throws IOException if anything goes wrong with the writer.
      */
-    private static void writeLayer(final Writer writer, final int layerNumber, final List<LNode> nodes)
-            throws IOException {
-        
+    private static void writeLayer(final StringWriter writer, final int layerNumber, final List<LNode> nodes) {
         if (nodes.isEmpty()) {
             return;
         }

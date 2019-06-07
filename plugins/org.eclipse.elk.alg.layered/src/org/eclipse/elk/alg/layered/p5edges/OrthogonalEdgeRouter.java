@@ -227,11 +227,10 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
                 layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS).doubleValue();
         double edgeNodeSpacing =
                 layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS).doubleValue();
-        boolean debug = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, debug ? "phase5" : null);
+                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, "phase5");
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
@@ -258,7 +257,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
             
             // Route edges between the two layers
             double startPos = leftLayer == null ? xpos : xpos + edgeNodeSpacing;
-            slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
+            slotsCount = routingGenerator.routeEdges(monitor, layeredGraph, leftLayerNodes, leftLayerIndex,
                     rightLayerNodes, startPos);
             
             boolean isLeftLayerExternal = leftLayer == null || Iterables.all(leftLayerNodes,

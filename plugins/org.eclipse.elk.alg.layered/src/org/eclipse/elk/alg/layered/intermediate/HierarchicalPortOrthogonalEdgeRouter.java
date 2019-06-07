@@ -116,7 +116,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         /* Step 3
          * Orthogonal edge routing.
          */
-        routeEdges(layeredGraph, northSouthDummies);
+        routeEdges(monitor, layeredGraph, northSouthDummies);
         
         /* Step 4
          * Removal of the temporarily created north / south port dummies.
@@ -500,10 +500,13 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      * Routes nothern and southern hierarchical port edges and ajusts the graph's height and
      * offsets accordingly.
      * 
+     * @param monitor the progress monitor we're using.
      * @param layeredGraph the layered graph.
      * @param northSouthDummies the collection of restored northern and southern port dummies.
      */
-    private void routeEdges(final LGraph layeredGraph, final Iterable<LNode> northSouthDummies) {
+    private void routeEdges(final IElkProgressMonitor monitor, final LGraph layeredGraph,
+            final Iterable<LNode> northSouthDummies) {
+        
         // Prepare south and target layers for northern and southern routing
         Set<LNode> northernSourceLayer = Sets.newLinkedHashSet();
         Set<LNode> northernTargetLayer = Sets.newLinkedHashSet();
@@ -513,7 +516,6 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         // Find some routing parameters
         double nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
         double edgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).doubleValue();
-        boolean debug = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         // Assemble the northern and southern hierarchical port dummies and the nodes they are
         // connected to
@@ -539,10 +541,10 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         if (!northernSourceLayer.isEmpty()) {
             // Route the edges using a south-to-north orthogonal edge router
             OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                    OrthogonalRoutingGenerator.RoutingDirection.SOUTH_TO_NORTH,
-                    edgeSpacing, debug ? "extnorth" : null);
+                    OrthogonalRoutingGenerator.RoutingDirection.SOUTH_TO_NORTH, edgeSpacing, "extnorth");
             
             int slots = routingGenerator.routeEdges(
+                    monitor,
                     layeredGraph,
                     northernSourceLayer,
                     0,
@@ -562,10 +564,10 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         if (!southernSourceLayer.isEmpty()) {
             // Route the edges using a north-to-south orthogonal edge router
             OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                    OrthogonalRoutingGenerator.RoutingDirection.NORTH_TO_SOUTH,
-                    edgeSpacing, debug ? "extsouth" : null);
+                    OrthogonalRoutingGenerator.RoutingDirection.NORTH_TO_SOUTH, edgeSpacing, "extsouth");
             
             int slots = routingGenerator.routeEdges(
+                    monitor,
                     layeredGraph,
                     southernSourceLayer,
                     0,
