@@ -501,6 +501,7 @@ public class DiagramLayoutEngine {
             IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
             finalMonitor = new BasicProgressMonitor(0)
                     .withLogging(prefStore.getBoolean(PREF_DEBUG_LOGGING))
+                    .withLogPersistence(prefStore.getBoolean(PREF_DEBUG_STORE))
                     .withExecutionTimeMeasurement(prefStore.getBoolean(PREF_DEBUG_EXEC_TIME));
         } else {
             finalMonitor = progressMonitor;
@@ -717,10 +718,8 @@ public class DiagramLayoutEngine {
                 ElkUtil.applyVisitorsWithValidation(mapping.getLayoutGraph(), visitors);
             }
             
-            // Export the layout graph for debugging
-            if (ElkServicePlugin.getInstance().getPreferenceStore().getBoolean(PREF_DEBUG_STORE)) {
-                exportLayoutGraph(mapping.getLayoutGraph());
-            }
+            // Export the layout graph for debugging (this only does things if debug mode is enabled)
+            progressMonitor.logGraph(mapping.getLayoutGraph(), "input");
 
             // Perform layout on the layout graph
             graphLayoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(1));
@@ -729,7 +728,7 @@ public class DiagramLayoutEngine {
                 progressMonitor.done();
                 
                 // Log the final result to be displayed in our debug views
-                progressMonitor.logGraph(mapping.getLayoutGraph(), "Result");
+                progressMonitor.logGraph(mapping.getLayoutGraph(), "result");
             }
             if (progressMonitor.isCanceled()) {
                 return Status.CANCEL_STATUS;

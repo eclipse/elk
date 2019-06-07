@@ -987,12 +987,12 @@ public final class ElkUtil {
      * <p>
      * If the returned path does not exist, it is not automatically created.
      *
-     * @param subfolder optional subfolder name. Can be {@code null} or empty, in which case the ELK-specific
-     *                  subfolder of the user's home folder is returned.
+     * @param subfolders optional subfolder names. Can be empty, in which case the ELK-specific subfolder of the user's
+     *                   home folder is returned.
      * @return debug folder path, including a trailing separator character. Can return {@code null} if the user's
      *         home folder is not defined.
      */
-    public static String debugFolderPath(final String subfolder) {
+    public static String debugFolderPath(final String... subfolders) {
         // elkjs-exclude-start
         String userHome = System.getProperty("user.home");
         if (userHome != null) {
@@ -1006,14 +1006,11 @@ public final class ElkUtil {
             // The ELK debug directory
             path.append("elk").append(File.separatorChar);
 
-            // Append the subfolder name, if any
-            if (!Strings.isNullOrEmpty(subfolder)) {
-                path.append(subfolder);
-            }
-
-            // Again, make sure we end with a separator
-            if (path.charAt(path.length() - 1) != File.separatorChar) {
-                path.append(File.separatorChar);
+            // Append the subfolder names, if any
+            if (subfolders != null) {
+                for (String s : subfolders) {
+                    path.append(s).append(File.separatorChar);
+                }
             }
 
             return path.toString();
@@ -1021,6 +1018,42 @@ public final class ElkUtil {
         // elkjs-exclude-end
 
         return null;
+    }
+    
+    /**
+     * Takes the given name and makes it safe to be used as a file or folder name. To do so, we replace all spaces by
+     * underscores and everything that is neither digit not standard character by hyphens.
+     * 
+     * @param name the name to convert to a proper path name.
+     * @return the proper path name.
+     */
+    public static String toSafePathName(final String name) {
+        int nameLength = name.length();
+        char[] newPath = new char[nameLength];
+        
+        for (int i = 0; i < nameLength; i++) {
+            char oldChar = name.charAt(i);
+            
+            // We're being very restrictive here to ensure maximum file system compatibility
+            boolean isDigit = oldChar >= '0' && oldChar <= '9';
+            boolean isCharacter = (oldChar >= 'a' && oldChar <= 'z') || (oldChar >= 'A' && oldChar <= 'Z');
+            boolean isWhitespace = Character.isWhitespace(oldChar);
+            
+            if (isDigit || isCharacter) {
+                // This one's allowed
+                newPath[i] = oldChar;
+                
+            } else if (isWhitespace) {
+                // Replace by underscore
+                newPath[i] = '_';
+                
+            } else {
+                // Replace by hyphen
+                newPath[i] = '-';
+            }
+        }
+        
+        return new String(newPath);
     }
 
 

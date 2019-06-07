@@ -607,6 +607,7 @@ public abstract class MonitoredOperation {
 
             IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
             withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING));
+            withLogPersistence(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_STORE));
             withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
         }
         

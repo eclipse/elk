@@ -106,6 +106,7 @@ public class ProgressMonitorAdapter extends BasicProgressMonitor {
         int newMaxHierarchyLevels = Math.max(0, maxHierarchyLevels - 1);
         return new ProgressMonitorAdapter(progressMonitor, newMaxHierarchyLevels)
                 .withLogging(isLoggingEnabled())
+                .withLogPersistence(isLogPersistenceEnabled())
                 .withExecutionTimeMeasurement(isExecutionTimeMeasured());
     }
 

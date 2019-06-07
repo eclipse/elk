@@ -7,7 +7,15 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.io.StringWriter;
+import java.util.Collections;
+
+import org.eclipse.elk.core.util.persistence.ElkGraphResource;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 /**
  * A logged graph, including relevant information about the graph. The actual data type of a logged graph can be either
@@ -21,16 +29,20 @@ public final class LoggedGraph {
      */
     public static enum Type {
         /** Type for elk graphs. */
-        ELK(ElkNode.class),
+        ELK(ElkNode.class, "elkg"),
         /** Type for json graphs. */
-        JSON(String.class),
+        JSON(String.class, "json"),
         /** Type for dot graphs. */
-        DOT(String.class);
+        DOT(String.class, "dot");
         
+        /** Expected data type a graph of this type is expected to be delivered in. */
         private final Class<?> expectedType;
+        /** Extension of files this type of graph should be stored in. */
+        private final String fileExtension;
         
-        Type(final Class<?> expectedType) {
+        Type(final Class<?> expectedType, final String fileExtension) {
             this.expectedType = expectedType;
+            this.fileExtension = fileExtension;
         }
         
         /**
@@ -38,6 +50,13 @@ public final class LoggedGraph {
          */
         boolean isTypeCompatible(final Object o) {
             return expectedType.isAssignableFrom(o.getClass());
+        }
+        
+        /**
+         * Returns the file extension for graphs of this type.
+         */
+        public String getFileExtension() {
+            return fileExtension;
         }
     }
     
@@ -81,6 +100,39 @@ public final class LoggedGraph {
      */
     public String getTag() {
         return tag;
+    }
+    
+    /**
+     * Serializes the graph to a string for it to be saved to a file.
+     */
+    public String serialize() {
+        graphType.isTypeCompatible(graph);
+        
+        // Depending on our type, different things are to be done
+        switch (graphType) {
+        case ELK:
+            ResourceSet resourceSet = new ResourceSetImpl();
+            Resource resource = resourceSet.createResource(URI.createFileURI("dummy.elkg"));
+            
+            // The resource should be an ElkGraphResource, but be save here...
+            if (resource instanceof ElkGraphResource) {
+                resource.getContents().add((ElkNode) graph);
+                
+                try {
+                    StringWriter stringWriter = new StringWriter();
+                    ((ElkGraphResource) resource).save(stringWriter, Collections.emptyMap());
+                    return stringWriter.toString();
+                    
+                } catch (Exception e) {
+                    // ignore the exception and abort the layout graph exporting
+                }
+            }
+            
+            return "Unexpected problem serializing ELK Graph.";
+            
+        default:
+            return graph.toString();
+        }
     }
 
 }

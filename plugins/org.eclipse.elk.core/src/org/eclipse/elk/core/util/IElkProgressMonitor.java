@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Interface for monitors of progress of a job. Besides monitoring the progress of operations (and allowing clients to
- * cancel them), progress monitors also have debugging capabilities by providing execution time measurement and 
+ * cancel them), progress monitors also have debugging capabilities by providing execution time measurement as well as
+ * ways to log messages and graphs.
  */
 public interface IElkProgressMonitor extends IElkCancelIndicator {
 
@@ -110,6 +112,14 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
     boolean isLoggingEnabled();
     
     /**
+     * Whether the progress monitor will save logged data on the file system. If so, things are saved only if logging
+     * itself is enabled as well (see {@link #isLoggingEnabled()}).
+     * 
+     * @return {@code true} if logged objects are saved to the file system.
+     */
+    boolean isLogPersistenceEnabled();
+    
+    /**
      * Logs the given object.
      * 
      * @param object to be logged.
@@ -147,6 +157,17 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
      * @return list of graphs
      */
     List<LoggedGraph> getLoggedGraphs();
+    
+    /**
+     * Returns the path where this monitor will put debug files. Clients can put custom debug files there as well. The
+     * path is {@code null} if {@link #isLoggingEnabled()} returns {@code false}. If the method returns {@code true},
+     * the path can be {@code null} as well in case the path couldn't be created or written to. If the path is
+     * non-{@code null}, the path is required to exist and be writable at least after this method was called the first
+     * time.
+     * 
+     * @return debug path.
+     */
+    Path getDebugFolder();
     
     /**
      * Returns whether this monitor measures execution time. If it is, the value returned by {@link #getExecutionTime()}
