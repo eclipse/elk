@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Kiel University and others.
+ * Copyright (c) 2011, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,10 @@ import java.io.IOException;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.debug.model.ExecutionInfo;
+import org.eclipse.elk.core.debug.model.ExecutionInfoModel;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -31,75 +34,104 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
 /**
- * An action for loading a KGraph and performing layout on it.
+ * An action for loading an ELK graph file and performing layout on it.
  */
 public class LoadGraphAction extends Action {
-    
+
     /** identifier string for this action. */
-    private static final String ACTION_ID = "org.eclipse.elk.debug.loadGraph";
+    private static final String ACTION_ID = "org.eclipse.elk.debug.actions.loadGraph";
+
     /** relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/import.gif";
+    private static final String ICON_PATH = "icons/import.png";
     /** preference identifier for the last used file name. */
     private static final String LAST_FILE_NAME_PREF = "loadGraphAction.lastGraphFile";
-    
-    /**
-     * Creates a load graph action.
-     */
+
     public LoadGraphAction() {
         setId(ACTION_ID);
         setText("Load Graph");
         setToolTipText("Load, layout, and display a saved ELK graph.");
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void run() {
-        IPreferenceStore preferenceStore = ElkDebugPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore prefStore = ElkDebugPlugin.getDefault().getPreferenceStore();
 
-        // create and configure file dialog
+        // Create and configure file dialog
         FileDialog fileDialog = new FileDialog(Display.getDefault().getActiveShell(), SWT.OPEN);
         fileDialog.setFilterExtensions(new String[] { "*.elkg", "*.elkt", "*.xmi", "*.*" });
         fileDialog.setText("Select Graph File");
-        fileDialog.setFileName(preferenceStore.getString(LAST_FILE_NAME_PREF));
+        fileDialog.setFileName(prefStore.getString(LAST_FILE_NAME_PREF));
 
-        // open the file dialog and wait for file name
+        // Open the file dialog and wait for file name
         String fileName = fileDialog.open();
-        
+
         if (fileName != null) {
-            preferenceStore.setValue(LAST_FILE_NAME_PREF, fileName);
-            
-            // load the file content
-            ResourceSet resourceSet = new ResourceSetImpl();
-            URI uri = URI.createFileURI(fileName);
-            Resource resource = resourceSet.createResource(uri);
+            prefStore.setValue(LAST_FILE_NAME_PREF, fileName);
+
+            // Load the file content
             try {
-                resource.load(null);
-                ElkNode content = (ElkNode) resource.getContents().get(0);
-                layout(content);
+                ElkNode content = loadFromFile(fileName);
+                ExecutionInfo info = layout(fileName, content);
+                ElkDebugPlugin.getDefault().getModel().addExecution(info);
             } catch (IOException exception) {
                 throw new WrappedException(exception);
             }
         }
     }
-    
+
     /**
-     * Perform layout and draw the resulting graph.
+     * Loads an ELK graph from the given file.
      * 
-     * @param graph a graph
+     * @param fileName
+     *            path to the file to load.
+     * @return {@link ElkNode} loaded from the file.
+     * @throws IOException
+     *             if anything goes wrong.
      */
-    private void layout(final ElkNode graph) {
-        // perform layout using a graph layout engine
-        IElkProgressMonitor monitor = new BasicProgressMonitor();
-        if (!graph.getProperty(CoreOptions.NO_LAYOUT)) {
+    static ElkNode loadFromFile(final String fileName) throws IOException {
+        // Load the file content
+        ResourceSet resourceSet = new ResourceSetImpl();
+        URI uri = URI.createFileURI(fileName);
+
+        Resource resource = resourceSet.createResource(uri);
+        resource.load(null);
+
+        return (ElkNode) resource.getContents().get(0);
+    }
+
+    /**
+     * Perform layout, if activated, and return an {@link ExecutionInfo} that contains information about the layout run.
+     * That object is not added to the {@link ExecutionInfoModel} by this method.
+     */
+    static ExecutionInfo layout(final String fileName, final ElkNode graph) {
+        return layout(fileName, LayoutUponLoadSettingAction.shouldLayoutUponLoad(), graph);
+    }
+
+    /**
+     * Perform layout, if requested, and return an {@link ExecutionInfo} that contains information about the layout run.
+     * That object is not added to the {@link ExecutionInfoModel} by this method.
+     */
+    static ExecutionInfo layout(final String fileName, final boolean performLayout, final ElkNode graph) {
+        IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IElkProgressMonitor monitor =
+                new BasicProgressMonitor(0).withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING))
+                        .withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
+        monitor.begin(fileName, 1);
+
+        // Perform layout using a graph layout engine, if enabled
+        if (performLayout) {
             IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
-            layoutEngine.layout(graph, monitor);
+            layoutEngine.layout(graph, monitor.subTask(1));
         }
-        
-        // draw the resulting layout on the canvas
-        LayoutGraphView.updateWithGraph(graph);
+
+        monitor.done();
+
+        // We're not going through the DiagramLayoutEngine, but directly through the RecursiveGraphLayoutEngine, which
+        // means that not layout events will be fired. We'll have to update our model manually.
+        monitor.logGraph(graph, "Result");
+
+        return ExecutionInfo.fromProgressMonitorAndFile(monitor, fileName, performLayout);
     }
 
 }

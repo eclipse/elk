@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Kiel University and others.
+ * Copyright (c) 2008, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,8 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action that exports the currently displayed layout graph into an image file.
@@ -35,13 +37,12 @@ import org.eclipse.swt.widgets.FileDialog;
 public class ImageExportAction extends Action {
 
     /** identifier string for this action. */
-    private static final String ACTION_ID = "org.eclipse.elk.debug.imageExport";
-    /** relative path to the icon to use for this action. */
-    private static final String ICON_PATH = "icons/export.gif";
+    private static final String ACTION_ID = "org.eclipse.elk.debug.actions.imageExport";
+    
     /** preference identifier for the last used file name. */
     private static final String LAST_FILE_NAME_PREF = "imageExportAction.lastImageFile";
 
-    /** the layout graph view associated with this action. */
+    /** The layout graph view associated with this action. */
     private LayoutGraphView view;
 
     /**
@@ -50,16 +51,22 @@ public class ImageExportAction extends Action {
      * @param theview layout graph view that created this action
      */
     public ImageExportAction(final LayoutGraphView theview) {
-        this.view = theview;
         setId(ACTION_ID);
         setText("&Export PNG");
         setToolTipText("Export the current graph as a PNG image file.");
-        setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+                ISharedImages.IMG_ETOOL_SAVE_EDIT));
+        
+        this.view = theview;
+    }
+    
+    /**
+     * Updates the enabled property of this action.
+     */
+    public void updateEnablement() {
+        setEnabled(view.getCanvas() != null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void run() {
         final GraphRenderingCanvas canvas = view.getCanvas();

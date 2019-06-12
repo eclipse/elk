@@ -20,14 +20,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Preference initializer for the ELK plugins.
- *
- * @author msp
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void initializeDefaultPreferences() {
         IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
@@ -38,8 +33,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         uiPrefStore.setDefault(LayoutHandler.PREF_PROGRESS, false);
         uiPrefStore.setDefault(LayoutViewPart.PREF_CATEGORIES, true);
         uiPrefStore.setDefault(LayoutViewPart.PREF_ADVANCED, false);
-        servicePrefStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_OUTPUT, false);
-        servicePrefStore.setDefault(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT, false);
+        servicePrefStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_STORE, false);
+        servicePrefStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_LOGGING, false);
+        servicePrefStore.setDefault(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME, false);
     }
 
 }

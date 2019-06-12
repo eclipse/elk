@@ -30,6 +30,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -557,6 +558,7 @@ public final class OrthogonalRoutingGenerator {
     /**
      * Route edges between the given layers.
      *
+     * @param monitor the progress monitor we're using.
      * @param layeredGraph the layered graph.
      * @param sourceLayerNodes the left layer. May be {@code null}.
      * @param sourceLayerIndex the source layer's index. Ignored if there is no source layer.
@@ -564,8 +566,9 @@ public final class OrthogonalRoutingGenerator {
      * @param startPos horizontal position of the first routing slot
      * @return the number of routing slots for this layer
      */
-    public int routeEdges(final LGraph layeredGraph, final Iterable<LNode> sourceLayerNodes,
-            final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes, final double startPos) {
+    public int routeEdges(final IElkProgressMonitor monitor, final LGraph layeredGraph,
+            final Iterable<LNode> sourceLayerNodes, final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes,
+            final double startPos) {
 
         Map<LPort, HyperNode> portToHyperNodeMap = Maps.newHashMap();
         List<HyperNode> hyperNodes = Lists.newArrayList();
@@ -590,9 +593,14 @@ public final class OrthogonalRoutingGenerator {
 
         // write the full dependency graph to an output file
         // elkjs-exclude-start
-        if (debugPrefix != null) {
-            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
-                    : sourceLayerIndex + 1, hyperNodes, debugPrefix, "full");
+        if (debugPrefix != null && monitor.isLoggingEnabled()) {
+            DebugUtil.logDebugGraph(
+                    monitor,
+                    layeredGraph,
+                    sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
+                    hyperNodes,
+                    debugPrefix,
+                    "full");
         }
         // elkjs-exclude-end
 
@@ -601,9 +609,14 @@ public final class OrthogonalRoutingGenerator {
 
         // write the acyclic dependency graph to an output file
         // elkjs-exclude-start
-        if (debugPrefix != null) {
-            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
-                    : sourceLayerIndex + 1, hyperNodes, debugPrefix, "acyclic");
+        if (debugPrefix != null && monitor.isLoggingEnabled()) {
+            DebugUtil.logDebugGraph(
+                    monitor,
+                    layeredGraph,
+                    sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
+                    hyperNodes,
+                    debugPrefix,
+                    "acyclic");
         }
         // elkjs-exclude-end
 

@@ -123,24 +123,16 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             return newSegment;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return "ls" + nodes.toString();
         }
-
-        /**
-         * {@inheritDoc}
-         */
+        
+        @Override
         public int compareTo(final LinearSegment other) {
             return this.id - other.id;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean equals(final Object object) {
             if (object instanceof LinearSegment) {
@@ -150,9 +142,6 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             return false;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int hashCode() {
             return id;
@@ -166,9 +155,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             .addBefore(LayeredPhases.P5_EDGE_ROUTING,
                     IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
@@ -190,16 +177,14 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
     /** Spacing values. */
     private Spacings spacings;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Linear segments node placement", 1);
 
         spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
 
         // sort the linear segments of the layered graph
-        sortLinearSegments(layeredGraph);
+        sortLinearSegments(layeredGraph, monitor);
 
         // create an unbalanced placement from the sorted segments
         createUnbalancedPlacement(layeredGraph);
@@ -225,9 +210,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
      *
      * @param layeredGraph
      *            layered graph to process
+     * @param monitor
+     *            our progress monitor.
      * @return a sorted array of linear segments
      */
-    private LinearSegment[] sortLinearSegments(final LGraph layeredGraph) {
+    private LinearSegment[] sortLinearSegments(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         // set the identifier and input / output priority for all nodes
         List<LinearSegment> segmentList = Lists.newArrayList();
         for (Layer layer : layeredGraph) {
@@ -273,7 +260,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         }
 
         // create edges for the segment ordering graph
-        createDependencyGraphEdges(layeredGraph, segmentList, outgoingList, incomingCountList);
+        createDependencyGraphEdges(monitor, layeredGraph, segmentList, outgoingList, incomingCountList);
 
         // turn lists into arrays
         LinearSegment[] segments = segmentList.toArray(new LinearSegment[segmentList.size()]);
@@ -331,6 +318,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
      * Fills the dependency graph with dependencies. If a dependency would introduce a cycle, the
      * offending linear segment is split into two linear segments.
      *
+     * @param monitor
+     *            our progress monitor.
      * @param layeredGraph
      *            the layered graph.
      * @param segmentList
@@ -341,7 +330,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
      * @param incomingCountList
      *            the number of incoming dependencies for each segment.
      */
-    private void createDependencyGraphEdges(final LGraph layeredGraph,
+    private void createDependencyGraphEdges(final IElkProgressMonitor monitor, final LGraph layeredGraph,
             final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList,
             final List<Integer> incomingCountList) {
 
@@ -454,8 +443,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
 
         // Write debug output graph
         // elkjs-exclude-start
-        if (layeredGraph.getProperty(LayeredOptions.DEBUG_MODE)) {
-            DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
+        if (monitor.isLoggingEnabled()) {
+            DebugUtil.logDebugGraph(monitor, layeredGraph, segmentList, outgoingList);
         }
         // elkjs-exclude-end
     }
