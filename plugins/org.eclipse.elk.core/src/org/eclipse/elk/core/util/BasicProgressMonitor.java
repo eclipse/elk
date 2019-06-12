@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     
     /** name of the parent folder for all debug data. */
     public static final String ROOT_DEBUG_FOLDER_NAME = "logs";
+    /** indicates an infinite number of hierarchy levels for progress reporting. */
+    private static final int INFINITE_HIERARCHY_LEVELS = -1;
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +65,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     /** list of child monitors. */
     private final List<IElkProgressMonitor> children = new LinkedList<IElkProgressMonitor>();
     /** the maximal number of hierarchy levels for which progress is reported. */
-    private final int maxLevels;
+    private int maxLevels = INFINITE_HIERARCHY_LEVELS;
     
     /** the name of the associated task. */
     private String taskName;
@@ -102,7 +105,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
      * Creates a progress monitor with infinite number of hierarchy levels.
      */
     public BasicProgressMonitor() {
-        this(-1);
+        
     }
 
     /**
@@ -110,16 +113,36 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
      * number is negative, the hierarchy levels are infinite. Otherwise progress is
      * reported to parent monitors only up to the specified number of levels.
      *
+     * @deprecated Use {@link #withMaxHierarchyLevels(int)} instead.
      * @param themaxLevels the maximal number of hierarchy levels for which progress is
      *     reported
      */
     public BasicProgressMonitor(final int themaxLevels) {
-        this.maxLevels = themaxLevels;
+        withMaxHierarchyLevels(themaxLevels);
     }
 
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
+    
+    /**
+     * Configures the monitor for the given maximum number of hierarchy levels. If the number is negative, the hierarchy
+     * levels are infinite. Otherwise, progress is reported to parent monitors only up to the specified number of
+     * levels.This method should be called right after the monitor has been created and allows for method chaining.
+     * 
+     * @param levels
+     *            the maximum number of hierarchy levels for which progress is reported.
+     * @return this progress monitor.
+     */
+    public BasicProgressMonitor withMaxHierarchyLevels(final int levels) {
+        if (levels < 0) {
+            this.maxLevels = INFINITE_HIERARCHY_LEVELS;
+        } else {
+            this.maxLevels = levels;
+        }
+        
+        return this;
+    }
     
     /**
      * Enable or disable logging on this monitor. This method should be called right after the monitor has been created
@@ -319,8 +342,9 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
      * @return a new progress monitor instance
      */
     protected BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels) {
-        int newMaxHierarchyLevels = Math.max(0, maxHierarchyLevels - 1);
-        return new BasicProgressMonitor(newMaxHierarchyLevels)
+        int newMaxHierarchyLevels = maxHierarchyLevels > 0 ? maxHierarchyLevels - 1 : maxHierarchyLevels;
+        return new BasicProgressMonitor()
+                .withMaxHierarchyLevels(newMaxHierarchyLevels)
                 .withLogging(recordLogs)
                 .withLogPersistence(persistLogs)
                 .withExecutionTimeMeasurement(recordExecutionTime);
@@ -328,7 +352,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     @Override
     public final List<IElkProgressMonitor> getSubMonitors() {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     @Override
@@ -378,7 +402,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     @Override
     public List<String> getLogs() {
-        return logMessages;
+        return Collections.unmodifiableList(logMessages);
     }
     
     @Override
@@ -419,7 +443,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     @Override
     public List<LoggedGraph> getLoggedGraphs() {
-        return logGraphs;
+        return Collections.unmodifiableList(logGraphs);
     }
     
     @Override

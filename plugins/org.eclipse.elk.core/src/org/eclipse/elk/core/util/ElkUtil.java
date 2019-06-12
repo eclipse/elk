@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -1028,32 +1029,13 @@ public final class ElkUtil {
      * @return the proper path name.
      */
     public static String toSafePathName(final String name) {
-        int nameLength = name.length();
-        char[] newPath = new char[nameLength];
+        // Replace whitespace by _
+        Pattern whitespace = Pattern.compile("\\s");
+        String nameWithoutWhitespace = whitespace.matcher(name).replaceAll("_");
         
-        for (int i = 0; i < nameLength; i++) {
-            char oldChar = name.charAt(i);
-            
-            // We're being very restrictive here to ensure maximum file system compatibility
-            boolean isDigit = oldChar >= '0' && oldChar <= '9';
-            boolean isCharacter = (oldChar >= 'a' && oldChar <= 'z') || (oldChar >= 'A' && oldChar <= 'Z');
-            boolean isWhitespace = Character.isWhitespace(oldChar);
-            
-            if (isDigit || isCharacter) {
-                // This one's allowed
-                newPath[i] = oldChar;
-                
-            } else if (isWhitespace) {
-                // Replace by underscore
-                newPath[i] = '_';
-                
-            } else {
-                // Replace by hyphen
-                newPath[i] = '-';
-            }
-        }
-        
-        return new String(newPath);
+        // Replace everything which isn't a-z, A-Z, 0-9 or _ with -
+        Pattern allButAllowedCharacters = Pattern.compile("[^a-zA-Z0-9_]");
+        return allButAllowedCharacters.matcher(nameWithoutWhitespace).replaceAll("-");
     }
 
 

@@ -8,6 +8,7 @@
 package org.eclipse.elk.core.debug.actions;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
@@ -43,7 +44,8 @@ public class RevealLogFolderAction extends Action {
             setEnabled(false);
         } else {
             // We're enabled if the folder exists
-            setEnabled(Files.isDirectory(selectedInfo.getDebugFolder()));
+            Path debugFolder = selectedInfo.getDebugFolder();
+            setEnabled(debugFolder != null && Files.isDirectory(debugFolder));
         }
     }
 

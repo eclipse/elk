@@ -40,6 +40,7 @@ public class ProgressMonitorAdapter extends BasicProgressMonitor {
      * Creates a progress monitor wrapper with given maximal number of hierarchy levels. Progress
      * is reported to parent monitors only up to the specified hierarchy level.
      * 
+     * @deprecated Use {@link #withMaxHierarchyLevels(int)} instead.
      * @param theprogressMonitor the progress monitor
      * @param maxLevels maximal number of hierarchy levels for which progress is reported
      */
@@ -103,8 +104,9 @@ public class ProgressMonitorAdapter extends BasicProgressMonitor {
      */
     @Override
     protected BasicProgressMonitor doSubTask(final float work, final int maxHierarchyLevels) {
-        int newMaxHierarchyLevels = Math.max(0, maxHierarchyLevels - 1);
-        return new ProgressMonitorAdapter(progressMonitor, newMaxHierarchyLevels)
+        int newMaxHierarchyLevels = maxHierarchyLevels > 0 ? maxHierarchyLevels - 1 : maxHierarchyLevels;
+        return new ProgressMonitorAdapter(progressMonitor)
+                .withMaxHierarchyLevels(newMaxHierarchyLevels)
                 .withLogging(isLoggingEnabled())
                 .withLogPersistence(isLogPersistenceEnabled())
                 .withExecutionTimeMeasurement(isExecutionTimeMeasured());
