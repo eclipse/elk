@@ -33,7 +33,9 @@ public final class LoggedGraph {
         /** Type for json graphs. */
         JSON(String.class, "json"),
         /** Type for dot graphs. */
-        DOT(String.class, "dot");
+        DOT(String.class, "dot"),
+        /** Type for SVG images. */
+        SVG(String.class, "svg");
         
         /** Expected data type a graph of this type is expected to be delivered in. */
         private final Class<?> expectedType;

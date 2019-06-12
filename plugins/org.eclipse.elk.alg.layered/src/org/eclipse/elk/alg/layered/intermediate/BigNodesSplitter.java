@@ -124,16 +124,10 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
     private double spacing = 0;
     /** Current layout direction. */
     private Direction direction = Direction.UNDEFINED;
-    
-    private static boolean debug = false;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph theLayeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Big nodes pre-processing", 1);
-
-        debug = theLayeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         this.layeredGraph = theLayeredGraph;
         List<LNode> nodes = Lists.newArrayList();
@@ -190,7 +184,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
         for (BigNode node : bigNodes) {
             // is this big node ok?
             if (isProcessorApplicable(node)) {
-                node.process();
+                node.process(monitor);
             }
         }
 
@@ -323,7 +317,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
          * - splits the big node into consecutive dummy nodes - handles labels
          * 
          */
-        public void process() {
+        public void process(final IElkProgressMonitor monitor) {
 
             // remember east ports
             List<LPort> eastPorts = Lists.newArrayList();
@@ -354,19 +348,15 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
              */
             Pair<Integer, Double> created = null;
             if (type == BigNodeType.NO_OUTGOING) {
-
-                created = processNoOutgoingEdge(node, node.getLayer().getIndex(), node.getSize().x);
+                created = processNoOutgoingEdge(node, node.getLayer().getIndex(), node.getSize().x, monitor);
                 
             } else if (type == BigNodeType.NO_INCOMING) {
-                
-                created = processNoIncomingEdge(node, node.getLayer().getIndex(), node.getSize().x);
+                created = processNoIncomingEdge(node, node.getLayer().getIndex(), node.getSize().x, monitor);
 
             } else if (type == BigNodeType.OUT_LONG_EDGE) {
-
                 created = processOutLongEdge(node, node.getSize().x);
                 
             } else if (type == BigNodeType.INC_LONG_EDGE) {
-                
                 created = processIncLongEdge(node, node.getSize().x);
                 
             }
@@ -624,7 +614,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
          */
 
         private Pair<Integer, Double> processNoOutgoingEdge(final LNode bignode,
-                final int startLayerIndex, final double originalWidth) {
+                final int startLayerIndex, final double originalWidth, final IElkProgressMonitor monitor) {
 
             int maxLayer = layeredGraph.getLayers().size();
             if (startLayerIndex >= maxLayer - 1) {
@@ -651,9 +641,8 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
                 }
             }
 
-            List<Integer> inLayerPositions =
-                    findPossibleDummyPositions(Dir.Right, inLayerPos, currentLayer, maxLayer,
-                            chunks, true);
+            List<Integer> inLayerPositions = findPossibleDummyPositions(
+                    Dir.Right, inLayerPos, currentLayer, maxLayer, chunks, true, monitor);
             if (inLayerPositions == null) {
                 // no valid positioning could be found
                 return null;
@@ -703,7 +692,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
          */
 
         private Pair<Integer, Double> processNoIncomingEdge(final LNode bignode,
-                final int startLayerIndex, final double originalWidth) {
+                final int startLayerIndex, final double originalWidth, final IElkProgressMonitor monitor) {
 
             if (startLayerIndex <= 0) {
                 // there are no more layers, we cannot create dummies
@@ -729,9 +718,8 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
                 }
             }
 
-            List<Integer> inLayerPositions =
-                    findPossibleDummyPositions(Dir.Left, inLayerPos, currentLayer, 
-                            layeredGraph.getLayers().size(), chunks, true);
+            List<Integer> inLayerPositions = findPossibleDummyPositions(
+                    Dir.Left, inLayerPos, currentLayer, layeredGraph.getLayers().size(), chunks, true, monitor);
             if (inLayerPositions == null) {
                 // no valid positioning could be found
                 return null;
@@ -812,7 +800,8 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
                 final int layerIndex,
                 final int maxLayer, 
                 final int remainingChunks, 
-                final boolean initial) {
+                final boolean initial,
+                final IElkProgressMonitor monitor) {
 
             // current layer
             Layer currentLayer = layeredGraph.getLayers().get(layerIndex);
@@ -855,13 +844,14 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
                 }
             }
 
-            if (debug) {
-                System.out.println("\n" + node);
-                System.out.println("Dir: " + dir);
-                System.out.println("Upper: " + upper);
-                System.out.println("Lower: " + lower);
-                System.out.println("UpperStroke: " + upperPrime);
-                System.out.println("LowerStroke: " + lowerPrime);
+            if (monitor.isLoggingEnabled()) {
+                String logMessage = node
+                        + "\n    Dir: " + dir
+                        + "\n    Upper: " + upper
+                        + "\n    Lower: " + lower
+                        + "\n    UpperStroke: " + upperPrime
+                        + "\n    LowerStroke: " + lowerPrime;
+                monitor.log(logMessage);
             }
             
             // find min and max
@@ -946,7 +936,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
                 } else {
                     List<Integer> rec = findPossibleDummyPositions(dir, upperStrokeMax, 
                             layerIndex + (dir == Dir.Right ? 1 : -1), maxLayer, 
-                            remainingChunks - 1, false);
+                            remainingChunks - 1, false, monitor);
 
                     if (rec != null) {
                         if (dir == Dir.Right) {

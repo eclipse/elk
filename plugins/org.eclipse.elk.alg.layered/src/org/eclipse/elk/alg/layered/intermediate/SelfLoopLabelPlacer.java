@@ -75,8 +75,8 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                     SelfLoopLabelPositionGeneration.generatePositions(slNode);
 
                     // Find the best position for each component
-                    SelfLoopLabelPositionEvaluator evaluator = new SelfLoopLabelPositionEvaluator(slNode);
-                    evaluator.evaluatePositions();
+                    SelfLoopLabelPositionEvaluator evaluator = new SelfLoopLabelPositionEvaluator(slNode, monitor);
+                    evaluator.evaluatePositions(monitor);
                     
                     // Calculate the actual coordinates
                     placeLabels(slNode, layoutDirection);

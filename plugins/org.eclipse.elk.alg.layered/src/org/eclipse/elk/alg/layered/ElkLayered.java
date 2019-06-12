@@ -130,7 +130,7 @@ public final class ElkLayered {
     public void doLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         IElkProgressMonitor theMonitor = monitor;
         if (theMonitor == null) {
-            theMonitor = new BasicProgressMonitor(0);
+            theMonitor = new BasicProgressMonitor().withMaxHierarchyLevels(0);
         }
         theMonitor.begin("Layered layout", 1);
 
@@ -174,7 +174,7 @@ public final class ElkLayered {
     public void doCompoundLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         IElkProgressMonitor theMonitor = monitor;
         if (theMonitor == null) {
-            theMonitor = new BasicProgressMonitor(0);
+            theMonitor = new BasicProgressMonitor().withMaxHierarchyLevels(0);
         }
         theMonitor.begin("Layered layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
 
