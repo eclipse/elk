@@ -370,7 +370,9 @@ public final class ElkUtil {
 
         node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
 
-        for (ElkShape shape : Iterables.concat(node.getPorts(), node.getLabels())) {
+        final Iterable<ElkLabel> portLabels = Iterables.concat(
+                Iterables.transform(node.getPorts(), p -> p.getLabels()));
+        for (ElkShape shape : Iterables.concat(node.getLabels(), node.getPorts(), portLabels)) {
             shape.setLocation(scalingFactor * shape.getX(), scalingFactor * shape.getY());
             shape.setDimensions(scalingFactor * shape.getWidth(), scalingFactor * shape.getHeight());
 
