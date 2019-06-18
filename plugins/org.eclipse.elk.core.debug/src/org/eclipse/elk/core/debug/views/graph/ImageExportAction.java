@@ -141,7 +141,7 @@ public class ImageExportAction extends Action {
         fileDialog.setFileName(preferenceStore.getString(LAST_FILE_NAME_PREF));
 
         // open the file dialog and check the output
-        String fileName = checkFileName(fileDialog.open());
+        String fileName = completeFileName(fileDialog.open());
 
         if (fileName != null) {
             preferenceStore.setValue(LAST_FILE_NAME_PREF, fileName);
@@ -156,7 +156,7 @@ public class ImageExportAction extends Action {
      * @param fileName file name given by the user
      * @return file name with .png as extension
      */
-    private static String checkFileName(final String fileName) {
+    private static String completeFileName(final String fileName) {
         if (fileName == null) {
             return null;
         } else {

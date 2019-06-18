@@ -115,7 +115,9 @@ public class LoadGraphAction extends Action {
     static ExecutionInfo layout(final String fileName, final boolean performLayout, final ElkNode graph) {
         IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
         IElkProgressMonitor monitor =
-                new BasicProgressMonitor(0).withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING))
+                new BasicProgressMonitor()
+                        .withMaxHierarchyLevels(0)
+                        .withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING))
                         .withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
         monitor.begin(fileName, 1);
 
