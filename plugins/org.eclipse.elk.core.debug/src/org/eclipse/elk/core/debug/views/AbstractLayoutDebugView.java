@@ -20,6 +20,7 @@ import org.eclipse.elk.core.debug.actions.ExpandExecutionTreeAction;
 import org.eclipse.elk.core.debug.actions.FilterExecutionTreeAction;
 import org.eclipse.elk.core.debug.actions.PreferenceAction;
 import org.eclipse.elk.core.debug.actions.RevealLogFolderAction;
+import org.eclipse.elk.core.debug.actions.CompressLogFolderAction;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.model.ExecutionInfoContentProvider;
 import org.eclipse.elk.core.debug.model.IExecutionInfoModelListener;
@@ -66,6 +67,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
     private final ClearExecutionAction clearExecutionAction = new ClearExecutionAction(this);
     private final ClearExecutionsAction clearExecutionsAction = new ClearExecutionsAction();
     private final RevealLogFolderAction revealLogFolderAction = new RevealLogFolderAction(this);
+    private final CompressLogFolderAction compressLogFolderAction = new CompressLogFolderAction(this);
     private final CollapseExecutionTreeAction collapseTreeAction = new CollapseExecutionTreeAction(this);
     private final ExpandExecutionTreeAction expandTreeAction = new ExpandExecutionTreeAction(this);
     
@@ -225,6 +227,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         contextMenu.add(clearExecutionsAction);
         contextMenu.add(new Separator());
         contextMenu.add(revealLogFolderAction);
+        contextMenu.add(compressLogFolderAction);
         contextMenu.add(new Separator());
         contextMenu.add(expandTreeAction);
         contextMenu.add(collapseTreeAction);
@@ -235,6 +238,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
                 // Update some actions because they are not updated before the menu is shown
                 clearExecutionAction.updateEnablement();
                 revealLogFolderAction.updateEnablement();
+                compressLogFolderAction.updateEnablement();
             }
         });
         
@@ -363,6 +367,7 @@ public abstract class AbstractLayoutDebugView extends ViewPart implements IExecu
         clearExecutionAction.updateEnablement();
         clearExecutionsAction.updateEnablement();
         revealLogFolderAction.updateEnablement();
+        compressLogFolderAction.updateEnablement();
     }
 
     @Override
