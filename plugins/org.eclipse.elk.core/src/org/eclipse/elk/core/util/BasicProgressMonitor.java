@@ -352,6 +352,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     @Override
     public final List<IElkProgressMonitor> getSubMonitors() {
+        assert children != null;
         return Collections.unmodifiableList(children);
     }
 
@@ -402,7 +403,9 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     @Override
     public List<String> getLogs() {
-        return Collections.unmodifiableList(logMessages);
+        return logMessages == null
+                ? null
+                : Collections.unmodifiableList(logMessages);
     }
     
     @Override
@@ -443,7 +446,9 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     @Override
     public List<LoggedGraph> getLoggedGraphs() {
-        return Collections.unmodifiableList(logGraphs);
+        return logGraphs == null
+                ? null
+                : Collections.unmodifiableList(logGraphs);
     }
     
     @Override
@@ -580,9 +585,10 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         // We try different file names until we find one that doesn't already exist
         Path filePath = debugFolder.resolve(name + "." + extension);
         
-        int number = 1;
+        int number = 0;
         while (Files.exists(filePath)) {
             // Try the next possible file name
+            number++;
             filePath = debugFolder.resolve(name + "-" + number + "." + extension);
         }
         
