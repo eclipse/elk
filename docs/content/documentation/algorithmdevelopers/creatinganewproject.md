@@ -7,63 +7,44 @@ menu:
     weight: 20
 ---
 
-Layout algorithms are developed as _Eclipse Plug-in Projects_. There's a few things to setup to get your project ready, which is what we will work through here.
-
-{{% note title="If you have nothing better to do&hellip;" mode="info" %}}
-[This ticket](https://github.com/eclipse/elk/issues/29) is all about adding an _ELK Project Wizard_ to the ELK SDK that will help people create new layout algorithm projects that are already perfectly setup. If you want to make people's lifes better but don't know how, here's your chance!
-{{% /note %}}
+Layout algorithms are developed as _Eclipse Plug-in Projects_. Let's work through creating a new project using our wizard and what that project consists of.
 
 
-## Creating a New Plug-in
+## Creating a New Project
 
 Follow these steps to create a new plug-in:
 
 1. From the _File_ menu, select _New - Project..._.
 1. From the _Plug-in Development_ category, select _Plug-in Project_ and click _Next_.
 1. Configure your project's basic settings, in particular its name, and click _Next_.
-1. Configure your project's content. The _Properties_ should be somewhat sensible, but don't really matter all that much. In the _Options_ section, uncheck everything (layout algorithm projects normally don't need an activator class, nor do they normally make contributions to the UI). Also, don't create a rich client application. Click _Finish_.
 
-{{< image src="algdev_creatinganewproject_wizard.png" alt="Configuring a new layout algorithm project." >}}
+    {{< image src="algdev_creatinganewproject_step1.png" alt="Step 1 of the New Plug-In Project Wizard." >}}
 
-The _Package Explorer_ now shows a new project for your plug-in which we will configure in the next section.
+1. Configure the project's properties as you see fit and click _Next_.
+
+    {{< image src="algdev_creatinganewproject_step2.png" alt="Step 2 of the New Plug-In Project Wizard." >}}
+
+1. Select the _Layout Algorithm_ project template. This will cause your project to be initialized with all the necessary files for a simple layout algorithm.
+
+    {{< image src="algdev_creatinganewproject_step3.png" alt="Step 3 of the New Plug-In Project Wizard." >}}
+
+1. The template requires a name for your layout algorithm. This will usually derive from your project's name. Click _Finish_ once you have settled on a name.
+
+    {{< image src="algdev_creatinganewproject_step4.png" alt="Step 4 of the New Plug-In Project Wizard." >}}
+
+The _Package Explorer_ now shows a new project for your plug-in.
+
+{{< image src="algdev_creatinganewproject_project.png" alt="The new project in all its glory." >}}
 
 
-## Setting Up Your Plug-in
+## The Components of Your New Project
 
-Your plug-in needs to declare dependencies to ELK's most important plug-ins: `org.eclipse.elk.graph` (which contains the graph model that will be the input to your layout algorithm) and `org.eclipse.elk.core` (which contains the core ELK code). Follow these steps to add the dependencies:
+The wizard creates the following things for your:
 
-1. Open the `MANIFEST.MF` file, located in your plug-in's `META_INF` folder. The _Plug-in Manifest Editor_ will open up, which is divided into several pages that you can switch between using the controls at the bottom of the editor.
-1. Open the editor's _Dependencies_ tab.
-1. Click the left _Add..._ button to add a dependency. In the dialog that pops up, search for the `org.eclipse.elk.graph` plug-in and click _OK_.
-1. Repeat for ELK's core plug-in, `org.eclipse.elk.core`.
+* A `MANIFEST.MF` file with the necessary dependencies to the Eclipse Layout Kernel so you can use our data structures.
 
-{{< image src="algdev_creatinganewproject_dependencies.png" alt="Configuring a new layout algorithm project." >}}
+* A `plugin.xml` file which registers your new layout algorithm with ELK so it can be used.
 
+* A `.melk` file which describes your layout algorithm and the options it supports (see [this page]({{< relref "documentation/algorithmdevelopers/metadatalanguage.md" >}}) for more information).
 
-## Creating a Layout Provider
-
-While we will discuss the details of implementing the actual layout algorithm  [later]({{< relref "documentation/algorithmdevelopers/algorithmimplementation.md" >}}), it is a good idea to already create its main class now for us to be able to reference it. Create a new Java class with the following properties:
-
-* The package should be your plug-in's source package. That is, it should be named just like the plug-in. (This is not strictly necessary, but a common convention.)
-* Give it a name that ends in `LayoutProvider`.
-* Its superclass must be set to `org.eclipse.elk.core.AbstractLayoutProvider`.
-
-Your class will look something like this:
-
-```java
-package cds.layout.simple;
-
-import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.ElkNode;
-
-public class SimpleLayoutProvider extends AbstractLayoutProvider {
-
-    @Override
-    public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
-
-    }
-
-}
-```
+* A sample implementation with a simple basic layout provider. Studying this implementation will teach you a lot about how to develop layout algorithms with ELK (see [this page]({{< relref "documentation/algorithmdevelopers/algorithmimplementation.md" >}}) for more information).
