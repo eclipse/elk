@@ -49,9 +49,27 @@ public final class LoggedGraph {
         
         /**
          * Checks if {@code o}'s type is the same or a subtype of the type we would expect.
+         * 
+         * @param o
+         *            the object whose type compatibility to check.
+         * @return {@code true} if the type is compatible.
          */
-        boolean isTypeCompatible(final Object o) {
+        public boolean isTypeCompatible(final Object o) {
             return expectedType.isAssignableFrom(o.getClass());
+        }
+        
+        /**
+         * Throws a {@link ClassCastException} if {@link #isTypeCompatible(Object)} returns {@code false} for the
+         * object.
+         * 
+         * @param o
+         *            the object whose type compatibility to check.
+         * @throws ClassCastException if the type is unexpected.
+         */
+        public void checkTypeCompatibility(final Object o) {
+            if (!isTypeCompatible(o)) {
+                throw new ClassCastException("Type " + o.getClass().getName() + " incompatible for " + this.name());
+            }
         }
         
         /**
@@ -78,6 +96,8 @@ public final class LoggedGraph {
      *             if the type of {@code graph} does not conform to the type expected for {@code graphType}.
      */
     public LoggedGraph(final Object graph, final String tag, final Type graphType) {
+        graphType.checkTypeCompatibility(graph);
+        
         this.graph = graph;
         this.tag = tag;
         this.graphType = graphType;
@@ -108,8 +128,6 @@ public final class LoggedGraph {
      * Serializes the graph to a string for it to be saved to a file.
      */
     public String serialize() {
-        graphType.isTypeCompatible(graph);
-        
         // Depending on our type, different things are to be done
         switch (graphType) {
         case ELK:
