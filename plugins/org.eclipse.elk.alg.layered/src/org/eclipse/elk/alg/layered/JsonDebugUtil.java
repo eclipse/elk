@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered;
 
-import java.io.IOException;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,50 +35,32 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * A utility class for debugging of KLay Layered.
- * 
- * @author msp
- * @author cds
- * @author csp
+ * A utility class for debugging of ELK Layered.
  */
 public final class JsonDebugUtil {
     
-    /** File extension for dot debug files. */
-    private static final String FILE_EXTENSION = ".json";
-    
     private static final String INDENT = "  ";
 
-    
     /**
      * Hidden constructor to avoid instantiation.
      */
     private JsonDebugUtil() { }
-
 
     /**
      * Output a representation of the given graph in JSON format.
      * 
      * @param lgraph
      *            the layered graph
-     * @param slotIndex
-     *            the slot before whose execution the graph is written.
-     * @param name
-     *            the name the slot before whose execution the graph is written.
+     * @return graph in JSON format.
      */
-    public static void writeDebugGraph(final LGraph lgraph, final int slotIndex, final String name) {
-        try {
-            Writer writer = DebugUtil.createWriter(lgraph, slotIndex, name, FILE_EXTENSION);
-            
-            beginGraph(writer, lgraph);
-            
-            writeLgraph(lgraph, writer, 1);
-            
-            // Close the graph and the writer.
-            endGraph(writer);
-            writer.close();
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
+    public static String createDebugGraph(final LGraph lgraph) {
+        StringWriter writer = new StringWriter();
+        
+        beginGraph(writer, lgraph);
+        writeLgraph(lgraph, writer, 1);
+        endGraph(writer);
+        
+        return writer.toString();
     }
 
 
@@ -92,61 +73,59 @@ public final class JsonDebugUtil {
      *            the list of linear segments.
      * @param outgoingList
      *            the list of successors for each linear segment.
+     * @return linear segment graph in JSON format.
      */
-    public static void writeDebugGraph(final LGraph layeredGraph,
-            final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
+    public static String createDebugGraph(final LGraph layeredGraph, final List<LinearSegment> segmentList,
+            final List<List<LinearSegment>> outgoingList) {
 
-        try {
-            Writer writer = DebugUtil.createWriter(layeredGraph, FILE_EXTENSION);
+        StringWriter writer = new StringWriter();
             
-            beginGraph(writer, layeredGraph);
-            beginChildNodeList(writer, 1);
+        beginGraph(writer, layeredGraph);
+        beginChildNodeList(writer, 1);
 
-            String indent1 = Strings.repeat(INDENT, 2);
-            String indent2 = Strings.repeat(INDENT, 3); // SUPPRESS CHECKSTYLE MagicNumber
-            int edgeId = 0;
-            
-            Iterator<LinearSegment> segmentIterator = segmentList.iterator();
-            Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
-            
-            StringBuffer edges = new StringBuffer();
-            
-            while (segmentIterator.hasNext()) {
-                LinearSegment segment = segmentIterator.next();
-                writer.write("\n" + indent1 + "{\n"
-                        + indent2 + "\"id\": \"n" + segment.hashCode() + "\",\n"
-                        + indent2 + "\"labels\": [ { \"text\": \"" + segment + "\" } ],\n"
-                        + indent2 + "\"width\": 50,\n"
-                        + indent2 + "\"height\": 25\n"
-                        + indent1 + "}");
-                if (segmentIterator.hasNext()) {
-                    writer.write(",");
-                }
-
-                Iterator<LinearSegment> succIterator = successorsIterator.next().iterator();
-                
-                while (succIterator.hasNext()) {
-                    LinearSegment successor = succIterator.next();
-                    edges.append("\n" + indent1 + "{\n"
-                        + indent2 + "\"id\": \"e" + edgeId++ + "\",\n"
-                        + indent2 + "\"source\": \"n" + segment.hashCode() + "\",\n"
-                        + indent2 + "\"target\": \"n" + successor.hashCode() + "\",\n"
-                        + indent1 + "},");
-                }
+        String indent1 = Strings.repeat(INDENT, 2);
+        String indent2 = Strings.repeat(INDENT, 3); // SUPPRESS CHECKSTYLE MagicNumber
+        int edgeId = 0;
+        
+        Iterator<LinearSegment> segmentIterator = segmentList.iterator();
+        Iterator<List<LinearSegment>> successorsIterator = outgoingList.iterator();
+        
+        StringBuffer edges = new StringBuffer();
+        
+        while (segmentIterator.hasNext()) {
+            LinearSegment segment = segmentIterator.next();
+            writer.write("\n" + indent1 + "{\n"
+                    + indent2 + "\"id\": \"n" + segment.hashCode() + "\",\n"
+                    + indent2 + "\"labels\": [ { \"text\": \"" + segment + "\" } ],\n"
+                    + indent2 + "\"width\": 50,\n"
+                    + indent2 + "\"height\": 25\n"
+                    + indent1 + "}");
+            if (segmentIterator.hasNext()) {
+                writer.write(",");
             }
-            
-            endChildNodeList(writer, 1);
-            
-            if (edges.length() > 0) {
-                edges.deleteCharAt(edges.length() - 1);
-            }
-            writer.write(INDENT + "\"edges\": [" + edges + "\n" + indent1 + "]");
 
-            endGraph(writer);
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            Iterator<LinearSegment> succIterator = successorsIterator.next().iterator();
+            
+            while (succIterator.hasNext()) {
+                LinearSegment successor = succIterator.next();
+                edges.append("\n" + indent1 + "{\n"
+                    + indent2 + "\"id\": \"e" + edgeId++ + "\",\n"
+                    + indent2 + "\"source\": \"n" + segment.hashCode() + "\",\n"
+                    + indent2 + "\"target\": \"n" + successor.hashCode() + "\",\n"
+                    + indent1 + "},");
+            }
         }
+        
+        endChildNodeList(writer, 1);
+        
+        if (edges.length() > 0) {
+            edges.deleteCharAt(edges.length() - 1);
+        }
+        writer.write(INDENT + "\"edges\": [" + edges + "\n" + indent1 + "]");
+
+        endGraph(writer);
+        
+        return writer.toString();
     }
 
 
@@ -155,67 +134,58 @@ public final class JsonDebugUtil {
      * 
      * @param layeredGraph
      *            the layered graph
-     * @param layerIndex
-     *            the currently processed layer's index
      * @param hypernodes
      *            a list of hypernodes
-     * @param debugPrefix
-     *            prefix of debug output files
-     * @param label
-     *            a label to append to the output files
+     * @return hypernode graph in JSON format.
      */
-    public static void writeDebugGraph(final LGraph layeredGraph, final int layerIndex,
-            final List<HyperNode> hypernodes, final String debugPrefix, final String label) {
+    public static String createDebugGraph(final LGraph layeredGraph, final List<HyperNode> hypernodes) {
+        StringWriter writer = new StringWriter();
         
-        try {
-            Writer writer = DebugUtil.createWriter(layeredGraph, layerIndex, debugPrefix, label, FILE_EXTENSION);
-            beginGraph(writer, layeredGraph);
-            beginChildNodeList(writer, 1);
+        beginGraph(writer, layeredGraph);
+        beginChildNodeList(writer, 1);
 
-            String indent1 = Strings.repeat(INDENT, 2);
-            String indent2 = Strings.repeat(INDENT, 3); // SUPPRESS CHECKSTYLE MagicNumber
-            int edgeId = 0;
-            
-            Iterator<HyperNode> hypernodeIterator = hypernodes.iterator();
-            
-            StringBuffer edges = new StringBuffer();
-            
-            while (hypernodeIterator.hasNext()) {
-                HyperNode hypernode = hypernodeIterator.next();
-                writer.write("\n" + indent1 + "{\n"
-                        + indent2 + "\"id\": \"n" + System.identityHashCode(hypernode) + "\",\n"
-                        + indent2 + "\"labels\": [ { \"text\": \"" + hypernode.toString() + "\" } ],\n"
-                        + indent2 + "\"width\": 50,\n"
-                        + indent2 + "\"height\": 25\n"
-                        + indent1 + "}");
-                if (hypernodeIterator.hasNext()) {
-                    writer.write(",");
-                }
-
-                Iterator<Dependency> dependencyIterator = hypernode.getOutgoing().iterator();
-                
-                while (dependencyIterator.hasNext()) {
-                    Dependency dependency = dependencyIterator.next();
-                    edges.append("\n" + indent1 + "{\n"
-                        + indent2 + "\"id\": \"e" + edgeId++ + "\",\n"
-                        + indent2 + "\"source\": \"n" + System.identityHashCode(hypernode) + "\",\n"
-                        + indent2 + "\"target\": \"n" + System.identityHashCode(dependency.getTarget())
-                        + "\"\n" + indent1 + "},");
-                }
+        String indent1 = Strings.repeat(INDENT, 2);
+        String indent2 = Strings.repeat(INDENT, 3); // SUPPRESS CHECKSTYLE MagicNumber
+        int edgeId = 0;
+        
+        Iterator<HyperNode> hypernodeIterator = hypernodes.iterator();
+        
+        StringBuffer edges = new StringBuffer();
+        
+        while (hypernodeIterator.hasNext()) {
+            HyperNode hypernode = hypernodeIterator.next();
+            writer.write("\n" + indent1 + "{\n"
+                    + indent2 + "\"id\": \"n" + System.identityHashCode(hypernode) + "\",\n"
+                    + indent2 + "\"labels\": [ { \"text\": \"" + hypernode.toString() + "\" } ],\n"
+                    + indent2 + "\"width\": 50,\n"
+                    + indent2 + "\"height\": 25\n"
+                    + indent1 + "}");
+            if (hypernodeIterator.hasNext()) {
+                writer.write(",");
             }
-            
-            endChildNodeList(writer, 1);
-            
-            if (edges.length() > 0) {
-                edges.deleteCharAt(edges.length() - 1);
-            }
-            writer.write(INDENT + "\"edges\": [" + edges + "\n" + INDENT + "]");
 
-            endGraph(writer);
-            writer.close();
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            Iterator<Dependency> dependencyIterator = hypernode.getOutgoing().iterator();
+            
+            while (dependencyIterator.hasNext()) {
+                Dependency dependency = dependencyIterator.next();
+                edges.append("\n" + indent1 + "{\n"
+                    + indent2 + "\"id\": \"e" + edgeId++ + "\",\n"
+                    + indent2 + "\"source\": \"n" + System.identityHashCode(hypernode) + "\",\n"
+                    + indent2 + "\"target\": \"n" + System.identityHashCode(dependency.getTarget())
+                    + "\"\n" + indent1 + "},");
+            }
         }
+        
+        endChildNodeList(writer, 1);
+        
+        if (edges.length() > 0) {
+            edges.deleteCharAt(edges.length() - 1);
+        }
+        writer.write(INDENT + "\"edges\": [" + edges + "\n" + INDENT + "]");
+
+        endGraph(writer);
+        
+        return writer.toString();
     }
 
 
@@ -256,12 +226,12 @@ public final class JsonDebugUtil {
      * @param node
      *            the current node to inspect.
      */
-    private static void calculateMinMaxPositions(final KVector min, final KVector max,
-            final LNode node) {
+    private static void calculateMinMaxPositions(final KVector min, final KVector max, final LNode node) {
         min.x = Math.min(min.x, node.getPosition().x - node.getMargin().left);
         max.x = Math.max(max.x, node.getPosition().x + node.getSize().x +  node.getMargin().right);
         min.y = Math.min(min.y, node.getPosition().y - node.getMargin().top);
         max.y = Math.max(max.y, node.getPosition().y + node.getSize().y + node.getMargin().bottom);
+        
         for (LPort port : node.getPorts()) {
             min.x = Math.min(min.x, node.getPosition().x + port.getPosition().x - port.getMargin().left);
             max.x = Math.max(max.x, node.getPosition().x + port.getPosition().x + port.getSize().x
@@ -270,6 +240,7 @@ public final class JsonDebugUtil {
             max.y = Math.max(max.y, node.getPosition().y + port.getPosition().y + port.getSize().y
                     + port.getMargin().bottom);
         }
+        
         for (LEdge edge : node.getOutgoingEdges()) {
             for (KVector bendpoint : edge.getBendPoints()) {
                 min.x = Math.min(min.x, bendpoint.x);
@@ -289,10 +260,8 @@ public final class JsonDebugUtil {
      *            the writer to write to.
      * @param lgraph
      *            the graph to begin
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void beginGraph(final Writer writer, final LGraph lgraph) throws IOException {
+    private static void beginGraph(final StringWriter writer, final LGraph lgraph) {
         KVectorChain graphSize = calculateGraphSize(lgraph);
         writer.write("{\n"
                 + INDENT + "\"id\": \"root\",\n"
@@ -312,12 +281,8 @@ public final class JsonDebugUtil {
      *            the writer to write to.
      * @param indentation
      *            the indentation level to use.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void writeLgraph(final LGraph lgraph, final Writer writer, final int indentation)
-            throws IOException {
-        
+    private static void writeLgraph(final LGraph lgraph, final StringWriter writer, final int indentation) {
         KVector offset = new KVector(lgraph.getOffset())
                 .add(lgraph.getPadding().left, lgraph.getPadding().top);
         
@@ -358,12 +323,8 @@ public final class JsonDebugUtil {
      *            writer to write to.
      * @param indentation
      *            the indentation level to use.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void beginChildNodeList(final Writer writer, final int indentation)
-            throws IOException {
-        
+    private static void beginChildNodeList(final StringWriter writer, final int indentation) {
         writer.write(",\n" + Strings.repeat(INDENT, indentation) + "\"children\": [");
     }
 
@@ -375,12 +336,8 @@ public final class JsonDebugUtil {
      *            writer to write to.
      * @param indentation
      *            the indentation level to use.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void endChildNodeList(final Writer writer, final int indentation)
-            throws IOException {
-        
+    private static void endChildNodeList(final StringWriter writer, final int indentation) {
         writer.write("\n" + Strings.repeat(INDENT, indentation) + "],\n");
     }
 
@@ -390,10 +347,8 @@ public final class JsonDebugUtil {
      * 
      * @param writer
      *            the writer to write to.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void endGraph(final Writer writer) throws IOException {
+    private static void endGraph(final StringWriter writer) {
         writer.write("\n}\n");
     }
 
@@ -412,12 +367,9 @@ public final class JsonDebugUtil {
      * @param offset
      *            the combined offset of the containing LGraph.
      * @return list of edges that need to be added to the graph.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static List<LEdge> writeLayer(final Writer writer, final int layerNumber,
-            final List<LNode> nodes, final int indentation, final KVector offset)
-            throws IOException {
+    private static List<LEdge> writeLayer(final StringWriter writer, final int layerNumber, final List<LNode> nodes,
+            final int indentation, final KVector offset) {
         
         if (nodes.isEmpty()) {
             return Lists.newLinkedList();
@@ -452,11 +404,9 @@ public final class JsonDebugUtil {
      *            the layer number. {@code -1} for layerless nodes.
      * @param offset
      *            the combined offset of the containing LGraph.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void writeNodes(final Writer writer, final List<LNode> nodes, final int indentation,
-            final int layerNumber, final KVector offset) throws IOException {
+    private static void writeNodes(final StringWriter writer, final List<LNode> nodes, final int indentation,
+            final int layerNumber, final KVector offset) {
         
         String indent0 = Strings.repeat(INDENT, indentation);
         String indent1 = Strings.repeat(INDENT, indentation + 1);
@@ -477,7 +427,7 @@ public final class JsonDebugUtil {
             writeProperties(writer, node.getAllProperties(), indentation + 1);
             writer.write(",\n");
             writePorts(writer, node.getPorts(), indentation + 1);
-            final LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            final LGraph nestedGraph = node.getNestedGraph();
             if (nestedGraph != null) {
                 writeLgraph(nestedGraph, writer, indentation + 1);
             }
@@ -500,11 +450,9 @@ public final class JsonDebugUtil {
      *            the indentation level to use.
      * @param offset
      *            the combined offset of the containing LGraph.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void writeEdges(final Writer writer, final List<LEdge> edges, final int indentation,
-            final KVector offset) throws IOException {
+    private static void writeEdges(final StringWriter writer, final List<LEdge> edges, final int indentation,
+            final KVector offset) {
     
         String indent0 = Strings.repeat(INDENT, indentation);
         String indent1 = Strings.repeat(INDENT, indentation + 1);
@@ -548,11 +496,9 @@ public final class JsonDebugUtil {
      *            the indentation level to use.
      * @param offset
      *            the combined offset of the containing LGraph.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void writeBendPoints(final Writer writer, final KVectorChain bendPoints,
-            final int indentation, final KVector offset) throws IOException {
+    private static void writeBendPoints(final StringWriter writer, final KVectorChain bendPoints,
+            final int indentation, final KVector offset) {
         
         String indent0 = Strings.repeat(INDENT, indentation);
         String indent1 = Strings.repeat(INDENT, indentation + 1);
@@ -577,12 +523,8 @@ public final class JsonDebugUtil {
      *            the ports to write.
      * @param indentation
      *            the indentation level to use.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void writePorts(final Writer writer, final List<LPort> ports,
-            final int indentation) throws IOException {
-        
+    private static void writePorts(final StringWriter writer, final List<LPort> ports, final int indentation) {
             String indent0 = Strings.repeat(INDENT, indentation);
             String indent1 = Strings.repeat(INDENT, indentation + 1);
             String indent2 = Strings.repeat(INDENT, indentation + 2);
@@ -615,11 +557,9 @@ public final class JsonDebugUtil {
      *            the properties to write.
      * @param indentation
      *            the indentation level to use.
-     * @throws IOException
-     *             if anything goes wrong with the writer.
      */
-    private static void writeProperties(final Writer writer,
-            final Map<IProperty<?>, Object> properties, final int indentation) throws IOException {
+    private static void writeProperties(final StringWriter writer, final Map<IProperty<?>, Object> properties,
+            final int indentation) {
         
         String indent0 = Strings.repeat(INDENT, indentation);
         String indent1 = Strings.repeat(INDENT, indentation + 1);
@@ -682,14 +622,14 @@ public final class JsonDebugUtil {
         String name = "";
         if (node.getType() == NodeType.NORMAL) {
             // Normal nodes display their name, if any
-            if (node.getName() != null) {
-                name = node.getName();
+            if (node.getDesignation() != null) {
+                name = node.getDesignation();
             }
             name += " (" + layer + "," + index + ")";
         } else {
             // Dummy nodes show their name (if set), or their node ID
-            if (node.getName() != null) {
-                name = node.getName();
+            if (node.getDesignation() != null) {
+                name = node.getDesignation();
             } else {
                 name = "n_" + node.id;
             }

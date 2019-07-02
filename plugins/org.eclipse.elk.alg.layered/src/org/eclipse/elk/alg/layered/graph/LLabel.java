@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
+import com.google.common.base.Strings;
+
 /**
  * A label in the layered graph structure.
- * 
- * @author jjc
  */
 public final class LLabel extends LShape {
     
@@ -40,23 +40,30 @@ public final class LLabel extends LShape {
     }
     
     /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        if (text == null) {
-            return "l_" + id;
-        } else {
-            return "l_" + text;
-        }
-    }
-    
-    /**
      * Returns the text of the label.
      * 
      * @return the text
      */
     public String getText() {
         return text;
+    }
+
+    @Override
+    public String toString() {
+        String designation = getDesignation();
+        if (designation == null) {
+            return "label";
+        } else {
+            return "l_" + designation;
+        }
+    }
+
+    @Override
+    public String getDesignation() {
+        if (!Strings.isNullOrEmpty(text)) {
+            return text;
+        }
+        return super.getDesignation();
     }
     
 }

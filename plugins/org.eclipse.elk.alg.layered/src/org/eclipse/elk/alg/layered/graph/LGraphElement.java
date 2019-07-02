@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
+import org.eclipse.elk.alg.layered.graph.transform.ElkGraphTransformer;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
+
+import com.google.common.base.Strings;
 
 /**
  * Abstract superclass for the layers, nodes, ports, and edges of a layered graph
@@ -25,8 +28,6 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * runs on the same graph. As a consequence, hash tables and hash sets would store their content
  * in different order, which can lead to different layouts in some cases. The deterministic hash
  * code implemented here guarantees that such effects will not occur.</p>
- *
- * @author msp
  */
 public abstract class LGraphElement extends MapPropertyHolder {
 
@@ -37,5 +38,18 @@ public abstract class LGraphElement extends MapPropertyHolder {
     /** Identifier value, may be arbitrarily used by algorithms. */
     public int id;
     // CHECKSTYLEON VisibilityModifier
+    
+    /**
+     * Returns a string that is useful to identify the element while debugging.
+     * 
+     * @return the element's designation, or {@code null} if no meaningful designation can be provided
+     */
+    public String getDesignation() {
+        String identifier = ElkGraphTransformer.getOriginIdentifier(this);
+        if (!Strings.isNullOrEmpty(identifier)) {
+            return identifier;
+        }
+        return null;
+    }
     
 }

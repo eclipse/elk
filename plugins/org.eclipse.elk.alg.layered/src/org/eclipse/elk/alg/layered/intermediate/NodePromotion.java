@@ -449,7 +449,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         // The laLaLayer, born in the far away laLaLand, traveled here to be of special use for
         // our layering. It is added to the layeredGraph with reversed IDs so they fit to the IDs
         // stored in the nodes but can also be properly assigned compliant with the layering used in
-        // KLay Layered.
+        // ELK Layered.
         List<Layer> layList = Lists.newArrayList();
         for (int i = 0; i <= maxHeight; i++) {
             Layer laLaLayer = new Layer(layeredGraph);

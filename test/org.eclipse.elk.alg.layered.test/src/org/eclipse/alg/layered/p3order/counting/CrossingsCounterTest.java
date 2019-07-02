@@ -31,6 +31,7 @@ import org.junit.Test;
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MethodName
+@SuppressWarnings("restriction")
 public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     private CrossingsCounter counter;
 

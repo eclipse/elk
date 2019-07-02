@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -75,7 +76,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
         // Iterate through the current list of layers
         for (Layer layer : layers) {
             // Iterate through a node array to avoid ConcurrentModificationExceptions
-            LNode [] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
+            LNode [] nodes = LGraphUtil.toNodeArray(layer.getNodes());
             
             for (LNode node : nodes) {
                 LayerConstraint constraint = node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
@@ -133,7 +134,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
             }
             if (moveAllowed) {
                 // Iterate through a node array to avoid ConcurrentModificationExceptions
-                LNode [] nodes = firstLayer.getNodes().toArray(new LNode[firstLayer.getNodes().size()]);
+                LNode [] nodes = LGraphUtil.toNodeArray(firstLayer.getNodes());
                 for (LNode node : nodes) {
                     node.setLayer(sndFirstLayer);
                 }
@@ -163,7 +164,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
             }
             if (moveAllowed) {
                 // Iterate through a node array to avoid ConcurrentModificationExceptions
-                LNode [] nodes = lastLayer.getNodes().toArray(new LNode[lastLayer.getNodes().size()]);
+                LNode [] nodes = LGraphUtil.toNodeArray(lastLayer.getNodes());
                 for (LNode node : nodes) {
                     node.setLayer(sndLastLayer);
                 }

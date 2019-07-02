@@ -242,8 +242,8 @@ public final class PortLabelPlacementCalculator {
         
         // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
         double startCoordinate = portSide == PortSide.NORTH
-                ? Double.MIN_VALUE
-                : Double.MAX_VALUE;
+                ? Double.NEGATIVE_INFINITY
+                : Double.POSITIVE_INFINITY;
         
         for (PortContext portContext : portContexts) {
             if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {
@@ -450,8 +450,8 @@ public final class PortLabelPlacementCalculator {
         
         // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
         double startCoordinate = portSide == PortSide.NORTH
-                ? Double.MAX_VALUE
-                : Double.MIN_VALUE;
+                ? Double.POSITIVE_INFINITY
+                : Double.NEGATIVE_INFINITY;
         
         for (PortContext portContext : portContexts) {
             if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {

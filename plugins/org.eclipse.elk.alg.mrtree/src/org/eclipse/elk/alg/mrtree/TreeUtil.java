@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.mrtree.graph.TNode;
 import com.google.common.collect.Iterables;
 
 /**
- * Utility class for KLay Tree.
+ * Utility class for Mr Tree.
  * 
  * @author sgu
  */

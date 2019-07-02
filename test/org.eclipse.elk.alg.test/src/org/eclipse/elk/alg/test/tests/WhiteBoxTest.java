@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.Lists;
 
 /**
- * white box tests executed on ELKLayered The tested Algorithm is specified in TestTestClasses.
+ * white box tests executed on ELK Layered The tested Algorithm is specified in TestTestClasses.
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)

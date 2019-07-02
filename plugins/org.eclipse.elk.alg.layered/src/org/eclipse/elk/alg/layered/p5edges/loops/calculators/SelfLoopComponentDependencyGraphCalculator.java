@@ -196,7 +196,7 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                 List<SelfLoopPort> sidePorts = component.getPortsOfSide(currentSide);
                 
                 // filter non-loop components
-                if (component.getPorts().size() > 1) {
+                if (ports.size() > 1) {
                     List<SelfLoopEdge> dependencies = calculateEdgeOrder(
                             ports, sidePorts, new HashSet<SelfLoopEdge>(), currentSide, false);
                     component.getEdgeDependencies().put(currentSide, dependencies);

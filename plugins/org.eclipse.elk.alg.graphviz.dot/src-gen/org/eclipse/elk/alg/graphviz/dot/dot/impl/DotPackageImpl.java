@@ -172,7 +172,7 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   * 
+   *
    * <p>This method is used to initialize {@link DotPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -187,7 +187,8 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     if (isInited) return (DotPackage)EPackage.Registry.INSTANCE.getEPackage(DotPackage.eNS_URI);
 
     // Obtain or create and register package
-    DotPackageImpl theDotPackage = (DotPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof DotPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new DotPackageImpl());
+    Object registeredDotPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+    DotPackageImpl theDotPackage = registeredDotPackage instanceof DotPackageImpl ? (DotPackageImpl)registeredDotPackage : new DotPackageImpl();
 
     isInited = true;
 
@@ -200,7 +201,6 @@ public class DotPackageImpl extends EPackageImpl implements DotPackage
     // Mark meta-data to indicate it can't be changed
     theDotPackage.freeze();
 
-  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(DotPackage.eNS_URI, theDotPackage);
     return theDotPackage;

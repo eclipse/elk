@@ -26,13 +26,22 @@ import org.eclipse.elk.alg.layered.p3order.ISweepPortDistributor;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.LayerTotalPortDistributor;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+@SuppressWarnings("restriction")
 public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
+    
+    @BeforeClass
+    public static void initialize() {
+        LayoutMetaDataService.getInstance();
+    }
+    
     // CHECKSTYLEOFF javadoc
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF MethodName

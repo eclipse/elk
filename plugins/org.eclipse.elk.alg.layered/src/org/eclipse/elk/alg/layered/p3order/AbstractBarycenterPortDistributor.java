@@ -325,7 +325,7 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
     }
 
     private boolean hasNestedGraph(final LNode node) {
-        return node.getProperty(InternalProperties.NESTED_LGRAPH) != null;
+        return node.getNestedGraph() != null;
     }
 
     private boolean isNotFirstLayer(final int length, final int currentIndex,

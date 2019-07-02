@@ -17,7 +17,7 @@ While developing your algorithm, you will regularly switch back and forth betwee
 However many classes a layout algorithm consists of, it always provides one entry class that inherits from `AbstractLayoutProvider` and implements the single most important method for your algorithm:
 
 ```java
-void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor);
+void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor);
 ```
 
 Let's go through the parameters in reverse order (because of reasons). The `progressMonitor` parameter should be used to track progress and check if the user wants to cancel the layout operation. Actually canceling when the user wants to cancel is one of those features that will help your software stand out from many other programs, so take this opportunity to shine!

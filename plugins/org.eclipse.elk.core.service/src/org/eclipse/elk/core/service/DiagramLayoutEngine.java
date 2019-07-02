@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Kiel University and others.
+ * Copyright (c) 2011, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -146,10 +147,12 @@ public class DiagramLayoutEngine {
         }
     }
     
-    /** preference identifier for debug graph output. */
-    public static final String PREF_DEBUG_OUTPUT = "elk.debug.graph";
+    /** preference identifier for whether logging is enabled on progress monitors. */
+    public static final String PREF_DEBUG_LOGGING = "elk.debug.logs";
+    /** preference identifier for whether logged data are to be persisted. */
+    public static final String PREF_DEBUG_STORE = "elk.debug.store";
     /** preference identifier for execution time measurement. */
-    public static final String PREF_EXEC_TIME_MEASUREMENT = "elk.exectime.measure";
+    public static final String PREF_DEBUG_EXEC_TIME = "elk.debug.exectime";
     
     /**
      * Filter for {@link LayoutConfigurator} that checks for each option whether its configured targets
@@ -495,8 +498,11 @@ public class DiagramLayoutEngine {
         
         final IElkProgressMonitor finalMonitor;
         if (progressMonitor == null) {
-            finalMonitor = new BasicProgressMonitor(0, ElkServicePlugin.getInstance().getPreferenceStore()
-                    .getBoolean(PREF_EXEC_TIME_MEASUREMENT));
+            IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+            finalMonitor = new BasicProgressMonitor(0)
+                    .withLogging(prefStore.getBoolean(PREF_DEBUG_LOGGING))
+                    .withLogPersistence(prefStore.getBoolean(PREF_DEBUG_STORE))
+                    .withExecutionTimeMeasurement(prefStore.getBoolean(PREF_DEBUG_EXEC_TIME));
         } else {
             finalMonitor = progressMonitor;
         }
@@ -674,6 +680,9 @@ public class DiagramLayoutEngine {
                 }
             }
             progressMonitor.done();
+            
+            // Log the final result to be displayed in our debug views
+            progressMonitor.logGraph(mapping.getLayoutGraph(), "Result");
         }
 
         mapping.setProperty(MAPPING_STATUS, status);
@@ -709,16 +718,17 @@ public class DiagramLayoutEngine {
                 ElkUtil.applyVisitorsWithValidation(mapping.getLayoutGraph(), visitors);
             }
             
-            // Export the layout graph for debugging
-            if (ElkServicePlugin.getInstance().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
-                exportLayoutGraph(mapping.getLayoutGraph());
-            }
+            // Export the layout graph for debugging (this only does things if debug mode is enabled)
+            progressMonitor.logGraph(mapping.getLayoutGraph(), "input");
 
             // Perform layout on the layout graph
             graphLayoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(1));
             
             if (newTask) {
                 progressMonitor.done();
+                
+                // Log the final result to be displayed in our debug views
+                progressMonitor.logGraph(mapping.getLayoutGraph(), "result");
             }
             if (progressMonitor.isCanceled()) {
                 return Status.CANCEL_STATUS;

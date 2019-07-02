@@ -111,7 +111,7 @@ public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph
 
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node). Used internally, as
-     * KLay Layered doesn't remove self-loops in its cycle breaking phase, but MinWidth expects only
+     * ELK Layered doesn't remove self-loops in its cycle breaking phase, but MinWidth expects only
      * real directed acyclic graphs (DAGs).
      */
     private SelfLoopPredicate isSelfLoopTest = new SelfLoopPredicate();

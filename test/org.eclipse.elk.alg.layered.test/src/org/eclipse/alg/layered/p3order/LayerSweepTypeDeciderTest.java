@@ -24,10 +24,18 @@ import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepTypeDecider;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+@SuppressWarnings("restriction")
 public class LayerSweepTypeDeciderTest extends TestGraphCreator {
+    
+    @BeforeClass
+    public static void initialize() {
+        LayoutMetaDataService.getInstance();
+    }
 
     /**
      * <pre>

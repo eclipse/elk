@@ -36,6 +36,7 @@ import com.google.common.collect.Multimap;
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF MethodName
+@SuppressWarnings("restriction")
 public class BarycenterHeuristicTest extends TestGraphCreator {
     private MockRandom random;
     @Before

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,19 +19,18 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
- * An edge in a layered graph. Edges may only be connected to ports of a node, which represent the
- * point where the edge touches the node.
- * 
- * @author msp
+ * An edge in a layered graph. Edges may only be connected to ports of a node, which represent the point where the edge
+ * touches the node.
  */
 public final class LEdge extends LGraphElement {
 
     /** the serial version UID. */
     private static final long serialVersionUID = 1429497419118554817L;
-    
+
     /** the bend points. */
     private KVectorChain bendPoints = new KVectorChain();
     /** the source port. */
@@ -40,63 +39,51 @@ public final class LEdge extends LGraphElement {
     private LPort target;
     /** labels assigned to this edge. */
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(3);
-    
+
     /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        if (source != null && target != null) {
-            return source.getNode() + "(" + source + ")->" + target.getNode() + "(" + target + ")";
-        } else {
-            return "e_" + hashCode();
-        }
-    }
-    
-    /**
-     * Reverses the edge, including its bend points. Negates the {@code REVERSED} property. (an
-     * edge that was marked as being reversed is then unmarked, and the other way around) This
-     * does not change any properties on the connected ports. End labels are reversed as well (
-     * {@code HEAD} labels become {@code TAIL} labels and vice versa).
+     * Reverses the edge, including its bend points. Negates the {@code REVERSED} property. (an edge that was marked as
+     * being reversed is then unmarked, and the other way around) This does not change any properties on the connected
+     * ports. End labels are reversed as well ( {@code HEAD} labels become {@code TAIL} labels and vice versa).
      * 
      * @param layeredGraph
-     *         the layered graph
+     *            the layered graph
      * @param adaptPorts
-     *         If true and a connected port is a collector port (a port used to merge edges),
-     *         the corresponding opposite port is used instead of the original one.
+     *            If true and a connected port is a collector port (a port used to merge edges), the corresponding
+     *            opposite port is used instead of the original one.
      */
     public void reverse(final LGraph layeredGraph, final boolean adaptPorts) {
         LPort oldSource = getSource();
         LPort oldTarget = getTarget();
-        
+
         setSource(null);
         setTarget(null);
         if (adaptPorts && oldTarget.getProperty(InternalProperties.INPUT_COLLECT)) {
-            setSource(LGraphUtil.provideCollectorPort(layeredGraph, oldTarget.getNode(),
-                    PortType.OUTPUT, PortSide.EAST));
+            setSource(
+                    LGraphUtil.provideCollectorPort(layeredGraph, oldTarget.getNode(), PortType.OUTPUT, PortSide.EAST));
         } else {
             setSource(oldTarget);
         }
         if (adaptPorts && oldSource.getProperty(InternalProperties.OUTPUT_COLLECT)) {
-            setTarget(LGraphUtil.provideCollectorPort(layeredGraph, oldSource.getNode(),
-                    PortType.INPUT, PortSide.WEST));
+            setTarget(
+                    LGraphUtil.provideCollectorPort(layeredGraph, oldSource.getNode(), PortType.INPUT, PortSide.WEST));
         } else {
             setTarget(oldSource);
         }
-        
+
         // Switch end labels
         for (LLabel label : labels) {
             EdgeLabelPlacement labelPlacement = label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT);
-            
+
             if (labelPlacement == EdgeLabelPlacement.TAIL) {
                 label.setProperty(LayeredOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
             } else if (labelPlacement == EdgeLabelPlacement.HEAD) {
                 label.setProperty(LayeredOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.TAIL);
             }
         }
-        
+
         boolean reversed = getProperty(InternalProperties.REVERSED);
         setProperty(InternalProperties.REVERSED, !reversed);
-        
+
         bendPoints = KVectorChain.reverse(bendPoints);
     }
 
@@ -110,10 +97,10 @@ public final class LEdge extends LGraphElement {
     }
 
     /**
-     * Sets the source port of this edge and adds itself to the port's list of edges. If the edge
-     * previously had another source, it is removed from the original port's list of edges. Be
-     * careful not to use this method while iterating through the edges list of the old port nor of
-     * the new port, since that could lead to {@link java.util.ConcurrentModificationException}s.
+     * Sets the source port of this edge and adds itself to the port's list of edges. If the edge previously had another
+     * source, it is removed from the original port's list of edges. Be careful not to use this method while iterating
+     * through the edges list of the old port nor of the new port, since that could lead to
+     * {@link java.util.ConcurrentModificationException}s.
      * 
      * @param source
      *            the source port to set
@@ -122,9 +109,9 @@ public final class LEdge extends LGraphElement {
         if (this.source != null) {
             this.source.getOutgoingEdges().remove(this);
         }
-        
+
         this.source = source;
-        
+
         if (this.source != null) {
             this.source.getOutgoingEdges().add(this);
         }
@@ -140,10 +127,10 @@ public final class LEdge extends LGraphElement {
     }
 
     /**
-     * Sets the target port of this edge and adds itself to the port's list of edges. If the edge
-     * previously had another target, it is removed from the original port's list of edges. Be
-     * careful not to use this method while iterating through the edges list of the old port nor of
-     * the new port, since that could lead to {@link java.util.ConcurrentModificationException}s.
+     * Sets the target port of this edge and adds itself to the port's list of edges. If the edge previously had another
+     * target, it is removed from the original port's list of edges. Be careful not to use this method while iterating
+     * through the edges list of the old port nor of the new port, since that could lead to
+     * {@link java.util.ConcurrentModificationException}s.
      * 
      * @param target
      *            the target port to set
@@ -152,21 +139,21 @@ public final class LEdge extends LGraphElement {
         if (this.target != null) {
             this.target.getIncomingEdges().remove(this);
         }
-        
+
         this.target = target;
-        
+
         if (this.target != null) {
             this.target.getIncomingEdges().add(this);
         }
     }
-    
+
     /**
-     * The same as {@link #setTarget(LPort)} with the exception that the index the edge is inserted at
-     * in the target port's list of incoming edges can be specified.
+     * The same as {@link #setTarget(LPort)} with the exception that the index the edge is inserted at in the target
+     * port's list of incoming edges can be specified.
      * 
      * <p>
-     * <em>If you need to think about whether you want to use this or {@link #setTarget(LPort)}, chances
-     * are you want the latter.</em>
+     * <em>If you need to think about whether you want to use this or {@link #setTarget(LPort)}, chances are you want
+     * the latter.</em>
      * </p>
      *
      * @param targetPort
@@ -188,10 +175,10 @@ public final class LEdge extends LGraphElement {
             this.target.getIncomingEdges().add(index, this);
         }
     }
-    
+
     /**
-     * Determines if this edge is a self-loop or not. An edge is considered a self-loop if both, source
-     * and target port are defined and belong to the same non-null node.
+     * Determines if this edge is a self-loop or not. An edge is considered a self-loop if both, source and target port
+     * are defined and belong to the same non-null node.
      * 
      * @return {@code true} if this edge is a self-loop.
      */
@@ -199,13 +186,13 @@ public final class LEdge extends LGraphElement {
         if (this.source == null || this.target == null) {
             return false;
         }
-        
+
         return this.source.getNode() != null && this.source.getNode() == this.target.getNode();
     }
-    
+
     /**
-     * @return {@code true} if this edge is not a self loop, the source node and target node of this edge 
-     *         reside in the same layer.
+     * @return {@code true} if this edge is not a self loop, the source node and target node of this edge reside in the
+     *         same layer.
      * @see #isSelfLoop()
      */
     public boolean isInLayerEdge() {
@@ -213,8 +200,8 @@ public final class LEdge extends LGraphElement {
     }
 
     /**
-     * Returns the list of bend points, with coordinates relative to the {@code LayeredGraph}'s
-     * origin. The list is initially empty.
+     * Returns the list of bend points, with coordinates relative to the {@code LayeredGraph}'s origin. The list is
+     * initially empty.
      * 
      * @return the bend points
      */
@@ -266,4 +253,30 @@ public final class LEdge extends LGraphElement {
             throw new IllegalArgumentException("'node' must either be the source node or target node of the edge.");
         }
     }
+
+    @Override
+    public String getDesignation() {
+        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
+            return labels.get(0).getText();
+        }
+        return super.getDesignation();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("e_");
+        String designation = getDesignation();
+        if (designation != null) {
+            result.append(designation);
+        }
+        if (source != null && target != null) {
+            result.append(" ").append(source.getDesignation());
+            result.append("[").append(source.getNode()).append("]");
+            result.append(" -> ").append(target.getDesignation());
+            result.append("[").append(target.getNode()).append("]");
+        }
+        return result.toString();
+    }
+
 }

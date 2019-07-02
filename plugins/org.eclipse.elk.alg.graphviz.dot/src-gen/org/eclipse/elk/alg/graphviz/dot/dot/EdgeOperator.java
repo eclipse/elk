@@ -58,7 +58,7 @@ public enum EdgeOperator implements Enumerator
    * </p>
    * <!-- end-user-doc -->
    * @see #DIRECTED
-   * @model name="directed" literal="->"
+   * @model name="directed" literal="-&gt;"
    * @generated
    * @ordered
    */

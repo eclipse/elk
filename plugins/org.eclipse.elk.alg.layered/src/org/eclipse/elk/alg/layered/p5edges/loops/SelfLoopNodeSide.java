@@ -24,7 +24,7 @@ public class SelfLoopNodeSide {
     /** The actual side information. */
     private final PortSide side;
     /** The ports which are placed on this node side. */
-    private List<SelfLoopPort> ports = new ArrayList<>();
+    private final List<SelfLoopPort> ports = new ArrayList<>();
     /** The maximum level a port on this side has. */
     private int maximumPortLevel;
     /** The maximum level a segment on this side has. */
@@ -32,9 +32,9 @@ public class SelfLoopNodeSide {
     /** The maximum offset which has to be considered when calculating the margin of the node. */
     private double maximumLabelOffset;
     /** The segments which belong to an opposing self loop (space has to be reserved for them). */
-    private Map<SelfLoopEdge, SelfLoopOpposingSegment> opposingSegments = new HashMap<>();
+    private final Map<SelfLoopEdge, SelfLoopOpposingSegment> opposingSegments = new HashMap<>();
     /** The roots of the component dependency graph. They hold the outermost components of the node side. */
-    private Set<SelfLoopComponent> componentDependencies = new HashSet<>();
+    private final Set<SelfLoopComponent> componentDependencies = new HashSet<>();
 
     
     /**

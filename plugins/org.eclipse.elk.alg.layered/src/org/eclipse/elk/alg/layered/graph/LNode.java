@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,32 +14,26 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * A node in a layered graph.
- * 
- * @author msp
  */
 public final class LNode extends LShape {
     
     /**
      * Definition of node types used in the layered approach.
-     * 
-     * @author msp
-     * @author cds
-     * @author ima
-     * @author jjc
      */
     public static enum NodeType {
         
@@ -91,6 +85,8 @@ public final class LNode extends LShape {
     private final List<LPort> ports = Lists.newArrayListWithCapacity(6);
     /** this node's labels. */
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
+    /** the nested graph, or @{code null}. */
+    private LGraph nestedGraph;
     /** the margin area around this node. */
     private final LMargin margin = new LMargin();
     /** the padding inside this node, usually reserved for port and label placement. */
@@ -107,40 +103,6 @@ public final class LNode extends LShape {
      */
     public LNode(final LGraph graph) {
         this.graph = graph;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toString() {
-        return "n_" + getDesignation();
-    }
-    
-    /**
-     * Returns the name of the node. The name is derived from the text of the first label, if any.
-     * 
-     * @return the name, or {@code null}
-     */
-    public String getName() {
-        if (!labels.isEmpty()) {
-            return labels.get(0).getText();
-        }
-        return null;
-    }
-    
-    /**
-     * Returns the node's designation. The designation is either the name if that is not {@code null},
-     * or the node's ID otherwise.
-     * 
-     * @return the node's designation.
-     */
-    public String getDesignation() {
-        String name = getName();
-        if (name == null) {
-            return Integer.toString(id);
-        } else {
-            return name;
-        }
     }
 
     /**
@@ -423,6 +385,24 @@ public final class LNode extends LShape {
     }
     
     /**
+     * Returns a graph that is nested in this node, if any.
+     * 
+     * @return the nested graph, or @{code null}
+     */
+    public LGraph getNestedGraph() {
+        return nestedGraph;
+    }
+    
+    /**
+     * Sets the nested graph.
+     * 
+     * @param nestedGraph the new nested graph
+     */
+    public void setNestedGraph(final LGraph nestedGraph) {
+        this.nestedGraph = nestedGraph;
+    }
+    
+    /**
      * Returns the node's margin. The margin is the space around the node that is to be reserved
      * for ports and labels.
      * 
@@ -544,6 +524,29 @@ public final class LNode extends LShape {
             }
         }
         portSideIndices.put(currentSide, Pair.of(firstIndexForCurrentSide, currentIndex));
+    }
+
+    @Override
+    public String getDesignation() {
+        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
+            return labels.get(0).getText();
+        }
+        String id = super.getDesignation();
+        if (id != null) {
+            return id;
+        }
+        return Integer.toString(getIndex());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("n");
+        if (type != NodeType.NORMAL) {
+            result.append("(").append(type.toString().toLowerCase()).append(")");
+        }
+        result.append("_").append(getDesignation());
+        return result.toString();
     }
 
 }

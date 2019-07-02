@@ -24,9 +24,9 @@ public class SelfLoopNode {
     /** The original node this class represents. */
     private final LNode node;
     /** A map from all four port sides to their respective node side objects. */
-    private EnumMap<PortSide, SelfLoopNodeSide> nodeSides = new EnumMap<>(PortSide.class);
+    private final EnumMap<PortSide, SelfLoopNodeSide> nodeSides = new EnumMap<>(PortSide.class);
     /** List of self loop components this node has. */
-    private List<SelfLoopComponent> selfLoopComponents = new ArrayList<>();
+    private final List<SelfLoopComponent> selfLoopComponents = new ArrayList<>();
 
     
     /**

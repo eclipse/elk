@@ -25,7 +25,9 @@ import org.eclipse.elk.alg.layered.compaction.oned.algs.QuadraticConstraintCalcu
 import org.eclipse.elk.alg.layered.compaction.oned.algs.ScanlineConstraintCalculator;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.core.util.LoggedGraph.Type;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -548,7 +550,7 @@ public final class OneDimensionalCompactor {
      * @return
      *          this instance of {@link OneDimensionalCompactor}
      */
-    public OneDimensionalCompactor drawHitboxes(final String name) {
+    public OneDimensionalCompactor drawHitboxes(final IElkProgressMonitor monitor, final String name) {
         //determine viewBox
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -562,43 +564,38 @@ public final class OneDimensionalCompactor {
         KVector size = bottomRight.clone().sub(topLeft);
 
         // drawing hitboxes to svg
-        PrintWriter out;
-        try {
-            out = new PrintWriter(new FileWriter(name));
+        StringBuilder out = new StringBuilder();
+        
+        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        out.append("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\""
+                + "  viewBox=\"" + (topLeft.x) + " " + (topLeft.y) 
+                + " " + size.x + " " + size.y + "\">\n");
 
-            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            out.println("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\""
-                    + "  viewBox=\"" + (topLeft.x) + " " + (topLeft.y) 
-                    + " " + size.x + " " + size.y + "\">");
+        out.append("<defs><marker id=\"markerArrow\" markerWidth=\"13\" "
+                + "markerHeight=\"13\" refX=\"2\" refY=\"6\" "
+                + "orient=\"auto\">"
+                + "  <path d=\"M2,2 L2,11 L10,6 L2,2\" style=\"fill: #000000;\" />"
+                + "</marker></defs>\n");
 
-            out.println("<defs><marker id=\"markerArrow\" markerWidth=\"13\" "
-                    + "markerHeight=\"13\" refX=\"2\" refY=\"6\" "
-                    + "orient=\"auto\">"
-                    + "  <path d=\"M2,2 L2,11 L10,6 L2,2\" style=\"fill: #000000;\" />"
-                    + "</marker></defs>");
+        for (CNode cNode : cGraph.cNodes) {
+            // the node's representation
+            out.append(cNode.getDebugSVG()).append("\n");
 
-            for (CNode cNode : cGraph.cNodes) {
-                
-                // the node's representation
-                out.println(cNode.getDebugSVG());
-
-                // the constraints
-                for (CNode inc : cNode.constraints) {
-                    out.println("<line x1=\"" + (cNode.hitbox.x + cNode.hitbox.width / 2)
-                            + "\" y1=\"" + (cNode.hitbox.y + cNode.hitbox.height / 2) + "\" x2=\""
-                            + (inc.hitbox.x + inc.hitbox.width / 2) + "\" y2=\""
-                            + (inc.hitbox.y + inc.hitbox.height / 2)
-                            + "\" stroke=\"grey\" opacity=\"0.2\""
-                            + " style=\"marker-start: url(#markerArrow);\" />");
-                }
+            // the constraints
+            for (CNode inc : cNode.constraints) {
+                out.append("<line x1=\"" + (cNode.hitbox.x + cNode.hitbox.width / 2)
+                        + "\" y1=\"" + (cNode.hitbox.y + cNode.hitbox.height / 2) + "\" x2=\""
+                        + (inc.hitbox.x + inc.hitbox.width / 2) + "\" y2=\""
+                        + (inc.hitbox.y + inc.hitbox.height / 2)
+                        + "\" stroke=\"grey\" opacity=\"0.2\""
+                        + " style=\"marker-start: url(#markerArrow);\" />\n");
             }
-
-            out.println("</svg>");
-
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        out.append("</svg>");
+
+        monitor.logGraph(out.toString(), name, Type.SVG);
+        
         return this;
     }
     // elkjs-exclude-end

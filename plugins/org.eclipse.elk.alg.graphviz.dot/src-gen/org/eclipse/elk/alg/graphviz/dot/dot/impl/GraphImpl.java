@@ -349,7 +349,7 @@ public class GraphImpl extends MinimalEObjectImpl.Container implements Graph
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (strict: ");
     result.append(strict);
     result.append(", type: ");

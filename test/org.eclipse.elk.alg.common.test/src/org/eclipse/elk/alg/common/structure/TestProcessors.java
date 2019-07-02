@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.common.structure;
 
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 public enum TestProcessors implements ILayoutProcessorFactory<StringBuffer> {

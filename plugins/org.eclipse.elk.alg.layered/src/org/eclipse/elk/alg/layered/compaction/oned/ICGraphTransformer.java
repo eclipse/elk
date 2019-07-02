@@ -24,7 +24,7 @@ public interface ICGraphTransformer<T> {
      *          the graph to transform into a {@link CGraph}
      * @return a {@link CGraph}
      */
-    CGraph transform(final T inputGraph);
+    CGraph transform(T inputGraph);
     
     /**
      * Updates the properties of the input graph and applies the compacted positions to the

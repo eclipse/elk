@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -30,8 +31,6 @@ import com.google.common.collect.Lists;
  * <p>Port must be used even if the original graph does not reveal them. In this
  * case each edge has dedicated source and target ports, which are used to
  * determine the points where the edge touches the source and target nodes.</p>
- *
- * @author msp
  */
 public final class LPort extends LShape {
 
@@ -99,6 +98,7 @@ public final class LPort extends LShape {
     private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
     /** All connected edges in a combined iterable. */
     private Iterable<LEdge> connectedEdges = new CombineIter<LEdge>(incomingEdges, outgoingEdges);
+    
     /**
      * Returns the node that owns this port.
      * 
@@ -348,17 +348,36 @@ public final class LPort extends LShape {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public String getDesignation() {
+        if (!labels.isEmpty() && !Strings.isNullOrEmpty(labels.get(0).getText())) {
+            return labels.get(0).getText();
+        }
+        String id = super.getDesignation();
+        if (id != null) {
+            return id;
+        }
+        return Integer.toString(getIndex());
+    }
+
     @Override
     public String toString() {
-        String text = getName();
-        if (text == null) {
-            return "p_" + id;
-        } else {
-            return "p_" + text;
+        StringBuilder result = new StringBuilder();
+        result.append("p_").append(getDesignation());
+        if (owner != null) {
+            result.append("[").append(owner).append("]");
         }
+        if (incomingEdges.size() == 1 && outgoingEdges.isEmpty() && incomingEdges.get(0).getSource() != this) {
+            LPort source = incomingEdges.get(0).getSource();
+            result.append(" << ").append(source.getDesignation());
+            result.append("[").append(source.owner).append("]");
+        }
+        if (incomingEdges.isEmpty() && outgoingEdges.size() == 1 && outgoingEdges.get(0).getTarget() != this) {
+            LPort target = outgoingEdges.get(0).getTarget();
+            result.append(" >> ").append(target.getDesignation());
+            result.append("[").append(target.owner).append("]");
+        }
+        return result.toString();
     }
 
     /**

@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
 
 /**
  * This algorithm is an implementation for solving the node placement problem
- * which is posed in phase 4 of the KLay Layered algorithm. Inspired by:
+ * which is posed in phase 4 of the ELK Layered algorithm. Inspired by:
  * <ul>
  *   <li> Ulrik Brandes and Boris K&ouml;pf, Fast and simple horizontal coordinate assignment.
  *     In <i>Proceedings of the 9th International Symposium on Graph Drawing (GD'01)</i>,
@@ -53,10 +53,10 @@ import com.google.common.collect.Sets;
  * are executed four times, traversing the graph in all combinations of TOP or BOTTOM and LEFT or
  * RIGHT.</p>
  * 
- * <p>In KLay Layered we have the general idea of layouting from left to right and
+ * <p>In ELK Layered we have the general idea of layouting from left to right and
  * transforming in the desired direction later. We decided to translate the terminology of the original
  * algorithm which thinks of a layout from top to bottom. When placing coordinates, we have to differ
- * from the original algorithm, since node placement in KLay Layered has to assign y-coordinates and not
+ * from the original algorithm, since node placement in ELK Layered has to assign y-coordinates and not
  * x-coordinates.</p>
  * 
  * <p>The variable naming in this code is mostly chosen for an iteration direction within our
@@ -112,10 +112,6 @@ import com.google.common.collect.Sets;
  *     <dd>The size of each layer is set according to the area occupied by its nodes</dd>
  *     <dd>The height of the graph is set to the maximal layer height</dd>
  * </dl>
- * 
- * 
- * @author jjc
- * @author uru
  */
 public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
     
@@ -125,9 +121,7 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
                 .addBefore(LayeredPhases.P5_EDGE_ROUTING,
                         IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
@@ -143,14 +137,10 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
     /**  Precalculated information on nodes' neighborhoods etc. */
     private NeighborhoodInformation ni;
 
-    /** Flag which switches debug output of the algorithm on or off. */
-    private boolean debugMode = false;
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Brandes & Koepf node placement", 1);
 
@@ -159,9 +149,6 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
         // Precalculate some information that we require during the 
         // following processes. 
         ni = NeighborhoodInformation.buildFor(layeredGraph);
-
-        // Regard possible other layout options.
-        debugMode = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
 
         // a balanced layout is desired if
         //  a) no specific alignment is set and straight edges are not desired
@@ -236,9 +223,9 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
         }
 
         // Debug output
-        if (debugMode) {
+        if (monitor.isLoggingEnabled()) {
             for (BKAlignedLayout bal : layouts) {
-                System.out.println(bal + " size is " + bal.layoutSize());
+                monitor.log(bal + " size is " + bal.layoutSize());
             }
         }
 
@@ -252,7 +239,7 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
         // given criteria.
         if (produceBalancedLayout) {
             BKAlignedLayout balanced = createBalancedLayout(layouts, ni.nodeCount);
-            if (checkOrderConstraint(layeredGraph, balanced)) {
+            if (checkOrderConstraint(layeredGraph, balanced, monitor)) {
                 chosenLayout = balanced;
             }
         } 
@@ -261,7 +248,7 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
         // violates order constraints, pick the one with the smallest height
         if (chosenLayout == null) {
             for (BKAlignedLayout bal : layouts) {
-                if (checkOrderConstraint(layeredGraph, bal)) {
+                if (checkOrderConstraint(layeredGraph, bal, monitor)) {
                     if (chosenLayout == null || chosenLayout.layoutSize() > bal.layoutSize()) {
                         chosenLayout = bal;
                     }
@@ -283,11 +270,11 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
         }
 
         // Debug output
-        if (debugMode) {
-            System.out.println("Chosen node placement: " + chosenLayout);
-            System.out.println("Blocks: " + getBlocks(chosenLayout));
-            System.out.println("Classes: " + getClasses(chosenLayout));
-            System.out.println("Marked edges: " + markedEdges);
+        if (monitor.isLoggingEnabled()) {
+            monitor.log("Chosen node placement: " + chosenLayout);
+            monitor.log("Blocks: " + getBlocks(chosenLayout));
+            monitor.log("Classes: " + getClasses(chosenLayout, monitor));
+            monitor.log("Marked edges: " + markedEdges);
         }
         
         // cleanup
@@ -562,16 +549,17 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
      * Finds all classes of a given layout. Only used for debug output.
      * 
      * @param bal The layout whose classes to find
+     * @param monitor progress monitor for debug output
      * @return The classes of the given layout
      */
-    static Map<LNode, List<LNode>> getClasses(final BKAlignedLayout bal) {
+    static Map<LNode, List<LNode>> getClasses(final BKAlignedLayout bal, final IElkProgressMonitor monitor) {
         Map<LNode, List<LNode>> classes = Maps.newLinkedHashMap();
         
         // We need to enumerate all block roots
         Set<LNode> roots = Sets.newLinkedHashSet(Arrays.asList(bal.root));
         for (LNode root : roots) {
             if (root == null) {
-                System.out.println("There are no classes in a balanced layout.");
+                monitor.log("There are no classes in a balanced layout.");
                 break;
             }
             LNode sink = bal.sink[root.id];
@@ -594,9 +582,11 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
      * 
      * @param layeredGraph the containing layered graph.
      * @param bal the layout which shall be checked.
+     * @param monitor progress monitor for logging.
      * @return {@code true} if the order is preserved and no nodes overlap, {@code false} otherwise.
      */
-    private boolean checkOrderConstraint(final LGraph layeredGraph, final BKAlignedLayout bal) {
+    private boolean checkOrderConstraint(final LGraph layeredGraph, final BKAlignedLayout bal,
+            final IElkProgressMonitor monitor) {
         
         // Flag indicating whether the layout is feasible or not
         boolean feasible = true;
@@ -626,8 +616,8 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
                 } else {
                     // We've found an overlap
                     feasible = false;
-                    if (debugMode) {
-                        System.out.println("bk node placement breaks on " + node
+                    if (monitor.isLoggingEnabled()) {
+                        monitor.log("bk node placement breaks on " + node
                                 + " which should have been after " + previous);
                     }
                     break;
@@ -640,8 +630,8 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
             }
         }
         
-        if (debugMode) {
-            System.out.println(bal + " is feasible: " + feasible);
+        if (monitor.isLoggingEnabled()) {
+            monitor.log(bal + " is feasible: " + feasible);
         }
         
         return feasible;

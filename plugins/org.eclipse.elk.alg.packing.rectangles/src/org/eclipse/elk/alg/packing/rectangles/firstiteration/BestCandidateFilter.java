@@ -1,0 +1,30 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eclipse.elk.alg.packing.rectangles.firstiteration;
+
+import java.util.List;
+
+import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
+
+/**
+ * Interface implementing the Strategy interface of the strategy pattern. This interface offers a method that filters a
+ * given list of {@link DrawingData} objects and returns a filtered list.
+ */
+public interface BestCandidateFilter {
+
+    /**
+     * Filters the given list of {@link DrawingData} objects and returns it.
+     * 
+     * @param candidates
+     *            list to be filtered.
+     * @param dar
+     *            desired aspect ratio.
+     * @return a list that is filtered by whatever the implementation filtered for.
+     */
+    List<DrawingData> filterList(List<DrawingData> candidates, double dar);
+}

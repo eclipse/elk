@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
-import org.eclipse.elk.core.math.ElkRectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
@@ -25,7 +23,9 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNodeSide;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopOpposingSegment;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.calculators.SelfLoopOffsetCalculator;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
  * Choose a candidate position for each component label. Upon instantiation, a default assignment is immediately
@@ -64,8 +64,6 @@ public final class SelfLoopLabelPositionEvaluator {
     private final SelfLoopNode slNode;
     /** Those of the node's self loop components that actually have a label to be assigned. */
     private final List<SelfLoopComponent> components;
-    /** Whether debug mode is active. */
-    private final boolean debugMode;
     /** The current assignment's penalty. */
     private double assignmentPenalty;
     
@@ -75,10 +73,12 @@ public final class SelfLoopLabelPositionEvaluator {
     
     /**
      * Creates a new instance for the given node.
+     *
+     * @param slNode the node to evaluate self loop positions for.
+     * @param monitor progress monitor for debug output.
      */
-    public SelfLoopLabelPositionEvaluator(final SelfLoopNode slNode) {
+    public SelfLoopLabelPositionEvaluator(final SelfLoopNode slNode, final IElkProgressMonitor monitor) {
         this.slNode = slNode;
-        this.debugMode = slNode.getNode().getGraph().getProperty(LayeredOptions.DEBUG_MODE);
         
         // We're only interested in components that actually have a label here
         components = slNode.getSelfLoopComponents().stream()
@@ -87,7 +87,7 @@ public final class SelfLoopLabelPositionEvaluator {
 
         // initialize a random position constellation and calculate its penalty
         assignDefaultPositions();
-        assignmentPenalty = calculatePenalty();
+        assignmentPenalty = calculatePenalty(monitor);
     }
 
     /**
@@ -111,14 +111,14 @@ public final class SelfLoopLabelPositionEvaluator {
     /**
      * Chooses one {@link SelfLoopLabelPosition} for each self loop label with the aim of minimizing the penalties
      * that result from choosing those positions.
+     * 
+     * @param monitor progress monitor for debug output.
      */
-    public void evaluatePositions() {
-        if (debugMode) {
+    public void evaluatePositions(final IElkProgressMonitor monitor) {
+        if (monitor.isLoggingEnabled()) {
             KVector nodeSize = slNode.getNode().getSize();
-            System.out.println("----------------------------------------");
-            System.out.println("SETUP");
-            System.out.println();
-            System.out.println("Node (" + nodeSize.x + ", " + nodeSize.y + ")");
+            
+            monitor.log("SETUP Node (" + nodeSize.x + ", " + nodeSize.y + ")");
             
             for (SelfLoopComponent component : components) {
                 SelfLoopLabel slLabel = component.getSelfLoopLabel();
@@ -128,14 +128,14 @@ public final class SelfLoopLabelPositionEvaluator {
                 for (LLabel llabel : slLabel.getLabels()) {
                     joiner.add(llabel.getText());
                 }
-                System.out.println(joiner.toString() + " (" + slLabel.getWidth() + ", " + slLabel.getHeight() + ")");
+                monitor.log(joiner.toString() + " (" + slLabel.getWidth() + ", " + slLabel.getHeight() + ")");
                 
                 // Output possible positions
                 for (SelfLoopLabelPosition position : slLabel.getCandidatePositions()) {
-                    System.out.println("    " + position.getPosition().toString());
-                    System.out.println("        Base penalty: " + position.getBasePenalty());
-                    System.out.println("        Side: " + position.getSide());
-                    System.out.println("        Label alignment: " + position.getLabelAlignment());
+                    monitor.log("    " + position.getPosition().toString());
+                    monitor.log("        Base penalty: " + position.getBasePenalty());
+                    monitor.log("        Side: " + position.getSide());
+                    monitor.log("        Label alignment: " + position.getLabelAlignment());
                 }
             }
         }
@@ -144,25 +144,21 @@ public final class SelfLoopLabelPositionEvaluator {
         double previousPenalty = Double.MAX_VALUE;
         int run = 1;
         while (assignmentPenalty < previousPenalty) {
-            if (debugMode) {
-                System.out.println();
-                System.out.println();
-                System.out.println("RUN " + run++);
-                System.out.println();
-                System.out.println("Previous Penalty: " + assignmentPenalty);
-                System.out.println();
+            if (monitor.isLoggingEnabled()) {
+                monitor.log("RUN " + run++);
+                monitor.log("Previous Penalty: " + assignmentPenalty);
             }
             
             previousPenalty = assignmentPenalty;
             double currMinimum = Double.MAX_VALUE;
 
             for (SelfLoopComponent component : components) {
-                if (debugMode) {
+                if (monitor.isLoggingEnabled()) {
                     StringJoiner joiner = new StringJoiner(", ");
                     for (LLabel llabel : component.getSelfLoopLabel().getLabels()) {
                         joiner.add(llabel.getText());
                     }
-                    System.out.println(joiner.toString());
+                    monitor.log(joiner.toString());
                 }
                 
                 SelfLoopLabel slLabel = component.getSelfLoopLabel();
@@ -173,21 +169,21 @@ public final class SelfLoopLabelPositionEvaluator {
                 for (SelfLoopLabelPosition currPosition : positions) {
                     slLabel.setLabelPosition(currPosition);
 
-                    if (debugMode) {
-                        System.out.println("    " + currPosition.getPosition().toString());
+                    if (monitor.isLoggingEnabled()) {
+                        monitor.log("    " + currPosition.getPosition().toString());
                     }
                     
                     // calculate penalty for current constellation
-                    currMinimum = calculatePenalty();
+                    currMinimum = calculatePenalty(monitor);
 
-                    if (debugMode) {
-                        System.out.println("        Penalty: " + currMinimum);
+                    if (monitor.isLoggingEnabled()) {
+                        monitor.log("        Penalty: " + currMinimum);
                     }
 
                     // update minimum
                     if (currMinimum < assignmentPenalty) {
-                        if (debugMode) {
-                            System.out.println("    -> chosen");
+                        if (monitor.isLoggingEnabled()) {
+                            monitor.log("    -> chosen");
                         }
                         
                         assignmentPenalty = currMinimum;
@@ -198,18 +194,13 @@ public final class SelfLoopLabelPositionEvaluator {
                 component.getSelfLoopLabel().setLabelPosition(currMinPosition);
             }
 
-            if (debugMode) {
-                System.out.println();
-                System.out.println("New Penalty: " + assignmentPenalty);
-                System.out.println();
+            if (monitor.isLoggingEnabled()) {
+                monitor.log("New Penalty: " + assignmentPenalty);
             }
         }
 
-        if (debugMode) {
-            System.out.println();
-            System.out.println();
-            System.out.println("RESULT");
-            System.out.println();
+        if (monitor.isLoggingEnabled()) {
+            monitor.log("RESULT");
             
             for (SelfLoopComponent component : components) {
                 // Output component labels
@@ -217,10 +208,10 @@ public final class SelfLoopLabelPositionEvaluator {
                 for (LLabel llabel : component.getSelfLoopLabel().getLabels()) {
                     joiner.add(llabel.getText());
                 }
-                System.out.println(joiner.toString());
+                monitor.log(joiner.toString());
                 
                 // Output chosen position
-                System.out.println("    -> "
+                monitor.log("    -> "
                         + component.getSelfLoopLabel().getLabelPosition().getPosition().toString());
             }
         }
@@ -234,7 +225,7 @@ public final class SelfLoopLabelPositionEvaluator {
      * Calculates the penalty of the current self loop label position assignment. This takes label-label and
      * label-edge crossings into account.
      */
-    private double calculatePenalty() {
+    private double calculatePenalty(final IElkProgressMonitor monitor) {
         double totalBasePenalty = 0;
         
         // Reset the previous calculated coordinates since the current assignment of labels to candidate positions
@@ -256,10 +247,10 @@ public final class SelfLoopLabelPositionEvaluator {
         int labelLabelCrossings = calculateLabelLabelCrossings(labelRects);
         int labelEdgeCrossings = calculateLabelEdgeCrossings();
 
-        if (debugMode) {
-            System.out.println("        Label-Node: " + labelNodeCrossings);
-            System.out.println("        Label-Label: " + labelLabelCrossings);
-            System.out.println("        Label-Edge: " + labelEdgeCrossings);
+        if (monitor.isLoggingEnabled()) {
+            monitor.log("        Label-Node: " + labelNodeCrossings);
+            monitor.log("        Label-Label: " + labelLabelCrossings);
+            monitor.log("        Label-Edge: " + labelEdgeCrossings);
         }
         
         return LABEL_NODE_CROSSING_PENALTY * labelNodeCrossings

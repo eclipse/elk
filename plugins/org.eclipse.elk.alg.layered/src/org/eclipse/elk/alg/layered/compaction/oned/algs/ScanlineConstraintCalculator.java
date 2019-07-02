@@ -146,7 +146,7 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
         private boolean low;
         private CNode node;
 
-        public Timestamp(final CNode node, final boolean low) {
+        Timestamp(final CNode node, final boolean low) {
             this.node = node;
             this.low = low;
         }

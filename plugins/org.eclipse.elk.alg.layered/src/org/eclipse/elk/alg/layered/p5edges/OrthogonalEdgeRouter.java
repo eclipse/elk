@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -222,18 +221,16 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
         monitor.begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values
-        Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         double nodeNodeSpacing =
                 layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS).doubleValue();
         double edgeEdgeSpacing =
                 layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS).doubleValue();
         double edgeNodeSpacing =
                 layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS).doubleValue();
-        boolean debug = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, debug ? "phase5" : null);
+                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, "phase5");
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
@@ -260,7 +257,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
             
             // Route edges between the two layers
             double startPos = leftLayer == null ? xpos : xpos + edgeNodeSpacing;
-            slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
+            slotsCount = routingGenerator.routeEdges(monitor, layeredGraph, leftLayerNodes, leftLayerIndex,
                     rightLayerNodes, startPos);
             
             boolean isLeftLayerExternal = leftLayer == null || Iterables.all(leftLayerNodes,

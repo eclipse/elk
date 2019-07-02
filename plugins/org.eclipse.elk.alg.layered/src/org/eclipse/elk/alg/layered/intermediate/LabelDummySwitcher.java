@@ -568,10 +568,10 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         LPort outputPort2 = longEdgeDummy.getPorts(PortType.OUTPUT).iterator().next();
         
         // Store incoming and outgoing edges
-        LEdge[] incomingEdges1 = inputPort1.getIncomingEdges().toArray(new LEdge[1]);
-        LEdge[] outgoingEdges1 = outputPort1.getOutgoingEdges().toArray(new LEdge[1]);
-        LEdge[] incomingEdges2 = inputPort2.getIncomingEdges().toArray(new LEdge[1]);
-        LEdge[] outgoingEdges2 = outputPort2.getOutgoingEdges().toArray(new LEdge[1]);
+        LEdge[] incomingEdges1 = LGraphUtil.toEdgeArray(inputPort1.getIncomingEdges());
+        LEdge[] outgoingEdges1 = LGraphUtil.toEdgeArray(outputPort1.getOutgoingEdges());
+        LEdge[] incomingEdges2 = LGraphUtil.toEdgeArray(inputPort2.getIncomingEdges());
+        LEdge[] outgoingEdges2 = LGraphUtil.toEdgeArray(outputPort2.getOutgoingEdges());
 
         // Put first dummy into second dummy's layer and reroute second dummy's edges to first dummy
         labelDummy.setLayer(dummy2LayerPosition, layer2);

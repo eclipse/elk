@@ -97,7 +97,7 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.12.0,2.13.0)"/>
+        versionRange="[2.16.0,2.17.0)"/>
     <requirement
         name="org.eclipse.mylyn.ide_feature.feature.group"/>
     <requirement
@@ -125,7 +125,7 @@
     <requirement
         name="net.sf.eclipsecs.feature.group"/>
     <repository
-        url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0"/>
+        url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0"/>
     <repository
         url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/checkstyle"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
@@ -330,9 +330,11 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.12.0,2.13.0)"/>
+            versionRange="[2.16.0,2.17.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.lsp4j.sdk.feature.group"/>
         <requirement
             name="org.eclipse.gmf.runtime.sdk.feature.group"/>
         <requirement
@@ -341,24 +343,13 @@
             rootFolder="${git.clone.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="Neon">
-          <repository
-              url="http://download.eclipse.org/releases/neon"/>
-          <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
-          <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
-          <repository
-              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
-        </repositoryList>
-        <repositoryList
             name="Oxygen">
           <repository
               url="http://download.eclipse.org/releases/oxygen"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/"/>
           <repository
               url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
         </repositoryList>
@@ -369,7 +360,7 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/"/>
           <repository
               url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
         </repositoryList>

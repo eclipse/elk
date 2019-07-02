@@ -37,7 +37,7 @@ abstract class AbstractGraphPlacer {
      * @param components the graphs to be combined.
      * @param target the target graph into which the others shall be combined
      */
-    public abstract void combine(final List<LGraph> components, final LGraph target);
+    public abstract void combine(List<LGraph> components, LGraph target);
     
 
     /**

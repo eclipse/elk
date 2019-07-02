@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,6 @@ import org.eclipse.elk.graph.properties.IPropertyHolder;
 
 /**
  * Utility class for importing graphs into the {@link LGraph} format.
- * 
- * @author msp
  */
 public final class LGraphUtil {
     
@@ -44,6 +42,36 @@ public final class LGraphUtil {
      * Hidden constructor to avoid instantiation.
      */
     private LGraphUtil() { }
+    
+    /**
+     * Create a new array by copying the content of the given node collection.
+     * 
+     * @param nodes a collection of nodes
+     * @return an array of nodes
+     */
+    public static LNode[] toNodeArray(final Collection<LNode> nodes) {
+        return nodes.toArray(new LNode[nodes.size()]);
+    }
+    
+    /**
+     * Create a new array by copying the content of the given edge collection.
+     * 
+     * @param edges a collection of edges
+     * @return an array of edges
+     */
+    public static LEdge[] toEdgeArray(final Collection<LEdge> edges) {
+        return edges.toArray(new LEdge[edges.size()]);
+    }
+    
+    /**
+     * Create a new array by copying the content of the given port collection.
+     * 
+     * @param ports a collection of ports
+     * @return an array of ports
+     */
+    public static LPort[] toPortArray(final Collection<LPort> ports) {
+        return ports.toArray(new LPort[ports.size()]);
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Node Resizing
@@ -384,7 +412,7 @@ public final class LGraphUtil {
     // Handling of Ports
 
     /**
-     * Create a port for an edge that is not connected to a port. This is necessary because KLay
+     * Create a port for an edge that is not connected to a port. This is necessary because ELK
      * Layered wants all edges to have a source port and a target port. The port side is computed
      * from the given absolute end point position of the edge.
      * 
@@ -963,13 +991,13 @@ public final class LGraphUtil {
      */
     public static boolean isDescendant(final LNode child, final LNode parent) {
         LNode current = child;
-        LNode next = current.getGraph().getProperty(InternalProperties.PARENT_LNODE);
+        LNode next = current.getGraph().getParentNode();
         while (next != null) {
             current = next;
             if (current == parent) {
                 return true;
             }
-            next = current.getGraph().getProperty(InternalProperties.PARENT_LNODE);
+            next = current.getGraph().getParentNode();
         }
         return false;
     }
@@ -996,7 +1024,7 @@ public final class LGraphUtil {
         LNode node;
         do {
             point.add(graph.getOffset());
-            node = graph.getProperty(InternalProperties.PARENT_LNODE);
+            node = graph.getParentNode();
             if (node != null) {
                 LPadding padding = graph.getPadding();
                 point.add(padding.left, padding.top);
@@ -1009,7 +1037,7 @@ public final class LGraphUtil {
         graph = newGraph;
         do {
             point.sub(graph.getOffset());
-            node = graph.getProperty(InternalProperties.PARENT_LNODE);
+            node = graph.getParentNode();
             if (node != null) {
                 LPadding padding = graph.getPadding();
                 point.sub(padding.left, padding.top);

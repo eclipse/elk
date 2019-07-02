@@ -236,7 +236,7 @@ public final class RectilinearConvexHull {
          * @param quadrant
          *            the {@link Quadrant} for which this handler finds points on the hull.
          */
-        public MaximalElementsEventHandler(final Quadrant quadrant) {
+        MaximalElementsEventHandler(final Quadrant quadrant) {
             this.quadrant = quadrant;
             
             switch (quadrant) {

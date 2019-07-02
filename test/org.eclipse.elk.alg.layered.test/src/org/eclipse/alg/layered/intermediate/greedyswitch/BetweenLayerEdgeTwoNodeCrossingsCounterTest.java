@@ -28,6 +28,7 @@ import org.junit.Test;
  *
  * @author alan
  */
+@SuppressWarnings("restriction")
 public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreator {
     private BetweenLayerEdgeTwoNodeCrossingsCounter crossingCounter;
     private LNode upperNode;

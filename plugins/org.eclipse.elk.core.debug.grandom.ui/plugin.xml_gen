@@ -204,6 +204,15 @@
 			</activeWhen>
 		</handler>
 	</extension>
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-extensions="elkr"
+			id="org.eclipse.elk.core.debug.grandom.GRandom.contenttype"
+			name="GRandom File"
+			priority="normal">
+		</content-type>
+	</extension>
 	<!-- adding resource factories -->
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
@@ -360,12 +369,18 @@
 			class="org.eclipse.elk.core.debug.grandom.ui.GRandomExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="elkr">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.elk.core.debug.grandom.GRandom.contenttype"
+			contentViewerId="org.eclipse.elk.core.debug.grandom.GRandom.compare.contentViewers" />
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.eclipse.elk.core.debug.grandom.GRandom.compare.contentMergeViewers"
 			class="org.eclipse.elk.core.debug.grandom.ui.GRandomExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="elkr" label="GRandom Compare">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.elk.core.debug.grandom.GRandom.contenttype"
+			contentMergeViewerId="org.eclipse.elk.core.debug.grandom.GRandom.compare.contentMergeViewers" />
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.eclipse.elk.core.debug.grandom.GRandom.editors.documentProviders"

@@ -24,6 +24,7 @@ import org.eclipse.elk.core.util.IElkCancelIndicator;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -367,10 +368,11 @@ public abstract class MonitoredOperation {
                 }
             }
             if (status.get() == null && !isCanceled()) {
-                boolean measureExecTime = ElkServicePlugin.getInstance().getPreferenceStore()
-                        .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT);
-                status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS,
-                        measureExecTime)));
+                IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+                IElkProgressMonitor monAdapt = new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS)
+                        .withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING))
+                        .withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
+                status.set(execute(monAdapt));
                 assert status.get() != null;
             }
         } finally {
@@ -530,29 +532,23 @@ public abstract class MonitoredOperation {
             this.display = thedisplay;
         }
         
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void beginTask(final String name, final int totalWork) {
             synchronized (commands) {
                 commands.addLast(new WrapperCommand(WrapperCommand.Type.BEGIN_TASK, name, totalWork));
             }
             display.wake();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public void done() {
             synchronized (commands) {
                 commands.addLast(new WrapperCommand(WrapperCommand.Type.DONE, null, 0));
             }
             display.wake();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public void internalWorked(final double work) {
             synchronized (commands) {
                 commands.addLast(new WrapperCommand(WrapperCommand.Type.INTERNAL_WORKED, null,
@@ -560,47 +556,37 @@ public abstract class MonitoredOperation {
             }
             display.wake();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public void setTaskName(final String name) {
             synchronized (commands) {
                 commands.addLast(new WrapperCommand(WrapperCommand.Type.SET_TASK_NAME, name, 0));
             }
             display.wake();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public void subTask(final String name) {
             synchronized (commands) {
                 commands.addLast(new WrapperCommand(WrapperCommand.Type.SUB_TASK, name, 0));
             }
             display.wake();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public void worked(final int work) {
             synchronized (commands) {
                 commands.addLast(new WrapperCommand(WrapperCommand.Type.WORKED, null, work));
             }
             display.wake();
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public boolean isCanceled() {
             return isCanceled;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public void setCanceled(final boolean value) {
             isCanceled = value;
         }
@@ -617,15 +603,14 @@ public abstract class MonitoredOperation {
          * Create a cancelable progress monitor.
          */
         public CancelableProgressMonitor() {
-            super(0, ElkServicePlugin.getInstance().getPreferenceStore()
-                    .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
+            super(0);
+
+            IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+            withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING));
+            withLogPersistence(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_STORE));
+            withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
         }
         
-        /**
-         * Return whether the operation has been canceled.
-         * 
-         * @return true if the operation has been canceled
-         */
         @Override
         public boolean isCanceled() {
             return MonitoredOperation.this.isCanceled();

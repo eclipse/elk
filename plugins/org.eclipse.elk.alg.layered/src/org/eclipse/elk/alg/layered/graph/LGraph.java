@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,6 @@ import com.google.common.collect.Lists;
  * is desired, it can be obtained by pre-processing and post-processing the graph.
  * In contrast to the KGraph structure, the LGraph is not EMF-based, but plain Java.
  * It is optimized for being processed by a layer-based layout algorithm.
- * 
- * @author msp
  */
 public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
@@ -68,19 +66,11 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      */
     private final List<Layer> layers = Lists.newArrayList();
     
-    
     /**
-     * {@inheritDoc}
+     * The parent node in which this graph is nested, or {@code null}.
      */
-    @Override
-    public String toString() {
-        if (layers.isEmpty()) {
-            return "G-unlayered" + layerlessNodes.toString();
-        } else if (layerlessNodes.isEmpty()) {
-            return "G-layered" + layers.toString();
-        }
-        return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
-    }
+    private LNode parentNode;
+    
     
     /**
      * Returns the size of the graph, that is the bounding box that covers the
@@ -152,6 +142,24 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     public List<Layer> getLayers() {
         return layers;
     }
+    
+    /**
+     * Returns the parent node in which this graph is nested, if any.
+     * 
+     * @return the parent node or {@code null}
+     */
+    public LNode getParentNode() {
+        return parentNode;
+    }
+    
+    /**
+     * Sets the parent node in which this graph is nested.
+     * 
+     * @param parentNode the new parent node
+     */
+    public void setParentNode(final LNode parentNode) {
+        this.parentNode = parentNode;
+    }
 
     /**
      * Returns an iterator over the layers.
@@ -174,10 +182,20 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
             int layerIndex = layerIter.previousIndex();
-            lgraphArray[layerIndex] = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
+            lgraphArray[layerIndex] = LGraphUtil.toNodeArray(layer.getNodes());
         }
         
         return lgraphArray;
+    }
+    
+    @Override
+    public String toString() {
+        if (layers.isEmpty()) {
+            return "G-unlayered" + layerlessNodes.toString();
+        } else if (layerlessNodes.isEmpty()) {
+            return "G-layered" + layers.toString();
+        }
+        return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
     }
     
 }

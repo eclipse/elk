@@ -98,7 +98,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor<LGraph> {
             LNode referenceNode = sourcePort.getNode();
             LGraph referenceGraph;
             if (LGraphUtil.isDescendant(targetPort.getNode(), referenceNode)) {
-                referenceGraph = referenceNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                referenceGraph = referenceNode.getNestedGraph();
             } else {
                 referenceGraph = referenceNode.getGraph();
             }
@@ -121,7 +121,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor<LGraph> {
                 bendPoints.addAllAsCopies(0, ledge.getBendPoints());
                 bendPoints.offset(offset);
                 
-                // Note: if an NPE occurs here, that means KLay Layered has replaced the original edge
+                // Note: if an NPE occurs here, that means ELK Layered has replaced the original edge
                 KVector sourcePoint = new KVector(ledge.getSource().getAbsoluteAnchor());
                 KVector targetPoint = new KVector(ledge.getTarget().getAbsoluteAnchor());
                 sourcePoint.add(offset);

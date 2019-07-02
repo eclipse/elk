@@ -81,7 +81,7 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
 
                     // calculate dependency graph for components
                     SelfLoopComponentDependencyGraphCalculator.calculateComponentDependecies(slNode);
-                    //calculate a order for each edge in the components
+                    // calculate an order for each edge in the components
                     SelfLoopComponentDependencyGraphCalculator.calculateEdgeDependecies(components);
 
                     // assign levels
@@ -90,7 +90,12 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
                     SelfLoopLevelCalculator.calculateOpposingSegmentLevel(slNode);
 
                     // readd ports to port
-                    SelfLoopNodePortRestorator.restorePorts(node);
+                    if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isPosFixed()) {
+                        // This might happen if port positions have been fixed for arranging a nested graph
+                        SelfLoopNodePortRestorator.restoreAndPlacePorts(node);
+                    } else {
+                        SelfLoopNodePortRestorator.restorePorts(node);
+                    }
                 }
             }
         }
@@ -114,10 +119,11 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
 
         case FIXED_ORDER:
         case FIXED_POS:
+        case FIXED_RATIO:
             return new FixedOrderSelfLoopPortPositioner();
 
         default:
-            return null;
+            throw new AssertionError("Unknown port constraint: " + constraint);
         }
 
     }

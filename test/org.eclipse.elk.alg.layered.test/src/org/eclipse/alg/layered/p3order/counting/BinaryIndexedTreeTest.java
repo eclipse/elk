@@ -18,6 +18,7 @@ import org.junit.Test;
 
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF javadoc
+@SuppressWarnings("restriction")
 public class BinaryIndexedTreeTest {
     @Test
     public void sumBefore() throws Exception {

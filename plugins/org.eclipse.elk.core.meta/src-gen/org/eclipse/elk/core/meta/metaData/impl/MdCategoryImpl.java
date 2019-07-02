@@ -284,7 +284,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (deprecated: ");
     result.append(deprecated);
     result.append(", label: ");

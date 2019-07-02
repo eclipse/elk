@@ -273,7 +273,7 @@ class ElkGraphImporter {
                 LGraph parentLGraph = lgraph;
                 LNode parentLNode = (LNode) nodeAndPortMap.get(elknode.getParent());
                 if (parentLNode != null) {
-                    parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                    parentLGraph = parentLNode.getNestedGraph();
                 }
                 LNode lnode = transformNode(elknode, parentLGraph);
                 
@@ -287,8 +287,8 @@ class ElkGraphImporter {
                 if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
                     LGraph nestedGraph = createLGraph(elknode);
                     nestedGraph.setProperty(LayeredOptions.DIRECTION, parentGraphDirection);
-                    lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
-                    nestedGraph.setProperty(InternalProperties.PARENT_LNODE, lnode);
+                    lnode.setNestedGraph(nestedGraph);
+                    nestedGraph.setParentNode(lnode);
                     elknodeQueue.addAll(elknode.getChildren());
                 }
             }
@@ -328,7 +328,7 @@ class ElkGraphImporter {
                         LGraph parentLGraph = lgraph;
                         LNode parentLNode = (LNode) nodeAndPortMap.get(parentKGraph);
                         if (parentLNode != null) {
-                            parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                            parentLGraph = parentLNode.getNestedGraph();
                         }
                         
                         // Transform the edge, finally...
@@ -409,7 +409,7 @@ class ElkGraphImporter {
             LNode lnode = (LNode) nodeAndPortMap.get(origin);
             if (lnode != null) {
                 // Find the graph that represents the node's insides
-                LGraph lgraph = lnode.getProperty(InternalProperties.NESTED_LGRAPH);
+                LGraph lgraph = lnode.getNestedGraph();
                 if (lgraph != null) {
                     return lgraph;
                 }
@@ -424,10 +424,10 @@ class ElkGraphImporter {
     // Graph Transformation
 
     /**
-     * Create an LGraph from the given KNode.
+     * Create an LGraph from the given node.
      * 
      * @param elkgraph
-     *            the parent KNode from which to create the LGraph
+     *            the parent node from which to create the LGraph
      * @return a new LGraph instance
      */
     private LGraph createLGraph(final ElkNode elkgraph) {

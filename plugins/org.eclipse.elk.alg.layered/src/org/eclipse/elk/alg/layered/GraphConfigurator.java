@@ -136,7 +136,7 @@ final class GraphConfigurator {
 
             node.setProperty(InternalProperties.ORIGINAL_PORT_CONSTRAINTS, originalPortconstraints);
 
-            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            LGraph nestedGraph = node.getNestedGraph();
             if (nestedGraph != null) {
                 copyPortContraints(nestedGraph);
             }
@@ -148,7 +148,7 @@ final class GraphConfigurator {
 
                 node.setProperty(InternalProperties.ORIGINAL_PORT_CONSTRAINTS, originalPortconstraints);
 
-                LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+                LGraph nestedGraph = node.getNestedGraph();
                 if (nestedGraph != null) {
                     copyPortContraints(nestedGraph);
                 }
