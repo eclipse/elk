@@ -118,6 +118,7 @@ public class LoadGraphAction extends Action {
                 new BasicProgressMonitor()
                         .withMaxHierarchyLevels(0)
                         .withLogging(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_LOGGING))
+                        .withLogPersistence(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_STORE))
                         .withExecutionTimeMeasurement(prefStore.getBoolean(DiagramLayoutEngine.PREF_DEBUG_EXEC_TIME));
         monitor.begin(fileName, 1);
 
