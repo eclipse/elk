@@ -101,7 +101,7 @@ public class CoffmanGrahamLayerer implements ILayoutPhase<LayeredPhases, LGraph>
         // -------------------------------
         // #2 Compute topological ordering
         // -------------------------------
-        PriorityQueue<LNode> sources = new PriorityQueue<LNode>((u, v) -> compareNodesInTopo(u, v));
+        PriorityQueue<LNode> sources = new PriorityQueue<LNode>(this::compareNodesInTopo);
 
         // for each node, determine its current in-degree and remember initial sources
         for (LNode v : layeredGraph.getLayerlessNodes()) {
