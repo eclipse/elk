@@ -105,7 +105,7 @@ public final class PortSideProcessor implements ILayoutProcessor<LGraph> {
         }
         
         // If the port anchor is not fixed, adapt it to its port side
-        if (!port.isAnchorFixed()) {
+        if (!port.isExplicitlySuppliedPortAnchor()) {
             KVector portSize = port.getSize();
             KVector portAnchor = port.getAnchor();
             
