@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.core.debug
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Debugging Utilities
 Bundle-SymbolicName: org.eclipse.elk.core.debug;singleton:=true

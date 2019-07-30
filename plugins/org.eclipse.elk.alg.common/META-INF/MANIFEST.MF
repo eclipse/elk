@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.alg.common
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Common Algorithms
 Bundle-SymbolicName: org.eclipse.elk.alg.common;singleton:=true
