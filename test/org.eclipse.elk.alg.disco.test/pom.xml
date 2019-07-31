@@ -11,8 +11,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.eclipse.elk</groupId>
-    <artifactId>plugins</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <artifactId>parent</artifactId>
+    <version>0.6.0-SNAPSHOT</version>
+    <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
