@@ -140,7 +140,8 @@ public final class LPort extends LShape {
 
     /**
      * Sets the node side on which the port is drawn.
-     * If the port anchor was not already supplied it is 
+     * If the port anchor was not already supplied it is set to the default for the corresponding direction.
+     * The default position is in the middle of the port in the direction specified by the side to set.
      * 
      * @param theside the side to set
      */
@@ -171,7 +172,7 @@ public final class LPort extends LShape {
                 getAnchor().x = 0;
                 getAnchor().y = getSize().y / 2;
                 break;
-            }            
+            }
         }
     }
     
