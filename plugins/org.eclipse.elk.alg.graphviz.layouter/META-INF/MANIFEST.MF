@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.alg.graphviz.layouter
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Layout Bridge for Graphviz
 Bundle-SymbolicName: org.eclipse.elk.alg.graphviz.layouter;singleton:=true

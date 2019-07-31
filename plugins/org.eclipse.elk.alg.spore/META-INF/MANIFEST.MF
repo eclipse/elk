@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.alg.spore
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK SPOrE
 Bundle-SymbolicName: org.eclipse.elk.alg.spore;singleton:=true

@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.alg.packing.rectangles
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Rectangle Packing Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.packing.rectangles;singleton:=true

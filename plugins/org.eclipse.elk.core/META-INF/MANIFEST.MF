@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.core
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Core Components
 Bundle-SymbolicName: org.eclipse.elk.core;singleton:=true
