@@ -1,0 +1,188 @@
+///////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2019 Kiel University and others.
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Public License v1.0
+// which accompanies this distribution, and is available at
+// http://www.eclipse.org/legal/epl-v10.html
+///////////////////////////////////////////////////////////////////////////////
+
+pipeline {
+  // Build agents this build is run on must support a few tools
+  agent any
+  tools {
+    maven 'apache-maven-latest'
+    ant 'apache-ant-1.9.6'
+    git 'Default'
+    jdk 'jdk1.8.0-latest'
+  }
+
+  // Parameters to be supplied to the build
+  parameters {
+    // For the source repository
+    string(
+      name: 'BRANCH',
+      description: 'The repository branch to checkout.',
+      defaultValue: 'master'
+    )
+
+    // Regarding the meta-data compiler...
+    string(
+      name: 'META_REPOSITORY_URL',
+      description: 'URL of the repository the meta data compiler will be published at.',
+      defaultValue: 'http://build.eclipse.org/modeling/elk/maven/meta/nightly'
+    )
+
+    string(
+      name: 'META_PUBLISH_URL',
+      description: 'Path to the repository the meta data compiler will be published at.',
+      defaultValue: 'file:///shared/modeling/elk/maven/meta/nightly/'
+    )
+
+    // Regarding ELK proper...
+    string(
+      name: 'ELK_TARGET_DIR',
+      description: 'Path to the directory the build will copy all downloadable artifacts to.',
+      defaultValue: '/shared/modeling/elk/updates/nightly/'
+    )
+  }
+
+  triggers {
+    // Build each night sometime between 3:00am and 5:59am Berlin time
+    cron '''TZ=Europe/Berlin
+  H H(3-5) * * *'''
+  }
+
+  options {
+    // We checkout our repositories explicitly
+    skipDefaultCheckout true
+
+    // Keep at most 14 builds for at most 14 days
+    buildDiscarder logRotator(artifactDaysToKeepStr: '14', artifactNumToKeepStr: '4', daysToKeepStr: '14', numToKeepStr: '14')
+  }
+
+  stages {
+    stage('Prepare') {
+      // Checks out all of the repositories and creates all directories
+      // our build requires
+      steps {
+        // Start with a clean workspace
+        cleanWs()
+
+        // Create a directory test results will be placed in
+        sh "mkdir test-results"
+
+        // Clone main ELK Repository
+        checkout(
+          [
+            $class: 'GitSCM',
+            branches: [[name: "*/${params.BRANCH}"]],
+            extensions: [
+              [
+                $class: 'CloneOption',
+                noTags: true,
+                shallow: true
+              ], [
+                $class: 'RelativeTargetDirectory',
+                relativeTargetDir: 'elk'
+              ], [
+                $class: 'CleanCheckout'
+              ]
+            ],
+            submoduleCfg: [],
+            userRemoteConfigs: [[url: 'https://github.com/eclipse/elk.git']]
+          ]
+        )
+
+        // Clone models repository (for unit tests)
+        checkout(
+          [
+            $class: 'GitSCM',
+            branches: [[name: "*/master"]],
+            extensions: [
+              [
+                $class: 'CloneOption',
+                noTags: true,
+                shallow: true
+              ], [
+                $class: 'RelativeTargetDirectory',
+                relativeTargetDir: 'elk-models'
+              ], [
+                $class: 'CleanCheckout'
+              ]
+            ],
+            submoduleCfg: [],
+            userRemoteConfigs: [[url: 'https://github.com/eclipse/elk-models.git']]
+          ]
+        )
+
+        // We may want to clone the website repository here as well at some point. Right
+        // now, the publish-website.sh script does that for us. In fact, doing it here
+        // doesn't work due to failed SSH connections. If we get that solved, we may be
+        // able to replace the whole script by checking out the website repository here
+        // and running commands later (see https://wiki.eclipse.org/Jenkins)
+      }
+    }
+
+    stage('BuildMeta') {
+      // Builds and publishes the ELK Meta Data Compiler
+      steps {
+        sh "mvn -f elk/build/pom.xml" +
+           " -Pelk-meta" +
+           " --define elkMeta.repositoryUrl=${params.META_REPOSITORY_URL}" +
+           " --define elkMeta.publishUrl=${params.META_PUBLISH_URL}" +
+           " clean deploy"
+      }
+    }
+
+    stage('BuildELK') {
+      // Builds the ELK update site itself and publishes to Maven Central
+      steps {
+        sh "mvn -f elk/build/pom.xml" +
+           " -Pelk-update-site -Pmaven-publish -Psign" +
+           " -s /opt/public/hipp/homes/genie.elk/.m2/settings-deploy-ossrh.xml" +
+           " --define elkMeta.repositoryUrl=${params.META_REPOSITORY_URL}" +
+           " --define elk.metadata.documentation.outputPath=elk/docs/" +
+           " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
+           " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
+           " --define tests.paths.results=${env.WORKSPACE}/test-results" +
+           " clean deploy"
+      }
+    }
+
+    stage('GenerateDownloads') {
+      // Generates and publishes our downloads
+      steps {
+        sh "ant -f elk/build/org.eclipse.elk.repository/publish.xml" +
+           " -DtargetDir=${params.ELK_TARGET_DIR}" +
+           " -Dhugo=/shared/common/hugo/latest/hugo" +
+           " docs zipIt publish"
+      }
+    }
+
+    stage('DeployWebsite') {
+      // Deploys the previously built website
+      steps {
+        dir ('elk/build/org.eclipse.elk.repository') {
+          sh "./publish-website.sh"
+        }
+      }
+    }
+  }
+
+  // Notify our developers upon entering or leaving regressions
+  post {
+      regression {
+          // Notify of regression
+          mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
+            body: "Oh noes! The build has fallen into the hands of an evil regression! Check console output at $BUILD_URL to view the results.",
+            to: 'cds@informatik.uni-kiel.de'
+      }
+
+      fixed {
+          // Notify that build is stable again
+          mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
+            body: "Hail to the source, the build is fixed! Check console output at $BUILD_URL to view the results.",
+            to: 'cds@informatik.uni-kiel.de'
+      }
+  }
+}
