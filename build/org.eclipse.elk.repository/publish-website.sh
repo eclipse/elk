@@ -27,13 +27,15 @@ rsync -crv --delete --exclude=".*/" --exclude=".*" elk/docs/public/ website
 cd website
 
 # If nothing has changed, abort
-if git diff-files --quiet --ignore-submodules --
-then
-  echo "The documentation website has not changed. Won't push stuff."
-  exit 0
-fi
-
-# Push changes
 git add -A
-git commit -m "Nightly website build job"
-git push origin master
+if git diff --staged --exit-code
+then
+  echo "Changes have been detected, publishing to repository."
+
+  git commit -m "Nightly website build job"
+  git log --graph --abbrev-commit --date=relative -n 5
+  git push origin master
+
+else
+  echo "No changes have been detected since last build, nothing to publish"
+fi
