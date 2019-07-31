@@ -42,16 +42,16 @@ Optional properties:
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
 
-	<!-- Important -->
+    <!-- Important -->
     <property name="version" value="nightly" />
 
-	<!-- Optional -->
-	<property name="sourceDir" value="target/repository/" />
-	<property name="hugo" value="hugo" />
+    <!-- Optional -->
+    <property name="sourceDir" value="target/repository/" />
+    <property name="hugo" value="hugo" />
 
-	<!-- Internal -->
-	<property name="updateSiteZipFileName" value="elk-${version}.zip" />
-	<property name="docsSiteZipFileName" value="elk-${version}-docs.zip" />
+    <!-- Internal -->
+    <property name="updateSiteZipFileName" value="elk-${version}.zip" />
+    <property name="docsSiteZipFileName" value="elk-${version}-docs.zip" />
 
 
     <!-- ================================================================= -->
@@ -86,10 +86,10 @@ Optional properties:
             description="Produces a zip file from the update site directory.">
 
         <!-- Produce a zip archive of the update site -->
-    	<zip destfile="${sourceDir}/${updateSiteZipFileName}"
-    	     basedir="${sourceDir}"
-    		 excludes="${docsSiteZipFileName}"
-    	/>
+        <zip destfile="${sourceDir}/${updateSiteZipFileName}"
+             basedir="${sourceDir}"
+             excludes="${docsSiteZipFileName}"
+        />
     </target>
 
 
@@ -99,12 +99,12 @@ Optional properties:
     <target name="docs"
             description="Compiles and zips the documentation website.">
 
-      <!-- Empty the compilation directory -->
-      <delete dir="../../docs/public/" />
+        <!-- Empty the compilation directory -->
+        <delete dir="../../docs/public/" />
 
-    	<!-- Invoke hugo to compile our documentation website -->
-    	<exec executable="${hugo}"
-    	      dir="../../docs/"
+        <!-- Invoke hugo to compile our documentation website -->
+        <exec executable="${hugo}"
+              dir="../../docs/"
         />
 
         <!-- Produce a zip archive of the documentation site -->
