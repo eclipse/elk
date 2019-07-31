@@ -274,7 +274,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="eclipse.target.platform"
-        defaultValue="Photon"
+        defaultValue="2019-06"
         storageURI="scope://Workspace"
         label="Target Platform">
       <description>Choose the compatibility level of the target platform</description>
@@ -359,6 +359,17 @@
               url="http://download.eclipse.org/releases/photon"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/"/>
+          <repository
+              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="2019-06">
+          <repository
+              url="http://download.eclipse.org/releases/2019-06"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.16.0/"/>
           <repository
