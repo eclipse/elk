@@ -76,7 +76,7 @@ class LayoutOptionsTest {
         val json = ElkGraphJson.forGraph(root).toJson
         
         val expected = '''{"id":"n0","layoutOptions":{"direction":"UP"}}'''
-        val cleanJson = CharMatcher.WHITESPACE.removeFrom(json)
+        val cleanJson = CharMatcher.whitespace.removeFrom(json)
         
         assertEquals(expected, cleanJson)
     }
