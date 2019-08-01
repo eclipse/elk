@@ -14,7 +14,7 @@
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <targetJdk>1.8</targetJdk>
-    <tycho-version>1.2.0</tycho-version>
+    <tycho-version>1.4.0</tycho-version>
     <xtext-version>2.16.0</xtext-version>
     <elk-version>${project.version}</elk-version>
 
@@ -44,8 +44,7 @@
       <modules>
         <module>../plugins</module>
         <module>../features</module>
-        <!-- Re-enable tests soon. -->
-        <!-- <module>../test</module> -->
+        <module>../test</module>
         <module>org.eclipse.elk.repository</module>
       </modules>
     </profile>
@@ -84,7 +83,7 @@
           <plugin>
             <groupId>org.eclipse.cbi.maven.plugins</groupId>
             <artifactId>eclipse-jarsigner-plugin</artifactId>
-            <version>1.1.3</version>
+            <version>1.1.6</version>
             <executions>
               <execution>
                 <id>sign</id>

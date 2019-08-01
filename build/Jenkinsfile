@@ -145,7 +145,7 @@ pipeline {
            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
            " --define tests.paths.results=${env.WORKSPACE}/test-results" +
-           " clean deploy"
+           " clean integration-test deploy"
       }
     }
 
