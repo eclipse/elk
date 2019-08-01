@@ -126,11 +126,17 @@ The processors can be specified for all test methods in a class, but can also be
 
 ## Running Tests
 
+### Inside Eclipse
+
 From Eclipse, tests can be run as plain Java JUnit tests. Three environment or system variables have to be set for the test framework to work:
 
 * `ELK_REPO`: Fully-qualified path to the directory where the main ELK repository is checked out.
 * `MODELS_REPO`: Fully-qualified path to the directory where the `elk-models` repository is checked out.
 * `RESULTS_PATH`: If test results or graphs of failed tests should be persisted, this should point to the directory to store them in.
+
+### As Part of Automatic Builds
+
+[This page]({{< relref "documentation/contributors/buildingelk.md">}}) describes how to run runit tests as part of automatic builds.
 
 
 ## Supporting White Box Tests
