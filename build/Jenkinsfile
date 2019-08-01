@@ -134,8 +134,27 @@ pipeline {
       }
     }
 
+    stage('TestELK') {
+      // Builds ELK and executes our unit tests. Ideally, we would want this stage to
+      // be merged with BuildELK, but the build itself fails if we activate both, the
+      // integration test and the deploy phases. If we can solve that problem, we can
+      // merge the two steps.
+      steps {
+        sh "mvn -f elk/build/pom.xml" +
+           " -Pelk-update-site" +
+           " -s /opt/public/hipp/homes/genie.elk/.m2/settings-deploy-ossrh.xml" +
+           " --define elkMeta.repositoryUrl=${params.META_REPOSITORY_URL}" +
+           " --define elk.metadata.documentation.outputPath=elk/docs/" +
+           " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
+           " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
+           " --define tests.paths.results=${env.WORKSPACE}/test-results" +
+           " clean integration-test"
+      }
+    }
+
     stage('BuildELK') {
-      // Builds the ELK update site itself and publishes to Maven Central
+      // Builds the ELK update site itself and publishes to Maven Central (again, this
+      // should, in an ideal world, be merged with the TestELK stage)
       steps {
         sh "mvn -f elk/build/pom.xml" +
            " -Pelk-update-site -Pmaven-publish -Psign" +
@@ -145,7 +164,7 @@ pipeline {
            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
            " --define tests.paths.results=${env.WORKSPACE}/test-results" +
-           " clean integration-test deploy"
+           " clean deploy"
       }
     }
 
