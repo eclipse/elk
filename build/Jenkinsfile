@@ -149,6 +149,8 @@ pipeline {
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
            " --define tests.paths.results=${env.WORKSPACE}/test-results" +
            " clean integration-test"
+        
+        junit 'test/**/surefire-reports/*.xml'
       }
     }
 
