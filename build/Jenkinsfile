@@ -191,7 +191,7 @@ pipeline {
   post {
     always {
       // Publish JUnit test result reports for them to show up in Jenkins
-      junit 'test/**/surefire-reports/*.xml'
+      junit 'elk/test/**/surefire-reports/*.xml'
     }
 
     regression {
