@@ -29,7 +29,9 @@ generate 2 graphs {
             // Set port constraint to fixed order
             constraint = order
 
-            // Equal distribution: min to max. Re-use 30% to 40% of ports, i.e. different edges exit or enter same port
+            // Equal distribution: min to max. Re-use 30%
+            // to 40% of ports, i.e. different edges exit
+            // or enter same port
             re-use = 0.3 to 0.4
         }
         
