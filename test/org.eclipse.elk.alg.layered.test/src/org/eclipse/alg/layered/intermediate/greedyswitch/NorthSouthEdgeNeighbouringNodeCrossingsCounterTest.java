@@ -18,8 +18,10 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeNeighbouringNodeCrossingsCounter;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -35,6 +37,11 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
     // CHECKSTYLEOFF javadoc
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF MethodName
+    
+    @BeforeClass
+    public void initPlainJavaLayout() {
+        PlainJavaInitialization.initializePlainJavaLayout();
+    }
 
     @Test
     public void noNorthSouthNode() {

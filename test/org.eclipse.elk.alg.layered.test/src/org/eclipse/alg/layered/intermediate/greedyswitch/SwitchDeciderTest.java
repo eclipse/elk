@@ -27,7 +27,9 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -46,6 +48,11 @@ import com.google.common.collect.Lists;
 public class SwitchDeciderTest extends TestGraphCreator {
 
     private final CrossMinType greedyType;
+    
+    @BeforeClass
+    public void initPlainJavaLayout() {
+        PlainJavaInitialization.initializePlainJavaLayout();
+    }
 
     /**
      * This method is needed by Parameterized.class. The parameters are all elements of the CrossMinType enum.

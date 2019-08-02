@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.alg.test.framework.FailFakeRunner.FailReason;
 import org.eclipse.elk.alg.test.framework.FailFakeRunner.NoExecutionFailure;
 import org.eclipse.elk.alg.test.framework.annotations.AfterProcessor;
@@ -42,7 +43,6 @@ import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.CodeResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ElkTestClassFilter;
 import org.eclipse.elk.alg.test.framework.io.ResultsResourcePath;
-import org.eclipse.elk.alg.test.framework.util.PlainJavaInitialization;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.util.Pair;

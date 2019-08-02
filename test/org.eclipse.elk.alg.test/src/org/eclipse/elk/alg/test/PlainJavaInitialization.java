@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.test.framework.util;
+package org.eclipse.elk.alg.test;
 
 import org.eclipse.elk.alg.disco.options.DisCoMetaDataProvider;
 import org.eclipse.elk.alg.force.options.ForceMetaDataProvider;

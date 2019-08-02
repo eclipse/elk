@@ -23,9 +23,11 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -55,6 +57,11 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         greedySwitcher = new LayerSweepCrossingMinimizer(gT);
 
         monitor = new BasicProgressMonitor();
+    }
+    
+    @BeforeClass
+    public void initPlainJavaLayout() {
+        PlainJavaInitialization.initializePlainJavaLayout();
     }
 
     /**
