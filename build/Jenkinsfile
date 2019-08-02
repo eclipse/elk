@@ -149,8 +149,6 @@ pipeline {
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
            " --define tests.paths.results=${env.WORKSPACE}/test-results" +
            " clean integration-test"
-        
-        junit 'test/**/surefire-reports/*.xml'
       }
     }
 
@@ -190,20 +188,24 @@ pipeline {
     }
   }
 
-  // Notify our developers upon entering or leaving regressions
   post {
-      regression {
-          // Notify of regression
-          mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
-            body: "Oh noes! The build has fallen into the hands of an evil regression! Check console output at $BUILD_URL to view the results.",
-            to: 'cds@informatik.uni-kiel.de'
-      }
+    always {
+      // Publish JUnit test result reports for them to show up in Jenkins
+      junit 'test/**/surefire-reports/*.xml'
+    }
 
-      fixed {
-          // Notify that build is stable again
-          mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
-            body: "Hail to the source, the build is fixed! Check console output at $BUILD_URL to view the results.",
-            to: 'cds@informatik.uni-kiel.de'
-      }
+    regression {
+      // Notify developers of regressions
+      mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
+        body: "Oh noes! The build has fallen into the hands of an evil regression! Check console output at $BUILD_URL to view the results.",
+        to: 'cds@informatik.uni-kiel.de, miro.spoenemann@typefox.io'
+    }
+
+    fixed {
+      // Notify that build is stable again
+      mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
+        body: "Hail to the source, the build is fixed! Check console output at $BUILD_URL to view the results.",
+        to: 'cds@informatik.uni-kiel.de, miro.spoenemann@typefox.io'
+    }
   }
 }
