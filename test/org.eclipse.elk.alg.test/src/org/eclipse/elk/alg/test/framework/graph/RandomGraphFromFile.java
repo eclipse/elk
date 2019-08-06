@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.FileExtensionFilter;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
 import org.eclipse.elk.core.debug.grandom.gRandom.RandGraph;
+import org.eclipse.elk.core.debug.grandom.generators.RandomGraphGenerator;
 import org.eclipse.elk.core.debug.grandom.ui.GRandomGraphMaker;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
@@ -30,7 +31,9 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
- * This strategy knows how to load a random graph configuration from a file.
+ * A test graph that generates input graphs using the {@link RandomGraphGenerator}. The configuration for the generator
+ * is loaded from a file supplied by a configuration method. Instances of this class are generated whenever the
+ * {@link RandomGeneratorFile} annotation is encountered.
  */
 public final class RandomGraphFromFile extends TestGraph {
     
@@ -126,16 +129,16 @@ public final class RandomGraphFromFile extends TestGraph {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // TestGraph
-
-    @Override
-    public String toString() {
-        return "randomGraphFile(" + resourcePath.getFile().getPath() + ")";
-    }
     
     @Override
     public ElkNode provideGraph(final Object testClass) {
         // Simply return a copy of the graph
         return EcoreUtil.copy(graph);
+    }
+
+    @Override
+    public String toString() {
+        return "randomGraphFile[" + resourcePath.getFile().getPath() + "]";
     }
 
 }

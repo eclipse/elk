@@ -29,13 +29,13 @@ import org.junit.runners.model.Statement;
  * <ol>
  * <li>{@link ParentRunner} calls {@link #childrenInvoker(RunNotifier)} to have us generate a {@link Statement} that
  * runs all of the tests. The statement is in charge of executing the layout tests.</li>
- * <li>A {@link RunExperimentStatement} is then used to run the actual tests.</li>
+ * <li>A {@link ExperimentStatement} is then used to run the actual tests.</li>
  * </ol>
  * 
- * For more details, see the documentation of {@link RunExperimentStatement}. These complications are mainly due to the
+ * For more details, see the documentation of {@link ExperimentStatement}. These complications are mainly due to the
  * fact that our whitebox tests are not executed the way usual test methods are.
  */
-public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
+final class ExperimentRunner extends ParentRunner<FrameworkMethod> {
 
     /** ID of the next {@link ExperimentRunner} to be created. */
     private static int nextRunnerId = 0;
@@ -56,7 +56,7 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
      *             this shouldn't happen since any initialization problems should already have been caught by
      *             {@link LayoutTestRunner}.
      */
-    public ExperimentRunner(final LayoutTestRunner parentRunner, final ExperimentalObject experimentalObject)
+    ExperimentRunner(final LayoutTestRunner parentRunner, final ExperimentalObject experimentalObject)
             throws InitializationError {
 
         super(parentRunner.getTestClass().getJavaClass());
@@ -122,7 +122,7 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
     @Override
     protected Statement childrenInvoker(final RunNotifier notifier) {
         // Instead of invoking our children directly, we use this statement to run tests
-        return new RunExperimentStatement(this, notifier);
+        return new ExperimentStatement(this, notifier);
     }
 
     @Override

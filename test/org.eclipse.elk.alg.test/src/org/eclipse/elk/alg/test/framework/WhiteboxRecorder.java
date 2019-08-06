@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
 /**
  * A notifier which, instead of passing events on, simply records them.
  */
-public class WhiteboxRecorder extends RunNotifier {
+final class WhiteboxRecorder extends RunNotifier {
 
     /** Set of whitebox tests that have been executed. Important for {@link FailIfNotExecuted} support. */
     private final Set<Description> executedWhiteboxTests = new HashSet<>();

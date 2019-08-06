@@ -133,9 +133,9 @@ public final class TestAlgorithm {
     @Override
     public String toString() {
         if (algorithm == null) {
-            return "algorithm(as in test graph)";
+            return "algorithm[as in test graph]";
         } else {
-            return "algorithm(" + algorithm.getId() + ")";
+            return "algorithm[" + algorithm.getId() + "]";
         }
     }
 

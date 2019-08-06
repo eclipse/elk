@@ -10,13 +10,9 @@ package org.eclipse.elk.alg.test.framework.graph;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Base class of strategies that know how to load graphs.
+ * Test graphs provide input graphs for layout tests. How those graphs are created is up to the subclasses.
  */
 public abstract class TestGraph {
-
-    // Force sub classes to provide proper descriptions
-    @Override
-    public abstract String toString();
 
     /**
      * Applies the strategy to load a graph.
@@ -28,5 +24,9 @@ public abstract class TestGraph {
      *             if anything goes wrong while trying to provide the graph.
      */
     public abstract ElkNode provideGraph(Object test) throws Throwable;
+
+    // Force sub classes to provide proper descriptions
+    @Override
+    public abstract String toString();
 
 }

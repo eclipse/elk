@@ -66,25 +66,6 @@ public class TestConfiguration {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // TestConfiguration
 
-    @Override
-    public String toString() {
-        StringJoiner joiner = new StringJoiner(", ");
-
-        if (useDefaultNodeConfig) {
-            joiner.add("nodes");
-        }
-
-        if (useDefaultPortConfig) {
-            joiner.add("ports");
-        }
-
-        if (useDefaultEdgeConfig) {
-            joiner.add("edges");
-        }
-
-        return "defaults(" + joiner.toString() + ")";
-    }
-
     /**
      * Applies the strategy to the given graph.
      * 
@@ -188,6 +169,25 @@ public class TestConfiguration {
             label.setHeight(rect.getHeight());
             label.setWidth(rect.getWidth());
         }
+    }
+
+    @Override
+    public String toString() {
+        StringJoiner joiner = new StringJoiner(", ");
+
+        if (useDefaultNodeConfig) {
+            joiner.add("nodes");
+        }
+
+        if (useDefaultPortConfig) {
+            joiner.add("ports");
+        }
+
+        if (useDefaultEdgeConfig) {
+            joiner.add("edges");
+        }
+
+        return "defaults[" + joiner.toString() + "]";
     }
 
 }

@@ -17,7 +17,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
- * A configuration which applies a configuration method to a graph.
+ * A configuration which calls a method to configure to a graph. Instances of this class are generated whenever the
+ * {@link Configurator} annotation is encountered.
  */
 public final class MethodTestConfiguration extends TestConfiguration {
 
@@ -31,27 +32,27 @@ public final class MethodTestConfiguration extends TestConfiguration {
         super(testClass);
         this.configuratorMethod = configuratorMethod;
     }
-    
+
     /**
      * Loads the configuration methods defined in the test class.
      * 
      * @param testClass
      *            the test class.
      * @param errors
-     *            list of error conditions encountered while evaluating the layout algorithms.
+     *            list of error conditions encountered.
      * @return a list of configurations loaded from the test class.
      */
     public static List<MethodTestConfiguration> fromTestClass(final TestClass testClass, final List<Throwable> errors) {
         List<MethodTestConfiguration> configurations = new ArrayList<>();
-        
+
         for (FrameworkMethod method : testClass.getAnnotatedMethods(Configurator.class)) {
             TestUtil.ensurePublic(method, errors);
             TestUtil.ensureReturnsType(method, errors, Void.TYPE);
             TestUtil.ensureParameters(method, errors, ElkNode.class);
-            
+
             configurations.add(new MethodTestConfiguration(testClass, method));
         }
-        
+
         return configurations;
     }
 
@@ -65,7 +66,7 @@ public final class MethodTestConfiguration extends TestConfiguration {
 
     @Override
     public String toString() {
-        return super.toString() + " configMethod(" + configuratorMethod.getName() + ")";
+        return super.toString() + " configMethod[" + configuratorMethod.getName() + "]";
     }
 
 }

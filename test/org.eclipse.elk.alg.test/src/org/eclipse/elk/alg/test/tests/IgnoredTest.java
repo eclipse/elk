@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Black box tests, some of which are ignored.
+ * An example for ignored tests.
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(ForceOptions.ALGORITHM_ID)

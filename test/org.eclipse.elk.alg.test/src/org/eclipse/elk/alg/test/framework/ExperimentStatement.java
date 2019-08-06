@@ -42,7 +42,7 @@ import com.google.common.collect.Multimap;
  * the failures we have since collected.</li>
  * </ol>
  */
-final class RunExperimentStatement extends Statement implements ILayoutExecutionListener {
+final class ExperimentStatement extends Statement implements ILayoutExecutionListener {
 
     /** The runner that created us. */
     private final ExperimentRunner experimentRunner;
@@ -56,7 +56,7 @@ final class RunExperimentStatement extends Statement implements ILayoutExecution
     /**
      * Creates a new statement for the given runner that will notify the given notifier.
      */
-    RunExperimentStatement(final ExperimentRunner experimentRunner, final RunNotifier notifier) {
+    ExperimentStatement(final ExperimentRunner experimentRunner, final RunNotifier notifier) {
         this.experimentRunner = experimentRunner;
         this.notifier = notifier;
     }

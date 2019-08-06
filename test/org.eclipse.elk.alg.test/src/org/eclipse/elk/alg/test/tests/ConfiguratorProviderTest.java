@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * A simple example of a black box test that tests different features of the test framework.
+ * An example for using a layout configurator provider to configure the layout graph.
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(ForceOptions.ALGORITHM_ID)

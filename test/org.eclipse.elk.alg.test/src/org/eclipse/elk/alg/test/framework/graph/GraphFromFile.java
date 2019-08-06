@@ -28,10 +28,11 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
- * A graph loaded from a graph file.
+ * A test graph that gets an input graph from a file supplied by a method. Instances of this class are generated
+ * whenever the {@link GraphResourceProvider} annotation is encountered.
  */
 public final class GraphFromFile extends TestGraph {
-    
+
     /** A file filter that will accept standard ELK graph files. */
     public static final FileFilter GRAPH_FILE_FILTER = new FileExtensionFilter(".elkt", ".elkg");
 
@@ -53,12 +54,12 @@ public final class GraphFromFile extends TestGraph {
      * @param test
      *            instance of the test class to call methods.
      * @param errors
-     *            list of error conditions encountered while evaluating the layout algorithms.
+     *            list of error conditions encountered.
      * @return a list of graphs.
      */
     public static List<GraphFromFile> fromTestClass(final TestClass testClass, final Object test,
             final List<Throwable> errors) {
-        
+
         List<AbstractResourcePath> resourcePaths = new ArrayList<>();
 
         for (FrameworkMethod method : testClass.getAnnotatedMethods(GraphResourceProvider.class)) {
@@ -69,44 +70,35 @@ public final class GraphFromFile extends TestGraph {
             // Invoke the method to obtain the resource paths
             try {
                 List<?> result = (List<?>) method.invokeExplosively(test);
-                
+
                 // Check that these are all resource paths
                 if (!result.stream().allMatch(o -> o instanceof AbstractResourcePath)) {
                     errors.add(new Exception("Method " + method.getName() + " must return List<AbstractResourcePath"));
                 } else {
-                    result.stream()
-                        .map(o -> (AbstractResourcePath) o)
-                        .forEach(path -> resourcePaths.add(path));
+                    result.stream().map(o -> (AbstractResourcePath) o).forEach(path -> resourcePaths.add(path));
                 }
             } catch (Throwable e) {
                 errors.add(e);
             }
         }
-        
+
         // Set proper file filters
         resourcePaths.stream().forEach(path -> path.setFilter(GRAPH_FILE_FILTER));
-        
+
         // Turn the abstract paths into absolute paths
-        return resourcePaths.stream()
-                .flatMap(path -> path.listResources().stream())
-                .map(path -> new GraphFromFile(path))
-                .collect(Collectors.toList());
+        return resourcePaths.stream().flatMap(path -> path.listResources().stream())
+                .map(path -> new GraphFromFile(path)).collect(Collectors.toList());
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // TestGraph
 
     @Override
-    public String toString() {
-        return "graphFile(" + resourcePath.getFile().getPath() + ")";
-    }
-
-    @Override
     public ElkNode provideGraph(final Object testClass) throws Throwable {
         // For this to work, we assume that PlainJavaInitialization was already triggered
         ResourceSet resourceSet = new ResourceSetImpl();
         Resource resource = resourceSet.getResource(URI.createFileURI(resourcePath.getFile().getAbsolutePath()), true);
-        
+
         if (resource != null) {
             resource.load(Collections.emptyMap());
             EObject eo = resource.getContents().get(0);
@@ -114,8 +106,13 @@ public final class GraphFromFile extends TestGraph {
                 return (ElkNode) eo;
             }
         }
-        
+
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "graphFile[" + resourcePath.getFile().getPath() + "]";
     }
 
 }

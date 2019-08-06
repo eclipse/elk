@@ -7,18 +7,17 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test.framework.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies that a white box test is to be executed only on the root of the graph, not on intermediate levels. This is
+ * Specifies that a whitebox test is to be executed only on the root of the graph, not on intermediate levels. This is
  * only of interest for layout algorithms that can layout multiple levels of hierarchy at once.
  */
-@Retention(RUNTIME)
-@Target(METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface OnlyOnRootNode {
 
 }

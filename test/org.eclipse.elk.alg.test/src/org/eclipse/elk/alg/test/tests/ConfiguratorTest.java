@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * A simple example of a black box test that tests different features of the test framework.
+ * An example for using configurator methods to configure the layout graph.
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(ForceOptions.ALGORITHM_ID)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,11 @@ import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.properties.IProperty;
-import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.runner.RunWith;
 
 /**
- * white box tests executed on ELK Layered The tested Algorithm is specified in TestTestClasses.
+ * A few simple whitebox test examples.
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
@@ -40,8 +38,6 @@ public class WhiteBoxTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
 
-    private static final IProperty<String> DESCRIPTION = new Property<>("wbt.description", "");
-
     /**
      * Returns a concrete graph to test with.
      */
@@ -49,12 +45,7 @@ public class WhiteBoxTest {
     public ElkNode compoundGraph() {
         // Create a graph with a compound node in it
         ElkNode topLevelGraph = ElkGraphUtil.createGraph();
-        topLevelGraph.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-        topLevelGraph.setProperty(DESCRIPTION, "topLevelGraph");
-
         ElkNode compoundChild = ElkGraphUtil.createNode(topLevelGraph);
-        compoundChild.setProperty(DESCRIPTION, "compoundChild");
-
         ElkGraphUtil.createNode(compoundChild);
 
         return topLevelGraph;
@@ -68,6 +59,7 @@ public class WhiteBoxTest {
      */
     @Configurator
     public void configure(final ElkNode graph) {
+        graph.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
         graph.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.NETWORK_SIMPLEX);
     }
 

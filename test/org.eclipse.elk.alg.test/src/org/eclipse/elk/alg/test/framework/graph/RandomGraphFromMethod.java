@@ -21,10 +21,13 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
- * This strategy knows how to load a random graph configuration from a configuration supplied by a configuration method.
+ * A test graph that generates input graphs using the {@link RandomGraphGenerator}. The configuration for the generator
+ * is supplied by a configuration method. Instances of this class are generated whenever the
+ * {@link RandomGeneratorOptions} annotation is encountered.
  */
 public final class RandomGraphFromMethod extends TestGraph {
-    
+
+    /** Seed for the random graph generator to make tests deterministic. */
     private static final long RANDOM_SEED = 1337;
 
     /** The method that supplied the random graph configuration. */
@@ -55,10 +58,10 @@ public final class RandomGraphFromMethod extends TestGraph {
             final List<Throwable> errors) {
 
         List<RandomGraphFromMethod> graphs = new ArrayList<>();
-        
+
         // We use a fixed seed to keep tests deterministic
         RandomGraphGenerator generator = new RandomGraphGenerator(new Random(RANDOM_SEED));
-        
+
         for (FrameworkMethod method : testClass.getAnnotatedMethods(RandomGeneratorOptions.class)) {
             TestUtil.ensurePublic(method, errors);
             TestUtil.ensureReturnsType(method, errors, GeneratorOptions.class);
@@ -80,14 +83,14 @@ public final class RandomGraphFromMethod extends TestGraph {
     // TestGraph
 
     @Override
-    public String toString() {
-        return "randomGraphMethod(" + configuratorMethod.getName() + ")";
-    }
-    
-    @Override
     public ElkNode provideGraph(final Object test) {
         // Simply return a copy of the graph
         return EcoreUtil.copy(graph);
+    }
+
+    @Override
+    public String toString() {
+        return "randomGraphMethod[" + configuratorMethod.getName() + "]";
     }
 
 }

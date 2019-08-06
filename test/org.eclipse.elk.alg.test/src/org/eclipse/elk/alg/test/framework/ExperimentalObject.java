@@ -20,7 +20,7 @@ import org.eclipse.elk.graph.ElkNode;
  * object does not keep specific graph instances. Instead, it just keeps everything necessary to know how to create a
  * graph. Clients call {@link #realize()} to obtain a concrete graph to run layout on.
  */
-public class ExperimentalObject {
+final class ExperimentalObject {
 
     /**
      * The layout algorithm strategy to be applied to our graph. This can be to either leave the graph's default
@@ -52,7 +52,7 @@ public class ExperimentalObject {
      * @param graph
      *            graph.
      */
-    public ExperimentalObject(final TestAlgorithm layoutAlgorithm, final TestConfiguration configuration,
+    ExperimentalObject(final TestAlgorithm layoutAlgorithm, final TestConfiguration configuration,
             final TestGraph graph) {
 
         this.layoutAlgorithm = layoutAlgorithm;

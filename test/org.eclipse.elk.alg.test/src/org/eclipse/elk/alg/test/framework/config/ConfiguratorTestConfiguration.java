@@ -19,7 +19,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
- * A configuration strategy which applies a layout configurator to a graph.
+ * A configuration which applies a {@link LayoutConfigurator} to a graph. The configurator is supplied by a method.
+ * Instances of this class are generated whenever the {@link ConfiguratorProvider} annotation is encountered.
  */
 public final class ConfiguratorTestConfiguration extends TestConfiguration {
 
@@ -47,7 +48,7 @@ public final class ConfiguratorTestConfiguration extends TestConfiguration {
      * @param test
      *            instance of the test class to call methods.
      * @param errors
-     *            list of error conditions encountered while evaluating the layout algorithms.
+     *            list of error conditions encountered.
      * @return a list of configurations loaded from the test class.
      */
     public static List<ConfiguratorTestConfiguration> fromTestClass(final TestClass testClass, final Object test,
@@ -82,7 +83,7 @@ public final class ConfiguratorTestConfiguration extends TestConfiguration {
 
     @Override
     public String toString() {
-        return super.toString() + " layoutConfigurator(" + configuratorMethod.getName() + ")";
+        return super.toString() + " layoutConfigurator[" + configuratorMethod.getName() + "]";
     }
 
 }

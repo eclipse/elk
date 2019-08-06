@@ -17,7 +17,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
 /**
- * A graph loaded from a graph file.
+ * A test graph that gets an input graph from a method. Instances of this class are generated whenever the
+ * {@link GraphProvider} annotation is encountered.
  */
 public final class GraphFromMethod extends TestGraph {
     
@@ -39,7 +40,7 @@ public final class GraphFromMethod extends TestGraph {
      * @param test
      *            instance of the test class to call methods.
      * @param errors
-     *            list of error conditions encountered while evaluating the layout algorithms.
+     *            list of error conditions encountered.
      * @return a list of graphs.
      */
     public static List<GraphFromMethod> fromTestClass(final TestClass testClass, final Object test,
@@ -62,13 +63,13 @@ public final class GraphFromMethod extends TestGraph {
     // TestGraph
 
     @Override
-    public String toString() {
-        return "graphMethod(" + method.getName() + ")";
+    public ElkNode provideGraph(final Object test) throws Throwable {
+        return (ElkNode) method.invokeExplosively(test);
     }
 
     @Override
-    public ElkNode provideGraph(final Object test) throws Throwable {
-        return (ElkNode) method.invokeExplosively(test);
+    public String toString() {
+        return "graphMethod[" + method.getName() + "]";
     }
 
 }
