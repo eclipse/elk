@@ -39,7 +39,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
     // CHECKSTYLEOFF MethodName
     
     @BeforeClass
-    public void initPlainJavaLayout() {
+    public static void initPlainJavaLayout() {
         PlainJavaInitialization.initializePlainJavaLayout();
     }
 

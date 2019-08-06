@@ -60,7 +60,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     }
     
     @BeforeClass
-    public void initPlainJavaLayout() {
+    public static void initPlainJavaLayout() {
         PlainJavaInitialization.initializePlainJavaLayout();
     }
 

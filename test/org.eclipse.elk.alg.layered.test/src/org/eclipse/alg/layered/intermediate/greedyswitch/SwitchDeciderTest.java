@@ -50,7 +50,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
     private final CrossMinType greedyType;
     
     @BeforeClass
-    public void initPlainJavaLayout() {
+    public static void initPlainJavaLayout() {
         PlainJavaInitialization.initializePlainJavaLayout();
     }
 
