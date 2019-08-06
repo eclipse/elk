@@ -22,6 +22,7 @@ import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -51,7 +52,11 @@ public class DirectLayoutTest {
         layoutProvider.layout(parentNode, progressMonitor);
 
         // execute a trivial junit test
-        GraphTestUtils.checkNodeCoordinates(parentNode);
+        for (ElkNode child : parentNode.getChildren()) {
+            if (child.getX() <= 0 || child.getY() <= 0) {
+                Assert.fail("Not all node coordinates have been set properly.");
+            }
+        }
         
         // output layout information
         printLayoutInfo(parentNode, progressMonitor);
