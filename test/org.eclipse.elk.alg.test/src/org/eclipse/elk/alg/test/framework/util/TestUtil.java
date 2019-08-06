@@ -139,27 +139,4 @@ public final class TestUtil {
         return testClass.getOnlyConstructor().newInstance();
     }
 
-    /**
-     * Returns a basic graph with three connected nodes.
-     */
-    public static ElkNode buildBasicGraph() {
-        ElkNode layoutGraph = ElkGraphUtil.createGraph();
-        ElkNode node1 = ElkGraphUtil.createNode(layoutGraph);
-        ElkNode node2 = ElkGraphUtil.createNode(layoutGraph);
-        ElkNode node3 = ElkGraphUtil.createNode(layoutGraph);
-
-        ElkGraphUtil.createSimpleEdge(node1, node3);
-        ElkGraphUtil.createSimpleEdge(node2, node3);
-
-        // layout options
-        for (ElkNode node : layoutGraph.getChildren()) {
-            // Suppress the Checkstyle warnings, because the meaning is clear
-            // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
-            node.setWidth(50.0);
-            node.setHeight(50.0);
-        }
-
-        return layoutGraph;
-    }
-
 }
