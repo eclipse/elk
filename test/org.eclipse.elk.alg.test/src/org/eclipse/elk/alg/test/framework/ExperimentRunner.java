@@ -17,7 +17,9 @@ import java.util.stream.Stream;
 
 import org.eclipse.elk.alg.test.framework.annotations.FailIfNotExecuted;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.testing.TestController;
+import org.eclipse.elk.core.testing.TestController.ILayoutExecutionListener;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.junit.Ignore;
@@ -34,7 +36,7 @@ import org.junit.runners.model.Statement;
  * call the appropriate test methods during and after the layout algorithm's execution.
  */
 public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
-    
+
     /** ID of the next {@link ExperimentRunner} to be created. */
     private static int nextRunnerId = 0;
     /** ID of this runner, used to disambiguate descriptions of test methods. */
@@ -63,7 +65,7 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
             throws InitializationError {
 
         super(parentRunner.getTestClass().getJavaClass());
-        
+
         this.runnerId = ++nextRunnerId;
 
         this.parentRunner = parentRunner;
@@ -76,7 +78,7 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Getters
-    
+
     /**
      * Returns the experimental object for this runner.
      */
@@ -119,7 +121,7 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
     protected void runChild(final FrameworkMethod child, final RunNotifier notifier) {
         // We don't do anything here because this method is not called due to the way our implementation works
     }
-    
+
     @Override
     protected Statement childrenInvoker(final RunNotifier notifier) {
         // Usually, each test method would be run by a statement. However, this is
@@ -137,19 +139,19 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Actual Test Running
-    
+
     private Object createTest() throws Throwable {
         return getTestClass().getOnlyConstructor().newInstance();
     }
-    
+
     /**
      * Has the experimental object create the actual test graph.
      */
     private final class ExperimentalObjectCreator extends Statement {
-        
+
         /** Next statement to be evaluated. */
         private final Statement nextStatement;
-        
+
         private ExperimentalObjectCreator(final Statement nextStatement) {
             this.nextStatement = nextStatement;
         }
@@ -158,76 +160,132 @@ public class ExperimentRunner extends ParentRunner<FrameworkMethod> {
         public void evaluate() throws Throwable {
             Object test = createTest();
             realizedExperimentalObject = getExperimentalObject().realize(test);
-            
+
             nextStatement.evaluate();
         }
-        
+
     }
-    
+
     /**
      * Statement in charge of running the actual experiment.
      */
-    private final class RunExperimentStatement extends Statement {
+    private final class RunExperimentStatement extends Statement implements ILayoutExecutionListener {
 
         /** The notifier we'll be notifying. */
         private RunNotifier notifier;
-        
+
         private RunExperimentStatement(final RunNotifier notifier) {
             this.notifier = notifier;
         }
-        
+
         @Override
         public void evaluate() throws Throwable {
             // Create a test controller if we have whitebox tests and the layout algorithm
             TestController testController = null;
-            
+
             if (!parentRunner.getWhiteboxTests().isEmpty()) {
                 testController = new TestController(experimentalObject.getLayoutAlgorithm().getAlgorithmId());
-                
-                // TODO Register listeners
+                testController.addLayoutExecutionListener(this);
             }
-            
+
             // Let the recursive graph layout engine run the layout algorithm (if we have a test controller, that will
             // automatically cause white box tests to run)
             RecursiveGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
             layoutEngine.layout(realizedExperimentalObject, testController, new BasicProgressMonitor());
             
-            // Run blackbox tests and make sure that whitebox tests that wanted to run, but weren't, fail
+            // Stop listening to the test controller
+            if (testController != null) {
+                testController.removeLayoutExecutionListener(this);
+            }
+
+            // Run blackbox tests now that the layout algorithm has finished
             runBlackboxTests();
-            failUnrunWhiteboxTests();
+
+            // Cleanly handle all whitebox tests that did not execute because their processors didn't run
+            handleUnexecutedWhiteboxTests();
         }
-        
+
+        /**
+         * Runs all blackbox tests after the layout algorithm has finished. By this time, all whitebox tests will have
+         * finished.
+         */
         private void runBlackboxTests() {
             for (FrameworkMethod bbTest : parentRunner.getBlackboxTests()) {
-                Description bbTestDescription = describeChild(bbTest);
-                
-                // Only run the test if it's not currently ignored
-                if (isIgnored(bbTest)) {
-                    notifier.fireTestIgnored(bbTestDescription);
-                } else {
-                    Statement bbTestStatement = new Statement() {
-                        @Override
-                        public void evaluate() throws Throwable {
-                            Object test = createTest();
-                            bbTest.invokeExplosively(test, realizedExperimentalObject);
-                        }
-                    };
-                    
-                    runLeaf(bbTestStatement, bbTestDescription, notifier);
-                }
+                runTest(bbTest, realizedExperimentalObject);
             }
         }
-        
-        private void failUnrunWhiteboxTests() {
+
+        private void runTest(final FrameworkMethod test, final Object graph) {
+            Description testDescription = describeChild(test);
+
+            // Only run the test if it's not currently ignored
+            if (isIgnored(test)) {
+                notifier.fireTestIgnored(testDescription);
+            } else {
+                Statement bbTestStatement = new Statement() {
+                    @Override
+                    public void evaluate() throws Throwable {
+                        Object testInstance = createTest();
+                        test.invokeExplosively(testInstance, graph);
+                    }
+                };
+
+                runLeaf(bbTestStatement, testDescription, notifier);
+            }
+        }
+
+        /**
+         * Simulates successful or failing test runs for all whitebox tests that did not execute.
+         */
+        private void handleUnexecutedWhiteboxTests() {
             for (FrameworkMethod wbTest : parentRunner.getWhiteboxTests()) {
-                FailIfNotExecuted failAnnotation = wbTest.getAnnotation(FailIfNotExecuted.class);
-                if (failAnnotation != null && !executedWhiteboxTests.contains(wbTest)) {
+                if (!executedWhiteboxTests.contains(wbTest)) {
+                    // This whitebox test was not executed, so we'll simulate a test run for the notifier
                     Description wbTestDescription = describeChild(wbTest);
-                    notifier.fireTestFailure(new Failure(wbTestDescription, new Exception("Test was not executed.")));
+                    notifier.fireTestStarted(wbTestDescription);
+
+                    // The test must fail if it was supposed to be executed
+                    if (wbTest.getAnnotation(FailIfNotExecuted.class) != null) {
+                        notifier.fireTestFailure(new Failure(wbTestDescription,
+                                new Exception("Test was not executed, but was supposed to.")));
+                    }
+
+                    notifier.fireTestFinished(wbTestDescription);
                 }
             }
         }
         
+
+        @Override
+        public void layoutProcessorReady(final ILayoutProcessor<?> processor, final Object graph,
+                final boolean isRoot) {
+            
+            // Retrieve all whitebox test that want to run before this processor
+            for (FrameworkMethod wbTest : parentRunner.getWhiteboxBeforeTests().get((Class<? extends ILayoutProcessor<?>>) processor.getClass())) {
+                // Only run the test if this is either the root graph (all whitebox tests want to be run on the root
+                // graph) or if the test is not restricted to run only on the root
+                if (isRoot || !parentRunner.getWhiteboxOnlyOnRoot().contains(wbTest)) {
+                    runTest(wbTest, graph);
+                    executedWhiteboxTests.add(wbTest);
+                }
+            }
+        }
+
+        @Override
+        public void layoutProcessorFinished(final ILayoutProcessor<?> processor, final Object graph,
+                final boolean isRoot) {
+            
+            // Retrieve all whitebox test that want to run after this processor
+            for (FrameworkMethod wbTest : parentRunner.getWhiteboxAfterTests().get((Class<? extends ILayoutProcessor<?>>) processor.getClass())) {
+                // Only run the test if this is either the root graph (all whitebox tests want to be run on the root
+                // graph) or if the test is not restricted to run only on the root
+                if (isRoot || !parentRunner.getWhiteboxOnlyOnRoot().contains(wbTest)) {
+                    runTest(wbTest, graph);
+                    executedWhiteboxTests.add(wbTest);
+                }
+            }
+        }
+
     }
 
 }

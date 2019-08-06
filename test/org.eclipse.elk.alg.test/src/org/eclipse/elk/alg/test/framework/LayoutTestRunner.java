@@ -9,10 +9,13 @@ package org.eclipse.elk.alg.test.framework;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.alg.test.framework.algorithm.TestAlgorithm;
+import org.eclipse.elk.alg.test.framework.annotations.OnlyOnRootNode;
 import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.alg.test.framework.annotations.TestBeforeProcessor;
 import org.eclipse.elk.alg.test.framework.config.ConfiguratorTestConfiguration;
@@ -71,6 +74,8 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
     private Multimap<Class<? extends ILayoutProcessor<?>>, FrameworkMethod> whiteboxBeforeTests;
     /** Whitebox tests to be executed after a given layout processor. */
     private Multimap<Class<? extends ILayoutProcessor<?>>, FrameworkMethod> whiteboxAfterTests;
+    /** Set of whitebox test methods that only want to be executed on an input graph's root node. */
+    private Set<FrameworkMethod> whiteboxOnlyOnRoot;
 
     /** All of the test runners we'll be running. */
     private final List<ExperimentRunner> childRunners = new ArrayList<>();
@@ -126,6 +131,13 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
     public Multimap<Class<? extends ILayoutProcessor<?>>, FrameworkMethod> getWhiteboxAfterTests() {
         return whiteboxAfterTests;
     }
+    
+    /**
+     * Returns the set of whitebox test that only want to be run on a root graph.
+     */
+    public Set<FrameworkMethod> getWhiteboxOnlyOnRoot() {
+        return whiteboxOnlyOnRoot;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // ParentRunner Initialization
@@ -175,9 +187,11 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
         testGraphs = new ArrayList<>();
         
         blackboxTests = new ArrayList<>();
+        
         whiteboxTests = new ArrayList<>();
         whiteboxBeforeTests = HashMultimap.create();
         whiteboxAfterTests = HashMultimap.create();
+        whiteboxOnlyOnRoot = new HashSet<>();
     }
 
     /**
@@ -191,7 +205,7 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
             TestUtil.ensurePublic(test, errors);
             TestUtil.ensureParameters(test, errors, ElkNode.class);
             TestUtil.ensureNotAnnotatedWith(test, errors, TestBeforeProcessor.class, TestAfterProcessor.class,
-                    BeforeClass.class, Before.class, After.class, AfterClass.class);
+                    BeforeClass.class, Before.class, After.class, AfterClass.class, OnlyOnRootNode.class);
 
             blackboxTests.add(test);
         }
@@ -201,16 +215,28 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
      * Collects and validates all whitebox test methods.
      */
     private void initializeWhiteboxTests(final List<Throwable> errors) {
+        Set<FrameworkMethod> encounteredTestMethods = new HashSet<>();
+        
         // Tests that want to be executed before a given layout processor
         for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestBeforeProcessor.class)) {
             TestUtil.ensurePublic(test, errors);
             TestUtil.ensureParameters(test, errors, Object.class);
             TestUtil.ensureNotAnnotatedWith(test, errors, Test.class, TestAfterProcessor.class, BeforeClass.class,
                     Before.class, After.class, AfterClass.class);
+            
+            // Check if the test only wants to be run on the root node
+            if (test.getAnnotation(OnlyOnRootNode.class) != null) {
+                whiteboxOnlyOnRoot.add(test);
+            }
 
             // There may be multiple annotations
             for (TestBeforeProcessor annotation : test.getMethod().getAnnotationsByType(TestBeforeProcessor.class)) {
-                whiteboxBeforeTests.put(annotation.processor(), test);
+                whiteboxBeforeTests.put(annotation.value(), test);
+            }
+            
+            // Add to our list of whitebox tests if it isn't already there
+            if (encounteredTestMethods.add(test)) {
+                whiteboxTests.add(test);
             }
         }
 
@@ -220,12 +246,24 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
             TestUtil.ensureParameters(test, errors, Object.class);
             TestUtil.ensureNotAnnotatedWith(test, errors, Test.class, TestBeforeProcessor.class, BeforeClass.class,
                     Before.class, After.class, AfterClass.class);
+            
+            // Check if the test only wants to be run on the root node
+            if (test.getAnnotation(OnlyOnRootNode.class) != null) {
+                whiteboxOnlyOnRoot.add(test);
+            }
 
             // There may be multiple annotations
             for (TestAfterProcessor annotation : test.getMethod().getAnnotationsByType(TestAfterProcessor.class)) {
-                whiteboxAfterTests.put(annotation.processor(), test);
+                whiteboxAfterTests.put(annotation.value(), test);
+            }
+            
+            // Add to our list of whitebox tests if it isn't already there
+            if (encounteredTestMethods.add(test)) {
+                whiteboxTests.add(test);
             }
         }
+        
+        
     }
 
     /**

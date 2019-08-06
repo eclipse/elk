@@ -28,9 +28,8 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 @Inherited
 @Repeatable(TestBeforeProcessors.class)
 public @interface TestBeforeProcessor {
+    
     /** The processor the graph should be executed before. */
-    Class<? extends ILayoutProcessor<?>> processor();
-
-    /** Whether the test should be executed just on the root graph. */
-    boolean onRootOnly() default false;
+    Class<? extends ILayoutProcessor<?>> value();
+    
 }
