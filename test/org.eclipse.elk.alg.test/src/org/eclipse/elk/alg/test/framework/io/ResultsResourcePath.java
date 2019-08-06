@@ -1,11 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
 package org.eclipse.elk.alg.test.framework.io;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import com.google.common.base.Strings;
 
@@ -29,6 +33,16 @@ public class ResultsResourcePath extends AbstractPropertyDependentResourcePath {
         }
         
         initialize(basePathForProperty(PATH_PROPERTY), relativePath);
+    }
+    
+    /**
+     * Ensures that the results directory actually exists.
+     * 
+     * @throws IOException if the path couldn't be created.
+     */
+    public static void ensureResultsPathExists() throws IOException {
+        String path = basePathForProperty(PATH_PROPERTY);
+        Files.createDirectories(Paths.get(path));
     }
 
 }

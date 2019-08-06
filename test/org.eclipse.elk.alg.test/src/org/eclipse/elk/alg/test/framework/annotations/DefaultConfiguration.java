@@ -13,13 +13,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Instruct the test framework to configure elements of input graphs with default values. The configuration with
+ * defaults is done after running configuration methods.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Algorithms {
+public @interface DefaultConfiguration {
     
-    /** The array of specified algorithms. */
-    Algorithm[] value();
+    /** Whether edges should be configured with default values. */
+    boolean edges() default true;
+    /** Whether nodes should be configured with default values. */
+    boolean nodes() default true;
+    /** Whether ports should be configured with default values. */
+    boolean ports() default true;
     
 }

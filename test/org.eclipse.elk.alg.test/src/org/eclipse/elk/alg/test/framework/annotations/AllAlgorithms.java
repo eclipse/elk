@@ -13,13 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Causes tests in a test class to be run on all known layout algorithms. This annotation cannot be used if the
+ * {@link Algorithm} annotation is used.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
+public @interface AllAlgorithms {
     
 }

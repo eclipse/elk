@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@ package org.eclipse.elk.alg.test;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
-import org.junit.Assert;
-
-import com.google.common.collect.Iterators;
 
 /**
  * Utility class for creating simple test graphs.
@@ -50,6 +47,29 @@ public final class GraphTestUtils {
     }
 
     /**
+     * Returns a basic graph with three connected nodes.
+     */
+    public static ElkNode createThreeNodeGraph() {
+        ElkNode layoutGraph = ElkGraphUtil.createGraph();
+        ElkNode node1 = ElkGraphUtil.createNode(layoutGraph);
+        ElkNode node2 = ElkGraphUtil.createNode(layoutGraph);
+        ElkNode node3 = ElkGraphUtil.createNode(layoutGraph);
+
+        ElkGraphUtil.createSimpleEdge(node1, node3);
+        ElkGraphUtil.createSimpleEdge(node2, node3);
+
+        // layout options
+        for (ElkNode node : layoutGraph.getChildren()) {
+            // Suppress the Checkstyle warnings, because the meaning is clear
+            // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
+            node.setWidth(50.0);
+            node.setHeight(50.0);
+        }
+
+        return layoutGraph;
+    }
+
+    /**
      * @return a hierarchical graph composed of two {@link #createSimpleGraph()}s.
      */
     public static ElkNode createHierarchicalGraph() {
@@ -66,18 +86,5 @@ public final class GraphTestUtils {
 
         return parentNode;
     }
-
-    /**
-     * Checks that the coordinates of all nodes in {@code parentNode}'s inclusion tree have x and y coordinates
-     * different from 0.
-     * 
-     * @param parentNode
-     *            root node of a graph.
-     */
-    public static void checkNodeCoordinates(final ElkNode parentNode) {
-        Iterators.filter(parentNode.eAllContents(), ElkNode.class).forEachRemaining(node -> {
-            Assert.assertTrue(node.getX() > 0);
-            Assert.assertTrue(node.getY() > 0);
-        });
-    }
+    
 }

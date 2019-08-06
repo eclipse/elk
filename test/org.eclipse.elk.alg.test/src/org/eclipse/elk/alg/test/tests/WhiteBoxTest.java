@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,87 +9,82 @@ package org.eclipse.elk.alg.test.tests;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer;
+import org.eclipse.elk.alg.layered.options.LayeringStrategy;
 import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
+import org.eclipse.elk.alg.test.framework.annotations.Configurator;
 import org.eclipse.elk.alg.test.framework.annotations.FailIfNotExecuted;
-import org.eclipse.elk.alg.test.framework.annotations.Graph;
-import org.eclipse.elk.alg.test.framework.annotations.ImportGraphs;
-import org.eclipse.elk.alg.test.framework.annotations.RunAfterProcessor;
-import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
-import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
-import org.eclipse.elk.alg.test.framework.util.TestUtil;
+import org.eclipse.elk.alg.test.framework.annotations.GraphProvider;
+import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.graph.ElkNode;
-import org.junit.Test;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.Lists;
-
 /**
- * white box tests executed on ELK Layered The tested Algorithm is specified in TestTestClasses.
+ * A few simple whitebox test examples.
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
-@RunAfterProcessor(processor = NetworkSimplexLayerer.class)
-@RunAfterProcessor(processor = LongestPathLayerer.class)
 public class WhiteBoxTest {
-    
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
 
     /**
-     * Specifies a list of paths to test models. These will usually be paths to models in ELK's models repository.
-     */
-    @ImportGraphs
-    public List<AbstractResourcePath> importGraphs() {
-        return Lists.newArrayList(
-                new ModelResourcePath("realworld/ptolemy/hierarchical/continuous_cartracking_CarTracking.elkt"));
-    }
-    
-    /**
      * Returns a concrete graph to test with.
      */
-    @Graph
-    public ElkNode basicGraph() {
-        return TestUtil.buildBasicGraph();
+    @GraphProvider
+    public ElkNode compoundGraph() {
+        // Create a graph with a compound node in it
+        ElkNode topLevelGraph = ElkGraphUtil.createGraph();
+        ElkNode compoundChild = ElkGraphUtil.createNode(topLevelGraph);
+        ElkGraphUtil.createNode(compoundChild);
+
+        return topLevelGraph;
     }
-    
-    
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
-    
-    
 
-    
+    /**
+     * Ensures ELK Layered will use the network simplex layerer.
+     */
+    @Configurator
+    public void configure(final ElkNode graph) {
+        graph.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
+        graph.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.NETWORK_SIMPLEX);
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tests
-    
+
     /**
      * Checks that there are no layerless nodes left.
      */
-    @Test
-    @FailIfNotExecuted(false)
-    public void testNoLayerlessNodes(final LGraph lGraph) {
-        assertTrue("There are layerless nodes left!", lGraph.getLayerlessNodes().isEmpty());
+    @TestAfterProcessor(NetworkSimplexLayerer.class)
+    @FailIfNotExecuted
+    public void testNoLayerlessNodes(final Object graph) {
+        assertTrue("There are layerless nodes left!", ((LGraph) graph).getLayerlessNodes().isEmpty());
     }
-    
+
     /**
      * Checks that the layering is proper.
      */
-    @Test
-    @FailIfNotExecuted(false)
-    public void testProperLayering(final LGraph lGraph) {
+    @TestAfterProcessor(NetworkSimplexLayerer.class)
+    @FailIfNotExecuted
+    public void testProperLayering(final Object graph) {
+        LGraph lGraph = (LGraph) graph;
         for (Layer layer : lGraph) {
             int sourceLayerIndex = layer.getIndex();
-            
+
             for (LNode lnode : layer) {
                 for (LEdge ledge : lnode.getOutgoingEdges()) {
                     int targetLayerIndex = ledge.getTarget().getNode().getLayer().getIndex();

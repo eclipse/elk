@@ -12,14 +12,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.graph.ElkNode;
+
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Flags a method as providing a test graph. A method such annotated must not
+ * expect any parameters and have return type {@link ElkNode}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
+@Target(ElementType.METHOD)
+public @interface GraphProvider {
     
 }

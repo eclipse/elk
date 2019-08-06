@@ -510,9 +510,10 @@ public final class ElkLayered {
      */
     private void notifyProcessorReady(final LGraph lgraph, final ILayoutProcessor<?> processor) {
         if (testController != null) {
-            testController.notifyProcessorReady(lgraph, processor);
             if (isRoot(lgraph)) {
                 testController.notifyRootProcessorReady(lgraph, processor);
+            } else {
+                testController.notifyProcessorReady(lgraph, processor);
             }
         }
     }
@@ -523,9 +524,10 @@ public final class ElkLayered {
      */
     private void notifyProcessorFinished(final LGraph lgraph, final ILayoutProcessor<?> processor) {
         if (testController != null) {
-            testController.notifyProcessorFinished(lgraph, processor);
             if (isRoot(lgraph)) {
                 testController.notifyRootProcessorFinished(lgraph, processor);
+            } else {
+                testController.notifyProcessorFinished(lgraph, processor);
             }
         }
     }

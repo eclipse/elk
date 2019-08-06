@@ -12,14 +12,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
+
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Flags a method as supplying a file which specifies how to produce random graphs. A method such annotated must not
+ * expect any parameters and have return type {@link AbstractResourcePath}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
-    
+@Target(ElementType.METHOD)
+public @interface RandomGeneratorFile {
+
 }

@@ -13,13 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Flags a method as providing locations from which to load graphs. A method such annotated must not
+ * expect any parameters and have return type {@code List<AbstractResourcePath>}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
+@Target(ElementType.METHOD)
+public @interface GraphResourceProvider {
     
 }

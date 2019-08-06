@@ -12,14 +12,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.core.LayoutConfigurator;
+
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Flags a method as supplying a {@link LayoutConfigurator} to configure graphs with. A method such annotated must not
+ * expect any parameters and have return type {@link LayoutConfigurator}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
+@Target(ElementType.METHOD)
+public @interface ConfiguratorProvider {
     
 }

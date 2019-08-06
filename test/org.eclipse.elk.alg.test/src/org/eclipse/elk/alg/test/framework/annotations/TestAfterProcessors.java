@@ -13,13 +13,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * This annotation is used to group repeated {@link TestAfterProcessor} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
+@Target(ElementType.METHOD)
+public @interface TestAfterProcessors {
     
-    /** The array of specified algorithms. */
-    Algorithm[] value();
+    /** The specified {@link TestAfterProcessor} annotations. */
+    TestAfterProcessor[] value();
     
 }

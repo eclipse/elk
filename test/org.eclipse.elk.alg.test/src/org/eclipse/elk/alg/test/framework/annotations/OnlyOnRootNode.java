@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Kiel University and others.
+ * Copyright (c) 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Specifies that a whitebox test is to be executed only on the root of the graph, not on intermediate levels. This is
+ * only of interest for layout algorithms that can layout multiple levels of hierarchy at once.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
-    
+@Target(ElementType.METHOD)
+public @interface OnlyOnRootNode {
+
 }

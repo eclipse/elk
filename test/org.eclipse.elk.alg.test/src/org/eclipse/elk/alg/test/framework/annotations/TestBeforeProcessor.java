@@ -8,18 +8,24 @@
 package org.eclipse.elk.alg.test.framework.annotations;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+
 /**
- * Container for repeated {@link Algorithm} annotations.
+ * Flags a method as a whitebox test. The test will be run whenever the given processor is about to execute. This
+ * annotation can be used more then once per class or method. A method annotated with this annotation must expect
+ * exactly one parameter of type {@code Object}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Algorithms {
-    
-    /** The array of specified algorithms. */
-    Algorithm[] value();
-    
+@Target(ElementType.METHOD)
+@Repeatable(TestBeforeProcessors.class)
+public @interface TestBeforeProcessor {
+
+    /** The processor the graph should be executed before. */
+    Class<? extends ILayoutProcessor<?>> value();
+
 }
