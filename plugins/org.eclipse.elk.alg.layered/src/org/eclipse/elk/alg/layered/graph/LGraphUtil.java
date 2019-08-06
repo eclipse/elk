@@ -703,7 +703,7 @@ public final class LGraphUtil {
             portAnchor.y = anchorPos.y;
             
             // Since we have applied an explicit anchor, assume the user knows what they are doing and fix it
-            port.setAnchorFixed(true);
+            port.setExplicitlySuppliedPortAnchor(true);
         } else if (portConstraints.isSideFixed() && portSide != PortSide.UNDEFINED) {
             // set the anchor point according to the port side
             switch (portSide) {

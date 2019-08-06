@@ -103,31 +103,6 @@ public final class PortSideProcessor implements ILayoutProcessor<LGraph> {
         } else {
             port.setSide(PortSide.WEST);
         }
-        
-        // If the port anchor is not fixed, adapt it to its port side
-        if (!port.isAnchorFixed()) {
-            KVector portSize = port.getSize();
-            KVector portAnchor = port.getAnchor();
-            
-            switch (port.getSide()) {
-            case NORTH:
-                portAnchor.x = portSize.x / 2;
-                portAnchor.y = 0;
-                break;
-            case EAST:
-                portAnchor.x = portSize.x;
-                portAnchor.y = portSize.y / 2;
-                break;
-            case SOUTH:
-                portAnchor.x = portSize.x / 2;
-                portAnchor.y = portSize.y;
-                break;
-            case WEST:
-                portAnchor.x = 0;
-                portAnchor.y = portSize.y / 2;
-                break;
-            }
-        }
     }
 
 }

@@ -156,8 +156,22 @@ class SweepCopy {
                 // switch the port's side if necessary
                 if ((port.getSide() == PortSide.NORTH) && (dummy.id > origin.id)) {
                     port.setSide(PortSide.SOUTH);
+                    if (port.isExplicitlySuppliedPortAnchor()) {
+                        // Set new coordinates for port anchor since it was switched from NORTH to SOUTH.
+                        // The y coordinate is updated by mirroring the y coordinate
+                        double portHeight =  port.getSize().y;
+                        double anchorY = port.getAnchor().y;
+                        port.getAnchor().y = portHeight - anchorY;
+                    }
                 } else if ((port.getSide() == PortSide.SOUTH) && (origin.id > dummy.id)) {
                     port.setSide(PortSide.NORTH);
+                    if (port.isExplicitlySuppliedPortAnchor()) {
+                        // Set new coordinates for port anchor since it was switched from NORTH to SOUTH.
+                        // The y coordinate is updated by mirroring the y coordinate
+                        double portHeight =  port.getSize().y;
+                        double anchorY = port.getAnchor().y;
+                        port.getAnchor().y =  - (portHeight - anchorY);
+                    }
                 }
                 break;
             }

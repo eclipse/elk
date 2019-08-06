@@ -49,7 +49,6 @@ public final class SelfLoopNodePortRestorator {
                 LPort lPort = port.getLPort();
                 lPort.setSide(port.getPortSide());
                 nodePorts.add(lPort);
-                setPortAnchor(lPort);
             }
         }
 
@@ -89,41 +88,12 @@ public final class SelfLoopNodePortRestorator {
                     setPosition(lPort, lastPosition + spacing, node);
                 }
                 nodePorts.add(lPort);
-                setPortAnchor(lPort);
                 lastPosition = getPosition(lPort);
             }
         }
 
         realNodePorts.removeAll(nodePorts);
         realNodePorts.addAll(nodePorts);
-    }
-
-    /**
-     * Adapt the anchor of the port.
-     */
-    private static void setPortAnchor(final LPort port) {
-        switch (port.getSide()) {
-        case EAST:
-            // adapt the anchor so edges are attached center right
-            port.getAnchor().x = port.getSize().x;
-            port.getAnchor().y = port.getSize().y / 2;
-            break;
-        case WEST:
-            // adapt the anchor so edges are attached center left
-            port.getAnchor().x = 0;
-            port.getAnchor().y = port.getSize().y / 2;
-            break;
-        case NORTH:
-            // adapt the anchor so edges are attached top center
-            port.getAnchor().x = port.getSize().x / 2;
-            port.getAnchor().y = 0;
-            break;
-        case SOUTH:
-            // adapt the anchor so edges are attached bottom center
-            port.getAnchor().x = port.getSize().x / 2;
-            port.getAnchor().y = port.getSize().y;
-            break;
-        }
     }
     
     /**
