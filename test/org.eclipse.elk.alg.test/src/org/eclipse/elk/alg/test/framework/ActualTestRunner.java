@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import org.eclipse.elk.alg.test.framework.analysis.AnalysisConfiguration;
 import org.eclipse.elk.alg.test.framework.io.ResultsResourcePath;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.graph.ElkNode;
@@ -81,13 +80,8 @@ class ActualTestRunner extends BlockJUnit4ClassRunner {
     private List<FrameworkMethod> methods;
     /** the descriptions of the test methods. */
     private final Map<FrameworkMethod, Description> methodDescriptions = new ConcurrentHashMap<>();
-
-    // Variables that are important for analysis tests
-    
     /** Whether a test method failed. */
     private boolean failed = false;
-    /** The configuration of the analysis test. */
-    private AnalysisConfiguration config;
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,28 +198,6 @@ class ActualTestRunner extends BlockJUnit4ClassRunner {
      */
     public boolean isFailed() {
         return failed;
-    }
-    
-    /**
-     * Sets the variables important for an analysis test.
-     * 
-     * @param name
-     *            The name of the graph
-     * @param alg
-     *            the Id of the algorithm
-     * @param analysisConfig
-     *            The configuration of the analysis test
-     * @param testFailed
-     *            The value in which it is stored, whether a test failed
-     */
-    public void setAnalysisVariables(final String name, final String alg, final AnalysisConfiguration analysisConfig,
-            final boolean testFailed) {
-        
-        this.graphName = name;
-        this.algorithmId = alg;
-        this.config = analysisConfig;
-        this.isAnalysis = true;
-        this.failed = testFailed;
     }
     
     
@@ -346,7 +318,7 @@ class ActualTestRunner extends BlockJUnit4ClassRunner {
                 + "algorithm:" + qualifiedToSimpleName(algorithmId) + lineSeparator
                 + whiteBoxDetails
                 + "test class: " + qualifiedToSimpleName(getName()) + lineSeparator
-                + "graph:" + graphName;
+                + "graph: " + graphName;
         
         // Create and cache the description
         Description description = Description.createTestDescription(
@@ -457,35 +429,6 @@ class ActualTestRunner extends BlockJUnit4ClassRunner {
                                 throw e;
                             }
                         }
-                    }
-                }
-            } else if (isAnalysis) {
-                /* an analysis test */
-                if (testMethod.getMethod().getParameterCount() == ANALYSIS_PARAMETER_COUNT) {
-                    Class<?>[] parameterTypes = testMethod.getMethod().getParameterTypes();
-                    if (parameterTypes[0].equals(ElkNode.class) && parameterTypes[1].equals(String.class)
-                            && parameterTypes[2].equals(String.class)
-                            && parameterTypes[3].equals(AnalysisConfiguration.class)) {
-                        // SUPPRESS CHECKSTYLE PREVIOUS MagicNumber
-                        // The meaning of the variable is clear and it is not used again
-                        failed = false;
-                        try {
-                            testMethod.invokeExplosively(target, graph, graphName, algorithmId, config);
-                        } catch (Throwable e) {
-                            // in case the file doesn't exist or the result doesn't exist the new results should be
-                            // written back
-                            if (!e.getMessage().equals("No old results file found or the file is empty") && !e
-                                    .getMessage().equals("No results with the same algorithm and Graph can be found "
-                                            + "in the resullts file")) {
-                                failed = true;
-                            }
-                            
-                            if (storeGraphOnTestFailure) {
-                                storeResult(graph);
-                            }
-                            throw e;
-                        }
-
                     }
                 }
             } else {

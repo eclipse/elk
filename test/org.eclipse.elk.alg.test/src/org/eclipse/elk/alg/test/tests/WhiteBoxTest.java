@@ -21,9 +21,9 @@ import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.FailIfNotExecuted;
-import org.eclipse.elk.alg.test.framework.annotations.Graph;
-import org.eclipse.elk.alg.test.framework.annotations.ImportGraphs;
-import org.eclipse.elk.alg.test.framework.annotations.RunAfterProcessor;
+import org.eclipse.elk.alg.test.framework.annotations.GraphProvider;
+import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
+import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
@@ -38,8 +38,6 @@ import com.google.common.collect.Lists;
  */
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
-@RunAfterProcessor(processor = NetworkSimplexLayerer.class)
-@RunAfterProcessor(processor = LongestPathLayerer.class)
 public class WhiteBoxTest {
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +46,7 @@ public class WhiteBoxTest {
     /**
      * Specifies a list of paths to test models. These will usually be paths to models in ELK's models repository.
      */
-    @ImportGraphs
+    @GraphResourceProvider
     public List<AbstractResourcePath> importGraphs() {
         return Lists.newArrayList(
                 new ModelResourcePath("realworld/ptolemy/hierarchical/continuous_cartracking_CarTracking.elkt"));
@@ -57,7 +55,7 @@ public class WhiteBoxTest {
     /**
      * Returns a concrete graph to test with.
      */
-    @Graph
+    @GraphProvider
     public ElkNode basicGraph() {
         return TestUtil.buildBasicGraph();
     }
@@ -72,31 +70,35 @@ public class WhiteBoxTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tests
     
-    /**
-     * Checks that there are no layerless nodes left.
-     */
-    @Test
-    @FailIfNotExecuted(false)
-    public void testNoLayerlessNodes(final LGraph lGraph) {
-        assertTrue("There are layerless nodes left!", lGraph.getLayerlessNodes().isEmpty());
-    }
-    
-    /**
-     * Checks that the layering is proper.
-     */
-    @Test
-    @FailIfNotExecuted(false)
-    public void testProperLayering(final LGraph lGraph) {
-        for (Layer layer : lGraph) {
-            int sourceLayerIndex = layer.getIndex();
-            
-            for (LNode lnode : layer) {
-                for (LEdge ledge : lnode.getOutgoingEdges()) {
-                    int targetLayerIndex = ledge.getTarget().getNode().getLayer().getIndex();
-                    assertTrue("Edge points leftwards!", sourceLayerIndex <= targetLayerIndex);
-                }
-            }
-        }
-    }
+//    /**
+//     * Checks that there are no layerless nodes left.
+//     */
+//    @Test
+//    @TestAfterProcessor(processor = NetworkSimplexLayerer.class)
+//    @TestAfterProcessor(processor = LongestPathLayerer.class)
+//    @FailIfNotExecuted()
+//    public void testNoLayerlessNodes(final LGraph lGraph) {
+//        assertTrue("There are layerless nodes left!", lGraph.getLayerlessNodes().isEmpty());
+//    }
+//    
+//    /**
+//     * Checks that the layering is proper.
+//     */
+//    @Test
+//    @TestAfterProcessor(processor = NetworkSimplexLayerer.class)
+//    @TestAfterProcessor(processor = LongestPathLayerer.class)
+//    @FailIfNotExecuted()
+//    public void testProperLayering(final LGraph lGraph) {
+//        for (Layer layer : lGraph) {
+//            int sourceLayerIndex = layer.getIndex();
+//            
+//            for (LNode lnode : layer) {
+//                for (LEdge ledge : lnode.getOutgoingEdges()) {
+//                    int targetLayerIndex = ledge.getTarget().getNode().getLayer().getIndex();
+//                    assertTrue("Edge points leftwards!", sourceLayerIndex <= targetLayerIndex);
+//                }
+//            }
+//        }
+//    }
 
 }

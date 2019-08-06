@@ -13,15 +13,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.core.LayoutConfigurator;
+
 /**
- * This annotation is used to group repeated {@link RunBeforeProcessor} annotations.
+ * Specifies the configurator for the graphs as a {@link LayoutConfigurator} instance.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ ElementType.METHOD, ElementType.FIELD })
 @Inherited
-public @interface RunBeforeProcessors {
-    
-    /** The specified {@link RunBeforeProcessor} annotations. */
-    RunBeforeProcessor[] value();
+public @interface ConfiguratorProvider {
     
 }

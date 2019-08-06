@@ -10,7 +10,9 @@ package org.eclipse.elk.alg.test.framework.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.elk.core.util.Pair;
@@ -30,7 +32,106 @@ public final class TestUtil {
      */
     private TestUtil() {
     }
-    
+
+    /**
+     * Adds an exception to the list of errors if the given method is not public.
+     */
+    public static boolean ensurePublic(final FrameworkMethod method, final List<Throwable> errors) {
+        if (!method.isPublic()) {
+            errors.add(new Exception("Method " + method.getName() + " must be public"));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Adds an exception to the list of errors if the given method has a non-void return type.
+     */
+    public static boolean ensureReturnsType(final FrameworkMethod method, final List<Throwable> errors,
+            final Class<?> expectedType) {
+
+        if (!expectedType.isAssignableFrom(method.getReturnType())) {
+            errors.add(new Exception(
+                    "Method " + method.getName() + " must have return type " + expectedType.getCanonicalName()));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Adds an exception to the list of errors if the given method does not have parameters that can accept arguments of
+     * the given types.
+     */
+    public static boolean ensureParameters(final FrameworkMethod method, final List<Throwable> errors,
+            final Class<?>... expectedTypes) {
+
+        Method javaMethod = method.getMethod();
+        boolean checkPassed = true;
+
+        if (javaMethod.getParameterCount() == expectedTypes.length) {
+            Class<?>[] parameterTypes = javaMethod.getParameterTypes();
+
+            for (int i = 0; i < expectedTypes.length; i++) {
+                if (!parameterTypes[i].isAssignableFrom(expectedTypes[i])) {
+                    checkPassed = false;
+                }
+            }
+
+        } else {
+            checkPassed = false;
+        }
+
+        if (checkPassed) {
+            return true;
+        } else {
+            errors.add(new Exception("Method " + method.getName() + " must expect parameters of types: "
+                    + Arrays.toString(expectedTypes)));
+            return false;
+        }
+    }
+
+    /**
+     * Adds exceptions to the list of errors if the given method has annotations of the given annotation types.
+     */
+    @SafeVarargs
+    public static boolean ensureNotAnnotatedWith(final FrameworkMethod method, final List<Throwable> errors,
+            final Class<? extends Annotation>... forbidden) {
+
+        boolean success = true;
+        
+        for (Annotation annotation : method.getAnnotations()) {
+            for (Class<? extends Annotation> forbiddenAnnotationType : forbidden) {
+                if (forbiddenAnnotationType.equals(annotation.getClass())) {
+                    errors.add(new Exception("Method " + method.getName() + " cannot have annotation "
+                            + forbiddenAnnotationType.getName()));
+                    success = false;
+                }
+            }
+        }
+
+        return success;
+    }
+
+    /**
+     * Adds an exception to the list of errors if the given class does not have a single public no-parameters
+     * constructor.
+     */
+    public static boolean ensureSinglePublicNoParameterConstructor(final TestClass testClass,
+            final List<Throwable> errors) {
+
+        Class<?> javaClass = testClass.getJavaClass();
+        Constructor<?>[] constructors = javaClass.getConstructors();
+
+        if (constructors.length != 1 || constructors[0].getParameterCount() != 0) {
+            errors.add(new Exception("Test class must have a single public constructor without parameters."));
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Tries to create and return an instance of the test class.
      * 
@@ -38,7 +139,7 @@ public final class TestUtil {
      */
     public static Object createTestClassInstance(final TestClass testClass) {
         Constructor<?> constr = testClass.getOnlyConstructor();
-        
+
         Object test = null;
         try {
             test = constr.newInstance();
@@ -51,29 +152,29 @@ public final class TestUtil {
         } catch (InvocationTargetException e1) {
             e1.printStackTrace();
         }
-        
+
         return test;
     }
-    
+
     /**
      * Returns the concatenation of the results of {@link #loadAnnotatedFields(TestClass, Class)} and
      * {@link #executeAnnotatedMethods(TestClass, Class)}.
      */
     public static List<Object> loadAnnotatedFieldsAndMethods(final TestClass testClass,
             final Class<? extends Annotation> annotation) {
-        
+
         List<Object> result = loadAnnotatedFields(testClass, annotation);
         result.addAll(executeAnnotatedMethods(testClass, annotation));
         return result;
     }
-    
+
     /**
      * Returns the concatenation of the results of {@link #loadAnnotatedFieldsWithNames(TestClass, Class)} and
      * {@link #executeAnnotatedMethodsWithName(TestClass, Class)}.
      */
     public static List<Pair<Object, String>> loadAnnotatedFieldsAndMethodsWithNames(final TestClass testClass,
             final Class<? extends Annotation> annotation) {
-        
+
         List<Pair<Object, String>> result = loadAnnotatedFieldsWithNames(testClass, annotation);
         result.addAll(executeAnnotatedMethodsWithName(testClass, annotation));
         return result;
@@ -90,10 +191,10 @@ public final class TestUtil {
      */
     public static List<Object> loadAnnotatedFields(final TestClass testClass,
             final Class<? extends Annotation> annotation) {
-        
+
         List<FrameworkField> annotatedFields = testClass.getAnnotatedFields(annotation);
         List<Object> result = new ArrayList<>();
-        
+
         for (FrameworkField frameworkField : annotatedFields) {
             Constructor<?> constr = testClass.getOnlyConstructor();
             Class<?> clazz = constr.getClass();
@@ -105,7 +206,7 @@ public final class TestUtil {
                 e.printStackTrace();
             }
         }
-        
+
         return result;
     }
 
@@ -121,26 +222,24 @@ public final class TestUtil {
      */
     public static List<Pair<Object, String>> loadAnnotatedFieldsWithNames(final TestClass testClass,
             final Class<? extends Annotation> annotation) {
-        
+
         List<FrameworkField> annotatedFields = testClass.getAnnotatedFields(annotation);
         List<Pair<Object, String>> result = new ArrayList<>();
-        
+
         for (FrameworkField frameworkField : annotatedFields) {
             Constructor<?> constr = testClass.getOnlyConstructor();
             Class<?> clazz = constr.getClass();
             String name = testClass.getJavaClass().getName() + "-" + frameworkField.getName();
-            
+
             try {
-                result.add(Pair.of(
-                        frameworkField.get(clazz),
-                        name));
+                result.add(Pair.of(frameworkField.get(clazz), name));
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-        
+
         return result;
     }
 
@@ -156,10 +255,10 @@ public final class TestUtil {
      */
     public static List<Object> executeAnnotatedMethods(final TestClass testClass,
             final Class<? extends Annotation> annotation) {
-        
+
         List<FrameworkMethod> annotMeth = testClass.getAnnotatedMethods(annotation);
         List<Object> result = new ArrayList<>();
-        
+
         Object test = createTestClassInstance(testClass);
         if (test != null) {
             for (FrameworkMethod frameworkMethod : annotMeth) {
@@ -170,7 +269,7 @@ public final class TestUtil {
                 }
             }
         }
-        
+
         return result;
     }
 
@@ -186,25 +285,23 @@ public final class TestUtil {
      */
     public static List<Pair<Object, String>> executeAnnotatedMethodsWithName(final TestClass testClass,
             final Class<? extends Annotation> annotation) {
-        
+
         List<FrameworkMethod> annotMeth = testClass.getAnnotatedMethods(annotation);
         List<Pair<Object, String>> result = new ArrayList<>();
-        
+
         Object test = createTestClassInstance(testClass);
         if (test != null) {
             for (FrameworkMethod frameworkMethod : annotMeth) {
                 String name = testClass.getJavaClass().getName() + "-" + frameworkMethod.getName();
-                
+
                 try {
-                    result.add(Pair.of(
-                            frameworkMethod.invokeExplosively(test),
-                            name));
+                    result.add(Pair.of(frameworkMethod.invokeExplosively(test), name));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
         }
-        
+
         return result;
     }
 
@@ -227,7 +324,7 @@ public final class TestUtil {
             node.setWidth(50.0);
             node.setHeight(50.0);
         }
-        
+
         return layoutGraph;
     }
 

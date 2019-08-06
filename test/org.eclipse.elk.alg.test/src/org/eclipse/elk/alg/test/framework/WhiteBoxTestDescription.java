@@ -18,8 +18,8 @@ class WhiteBoxTestDescription {
     private int expectedExecutions;
     /** Number of actual test executions. */
     private int actualExecutions;
-    /** Whether a test failed. */
-    private boolean fail;
+    /** Whether a test should fail if it's not executed. */
+    private boolean failIfNotExecuted;
     
     /**
      * Creates a new instance initialized with the given values.
@@ -30,7 +30,7 @@ class WhiteBoxTestDescription {
         this.nameWithoutGraph = nameWithoutGraph;
         this.actualExecutions = actualExecutions;
         this.expectedExecutions = expectedExecutions;
-        this.fail = fail;
+        this.failIfNotExecuted = fail;
     }
     
     /**
@@ -76,17 +76,17 @@ class WhiteBoxTestDescription {
     }
 
     /**
-     * Returns whether a test failed.
+     * Returns whether a test should fail if it is not executed.
      */
-    protected boolean isFail() {
-        return fail;
+    protected boolean isFailIfNotExecuted() {
+        return failIfNotExecuted;
     }
 
     /**
-     * Sets whether a test failed.
+     * Sets whether a test should fail if it is not executed.
      */
-    protected void setFail(final boolean fail) {
-        this.fail = fail;
+    protected void setFailIfNotExecuted(final boolean fail) {
+        this.failIfNotExecuted = fail;
     }
     
 }

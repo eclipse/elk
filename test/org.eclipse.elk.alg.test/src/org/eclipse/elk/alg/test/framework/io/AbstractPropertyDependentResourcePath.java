@@ -24,7 +24,7 @@ public abstract class AbstractPropertyDependentResourcePath extends AbstractReso
      * @throws IllegalStateException
      *             if no system property and environment variable with the given name exists.
      */
-    protected String basePathForProperty(final String propertyName) {
+    protected static String basePathForProperty(final String propertyName) {
         String path = System.getProperty(propertyName);
         if (path == null) {
             path = System.getenv(propertyName);

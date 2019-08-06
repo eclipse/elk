@@ -31,7 +31,7 @@ Tests are thus basically run on test instances defined by three properties:
 
 * A layout algorithm run on the graph.
 
-The framework distinguishes _black box_ and _white box_ tests. Black box tests work as described above. White box tests do not execute once layout has finished, but while layout is still running. Layout algorithms need to explicitly support white box tests.
+The framework distinguishes _black box_ and _white box_ tests. Black box tests work as described above. White box tests do not execute once layout has finished, but while layout is still running. Layout algorithms need to explicitly support white box tests. A test class can mix black box and white box tests.
 
 Writing unit tests isn't too hard. This page should walk you through writing and running them.
 
@@ -42,23 +42,12 @@ Unit tests should be placed in a plug-in inside the `test` folder that depends o
 
 ```java
 @RunWith(LayoutTestRunner.class)
-@Algorithm(MyTestClassOptions.ALGORITHM_ID)
 public class MyAlgorithmTest {
 
 }
 ```
 
-The `@RunWith` annotation specifies that the test should be run with our layout test framework. Each test class then needs one or more `@Algorithm` annotations to let the framework know which layout algorithms it should test.
-
-Very basic tests that should be run on all known layout algorithms can be specified like this:
-
-```java
-@RunWith(LayoutTestRunner.class)
-@AllAlgorithms
-public class MyAlgorithmTest {
-
-}
-```
+The `@RunWith` annotation specifies that the test should be run with our layout test framework.
 
 
 ## Specifying Graphs
@@ -67,27 +56,22 @@ There are several way to specify test graphs. There can be arbitrarily many sour
 
 ### Supply Graphs Directly
 
-You can specify fields and methods that supply graphs built directly in your test class, like this:
+You can specify methods that supply graphs built directly in your test class, like this:
 
 ```java
-@Graph
-public ElkNode testGraph = ...;
-
-@Graph
+@GraphProvider
 public ElkNode produceGraph() {
     // Build a graph here...
 }
 ```
-
-Almost all annotations can be used for both, methods and fields. In the following, we will omit code examples for fields and concentrate on methods only.
 
 ### Load Graphs From Disk
 
 Graphs stored in ELK's [models repository](https://github.com/eclipse/elk-models) can be used directly in tests. You specify graphs to be loaded through lists of `ModelResourcePath`, which accepts paths relative to the models repository:
 
 ```java
-@LoadGraphs
-public List<AbstractResourcePath> loadGraphs() {
+@GraphResourceProvider
+public List<AbstractResourcePath> provideGraphs() {
     List<AbstractResourcePath> paths = new ArrayList<>();
 
     // A single file
@@ -136,14 +120,15 @@ ELK includes a [random graph generator]({{< relref "documentation/algorithmdevel
 
 ## Configuring Graphs
 
-If you simply want to layout the graphs as specified and then run your tests on the results, you can skip this step. However, to test particular features it is often necessary to customize layout properties. Again, there are several ways to do so.
+If you simply want to layout the graphs as specified and then run your tests on the results, you can skip this step. However, to test particular features and algorithms it is often necessary to customize layout properties. Again, there are several ways to do so.
+
 
 ### Supply Layout Configurators
 
 Layout configurators are objects that can apply properties to graph objects. You can supply them like this:
 
 ```java
-@Configurator
+@ConfiguratorProvider
 public LayoutConfigurator configurator() {
     LayoutConfigurator layoutConfig = new LayoutConfigurator();
 
@@ -159,22 +144,44 @@ public LayoutConfigurator configurator() {
 You can also define a method that expects a graph and configures that graph dynamically. That allows you to set your properties only if certain conditions are met, for example.
 
 ```java
-@ConfiguratorMethod
+@Configurator
 public void configureStuff(final ElkNode graph) {
     graph.setProperty(SOME_PROPERTY, SOME_PROPERTY_VALUE);
 }
 ```
 
-This annotation, of course, can be used on methods only.
+### Specify Layout Algorithms
 
-### Use Default Configurations
+Since specifying a layout algorithm is a common scenario, there are special annotations to do so that can be added to a class. To test one or more specific algorithms, use one or more `@Algorithm` annotations:
+
+```java
+@RunWith(LayoutTestRunner.class)
+@Algorithm(MyTestClassOptions.ALGORITHM_ID)
+public class MyAlgorithmTest {
+
+}
+```
+
+To test all known algorithms, you can use the `@AllAlgorithms` annotation instead having to specify all algorithms explicitly:
+
+```java
+@RunWith(LayoutTestRunner.class)
+@AllAlgorithms
+public class MyAlgorithmTest {
+
+}
+```
+
+Each graph with each configuration is laid out once with each specified algorithm.
+
+### Default Configurations
 
 Many graphs in our models repository refrain from specifying explicit sizes and labels for diagram elements. Often, however, tests need nodes to have a size and labels. Thus, your test class can specify to apply default configurations to all diagram elements:
 
 ```java
 @RunWith(LayoutTestRunner.class)
 @Algorithm(MyTestClassOptions.ALGORITHM_ID)
-@UseDefaultConfiguration(nodes = true, ports = false, edges = false)
+@DefaultConfiguration(nodes = true, ports = false, edges = false)
 public class MyAlgorithmTest {
 
 }
@@ -214,9 +221,8 @@ White box tests ensure that an algorithm's internal state matches the developer'
 A white box test method needs to specify which layout processor(s) it wants to run before or after. It does so like this:
 
 ```java
-@RunBeforeProcessor(processor = NetworkSimplexLayerer.class, onRootOnly = false)
-@RunAfterProcessor(processor = NetworkSimplexLayerer.class, onRootOnly = false)
-@FailIfNotExecuted(false)
+@TestBeforeProcessor(processor = NetworkSimplexLayerer.class, onRootOnly = false)
+@TestAfterProcessor(processor = NetworkSimplexLayerer.class, onRootOnly = false)
 public void testNetworkSimplexLayerer(LGraph lGraph) {
     // Test things...
 }
@@ -224,7 +230,9 @@ public void testNetworkSimplexLayerer(LGraph lGraph) {
 
 The `onRootOnly` option specifies what to do if the algorithm executes on multiple levels of hierarchy at once. If `onRootOnly` is `true`, the test is only called if the processor is executed on the root graph. Otherwise, it is called whenever the processor is run on any of the hierarchy levels.
 
-By default, white box tests are expected to run at least once per test instance. If this is not the case for a test method, the test will fail. The optional `FailIfNotExecuted` annotation allows you to change that behaviour.
+Since white box tests are specific to a particular algorithm, we require that the test class is configured to run exactly one layout algorithm through an `@Algorithm` annotation. Test setup will fail if no or multiple algorithms were configured.
+
+By default, white box tests are expected to run at least once per test instance. If this is not the case for a test method, the test will fail. The optional `@FailIfNotExecuted` annotation allows you to change that behaviour.
 
 
 ### Supporting White Box Tests
@@ -245,3 +253,14 @@ From Eclipse, tests can be run as plain Java JUnit tests (not plug-in tests). Th
 ### As Part of Automatic Builds
 
 [This page]({{< relref "documentation/contributors/buildingelk.md">}}) describes how to run runit tests as part of automatic builds.
+
+
+## Differences to Usual JUnit Tests
+
+To keep the implementation simple, we currently don't support the following JUnit features:
+
+* `@Before` methods
+* `@After` methods
+* Timeouts and expected exceptions
+
+Feel free to add support for these and file a pull request. :)

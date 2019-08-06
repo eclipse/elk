@@ -19,7 +19,7 @@ import org.eclipse.elk.core.debug.grandom.generators.GeneratorOptions;
  * Specifies {@link GeneratorOptions} for the random graph generator, either through a method or a field.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.METHOD })
 @Inherited
 public @interface RandomGeneratorOptions {
     

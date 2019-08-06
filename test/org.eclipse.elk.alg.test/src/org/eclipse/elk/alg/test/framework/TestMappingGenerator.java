@@ -13,15 +13,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.eclipse.elk.alg.test.framework.annotations.ConfigMethod;
+import org.eclipse.elk.alg.test.framework.annotations.ConfiguratorProvider;
 import org.eclipse.elk.alg.test.framework.annotations.Configurator;
-import org.eclipse.elk.alg.test.framework.annotations.Graph;
-import org.eclipse.elk.alg.test.framework.annotations.ImportGraphs;
+import org.eclipse.elk.alg.test.framework.annotations.GraphProvider;
+import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
+import org.eclipse.elk.alg.test.framework.annotations.RandomGeneratorFile;
 import org.eclipse.elk.alg.test.framework.annotations.RandomGeneratorOptions;
-import org.eclipse.elk.alg.test.framework.annotations.RandomGraphFile;
-import org.eclipse.elk.alg.test.framework.annotations.UseDefaultConfiguration;
+import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
-import org.eclipse.elk.alg.test.framework.io.GraphProvider;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.debug.grandom.generators.GeneratorOptions;
@@ -54,7 +53,7 @@ class TestMappingGenerator {
             List<Pair<ElkNode, String>> graphs = loadGraphs(testClass);
             List<Pair<ElkNode, String>> randomGraphs = loadRandomGraphs(testClass);
             List<LayoutConfigurator> layoutConfigurators = loadLayoutConfigurators(testClass);
-            List<FrameworkMethod> layoutConfigMethods = testClass.getAnnotatedMethods(ConfigMethod.class);
+            List<FrameworkMethod> layoutConfigMethods = testClass.getAnnotatedMethods(Configurator.class);
             DefaultConfigs defaultConfigs = loadDefaultConfigs(testClass);
             
             // Now that we have everything we need, we need to combine every graph we have, both random and non-random,
@@ -161,14 +160,14 @@ class TestMappingGenerator {
         List<Pair<ElkNode, String>> graphs = new ArrayList<>();
         
         // Load graphs specified through fields and methods
-        for (Pair<Object, String> pair : TestUtil.loadAnnotatedFieldsAndMethodsWithNames(testClass, Graph.class)) {
+        for (Pair<Object, String> pair : TestUtil.loadAnnotatedFieldsAndMethodsWithNames(testClass, GraphProvider.class)) {
             if (pair.getFirst() instanceof ElkNode) {
                 graphs.add(Pair.of((ElkNode) pair.getFirst(), pair.getSecond()));
             }
         }
         
         // Load graphs referenced through resources
-        for (Object o : TestUtil.loadAnnotatedFieldsAndMethods(testClass, ImportGraphs.class)) {
+        for (Object o : TestUtil.loadAnnotatedFieldsAndMethods(testClass, GraphResourceProvider.class)) {
             if (o instanceof List<?>) {
                 // Resource paths may denote directories, so we need to find all files they describe first
                 List<AbstractResourcePath> paths = ((List<?>) o).stream()
@@ -177,9 +176,9 @@ class TestMappingGenerator {
                     .collect(Collectors.toList());
                 
                 for (AbstractResourcePath path : paths) {
-                    if (GraphProvider.isElkGraphFile(path)) {
-                        graphs.add(Pair.of(GraphProvider.loadElkGraph(path), path.getFile().getName()));
-                    }
+//                    if (GraphProvider.isElkGraphFile(path)) {
+//                        graphs.add(Pair.of(GraphProvider.loadElkGraph(path), path.getFile().getName()));
+//                    }
                 }
             }
         }
@@ -213,15 +212,15 @@ class TestMappingGenerator {
         }
         
         // Load graphs referenced through resources
-        for (Object value : TestUtil.loadAnnotatedFieldsAndMethods(testClass, RandomGraphFile.class)) {
+        for (Object value : TestUtil.loadAnnotatedFieldsAndMethods(testClass, RandomGeneratorFile.class)) {
             if (value instanceof AbstractResourcePath) {
                 for (AbstractResourcePath path : ((AbstractResourcePath) value).listResources()) {
-                    if (GraphProvider.isRandomGraphFile(path)) {
-                        int counter = 0;
-                        for (ElkNode graph : GraphProvider.loadRandomGraph(path)) {
-                            graphs.add(Pair.of(graph, path.getFile().getName() + counter++));
-                        }
-                    }
+//                    if (GraphProvider.isRandomGraphFile(path)) {
+//                        int counter = 0;
+//                        for (ElkNode graph : GraphProvider.loadRandomGraph(path)) {
+//                            graphs.add(Pair.of(graph, path.getFile().getName() + counter++));
+//                        }
+//                    }
                 }
             }
         }
@@ -235,7 +234,7 @@ class TestMappingGenerator {
     private List<LayoutConfigurator> loadLayoutConfigurators(final TestClass testClass) {
         List<LayoutConfigurator> configs = new ArrayList<>();
 
-        for (Object o : TestUtil.loadAnnotatedFieldsAndMethods(testClass, Configurator.class)) {
+        for (Object o : TestUtil.loadAnnotatedFieldsAndMethods(testClass, ConfiguratorProvider.class)) {
             if (o instanceof LayoutConfigurator) {
                 configs.add((LayoutConfigurator) o);
             }
@@ -250,7 +249,7 @@ class TestMappingGenerator {
     private DefaultConfigs loadDefaultConfigs(final TestClass testClass) {
         DefaultConfigs result = new DefaultConfigs();
         
-        UseDefaultConfiguration defaultConfig = testClass.getAnnotation(UseDefaultConfiguration.class);
+        DefaultConfiguration defaultConfig = testClass.getAnnotation(DefaultConfiguration.class);
         if (defaultConfig != null) {
             result.edges = defaultConfig.edges();
             result.nodes = defaultConfig.nodes();

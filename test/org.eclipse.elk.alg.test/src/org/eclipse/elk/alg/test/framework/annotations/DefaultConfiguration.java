@@ -13,16 +13,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
-
 /**
- * Instructs the framework to use random graphs loaded from a file. The file location is specified in a field annotated
- * with this annotation, or is supplied by a method annotated with this annotation and is always supplied as an
- * of {@link AbstractResourcePath}.
+ * Instruct the test framework to configure elements of input graphs with default values. The configuration with
+ * defaults is done after any {@link Configurator configuration method} has run.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.TYPE })
 @Inherited
-public @interface RandomGraphFile {
+public @interface DefaultConfiguration {
+    
+    /** Whether edges should be configured with default values. */
+    boolean edges() default true;
+    /** Whether nodes should be configured with default values. */
+    boolean nodes() default true;
+    /** Whether ports should be configured with default values. */
+    boolean ports() default true;
     
 }

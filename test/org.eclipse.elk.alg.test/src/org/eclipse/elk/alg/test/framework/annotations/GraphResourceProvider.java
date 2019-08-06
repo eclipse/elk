@@ -13,15 +13,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
+
 /**
- * The annotation used to specify test classes.
+ * Specifies the location of graphs that should be imported and laid out as a list of {@link AbstractResourcePath}
+ * instances. This annotation can be used either with fields of type {@code List<AbstractResourcePath>} or with methods
+ * which return such a list.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ ElementType.METHOD })
 @Inherited
-public @interface TestClasses {
-    
-    /** The array of test classes. */
-    Class<?>[] value();
+public @interface GraphResourceProvider {
     
 }

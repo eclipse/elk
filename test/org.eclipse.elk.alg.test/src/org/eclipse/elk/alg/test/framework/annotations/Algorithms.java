@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The containing annotation for repeating {@link Algorithm} annotations.
+ * Container for repeated {@link Algorithm} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

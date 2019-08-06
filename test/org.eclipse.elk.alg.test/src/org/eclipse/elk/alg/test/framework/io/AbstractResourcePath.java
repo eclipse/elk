@@ -147,7 +147,7 @@ public abstract class AbstractResourcePath {
     /**
      * Sets the filter that should be used to look for files in directories. A {@code null} filter accepts all files.
      */
-    protected void setFilter(final FileFilter filter) {
+    public void setFilter(final FileFilter filter) {
         this.filter = filter;
     }
 
@@ -169,8 +169,8 @@ public abstract class AbstractResourcePath {
      * of the files in the directory that are accepted by the filter. If it is set to be recursive, sub directories are
      * traversed as well.
      */
-    public List<AbstractResourcePath> listResources() {
-        List<AbstractResourcePath> result = new ArrayList<>();
+    public List<AbsoluteResourcePath> listResources() {
+        List<AbsoluteResourcePath> result = new ArrayList<>();
         
         if (file.exists()) {
             if (isDirectory && file.isDirectory()) {
@@ -179,14 +179,14 @@ public abstract class AbstractResourcePath {
                 
             } else if (!isDirectory && file.isFile()) {
                 // We're not a directory, just a humble file, so add us to the result
-                result.add(this);
+                result.add(new AbsoluteResourcePath(file.getAbsolutePath()));
             }
         }
         
         return result;
     }
     
-    private void fillFileList(final File directory, final List<AbstractResourcePath> result) {
+    private void fillFileList(final File directory, final List<AbsoluteResourcePath> result) {
         // List children (null filter accepts everything)
         File[] children = directory.listFiles(filter);
         

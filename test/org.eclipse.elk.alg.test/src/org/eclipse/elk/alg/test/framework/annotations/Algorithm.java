@@ -15,7 +15,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation to specify a layout algorithm for a tests. This annotation can be used more than once per test class.
+ * Specifies which layout algorithm the tests in a test class should be run on. This annotation can be used more than
+ * once per test class.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

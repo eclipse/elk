@@ -14,14 +14,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to group repeated {@link RunAfterProcessor} annotations.
+ * Causes tests in a test class to be run on all known layout algorithms.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target(ElementType.TYPE)
 @Inherited
-public @interface RunAfterProcessors {
+public @interface AllAlgorithms {
     
-    /** The specified {@link RunAfterProcessor} annotations. */
-    RunAfterProcessor[] value();
+    /** The algorithm ID. */
+    String value();
     
 }

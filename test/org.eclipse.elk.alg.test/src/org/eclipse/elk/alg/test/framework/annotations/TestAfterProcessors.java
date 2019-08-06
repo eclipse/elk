@@ -14,14 +14,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to specify whether to store the graph in case of a failed test.
+ * This annotation is used to group repeated {@link TestAfterProcessor} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ ElementType.METHOD })
 @Inherited
-public @interface StoreFailedGraphs {
+public @interface TestAfterProcessors {
     
-    /** Whether the failed graphs should be stored. */
-    boolean value() default true;
+    /** The specified {@link TestAfterProcessor} annotations. */
+    TestAfterProcessor[] value();
     
 }

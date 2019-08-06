@@ -37,7 +37,7 @@ public class FileExtensionFilter implements FileFilter {
      * @param extensions
      *            the extension to filter for, either with or without the leading period.
      */
-    public FileExtensionFilter(final String[] extensions) {
+    public FileExtensionFilter(final String... extensions) {
         for (String ext : extensions) {
             if (ext.startsWith(".")) {
                 this.extensions.add(ext);

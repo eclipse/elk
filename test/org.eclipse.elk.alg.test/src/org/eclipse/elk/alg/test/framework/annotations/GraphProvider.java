@@ -13,15 +13,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Specifies the location of graphs that should be imported and laid out as a list of {@link AbstractResourcePath}
- * instances.
+ * Annotates fields and methods that supply test graphs. If a field is annotated, that field must be of type
+ * {@link ElkNode}. If a method is annotated, that method must return an {@code ElkNode} instance.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.METHOD })
 @Inherited
-public @interface ImportGraphs {
+public @interface GraphProvider {
     
 }

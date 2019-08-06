@@ -7,6 +7,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test.framework.io;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import com.google.common.base.Strings;
 
 /**
@@ -29,6 +33,16 @@ public class ResultsResourcePath extends AbstractPropertyDependentResourcePath {
         }
         
         initialize(basePathForProperty(PATH_PROPERTY), relativePath);
+    }
+    
+    /**
+     * Ensures that the results directory actually exists.
+     * 
+     * @throws IOException if the path couldn't be created.
+     */
+    public static void ensureResultsPathExists() throws IOException {
+        String path = basePathForProperty(PATH_PROPERTY);
+        Files.createDirectories(Paths.get(path));
     }
 
 }

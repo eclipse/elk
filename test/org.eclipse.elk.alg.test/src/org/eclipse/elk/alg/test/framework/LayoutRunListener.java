@@ -125,9 +125,7 @@ class LayoutRunListener extends RunListener {
                         
                     } else {
                         FailIfNotExecuted failAnnot = atomicChild.getAnnotation(FailIfNotExecuted.class);
-                        boolean fail = failAnnot == null
-                                ? true
-                                : failAnnot.value();
+                        boolean fail = failAnnot == null;
                         atomicChildrenWhite.add(new WhiteBoxTestDescription(nameWithoutGraph, 1, 0, fail));
                     }
                 }

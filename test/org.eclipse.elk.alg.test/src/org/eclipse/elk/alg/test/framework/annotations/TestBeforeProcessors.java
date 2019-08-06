@@ -14,11 +14,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies a method that configures graphs directly.
+ * This annotation is used to group repeated {@link TestBeforeProcessor} annotations.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ ElementType.METHOD })
 @Inherited
-public @interface ConfigMethod {
+public @interface TestBeforeProcessors {
+    
+    /** The specified {@link TestBeforeProcessor} annotations. */
+    TestBeforeProcessor[] value();
     
 }

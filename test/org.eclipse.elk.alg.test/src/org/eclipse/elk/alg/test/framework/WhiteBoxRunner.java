@@ -15,14 +15,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.test.framework.annotations.AfterProcessor;
-import org.eclipse.elk.alg.test.framework.annotations.BeforeProcessor;
-import org.eclipse.elk.alg.test.framework.annotations.RunAfterProcessor;
-import org.eclipse.elk.alg.test.framework.annotations.RunAfterProcessors;
-import org.eclipse.elk.alg.test.framework.annotations.RunBeforeProcessor;
-import org.eclipse.elk.alg.test.framework.annotations.RunBeforeProcessors;
-import org.eclipse.elk.alg.test.framework.util.TestUtil;
+import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
+import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessors;
+import org.eclipse.elk.alg.test.framework.annotations.TestBeforeProcessor;
+import org.eclipse.elk.alg.test.framework.annotations.TestBeforeProcessors;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.testing.TestController;
@@ -92,9 +88,6 @@ class WhiteBoxRunner extends SomeBoxRunner {
             testRuns.add(testRun);
             
             for (TestClass testClass : testMapping.getTestClasses()) {
-                // Evaluate BeforeProcessor and AfterProcessor methods and add breakpoints to the test run accordingly
-                evaluateProcessorMethods(testClass, testRun);
-
                 // Evaluates the class's processor annotations and adds breakpoints to the test run accordingly
                 evaluateClassAnnotations(testClass, testRun);
                 
@@ -159,8 +152,8 @@ class WhiteBoxRunner extends SomeBoxRunner {
     // Test Run Setup
 
     /**
-     * Returns the subset of test methods that don't have specific processor annotations. ({@link RunBeforeProcessor},
-     * {@link RunBeforeProcessors}, {@link RunAfterProcessor}, or {@link RunAfterProcessors}).
+     * Returns the subset of test methods that don't have specific processor annotations. ({@link TestBeforeProcessor},
+     * {@link TestBeforeProcessors}, {@link TestAfterProcessor}, or {@link TestAfterProcessors}).
      */
     private List<FrameworkMethod> getProcessorIndependentMethods(final TestClass testClass) {
         // Look through all test methods and throw out those that have RunBefore* or RunAfter* annotations
@@ -169,10 +162,10 @@ class WhiteBoxRunner extends SomeBoxRunner {
         
         for (FrameworkMethod method : testMethods) {
             boolean processorDependent = Arrays.stream(method.getAnnotations())
-                .anyMatch(ann -> ann instanceof RunBeforeProcessor
-                        || ann instanceof RunBeforeProcessors
-                        || ann instanceof RunAfterProcessor
-                        || ann instanceof RunAfterProcessors);
+                .anyMatch(ann -> ann instanceof TestBeforeProcessor
+                        || ann instanceof TestBeforeProcessors
+                        || ann instanceof TestAfterProcessor
+                        || ann instanceof TestAfterProcessors);
             
             if (!processorDependent) {
                 result.add(method);
@@ -183,94 +176,32 @@ class WhiteBoxRunner extends SomeBoxRunner {
     }
 
     /**
-     * Looks for methods that supply a layout processor to run before or after. Those are tagged with either the
-     * {@link BeforeProcessor} or the {@link AfterProcessor} annotations. Adds breakpoints for all test methods to the
-     * test run that don't themselves specify processors to run before or after.
-     */
-    private void evaluateProcessorMethods(final TestClass testClass, final WhiteBoxTestRun testRun) {
-        List<FrameworkMethod> processorIndependentTests = getProcessorIndependentMethods(testClass);
-        
-        Object test = TestUtil.createTestClassInstance(testClass);
-        if (test != null) {
-            // Before Processor Annotations
-            for (FrameworkMethod frameworkMethod : testClass.getAnnotatedMethods(BeforeProcessor.class)) {
-                try {
-                    Object o = frameworkMethod.invokeExplosively(test);
-                    
-                    if (o instanceof Class<?> && ILayoutProcessor.class.isAssignableFrom((Class<?>) o)) {
-                        @SuppressWarnings("unchecked")
-                        Class<? extends ILayoutProcessor<?>> procClass = (Class<? extends ILayoutProcessor<?>>) o;
-                        
-                        // Create a break point
-                        WhiteBoxTestBreakpoint breakpoint = new WhiteBoxTestBreakpoint(
-                                procClass, testClass, processorIndependentTests);
-                        
-                        BeforeProcessor annotation = frameworkMethod.getAnnotation(BeforeProcessor.class);
-                        if (annotation.onRoot()) {
-                            testRun.getBeforeRootProc().add(breakpoint);
-                        } else {
-                            testRun.getBeforeProc().add(breakpoint);
-                        }
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // After Processor Annotations
-            for (FrameworkMethod frameworkMethod : testClass.getAnnotatedMethods(AfterProcessor.class)) {
-                try {
-                    Object o = frameworkMethod.invokeExplosively(test);
-                    
-                    if (o instanceof Class<?> && ILayoutProcessor.class.isAssignableFrom((Class<?>) o)) {
-                        @SuppressWarnings("unchecked")
-                        Class<? extends ILayoutProcessor<?>> procClass = (Class<? extends ILayoutProcessor<?>>) o;
-                        
-                        // Create a break point
-                        WhiteBoxTestBreakpoint breakpoint = new WhiteBoxTestBreakpoint(
-                                procClass, testClass, processorIndependentTests);
-                        
-                        AfterProcessor annotation = frameworkMethod.getAnnotation(AfterProcessor.class);
-                        if (annotation.onRoot()) {
-                            testRun.getAfterRootProc().add(breakpoint);
-                        } else {
-                            testRun.getAfterProc().add(breakpoint);
-                        }
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
      * Checks the class for processor annotations and creates breakpoints for all those test methods that don't
      * themselves specify processors to run before or after.
      */
     private void evaluateClassAnnotations(final TestClass testClass, final WhiteBoxTestRun testRun) {
         List<FrameworkMethod> processorIndependentTests = getProcessorIndependentMethods(testClass);
         
-        RunBeforeProcessor beforeProcessor = testClass.getAnnotation(RunBeforeProcessor.class);
+        TestBeforeProcessor beforeProcessor = testClass.getAnnotation(TestBeforeProcessor.class);
         if (beforeProcessor != null) {
             WhiteBoxTestBreakpoint breakpoint = new WhiteBoxTestBreakpoint(
                     beforeProcessor.processor(), testClass, processorIndependentTests);
             
-            if (beforeProcessor.onRoot()) {
+            if (beforeProcessor.onRootOnly()) {
                 testRun.getBeforeRootProc().add(breakpoint);
             } else {
                 testRun.getBeforeProc().add(breakpoint);
             }
         }
         
-        RunBeforeProcessors beforeProcessors = testClass.getAnnotation(RunBeforeProcessors.class);
+        TestBeforeProcessors beforeProcessors = testClass.getAnnotation(TestBeforeProcessors.class);
         if (beforeProcessors != null) {
-            RunBeforeProcessor[] procs = beforeProcessors.value();
-            for (RunBeforeProcessor runBeforeProcessor : procs) {
+            TestBeforeProcessor[] procs = beforeProcessors.value();
+            for (TestBeforeProcessor runBeforeProcessor : procs) {
                 WhiteBoxTestBreakpoint breakpoint = new WhiteBoxTestBreakpoint(
                         runBeforeProcessor.processor(), testClass, processorIndependentTests);
                 
-                if (runBeforeProcessor.onRoot()) {
+                if (runBeforeProcessor.onRootOnly()) {
                     testRun.getBeforeRootProc().add(breakpoint);
                 } else {
                     testRun.getBeforeProc().add(breakpoint);
@@ -278,26 +209,26 @@ class WhiteBoxRunner extends SomeBoxRunner {
             }
         }
         
-        RunAfterProcessor afterProcessor = testClass.getAnnotation(RunAfterProcessor.class);
+        TestAfterProcessor afterProcessor = testClass.getAnnotation(TestAfterProcessor.class);
         if (afterProcessor != null) {
             WhiteBoxTestBreakpoint breakpoint = new WhiteBoxTestBreakpoint(
                     afterProcessor.processor(), testClass, processorIndependentTests);
             
-            if (afterProcessor.onRoot()) {
+            if (afterProcessor.onRootOnly()) {
                 testRun.getAfterRootProc().add(breakpoint);
             } else {
                 testRun.getAfterProc().add(breakpoint);
             }
         }
         
-        RunAfterProcessors afterProcessors = testClass.getAnnotation(RunAfterProcessors.class);
+        TestAfterProcessors afterProcessors = testClass.getAnnotation(TestAfterProcessors.class);
         if (afterProcessors != null) {
-            RunAfterProcessor[] procs = afterProcessors.value();
-            for (RunAfterProcessor runAfterProcessor : procs) {
+            TestAfterProcessor[] procs = afterProcessors.value();
+            for (TestAfterProcessor runAfterProcessor : procs) {
                 WhiteBoxTestBreakpoint breakpoint = new WhiteBoxTestBreakpoint(
                         runAfterProcessor.processor(), testClass, processorIndependentTests);
                 
-                if (runAfterProcessor.onRoot()) {
+                if (runAfterProcessor.onRootOnly()) {
                     testRun.getAfterRootProc().add(breakpoint);
                 } else {
                     testRun.getAfterProc().add(breakpoint);
@@ -311,40 +242,40 @@ class WhiteBoxRunner extends SomeBoxRunner {
      */
     private void evaluateMethodAnnotations(final TestClass testClass, final WhiteBoxTestRun testRun) {
         for (FrameworkMethod frameworkMethod : testClass.getAnnotatedMethods(Test.class)) {
-            RunBeforeProcessor beforeProcessor = frameworkMethod.getAnnotation(RunBeforeProcessor.class);
+            TestBeforeProcessor beforeProcessor = frameworkMethod.getAnnotation(TestBeforeProcessor.class);
             if (beforeProcessor != null) {
                 updateOrCreateBreakpoint(
-                        beforeProcessor.onRoot() ? testRun.getBeforeRootProc() : testRun.getBeforeProc(),
+                        beforeProcessor.onRootOnly() ? testRun.getBeforeRootProc() : testRun.getBeforeProc(),
                         beforeProcessor.processor(),
                         testClass,
                         frameworkMethod);
             }
 
-            RunBeforeProcessors beforeProcessors = frameworkMethod.getAnnotation(RunBeforeProcessors.class);
+            TestBeforeProcessors beforeProcessors = frameworkMethod.getAnnotation(TestBeforeProcessors.class);
             if (beforeProcessors != null) {
-                for (RunBeforeProcessor processor : beforeProcessors.value()) {
+                for (TestBeforeProcessor processor : beforeProcessors.value()) {
                     updateOrCreateBreakpoint(
-                            processor.onRoot() ? testRun.getBeforeRootProc() : testRun.getBeforeProc(),
+                            processor.onRootOnly() ? testRun.getBeforeRootProc() : testRun.getBeforeProc(),
                             processor.processor(),
                             testClass,
                             frameworkMethod);
                 }
             }
             
-            RunAfterProcessor afterProcessor = frameworkMethod.getAnnotation(RunAfterProcessor.class);
+            TestAfterProcessor afterProcessor = frameworkMethod.getAnnotation(TestAfterProcessor.class);
             if (afterProcessor != null) {
                 updateOrCreateBreakpoint(
-                        afterProcessor.onRoot() ? testRun.getAfterRootProc() : testRun.getAfterProc(),
+                        afterProcessor.onRootOnly() ? testRun.getAfterRootProc() : testRun.getAfterProc(),
                         afterProcessor.processor(),
                         testClass,
                         frameworkMethod);
             }
 
-            RunAfterProcessors afterProcessors = frameworkMethod.getAnnotation(RunAfterProcessors.class);
+            TestAfterProcessors afterProcessors = frameworkMethod.getAnnotation(TestAfterProcessors.class);
             if (afterProcessors != null) {
-                for (RunAfterProcessor processor : afterProcessors.value()) {
+                for (TestAfterProcessor processor : afterProcessors.value()) {
                     updateOrCreateBreakpoint(
-                            processor.onRoot() ? testRun.getAfterRootProc() : testRun.getAfterProc(),
+                            processor.onRootOnly() ? testRun.getAfterRootProc() : testRun.getAfterProc(),
                             processor.processor(),
                             testClass,
                             frameworkMethod);
@@ -359,7 +290,7 @@ class WhiteBoxRunner extends SomeBoxRunner {
      * to that breakpoint. Otherwise, a new breakpoint is created and added to the list.
      */
     private void updateOrCreateBreakpoint(final List<WhiteBoxTestBreakpoint> breakpoints,
-            final Class<? extends ILayoutProcessor<LGraph>> processor, final TestClass testClass,
+            final Class<? extends ILayoutProcessor<?>> processor, final TestClass testClass,
             final FrameworkMethod method) {
         
         for (WhiteBoxTestBreakpoint breakpoint : breakpoints) {

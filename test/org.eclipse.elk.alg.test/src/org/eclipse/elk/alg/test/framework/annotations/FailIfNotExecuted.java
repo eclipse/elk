@@ -14,15 +14,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to specify for white box test methods whether the tests should fail in case the method is not executed. If the
+ * Used to specify for white box test methods that the tests should fail in case the method is not executed. If the
  * annotation is not present the tests will fail in case the method is not executed.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Inherited
 public @interface FailIfNotExecuted {
-    
-    /** Whether a test failure should appear. */
-    boolean value() default true;
     
 }

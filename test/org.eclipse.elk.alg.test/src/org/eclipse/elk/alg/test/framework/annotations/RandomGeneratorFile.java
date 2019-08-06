@@ -13,16 +13,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
+
 /**
- * This annotation can be used to specify the processor all the methods in a white box test class should be executed
- * after.
+ * Instructs the framework to use random graphs loaded from a file. The file location is specified in a field annotated
+ * with this annotation, or is supplied by a method annotated with this annotation and is always supplied as an
+ * instance of {@link AbstractResourcePath}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ ElementType.METHOD })
 @Inherited
-public @interface AfterProcessor {
-    
-    /** Whether the test should be executed just on the root graph. */
-    boolean onRoot() default false;
+public @interface RandomGeneratorFile {
     
 }

@@ -13,13 +13,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.eclipse.elk.core.LayoutConfigurator;
-
 /**
- * Specifies the configurator for the graphs as a {@link LayoutConfigurator} instance.
+ * Specifies a method that configures graphs directly.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.FIELD })
+@Target(ElementType.METHOD)
 @Inherited
 public @interface Configurator {
     
