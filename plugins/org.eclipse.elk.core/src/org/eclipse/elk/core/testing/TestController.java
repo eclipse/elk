@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,85 +7,59 @@
  *******************************************************************************/
 package org.eclipse.elk.core.testing;
 
-import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 /**
- * This class can be used to execute white box tests on an algorithm structured into {@link ILayoutProcessor}s. The
- * white box tests annotated with {@code @@RunBeforeProcessor} or {@code @RunAfterProcessor} specify the processor they
- * supposed to be run after or before, respectively. For each test method a {@link ILayoutPreProcessorListener} or
- * {@link ILayoutPostProcessorListener} is created and added to the list. This is done by an instance of the
- * {@code WhiteBoxRunner} JUnit test runner, which hands a {@link TestController} instance to the layout provider of the
- * algorithm to be tested through the {@link RecursiveGraphLayoutEngine}.
- * <p>
- * A layout algorithm that supports white box tests needs to notify the test controller of interesting intermediate
- * results by calling {@link #notifyProcessorReady(Object, ILayoutProcessor)} and
- * {@link #notifyProcessorFinished(Object, ILayoutProcessor)} as a processor is about to be executed or has just
- * finished executing.
- * </p>
- * <p>
- * Sometimes there are tests that should be executed only on the root graph. That can be specified through the
- * {@code isRoot} property of {@code @RunBeforeProcessor} and {@code @RunAfterProcessor}. The layout algorithm notifies
- * the controller of results on the root graph by calling {@link #notifyRootProcessorReady(Object, ILayoutProcessor)}
- * and {@link #notifyRootProcessorFinished(Object, ILayoutProcessor)}.
- * </p>
+ * A test controller is used to provide listeners with a way to track the execution of a layout algorithm structured
+ * into {@link ILayoutProcessor}s. The main reason for the existence of this class is that our test framework supports
+ * white box tests, that is, tests that examine the internal state of a layout algorithm before or after certain
+ * processors are run. Thus, the test framework uses test controllers to be notified whenever a layout processor is
+ * about to be executed or has just finished executing.
  */
 public class TestController {
-    
-    /** Listeners that should be executed before a layout processor. */
-    private Multimap<Class<? extends ILayoutProcessor<?>>, ILayoutPreProcessorListener> procPreListeners;
-    /** Listeners that should be executed after a layout processor. */
-    private Multimap<Class<? extends ILayoutProcessor<?>>, ILayoutPostProcessorListener> procPostListeners;
-    /** Listeners that should be executed before a layout processor is executed on the root graph. */
-    private Multimap<Class<? extends ILayoutProcessor<?>>, ILayoutPreProcessorListener> procRootPreListeners;
-    /** Listeners that should be executed after a layout processor is executed on the root graph. */
-    private Multimap<Class<? extends ILayoutProcessor<?>>, ILayoutPostProcessorListener> procRootPostListeners;
+
     /** Identifier of the layout algorithm that should be tested with this controller. */
     private String layoutAlgorithmId;
+    /** Listeners that want to be notified during the execution of a layout algorithm. */
+    private Set<ILayoutExecutionListener> listeners = new LinkedHashSet<>();
 
     /**
      * Creates a new instance for testing the layout algorithm with the given ID. Each controller is created for a
      * specific layout algorithm.
      */
     public TestController(final String layoutAlgorithmId) {
-        procPreListeners = HashMultimap.create();
-        procPostListeners = HashMultimap.create();
-        procRootPreListeners = HashMultimap.create();
-        procRootPostListeners = HashMultimap.create();
         this.layoutAlgorithmId = layoutAlgorithmId;
     }
-    
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Setup
-    
+
     /**
      * Returns the identifier of the layout algorithm that should be tested with this test controller.
      */
     public String getTargetAlgorithmId() {
         return layoutAlgorithmId;
     }
-    
+
     /**
      * Checks whether this test controller targets layout algorithms described by the given data object. If so, this
-     * test controller can be installed on the algorithm by calling 
+     * test controller can be installed on the algorithm by calling
      */
     public boolean targets(final LayoutAlgorithmData algorithmData) {
         return algorithmData.getId().equals(layoutAlgorithmId);
     }
-    
+
     /**
      * Installs this test controller on the given layout provider. Before calling this method, clients should have made
      * sure that the two fit by calling {@link #getTargetAlgorithmId()}.
      * 
-     * @throws IllegalArgumentException of the layout provider does not implement {@link IWhiteBoxTestable}.
+     * @throws IllegalArgumentException
+     *             of the layout provider does not implement {@link IWhiteBoxTestable}.
      */
     public void install(final AbstractLayoutProvider layoutProvider) {
         if (layoutProvider instanceof IWhiteBoxTestable) {
@@ -95,156 +69,123 @@ public class TestController {
                     "Test controllers can only be installed on white-box testable layout algorithms");
         }
     }
-    
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Notification Methods
 
     /**
-     * Notifies all the ILayoutPreProcessorListeners waiting for the actual processor.
+     * Notifies all listeners that a processor is about to be executed on a non-root graph.
      * 
-     * @param lgraph
-     *            - the actual graph before the processor started execution
+     * @param graph
+     *            the graph.
      * @param processor
-     *            - the processor that is about to be executed
+     *            the processor.
      */
-    @SuppressWarnings("unchecked") // a cast with a generic type leads to a warning
-    public void notifyProcessorReady(final Object lgraph, final ILayoutProcessor<?> processor) {
-        Collection<ILayoutPreProcessorListener> listeners = procPreListeners.get(
-                (Class<? extends ILayoutProcessor<?>>) processor.getClass());
-        
-        for (ILayoutPreProcessorListener listener : listeners) {
-            listener.layoutProcessorReady(lgraph, processor);
+    public void notifyProcessorReady(final Object graph, final ILayoutProcessor<?> processor) {
+        for (ILayoutExecutionListener listener : listeners) {
+            listener.layoutProcessorReady(processor, graph, false);
         }
     }
 
     /**
-     * Notifies all the ILayoutPreProcessorListeners waiting for the actual processor to finish.
+     * Notifies all listeners that a processor just finished executing on a non-root graph.
      * 
-     * @param lgraph
-     *            - the actual graph after the processor finished its execution
+     * @param graph
+     *            the graph.
      * @param processor
-     *            - the processor that has finished its execution
+     *            the processor.
      */
-    @SuppressWarnings("unchecked") // a cast with a generic type leads to a warning
-    public void notifyProcessorFinished(final Object lgraph, final ILayoutProcessor<?> processor) {
-        Collection<ILayoutPostProcessorListener> listeners = procPostListeners.get(
-                (Class<? extends ILayoutProcessor<?>>) processor.getClass());
-        
-        for (ILayoutPostProcessorListener listener : listeners) {
-            listener.layoutProcessorFinished(lgraph, processor);
+    public void notifyProcessorFinished(final Object graph, final ILayoutProcessor<?> processor) {
+        for (ILayoutExecutionListener listener : listeners) {
+            listener.layoutProcessorFinished(processor, graph, false);
         }
     }
 
     /**
-     * Notifies all the ILayoutPreProcessorListeners waiting for the actual processor to be ready to run on the root
-     * graph.
+     * Notifies all listeners that a processor is about to be executed on a root graph.
      * 
-     * @param lgraph
-     *            - the actual graph before the processor started execution
+     * @param graph
+     *            the graph.
      * @param processor
-     *            - the processor that is about to be executed
+     *            the processor.
      */
-    @SuppressWarnings("unchecked") // a cast with a generic type leads to a warning
-    public void notifyRootProcessorReady(final Object lgraph, final ILayoutProcessor<?> processor) {
-        Collection<ILayoutPreProcessorListener> listeners = procRootPreListeners.get(
-                (Class<? extends ILayoutProcessor<?>>) processor.getClass());
-        
-        for (ILayoutPreProcessorListener listener : listeners) {
-            listener.layoutProcessorReady(lgraph, processor);
+    public void notifyRootProcessorReady(final Object graph, final ILayoutProcessor<?> processor) {
+        for (ILayoutExecutionListener listener : listeners) {
+            listener.layoutProcessorReady(processor, graph, true);
         }
     }
 
     /**
-     * Notifies all the ILayoutPreProcessorListeners waiting for the actual processor to finish its execution on the
-     * root graph.
+     * Notifies all listeners that a processor just finished executing on a root graph.
      * 
-     * @param lgraph
-     *            - the actual graph after the processor finished its execution
+     * @param graph
+     *            the graph.
      * @param processor
-     *            - the processor that has finished its execution
+     *            the processor.
      */
-    @SuppressWarnings("unchecked") // a cast with a generic type leads to a warning
-    public void notifyRootProcessorFinished(final Object lgraph, final ILayoutProcessor<?> processor) {
-        Collection<ILayoutPostProcessorListener> listeners = procRootPostListeners.get(
-                (Class<? extends ILayoutProcessor<?>>) processor.getClass());
-        
-        for (ILayoutPostProcessorListener listener : listeners) {
-            listener.layoutProcessorFinished(lgraph, processor);
+    public void notifyRootProcessorFinished(final Object graph, final ILayoutProcessor<?> processor) {
+        for (ILayoutExecutionListener listener : listeners) {
+            listener.layoutProcessorFinished(processor, graph, true);
         }
     }
-    
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Listener Management
 
     /**
-     * Adds a ILayoutPreProcessorListener that should be notified.
+     * Adds a listener to the test controller.
      * 
      * @param listener
-     *            - the listener that has to be notified
-     * @param processor
-     *            - the processor the test should be executed before
-     * @param onRoot
-     *            - true, if the test should be executed only on the root
+     *            the listener to be added.
      */
-    public void addPreProcessorRunListener(final ILayoutPreProcessorListener listener,
-            final Class<? extends ILayoutProcessor<?>> processor, final boolean onRoot) {
-        if (onRoot) {
-            procRootPreListeners.put(processor, listener);
-        } else {
-            procPreListeners.put(processor, listener);
-        }
-
+    public void addLayoutExecutionListener(final ILayoutExecutionListener listener) {
+        listeners.add(listener);
     }
 
     /**
-     * Adds a ILayoutPreProcessorListener that should be notified.
+     * Removes a listener from the test controller.
      * 
      * @param listener
-     *            - the listener that has to be notified
-     * @param processor
-     *            - the processor the test should be executed after
-     * @param onRoot
-     *            - true, if the test should be executed only on the root
+     *            the listener to be added.
      */
-    public void addPostProcessorRunListener(final ILayoutPostProcessorListener listener,
-            final Class<? extends ILayoutProcessor<?>> processor, final boolean onRoot) {
-
-        if (onRoot) {
-            procRootPostListeners.put(processor, listener);
-        } else {
-            procPostListeners.put(processor, listener);
-        }
-
+    public void removeLayoutExecutionListener(final ILayoutExecutionListener listener) {
+        listeners.add(listener);
     }
-    
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Listener Interfaces
 
     /**
-     * A listener that wants to be notified before a layout processor is executed.
+     * Interface implemented by listeners interested in the execution of a layout algorithm.
      */
-    public interface ILayoutPreProcessorListener {
-        
-        /**
-         * Called before the given layout processor is about to be run on the given graph.
-         */
-        void layoutProcessorReady(Object graph, ILayoutProcessor<?> processor);
-        
-    }
-
-    /**
-     * A listener that wants to be notified after a layout processor is executed.
-     */
-    public interface ILayoutPostProcessorListener {
+    public interface ILayoutExecutionListener {
 
         /**
-         * Called after the given layout processor was run on the given graph.
+         * Fired when a layout processor is about to be executed.
+         * 
+         * @param processor
+         *            the layout processor about to be executed.
+         * @param graph
+         *            the graph the processor will be run on.
+         * @param isRoot
+         *            {@code true} if the graph is the root of the graph hierarchy laid out by the layout algorithm.
+         *            This does not have to be the root of the entire graph!
          */
-        void layoutProcessorFinished(Object graph, ILayoutProcessor<?> processor);
-        
+        void layoutProcessorReady(ILayoutProcessor<?> processor, Object graph, boolean isRoot);
+
+        /**
+         * Fired when a layout processor finished executing.
+         * 
+         * @param processor
+         *            the layout processor about to be executed.
+         * @param graph
+         *            the graph the processor will be run on.
+         * @param isRoot
+         *            {@code true} if the graph is the root of the graph hierarchy laid out by the layout algorithm.
+         *            This does not have to be the root of the entire graph!
+         */
+        void layoutProcessorFinished(ILayoutProcessor<?> processor, Object graph, boolean isRoot);
+
     }
-    
+
 }
