@@ -253,7 +253,6 @@
           <systemProperties>
             <ELK_REPO>${tests.paths.elk-repo}</ELK_REPO>
             <MODELS_REPO>${tests.paths.models-repo}</MODELS_REPO>
-            <RESULTS_PATH>${tests.paths.results}</RESULTS_PATH>
           </systemProperties>
         </configuration>
       </plugin>

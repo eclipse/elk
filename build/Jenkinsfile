@@ -68,9 +68,6 @@ pipeline {
         // Start with a clean workspace
         cleanWs()
 
-        // Create a directory test results will be placed in
-        sh "mkdir test-results"
-
         // Clone main ELK Repository
         checkout(
           [
@@ -147,7 +144,6 @@ pipeline {
            " --define elk.metadata.documentation.outputPath=elk/docs/" +
            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
-           " --define tests.paths.results=${env.WORKSPACE}/test-results" +
            " clean integration-test"
       }
     }
@@ -163,7 +159,6 @@ pipeline {
            " --define elk.metadata.documentation.outputPath=elk/docs/" +
            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
-           " --define tests.paths.results=${env.WORKSPACE}/test-results" +
            " clean deploy"
       }
     }
