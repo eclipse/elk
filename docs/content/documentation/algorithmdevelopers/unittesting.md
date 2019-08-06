@@ -221,18 +221,18 @@ White box tests ensure that an algorithm's internal state matches the developer'
 A white box test method needs to specify which layout processor(s) it wants to run before or after. It does so like this:
 
 ```java
-@TestBeforeProcessor(processor = NetworkSimplexLayerer.class, onRootOnly = false)
-@TestAfterProcessor(processor = NetworkSimplexLayerer.class, onRootOnly = false)
+@TestBeforeProcessor(NetworkSimplexLayerer.class)
+@TestAfterProcessor(NetworkSimplexLayerer.class)
 public void testNetworkSimplexLayerer(LGraph lGraph) {
     // Test things...
 }
 ```
 
-The `onRootOnly` option specifies what to do if the algorithm executes on multiple levels of hierarchy at once. If `onRootOnly` is `true`, the test is only called if the processor is executed on the root graph. Otherwise, it is called whenever the processor is run on any of the hierarchy levels.
+A test class containing white box tests must be configured such that all layout algorithms it runs with are white box testable. Test setup will fail otherwise.
 
-Since white box tests are specific to a particular algorithm, we require that the test class is configured to run exactly one layout algorithm through an `@Algorithm` annotation. Test setup will fail if no or multiple algorithms were configured.
+Depending on the algorithm and the input graph, it may happen that the layout processor a white box test is configured to run with never executes. By default, the framework treats such tests as having succeeded. If such a test should fail instead, simply add the `@FailIfNotExecuted` annotation.
 
-By default, white box tests are expected to run at least once per test instance. If this is not the case for a test method, the test will fail. The optional `@FailIfNotExecuted` annotation allows you to change that behaviour.
+A white box test will be executed upon every invocation of one of its processors. If a layout algorithm supports hierarchy, this may mean being executed several times, for example once per hierarchy leven which is being laid out. To change this, add the `@OnlyOnRootNode` annotation. Then, the test will only run if its processors are executed on what the layout algorithm considers the root node.
 
 
 ### Supporting White Box Tests
@@ -248,7 +248,6 @@ From Eclipse, tests can be run as plain Java JUnit tests (not plug-in tests). Th
 
 * `ELK_REPO`: Absolute path to the directory where the main ELK repository is checked out.
 * `MODELS_REPO`: Absolute path to the directory where the `elk-models` repository is checked out.
-* `RESULTS_PATH`: If graphs of failed tests should be persisted, this should point to the directory to store them in. If this path is not specified, nothing will be persisted.
 
 ### As Part of Automatic Builds
 

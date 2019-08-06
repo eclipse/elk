@@ -39,7 +39,6 @@ mvn
     --define elk.metadata.documentation.outputPath=/ELK_FOLDER/docs
     --define tests.paths.elk-repo=/ELK_FOLDER
     --define tests.paths.models-repo=/ELK_MODELS_FOLDER
-    --define tests.paths.results=/TEST_RESULTS_FOLDER
     clean
     integration-test
 ```
