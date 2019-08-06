@@ -13,8 +13,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
