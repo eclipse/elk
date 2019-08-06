@@ -107,11 +107,10 @@ public final class TestAlgorithm {
     // Getters
     
     /**
-     * Returns the ID of the layout algorithm, if any. If this instance won't change the layout algorithm set on the
-     * input graph, we return {@code null}.
+     * Returns the layout algorithm or {@code null} if this instance doesn't change layout algorithms.
      */
-    public String getAlgorithmId() {
-        return algorithm == null ? null : algorithm.getId();
+    public LayoutAlgorithmData getAlgorithmData() {
+        return algorithm;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

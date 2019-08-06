@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test.framework;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +26,10 @@ import org.eclipse.elk.alg.test.framework.graph.RandomGraphFromFile;
 import org.eclipse.elk.alg.test.framework.graph.RandomGraphFromMethod;
 import org.eclipse.elk.alg.test.framework.graph.TestGraph;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
+import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.testing.IWhiteBoxTestable;
 import org.eclipse.elk.graph.ElkNode;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -131,7 +133,7 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
     public Multimap<Class<? extends ILayoutProcessor<?>>, FrameworkMethod> getWhiteboxAfterTests() {
         return whiteboxAfterTests;
     }
-    
+
     /**
      * Returns the set of whitebox test that only want to be run on a root graph.
      */
@@ -150,9 +152,9 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
 
         // We're in plain Java mode, so ensure everything's initialized properly
         PlainJavaInitialization.initializePlainJavaLayout();
-        
+
         initializeFields();
-        
+
         // Initialize our test methods
         initializeBlackboxTests(errors);
         initializeWhiteboxTests(errors);
@@ -164,9 +166,8 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
         }
 
         try {
-            test = testClass.getOnlyConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+            test = TestUtil.createTestClassInstance(testClass);
+        } catch (Throwable e) {
             errors.add(e);
             return;
         }
@@ -185,9 +186,9 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
         testAlgorithms = new ArrayList<>();
         testConfigurations = new ArrayList<>();
         testGraphs = new ArrayList<>();
-        
+
         blackboxTests = new ArrayList<>();
-        
+
         whiteboxTests = new ArrayList<>();
         whiteboxBeforeTests = HashMultimap.create();
         whiteboxAfterTests = HashMultimap.create();
@@ -216,14 +217,14 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
      */
     private void initializeWhiteboxTests(final List<Throwable> errors) {
         Set<FrameworkMethod> encounteredTestMethods = new HashSet<>();
-        
+
         // Tests that want to be executed before a given layout processor
         for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestBeforeProcessor.class)) {
             TestUtil.ensurePublic(test, errors);
             TestUtil.ensureParameters(test, errors, Object.class);
             TestUtil.ensureNotAnnotatedWith(test, errors, Test.class, TestAfterProcessor.class, BeforeClass.class,
                     Before.class, After.class, AfterClass.class);
-            
+
             // Check if the test only wants to be run on the root node
             if (test.getAnnotation(OnlyOnRootNode.class) != null) {
                 whiteboxOnlyOnRoot.add(test);
@@ -233,7 +234,7 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
             for (TestBeforeProcessor annotation : test.getMethod().getAnnotationsByType(TestBeforeProcessor.class)) {
                 whiteboxBeforeTests.put(annotation.value(), test);
             }
-            
+
             // Add to our list of whitebox tests if it isn't already there
             if (encounteredTestMethods.add(test)) {
                 whiteboxTests.add(test);
@@ -246,7 +247,7 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
             TestUtil.ensureParameters(test, errors, Object.class);
             TestUtil.ensureNotAnnotatedWith(test, errors, Test.class, TestBeforeProcessor.class, BeforeClass.class,
                     Before.class, After.class, AfterClass.class);
-            
+
             // Check if the test only wants to be run on the root node
             if (test.getAnnotation(OnlyOnRootNode.class) != null) {
                 whiteboxOnlyOnRoot.add(test);
@@ -256,14 +257,13 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
             for (TestAfterProcessor annotation : test.getMethod().getAnnotationsByType(TestAfterProcessor.class)) {
                 whiteboxAfterTests.put(annotation.value(), test);
             }
-            
+
             // Add to our list of whitebox tests if it isn't already there
             if (encounteredTestMethods.add(test)) {
                 whiteboxTests.add(test);
             }
         }
-        
-        
+
     }
 
     /**
@@ -287,10 +287,26 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
     private void initializeAlgorithms(final TestClass testClass, final List<Throwable> errors) {
         testAlgorithms.addAll(TestAlgorithm.fromTestClass(testClass, errors));
 
-        // If we have whitebox tests, we need to have exactly one layout algorithm specification or it won't make sense
-        if (!whiteboxTests.isEmpty() && testAlgorithms.size() != 1) {
-            errors.add(
-                    new Exception("If whitebox tests are present, there must be exactly one @Algorithm annotation."));
+        // If we have whitebox tests, we need to check stuff
+        if (!whiteboxTests.isEmpty()) {
+            // Ensure that there is at least one specific layout algorithm
+            if (testAlgorithms.isEmpty() || testAlgorithms.get(0).getAlgorithmData() == null) {
+                errors.add(new Exception("Whitebox tests require explicit @Algorithm annotations."));
+
+            } else {
+                // Ensure that all algorithms are whitebox testable
+                for (TestAlgorithm algorithm : testAlgorithms) {
+                    LayoutAlgorithmData algorithmData = algorithm.getAlgorithmData();
+
+                    AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
+
+                    if (!(layoutProvider instanceof IWhiteBoxTestable)) {
+                        errors.add(new Exception("Algorithm " + algorithmData.getId() + " is not whitebox testable."));
+                    }
+
+                    algorithmData.getInstancePool().release(layoutProvider);
+                }
+            }
         }
 
         if (testAlgorithms.isEmpty()) {

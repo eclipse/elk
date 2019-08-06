@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,16 +9,12 @@ package org.eclipse.elk.alg.test.framework.util;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
-import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
 
@@ -100,7 +96,7 @@ public final class TestUtil {
             final Class<? extends Annotation>... forbidden) {
 
         boolean success = true;
-        
+
         for (Annotation annotation : method.getAnnotations()) {
             for (Class<? extends Annotation> forbiddenAnnotationType : forbidden) {
                 if (forbiddenAnnotationType.equals(annotation.getClass())) {
@@ -135,174 +131,12 @@ public final class TestUtil {
     /**
      * Tries to create and return an instance of the test class.
      * 
-     * @return an instance of the test class or {@code null} if something went wrong.
+     * @return an instance of the test class.
+     * @throws Throwable
+     *             if anything goes wrong.
      */
-    public static Object createTestClassInstance(final TestClass testClass) {
-        Constructor<?> constr = testClass.getOnlyConstructor();
-
-        Object test = null;
-        try {
-            test = constr.newInstance();
-        } catch (InstantiationException e1) {
-            e1.printStackTrace();
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
-        } catch (InvocationTargetException e1) {
-            e1.printStackTrace();
-        }
-
-        return test;
-    }
-
-    /**
-     * Returns the concatenation of the results of {@link #loadAnnotatedFields(TestClass, Class)} and
-     * {@link #executeAnnotatedMethods(TestClass, Class)}.
-     */
-    public static List<Object> loadAnnotatedFieldsAndMethods(final TestClass testClass,
-            final Class<? extends Annotation> annotation) {
-
-        List<Object> result = loadAnnotatedFields(testClass, annotation);
-        result.addAll(executeAnnotatedMethods(testClass, annotation));
-        return result;
-    }
-
-    /**
-     * Returns the concatenation of the results of {@link #loadAnnotatedFieldsWithNames(TestClass, Class)} and
-     * {@link #executeAnnotatedMethodsWithName(TestClass, Class)}.
-     */
-    public static List<Pair<Object, String>> loadAnnotatedFieldsAndMethodsWithNames(final TestClass testClass,
-            final Class<? extends Annotation> annotation) {
-
-        List<Pair<Object, String>> result = loadAnnotatedFieldsWithNames(testClass, annotation);
-        result.addAll(executeAnnotatedMethodsWithName(testClass, annotation));
-        return result;
-    }
-
-    /**
-     * Returns the values of all fields in the test class annotated with the specified annotation.
-     * 
-     * @param testClass
-     *            the test class to look through.
-     * @param annotation
-     *            the annotation the fields should be loaded for.
-     * @return a list of values.
-     */
-    public static List<Object> loadAnnotatedFields(final TestClass testClass,
-            final Class<? extends Annotation> annotation) {
-
-        List<FrameworkField> annotatedFields = testClass.getAnnotatedFields(annotation);
-        List<Object> result = new ArrayList<>();
-
-        for (FrameworkField frameworkField : annotatedFields) {
-            Constructor<?> constr = testClass.getOnlyConstructor();
-            Class<?> clazz = constr.getClass();
-            try {
-                result.add(frameworkField.get(clazz));
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Looks for fields in the test class annotated with the specified annotation and returns a list of their values
-     * together with the name of the field.
-     * 
-     * @param testClass
-     *            the test class to look through.
-     * @param annotation
-     *            the annotation the fields should be loaded for.
-     * @return a list of pairs of field values and field names.
-     */
-    public static List<Pair<Object, String>> loadAnnotatedFieldsWithNames(final TestClass testClass,
-            final Class<? extends Annotation> annotation) {
-
-        List<FrameworkField> annotatedFields = testClass.getAnnotatedFields(annotation);
-        List<Pair<Object, String>> result = new ArrayList<>();
-
-        for (FrameworkField frameworkField : annotatedFields) {
-            Constructor<?> constr = testClass.getOnlyConstructor();
-            Class<?> clazz = constr.getClass();
-            String name = testClass.getJavaClass().getName() + "-" + frameworkField.getName();
-
-            try {
-                result.add(Pair.of(frameworkField.get(clazz), name));
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Looks for methods in the given class annotated with the given annotation, executes them, and returns a list of
-     * their return values.
-     * 
-     * @param testClass
-     *            the test class to look through.
-     * @param annotation
-     *            the annotation methods to be executed should be annotated with.
-     * @return return values obtained by executing the methods.
-     */
-    public static List<Object> executeAnnotatedMethods(final TestClass testClass,
-            final Class<? extends Annotation> annotation) {
-
-        List<FrameworkMethod> annotMeth = testClass.getAnnotatedMethods(annotation);
-        List<Object> result = new ArrayList<>();
-
-        Object test = createTestClassInstance(testClass);
-        if (test != null) {
-            for (FrameworkMethod frameworkMethod : annotMeth) {
-                try {
-                    result.add(frameworkMethod.invokeExplosively(test));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Looks for methods in the given class annotated with the given annotation, executes them, and returns a list of
-     * their return values and their names.
-     * 
-     * @param testClass
-     *            the test class to look through.
-     * @param annotation
-     *            the annotation methods to be executed should be annotated with.
-     * @return pairs of return values obtained by executing the methods and the method names.
-     */
-    public static List<Pair<Object, String>> executeAnnotatedMethodsWithName(final TestClass testClass,
-            final Class<? extends Annotation> annotation) {
-
-        List<FrameworkMethod> annotMeth = testClass.getAnnotatedMethods(annotation);
-        List<Pair<Object, String>> result = new ArrayList<>();
-
-        Object test = createTestClassInstance(testClass);
-        if (test != null) {
-            for (FrameworkMethod frameworkMethod : annotMeth) {
-                String name = testClass.getJavaClass().getName() + "-" + frameworkMethod.getName();
-
-                try {
-                    result.add(Pair.of(frameworkMethod.invokeExplosively(test), name));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return result;
+    public static Object createTestClassInstance(final TestClass testClass) throws Throwable {
+        return testClass.getOnlyConstructor().newInstance();
     }
 
     /**
