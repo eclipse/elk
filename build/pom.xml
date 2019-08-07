@@ -244,11 +244,7 @@
         <configuration>
           <argLine>-ea</argLine>
           <excludes>
-            <exclude>**/ElkTest*.java</exclude>
-            <exclude>**/*ElkTest.java</exclude>
             <exclude>**/TestUtil.java</exclude>
-            <exclude>**/TestMapping.java</exclude>
-            <exclude>**/TestMappingGenerator.java</exclude>
           </excludes>
           <systemProperties>
             <ELK_REPO>${tests.paths.elk-repo}</ELK_REPO>

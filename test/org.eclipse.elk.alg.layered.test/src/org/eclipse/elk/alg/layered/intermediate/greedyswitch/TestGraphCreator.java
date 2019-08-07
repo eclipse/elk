@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.alg.layered.intermediate.greedyswitch;
+package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
