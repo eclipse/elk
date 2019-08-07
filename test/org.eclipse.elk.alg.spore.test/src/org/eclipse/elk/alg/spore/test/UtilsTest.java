@@ -133,7 +133,7 @@ public class UtilsTest {
 		vectors.add(Pair.of(new KVector(-20, 130), true));
 		vectors.add(Pair.of(new KVector(-20, -21), false));
 		
-		Arrays.stream(new File(ElkUtil.debugFolderPath("test")).listFiles()).forEach(File::delete);
+//		Arrays.stream(new File(ElkUtil.debugFolderPath("test")).listFiles()).forEach(File::delete);
 		
 		Node n1 = new Node(r1.getCenter(), r1);
 		for (Pair<KVector, Boolean> v : vectors) {
