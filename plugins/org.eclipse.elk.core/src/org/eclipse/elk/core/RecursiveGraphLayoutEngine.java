@@ -251,6 +251,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // The layout provider has failed - destroy it slowly and painfully
             layoutProvider.dispose();
             throw exception;
+        } finally {
+            if (testController != null) {
+                testController.uninstall();
+            }
         }
     }
 

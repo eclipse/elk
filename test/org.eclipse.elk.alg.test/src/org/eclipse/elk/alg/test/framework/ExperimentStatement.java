@@ -89,6 +89,8 @@ final class ExperimentStatement extends Statement implements ILayoutExecutionLis
 
         // Cleanly handle all whitebox tests that did not execute because their processors didn't run
         simulateWhiteboxTestsForNotifiers();
+        
+        testGraph = null;
     }
 
     /**

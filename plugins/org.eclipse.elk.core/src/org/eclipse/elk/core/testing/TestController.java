@@ -20,11 +20,17 @@ import org.eclipse.elk.core.data.LayoutAlgorithmData;
  * white box tests, that is, tests that examine the internal state of a layout algorithm before or after certain
  * processors are run. Thus, the test framework uses test controllers to be notified whenever a layout processor is
  * about to be executed or has just finished executing.
+ * 
+ * <p>A test controller needs to be registered with the layout provider by calling the
+ * {@link #install(AbstractLayoutProvider)} method. Once the layout algorithm has finished executing, it is a very good
+ * idea to 
  */
 public class TestController {
 
     /** Identifier of the layout algorithm that should be tested with this controller. */
-    private String layoutAlgorithmId;
+    private final String layoutAlgorithmId;
+    /** The layout provider the controller is currently installed on, if any. */
+    private IWhiteBoxTestable currentLayoutProvider;
     /** Listeners that want to be notified during the execution of a layout algorithm. */
     private Set<ILayoutExecutionListener> listeners = new LinkedHashSet<>();
 
@@ -48,7 +54,7 @@ public class TestController {
 
     /**
      * Checks whether this test controller targets layout algorithms described by the given data object. If so, this
-     * test controller can be installed on the algorithm by calling
+     * test controller can be installed on the algorithm by calling {@link #install(AbstractLayoutProvider)}.
      */
     public boolean targets(final LayoutAlgorithmData algorithmData) {
         return algorithmData.getId().equals(layoutAlgorithmId);
@@ -56,17 +62,33 @@ public class TestController {
 
     /**
      * Installs this test controller on the given layout provider. Before calling this method, clients should have made
-     * sure that the two fit by calling {@link #getTargetAlgorithmId()}.
+     * sure that the two fit by calling {@link #targets(LayoutAlgorithmData)}.
      * 
      * @throws IllegalArgumentException
      *             of the layout provider does not implement {@link IWhiteBoxTestable}.
+     * @throws IllegalStateException
+     *             if the test controller is currently installed on another layout provider.
      */
     public void install(final AbstractLayoutProvider layoutProvider) {
-        if (layoutProvider instanceof IWhiteBoxTestable) {
-            ((IWhiteBoxTestable) layoutProvider).setTestController(this);
+        if (currentLayoutProvider != null) {
+            throw new IllegalStateException("Test controller may be installed on only one layout provider at a time");
+        } else if (layoutProvider instanceof IWhiteBoxTestable) {
+            currentLayoutProvider = (IWhiteBoxTestable) layoutProvider;
+            currentLayoutProvider.setTestController(this);
         } else {
             throw new IllegalArgumentException(
                     "Test controllers can only be installed on white-box testable layout algorithms");
+        }
+    }
+    
+    /**
+     * Uninstalls this test controller from its current layout provider, if any. If it is not currently installed on
+     * one, this method does nothing.
+     */
+    public void uninstall() {
+        if (currentLayoutProvider != null) {
+            currentLayoutProvider.setTestController(null);
+            currentLayoutProvider = null;
         }
     }
 
