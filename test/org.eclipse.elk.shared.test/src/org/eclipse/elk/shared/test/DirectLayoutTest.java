@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.test.GraphTestUtils;
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -23,12 +24,18 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Test and demonstration of 'Using Layout Algorithms Directly'.
  */
 public class DirectLayoutTest {
+    
+    @BeforeClass
+    public static void setup() {
+        LayoutMetaDataService.initElkReflect();
+    }
 
     /**
      * Test a plain Java layout using the ELK Layered algorithm.
