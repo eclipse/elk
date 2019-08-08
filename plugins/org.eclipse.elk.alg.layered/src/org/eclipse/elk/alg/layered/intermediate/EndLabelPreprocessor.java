@@ -65,9 +65,7 @@ import com.google.common.collect.Ordering;
  */
 public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("End label pre-processing", 1);
         

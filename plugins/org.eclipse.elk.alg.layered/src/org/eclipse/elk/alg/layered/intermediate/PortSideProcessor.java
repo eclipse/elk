@@ -17,7 +17,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -33,20 +32,19 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * {@link org.eclipse.elk.alg.layered.options.LayeredOptions#FEEDBACK_EDGES FEEDBACK_EDGES}.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph.</dd>
- *   <dt>Postcondition:</dt><dd>all nodes have their ports distributed, with port constraints
- *     set to fixed sides at the least.</dd>
- *   <dt>Slots:</dt><dd>Before phase 1 or before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>all nodes have their ports distributed, with port constraints set to fixed sides at the least.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 1 or before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
- * 
- * @author cds
  */
 public final class PortSideProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Port side processing", 1);
         

@@ -41,9 +41,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("End label post-processing", 1);
         

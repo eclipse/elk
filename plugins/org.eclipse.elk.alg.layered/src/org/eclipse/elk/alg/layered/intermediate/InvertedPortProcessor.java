@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
@@ -73,13 +70,10 @@ import com.google.common.collect.Lists;
  * </dl>
  * 
  * @see PortSideProcessor
- * @author cds
  */
 public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Inverted port preprocessing", 1);
         
@@ -94,12 +88,11 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
         List<LNode> unassignedNodes = Lists.newArrayList();
         
         while (layerIterator.hasNext()) {
-            // Find the current, previous and next layer. If this layer is the last one,
-            // use the postfix layer as the next layer
+            // Update previous and current layers
             Layer previousLayer = currentLayer;
             currentLayer = layerIterator.next();
             
-            // If the last layer had unassigned nodes, assign them now and clear the list
+            // If the previous layer had unassigned nodes, assign them now and clear the list
             for (LNode node : unassignedNodes) {
                 node.setLayer(previousLayer);
             }
