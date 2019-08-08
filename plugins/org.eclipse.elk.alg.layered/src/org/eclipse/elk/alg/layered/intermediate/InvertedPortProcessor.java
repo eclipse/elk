@@ -164,6 +164,9 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
     private void createEastPortSideDummies(final LGraph layeredGraph, final LPort eastwardPort,
             final LEdge edge, final List<LNode> layerNodeList) {
         
+        assert edge.getTarget() == eastwardPort;
+        
+        // Ignore self loops
         if (edge.getSource().getNode() == eastwardPort.getNode()) {
             return;
         }
@@ -226,6 +229,9 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
     private void createWestPortSideDummies(final LGraph layeredGraph, final LPort westwardPort,
             final LEdge edge, final List<LNode> layerNodeList) {
         
+        assert edge.getSource() == westwardPort;
+        
+        // Ignore self loops
         if (edge.getTarget().getNode() == westwardPort.getNode()) {
             return;
         }
@@ -255,6 +261,17 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
         dummyEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(originalTarget);
+        
+        // Move any head labels over to the new dummy edge
+        ListIterator<LLabel> labelIterator = edge.getLabels().listIterator();
+        while (labelIterator.hasNext()) {
+            LLabel label = labelIterator.next();
+            
+            if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
+                labelIterator.remove();
+                dummyEdge.getLabels().add(label);
+            }
+        }
         
         // Set LONG_EDGE_SOURCE and LONG_EDGE_TARGET properties on the LONG_EDGE dummy
         setLongEdgeSourceAndTarget(dummy, dummyInput, dummyOutput, westwardPort);
