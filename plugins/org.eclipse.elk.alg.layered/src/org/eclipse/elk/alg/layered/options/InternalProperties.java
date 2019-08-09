@@ -26,7 +26,7 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
