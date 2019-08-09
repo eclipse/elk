@@ -128,7 +128,7 @@ public final class SelfLoopLabelPositionEvaluator {
                 for (LLabel llabel : slLabel.getLabels()) {
                     joiner.add(llabel.getText());
                 }
-                monitor.log(joiner.toString() + " (" + slLabel.getWidth() + ", " + slLabel.getHeight() + ")");
+                monitor.log(joiner.toString() + " (" + slLabel.getSize().x + ", " + slLabel.getSize().y + ")");
                 
                 // Output possible positions
                 for (SelfLoopLabelPosition position : slLabel.getCandidatePositions()) {
@@ -273,8 +273,8 @@ public final class SelfLoopLabelPositionEvaluator {
             ElkRectangle labelRect = new ElkRectangle(
                     slPos.getPosition().x,
                     slPos.getPosition().y,
-                    slLabel.getWidth(),
-                    slLabel.getHeight());
+                    slLabel.getSize().x,
+                    slLabel.getSize().y);
             labelRects.add(labelRect);
         }
         
@@ -366,8 +366,8 @@ public final class SelfLoopLabelPositionEvaluator {
         ElkRectangle labelRect = new ElkRectangle(
                 slLabelPos.getPosition().x,
                 slLabelPos.getPosition().y,
-                slLabel.getWidth(),
-                slLabel.getHeight());
+                slLabel.getSize().x,
+                slLabel.getSize().y);
         
         // Compute the port's anchor position
         LPort lPort = slPort.getLPort();

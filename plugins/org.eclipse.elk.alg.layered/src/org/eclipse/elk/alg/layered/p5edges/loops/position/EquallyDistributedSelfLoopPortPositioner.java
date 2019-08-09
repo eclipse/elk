@@ -43,14 +43,10 @@ public class EquallyDistributedSelfLoopPortPositioner extends AbstractSelfLoopPo
         SOUTH_EAST_CORNER;
     }
 
-    /** The self loop node we're distributing ports for. */
-    private SelfLoopNode slNode;
-    
-
     @Override
     public void position(final LNode node) {
         // Receive the node representation and the self loop components
-        slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
         List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // Sort by size

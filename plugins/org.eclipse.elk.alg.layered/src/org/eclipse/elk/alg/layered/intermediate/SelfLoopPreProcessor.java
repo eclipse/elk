@@ -4,18 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -53,42 +49,46 @@ import com.google.common.math.DoubleMath;
  * </dl>
  */
 public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
-
-    @Override
-    public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Self-Loop pre-processing.", 1);
-        
-        Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
-        
-        // process all nodes
-        for (final LNode node : layeredGraph.getLayerlessNodes()) {
-            if (node.getType() == NodeType.NORMAL) {
-                // create a self loop node representation
-                SelfLoopNode slNode = new SelfLoopNode(node);
-                node.setProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION, slNode);
-                
-                // calculate the SelfLoopComponents of the node and save them to it's properties
-                SelfLoopComponent.createSelfLoopComponents(slNode);
-                
-                // pre-process labels
-                preprocessLabels(slNode, layoutDirection);
-                
-                // hide the ports which are non useful for the crossing minimization
-                if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isPosFixed()) {
-                    hidePorts(node);
-                }
-            }
-        }
-
-        monitor.done();
-    }
     
     /** A small number for double approximation. */
     private static final double EPSILON = 1e-6;
 
+    @Override
+    public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
+        monitor.begin("Self-Loop pre-processing", 1);
+        
+        Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
+        
+        layeredGraph.getLayerlessNodes().stream()
+            .filter(node -> node.getType() == NodeType.NORMAL)
+            .forEach(node -> processNode(node, layoutDirection));
+
+        monitor.done();
+    }
+
+    /**
+     * Processes the given node.
+     */
+    private void processNode(final LNode node, final Direction layoutDirection) {
+        // create a self loop node representation
+        SelfLoopNode slNode = new SelfLoopNode(node);
+        node.setProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION, slNode);
+        
+        // calculate the SelfLoopComponents of the node and save them to it's properties
+        SelfLoopComponent.createSelfLoopComponents(slNode);
+        
+        // pre-process labels
+        preprocessLabels(slNode, layoutDirection);
+        
+        // hide the ports which are non useful for the crossing minimization
+        if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isPosFixed()) {
+            hidePorts(node);
+        }
+    }
+
     /**
      * For each component the labels of the contained edges are collected and put together to one label. This joint
-     * label is stored in a SelfLoopLabel.
+     * label is stored in a {@link SelfLoopLabel}.
      */
     public void preprocessLabels(final SelfLoopNode slNode, final Direction layoutDirection) {
         boolean verticalLayout = layoutDirection.isVertical();
@@ -100,12 +100,7 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
             List<LLabel> labels = component.getConnectedEdges().stream()
                 .filter(edge -> edge.getEdge().isSelfLoop())
                 .flatMap(edge -> edge.getEdge().getLabels().stream())
-                .sorted(new Comparator<LLabel>() {
-                    @Override
-                    public int compare(final LLabel o1, final LLabel o2) {
-                        return DoubleMath.fuzzyCompare(o1.getSize().x, o2.getSize().x, EPSILON);
-                    }
-                })
+                .sorted((l1, l2) -> DoubleMath.fuzzyCompare(l1.getSize().x, l2.getSize().x, EPSILON))
                 .collect(Collectors.toList());
 
             // If there are no labels, there is no need for us to do anything
@@ -113,7 +108,7 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 continue;
             }
             
-            // Since the labels will be stacked above or nexat to one another, we calculate the width and the height
+            // Since the labels will be stacked above or next to one another, we calculate the width and the height
             // required
             double width = 0.0;
             double height = 0.0;
@@ -141,8 +136,8 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
             // Create a SelfLoopLabel for this component
             SelfLoopLabel label = new SelfLoopLabel();
             label.getLabels().addAll(labels);
-            label.setHeight(height);
-            label.setWidth(width);
+            label.getSize().x = width;
+            label.getSize().y = height;
             component.setSelfLoopLabel(label);
         }
     }
@@ -155,19 +150,10 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
 
         // check each port if has to be hidden
         for (LPort port : node.getPorts()) {
-            Iterable<LEdge> edges = port.getConnectedEdges();
-
-            // check whether an port belongs only to self-loops
-            boolean containsNonSelfloop = false;
-            for (LEdge edge : edges) {
-                if (!edge.isSelfLoop()) {
-                    containsNonSelfloop = true;
-                    break;
-                }
-            }
-
-            // ports that belong only to self-loops are collected
-            if (!containsNonSelfloop) {
+            boolean hasRegularEdge = StreamSupport.stream(port.getConnectedEdges().spliterator(), false)
+                .anyMatch(edge -> !edge.isSelfLoop());
+            
+            if (!hasRegularEdge) {
                 selfLoopPorts.add(port);
             }
         }

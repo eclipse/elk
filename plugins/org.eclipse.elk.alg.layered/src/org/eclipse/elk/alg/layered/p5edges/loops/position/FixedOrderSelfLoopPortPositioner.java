@@ -33,18 +33,14 @@ import com.google.common.collect.Multimap;
  */
 public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositioner {
     
-    /** The node whose ports we're computing positions for. */
-    private SelfLoopNode slNode;
-
     @Override
     public void position(final LNode node) {
         // receive the node representation and the nodes components
-        slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
+        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
 
         // retrieve the ports from the components and sort them by their original index
         List<SelfLoopPort> allPorts = new ArrayList<SelfLoopPort>();
-        for (SelfLoopComponent component : components) {
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             List<SelfLoopPort> ports = component.getPorts();
             allPorts.addAll(ports);
         }
@@ -58,11 +54,11 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
         }
 
         // calculate the routing direction for the components
-        minimizeSides(components);
-        minimizeCrossings(components);
+        minimizeSides(slNode);
+        minimizeCrossings(slNode);
 
         // create the opposing segments
-        for (SelfLoopComponent component : components) {
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> componentSegments =
                     SelfLoopOpposingSegment.create(component, slNode);
 
@@ -79,8 +75,8 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private void minimizeSides(final List<SelfLoopComponent> components) {
-        for (SelfLoopComponent component : components) {
+    private void minimizeSides(final SelfLoopNode slNode) {
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             List<SelfLoopPort> ports = component.getPorts();
             SelfLoopPort portWithGreatestDistanceToRight = ports.get(0);
             int portDistance = 0;
@@ -150,12 +146,12 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private void minimizeCrossings(final List<SelfLoopComponent> components) {
+    private void minimizeCrossings(final SelfLoopNode slNode) {
         int numberOfPorts = slNode.getNumberOfPorts();
         
         // initialize
         Multimap<Integer, Integer> componentsConfiguration = ArrayListMultimap.create();
-        for (SelfLoopComponent component : components) {
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             List<SelfLoopPort> ports = component.getPorts();
             int startIndex = ports.get(0).getOriginalIndex() + 1;
             int endIndex = ports.get(ports.size() - 1).getOriginalIndex() + 1;
@@ -164,11 +160,11 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
 
         // find the minimum
         int previousMinimumCrossings = Integer.MAX_VALUE;
-        int minimumCrossings = countCrossings(componentsConfiguration);
+        int minimumCrossings = countCrossings(slNode, componentsConfiguration);
 
         while (minimumCrossings != 0 && minimumCrossings != previousMinimumCrossings) {
             previousMinimumCrossings = minimumCrossings;
-            for (SelfLoopComponent component : components) {
+            for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
                 List<SelfLoopPort> ports = component.getPorts();
                 List<SelfLoopPort> minimumRotation = new ArrayList<>(ports);
 
@@ -190,7 +186,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
                             true);
 
                     // evaluate rotation
-                    int newNumberOfCrossings = countCrossings(componentsConfiguration);
+                    int newNumberOfCrossings = countCrossings(slNode, componentsConfiguration);
                     if (newNumberOfCrossings < minimumCrossings) {
                         minimumCrossings = newNumberOfCrossings;
                         minimumRotation = newRotation;
@@ -204,7 +200,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
             }
 
             // set direction for the final setup
-            for (SelfLoopComponent component : components) {
+            for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
                 List<SelfLoopPort> ports = component.getPorts();
                 for (int i = 0; i < ports.size(); i++) {
                     setDirection(ports.get(i), i, ports.size());
@@ -255,7 +251,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private int countCrossings(final Multimap<Integer, Integer> componentsConfiguration) {
+    private int countCrossings(final SelfLoopNode slNode, final Multimap<Integer, Integer> componentsConfiguration) {
         int numberOfPorts = slNode.getNumberOfPorts();
         BinaryIndexedTree indexTree = new BinaryIndexedTree(numberOfPorts * 2 + 1);
         Deque<Integer> ends = new ArrayDeque<>();

@@ -30,7 +30,6 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.LabelSide;
@@ -361,12 +360,6 @@ public final class InternalProperties {
      */
     public static final IProperty<KVector> SPLINE_LABEL_SIZE =
             new Property<KVector>("splineLabelSize", new KVector());
-
-    /**
-     * A node's property storing the margins of a node required for it's self loops.
-     */
-    public static final IProperty<ElkMargin> SELF_LOOP_MARGINS = new Property<ElkMargin>(
-            "splineSelfLoopMargins", new ElkMargin());
 
     /**
      * Internal container for all possible spacing variations that we support.

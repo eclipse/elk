@@ -130,8 +130,8 @@ public final class SelfLoopOffsetCalculator {
         double labelWidth = 0;
         
         if (slLabel != null) {
-            labelHeight = slLabel.getHeight();
-            labelWidth = slLabel.getWidth();
+            labelHeight = slLabel.getSize().y;
+            labelWidth = slLabel.getSize().x;
         }
         
         double difference;

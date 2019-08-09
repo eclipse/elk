@@ -17,7 +17,6 @@ import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
@@ -60,31 +59,34 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
         
         Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
 
-        for (Layer layer : layeredGraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
-                if (node.getType() == NodeType.NORMAL) {
-                    SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-
-                    // merge loops before generating the positions
-                    if (layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_MERGE_SELF_LOOPS)) {
-                        SelfLoopComponentMerger.mergeComponents(slNode);
-                    }
-
-                    // Generate possible positions for the labels. This will set the candidate positions field of each
-                    // component's self loop label.
-                    SelfLoopLabelPositionGeneration.generatePositions(slNode);
-
-                    // Find the best position for each component
-                    SelfLoopLabelPositionEvaluator evaluator = new SelfLoopLabelPositionEvaluator(slNode, monitor);
-                    evaluator.evaluatePositions(monitor);
-                    
-                    // Calculate the actual coordinates
-                    placeLabels(slNode, layoutDirection);
-                }
-            }
-        }
+        layeredGraph.getLayers().stream()
+            .flatMap(layer -> layer.getNodes().stream())
+            .filter(node -> node.getType() == NodeType.NORMAL)
+            .filter(node -> node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION))
+            .forEach(node -> processNode(node, layoutDirection, monitor));
         
         monitor.done();
+    }
+
+    private void processNode(final LNode node, final Direction layoutDirection, final IElkProgressMonitor monitor) {
+        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        assert slNode != null;
+
+        // merge loops before generating the positions
+        if (node.getGraph().getProperty(LayeredOptions.EDGE_ROUTING_MERGE_SELF_LOOPS)) {
+            SelfLoopComponentMerger.mergeComponents(slNode);
+        }
+
+        // Generate possible positions for the labels. This will set the candidate positions field of each
+        // component's self loop label.
+        SelfLoopLabelPositionGeneration.generatePositions(slNode);
+
+        // Find the best position for each component
+        SelfLoopLabelPositionEvaluator evaluator = new SelfLoopLabelPositionEvaluator(slNode, monitor);
+        evaluator.evaluatePositions(monitor);
+        
+        // Calculate the actual coordinates
+        placeLabels(slNode, layoutDirection);
     }
 
     /**
@@ -119,11 +121,11 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
             
             switch (slPosition.getLabelAlignment()) {
             case CENTERED:
-                xPos += (slLabel.getWidth() - lLabel.getSize().x) / 2;
+                xPos += (slLabel.getSize().x - lLabel.getSize().x) / 2;
                 break;
                 
             case RIGHT:
-                xPos += (slLabel.getWidth() - lLabel.getSize().x);
+                xPos += (slLabel.getSize().x - lLabel.getSize().x);
                 break;
             }
             
@@ -155,11 +157,11 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
             
             switch (slPosition.getLabelAlignment()) {
             case CENTERED:
-                yPos += (slLabel.getHeight() - lLabel.getSize().y) / 2;
+                yPos += (slLabel.getSize().y - lLabel.getSize().y) / 2;
                 break;
                 
             case LEFT:
-                yPos += (slLabel.getWidth() - lLabel.getSize().x);
+                yPos += (slLabel.getSize().x - lLabel.getSize().x);
                 break;
             }
             

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -56,22 +57,18 @@ public class SelfLoopPort {
 
     /**
      * Checks whether this self loop port is in fact involved with self loops.
+     * 
+     * @returns {@code true} if there are incident edges and all of them are regular edges.
      */
     private boolean computeNonLoopPortProperty(final LPort lPort) {
-        for (LEdge edge : lPort.getConnectedEdges()) {
-            LPort relevantPort;
-            if (edge.getTarget() == lPort) {
-                relevantPort = edge.getSource();
-            } else {
-                relevantPort = edge.getTarget();
-            }
-            
-            if (relevantPort.getNode() == lPort.getNode()) {
-                return false;
-            }
+        // If there are no incident edges, there are no regular incident edges either
+        if (lPort.getIncomingEdges().isEmpty() && lPort.getOutgoingEdges().isEmpty()) {
+            return false;
         }
         
-        return lPort.getConnectedEdges().iterator().hasNext();
+        // Otherwise we check if there are only regular edges
+        return StreamSupport.stream(lPort.getConnectedEdges().spliterator(), false)
+                .allMatch(edge -> !edge.isSelfLoop());
     }
 
     /**

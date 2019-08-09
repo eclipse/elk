@@ -155,22 +155,22 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         switch (labelOffsetDirection) {
         case NORTH:
             // Center on x axis, move by label height along the direction vector
-            labelCoordinates.x += (pointDistance - label.getWidth()) / 2;
-            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getHeight()));
+            labelCoordinates.x += (pointDistance - label.getSize().x) / 2;
+            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getSize().y));
             break;
 
         case EAST:
-            labelCoordinates.y += pointDistance / 2 - label.getHeight() / 2;
+            labelCoordinates.y += pointDistance / 2 - label.getSize().y / 2;
             break;
 
         case SOUTH:
             // Center on x axis
-            labelCoordinates.x += pointDistance / 2 - label.getWidth() / 2;
+            labelCoordinates.x += pointDistance / 2 - label.getSize().x / 2;
             break;
 
         case WEST:
-            labelCoordinates.y += (pointDistance - label.getHeight()) / 2;
-            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getWidth()));
+            labelCoordinates.y += (pointDistance - label.getSize().y) / 2;
+            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getSize().x));
             break;
         }
         
@@ -195,11 +195,11 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         
         switch (labelOffsetDirection) {
         case NORTH:
-            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getHeight()));
+            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getSize().y));
             break;
 
         case WEST:
-            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getWidth()));
+            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getSize().x));
             break;
         }
         
@@ -229,21 +229,21 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         
         switch (labelOffsetDirection) {
         case NORTH:
-            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getHeight()));
-            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getWidth()));
+            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getSize().y));
+            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getSize().x));
             break;
 
         case EAST:
-            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getHeight()));
+            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getSize().y));
             break;
 
         case SOUTH:
-            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getWidth()));
+            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getSize().x));
             break;
 
         case WEST:
-            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getWidth()));
-            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getHeight()));
+            labelCoordinates.add(offsetDirectionVector.clone().scale(label.getSize().x));
+            labelCoordinates.add(reversedLineDirVector.clone().scale(label.getSize().y));
             break;
         }
         

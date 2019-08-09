@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * A side of the node used by the {@link SelfLoopNode}.
+ * Represents the ports along one {@link PortSide side} of a {@link SelfLoopNode}.
  */
 public class SelfLoopNodeSide {
 

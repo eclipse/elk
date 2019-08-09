@@ -23,18 +23,18 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * A self-loop component comprises a number of ports self-loops are incident to. Each can be thought of as a connected
- * component of a graph whose nodes are the ports, and whose edges are the self-loop edges. Each self loop component
- * can have labels and dependencies to other components it crosses.
+ * A self-loop component is basically a self-loop hyperedge. It comprises a number of ports, an optional label, and
+ * dependencies to other self-loop components and self-loop edges which are later used to compute routes.
  */
 public class SelfLoopComponent {
 
-    /** The ports of the self loop component. They are all connected by at least one edge. */
+    /** The ports of the self loop component. There are paths between all of them. */
     private final List<SelfLoopPort> ports;
     /** All center edge labels that occur at the component edges, if any. */
     private SelfLoopLabel selfLoopLabel;
+    
     /** The components that the self loop component depends on. */
-    private final Map<SelfLoopNodeSide, List<SelfLoopComponent>> dependencyComponents = new HashMap<>();
+    private final Map<SelfLoopNodeSide, List<SelfLoopComponent>> componentDependencies = new HashMap<>();
     /** Any edges the component depends on. */
     private final Map<PortSide, List<SelfLoopEdge>> edgeDependencies = new HashMap<>();
 
@@ -83,28 +83,23 @@ public class SelfLoopComponent {
      * Given a port this method searches via incoming and outgoing edges others port which can be reached. Pass in an
      * empty set as the last argument.
      */
-    private static void findAllConnectedPorts(final LNode node, final LPort lPort,
-            final Set<LPort> connectedPorts) {
+    private static void findAllConnectedPorts(final LNode node, final LPort lPort, final Set<LPort> connectedPorts) {
         // only process nodes which where not visited yet
         if (!connectedPorts.add(lPort)) {
             return;
         }
 
         // follow all incoming edges to find connected ports
-        for (LEdge edge : lPort.getIncomingEdges()) {
-            LPort source = edge.getSource();
-            if (source.getNode().equals(node)) {
-                findAllConnectedPorts(node, source, connectedPorts);
-            }
-        }
+        lPort.getIncomingEdges().stream()
+            .filter(edge -> edge.isSelfLoop())
+            .map(edge -> edge.getSource())
+            .forEach(port -> findAllConnectedPorts(node, port, connectedPorts));
         
         // follow all outgoing edges to find connected ports
-        for (LEdge edge : lPort.getOutgoingEdges()) {
-            LPort target = edge.getTarget();
-            if (target.getNode().equals(node)) {
-                findAllConnectedPorts(node, target, connectedPorts);
-            }
-        }
+        lPort.getOutgoingEdges().stream()
+            .filter(edge -> edge.isSelfLoop())
+            .map(edge -> edge.getTarget())
+            .forEach(port -> findAllConnectedPorts(node, port, connectedPorts));
     }
 
     
@@ -137,7 +132,7 @@ public class SelfLoopComponent {
     /**
      * Find the corresponding {@link SelfLoopPort} for an {@link LPort} or {@code null} if it could not be found.
      */
-    public SelfLoopPort findPort(final LPort port) {
+    public SelfLoopPort findSelfLoopPort(final LPort port) {
         for (SelfLoopPort selfLoopPort : ports) {
             if (selfLoopPort.getLPort() == port) {
                 return selfLoopPort;
@@ -151,7 +146,7 @@ public class SelfLoopComponent {
      */
     public SelfLoopPort getNextPort(final SelfLoopPort port) {
         int index = ports.indexOf(port);
-        if (index != ports.size() - 1) {
+        if (index >= 0 && index < ports.size() - 1) {
             return ports.get(index + 1);
         } else {
             return null;
@@ -219,15 +214,16 @@ public class SelfLoopComponent {
     }
     
     /**
-     * Calculate the edges connecting the ports of the component. For each edge a SelfLoopEdge is created.
+     * Calculate the edges connecting the ports of the component. For each edge a {@link SelfLoopEdge} is created. This
+     * cannot be done while the ports are discovered since the edges are added to the {@link SelfLoopPort}s.
      */
     private void calculateConnectedEdges() {
-        for (SelfLoopPort port : ports) {
-            for (LEdge edge : port.getLPort().getOutgoingEdges()) {
-                SelfLoopPort targetPort = findPort(edge.getTarget());
+        for (SelfLoopPort sourcePort : ports) {
+            for (LEdge edge : sourcePort.getLPort().getOutgoingEdges()) {
+                SelfLoopPort targetPort = findSelfLoopPort(edge.getTarget());
                 if (targetPort != null) {
-                    SelfLoopEdge selfLoopEdge = new SelfLoopEdge(this, port, targetPort, edge);
-                    port.getConnectedEdges().add(selfLoopEdge);
+                    SelfLoopEdge selfLoopEdge = new SelfLoopEdge(this, sourcePort, targetPort, edge);
+                    sourcePort.getConnectedEdges().add(selfLoopEdge);
                     targetPort.getConnectedEdges().add(selfLoopEdge);
                 }
             }
@@ -242,7 +238,7 @@ public class SelfLoopComponent {
      * Returns the component dependencies for each self loop node side.
      */
     public Map<SelfLoopNodeSide, List<SelfLoopComponent>> getDependencyComponents() {
-        return dependencyComponents;
+        return componentDependencies;
     }
 
     /**

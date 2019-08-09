@@ -60,7 +60,7 @@ public class SelfLoopNode {
     }
 
     /**
-     * @return all sides of the node representation
+     * Returns all sides of the node representation.
      */
     public Collection<SelfLoopNodeSide> getSides() {
         return nodeSides.values();
@@ -73,11 +73,9 @@ public class SelfLoopNode {
      * @return the number of ports of all sides
      */
     public int getNumberOfPorts() {
-        int numberOfPorts = 0;
-        for (SelfLoopNodeSide side : getSides()) {
-            numberOfPorts += side.getPorts().size();
-        }
-        return numberOfPorts;
+        return getSides().stream()
+            .mapToInt(side -> side.getPorts().size())
+            .sum();
     }
     
     /**
@@ -112,6 +110,7 @@ public class SelfLoopNode {
      *            the side the ports will be added to.
      */
     public void prependPorts(final List<SelfLoopPort> ports, final PortSide side) {
+        // TODO This will effectively reverse the order of the ports, is that okay?
         for (SelfLoopPort port : ports) {
             prependPort(port, side);
         }
@@ -138,9 +137,7 @@ public class SelfLoopNode {
      *            the side the ports will be added to.
      */
     public void appendPorts(final List<SelfLoopPort> ports, final PortSide side) {
-        for (SelfLoopPort port : ports) {
-            appendPort(port, side);
-        }
+        nodeSides.get(side).getPorts().addAll(ports);
     }
     
     

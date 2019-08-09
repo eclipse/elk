@@ -491,7 +491,7 @@ group edgeRouting {
         description 
             "Alter the distribution of the loops around the node. It only takes effect for PortConstraints.FREE."
         default = SelfLoopDistributionStrategy.NORTH
-        targets parents
+        targets nodes
     }
     
     option selfLoopOrdering: SelfLoopOrderingStrategy {
@@ -499,7 +499,7 @@ group edgeRouting {
          description "Alter the ordering of the loops they can either be stacked or sequenced.
                 It only takes effect for PortConstraints.FREE."
         default = SelfLoopOrderingStrategy.STACKED
-        targets parents
+        targets nodes
     }
     option mergeSelfLoops: boolean {
         label "Merge Self-Loops"

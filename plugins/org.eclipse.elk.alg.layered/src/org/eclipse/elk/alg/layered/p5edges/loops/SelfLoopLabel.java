@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
+import org.eclipse.elk.core.math.KVector;
 
 /**
  * A list of labels that belong to a {@link SelfLoopComponent}.
@@ -19,10 +20,8 @@ public class SelfLoopLabel {
 
     /** The list of labels this self loop label consists of. */
     private final List<LLabel> labels = new ArrayList<>();
-    /** The combined height of all labels. */
-    private double height;
-    /** The maximum width over all labels. */
-    private double width;
+    /** This label's size. */
+    private final KVector size = new KVector();
     /** The candidate positions for this label. */
     private final List<SelfLoopLabelPosition> candidatePositions = new ArrayList<>();
     /** The position chosen for this label. */
@@ -34,33 +33,14 @@ public class SelfLoopLabel {
     public List<LLabel> getLabels() {
         return labels;
     }
-
+    
     /**
-     * Returns the combined height of all labels represented by this self loop label.
+     * Returns the size of this self loop label. Modify to change the size.
+     * 
+     * @return the size.
      */
-    public double getHeight() {
-        return height;
-    }
-
-    /**
-     * Sets the combined height of all labels represented by this self loop label.
-     */
-    public void setHeight(final double height) {
-        this.height = height;
-    }
-
-    /**
-     * Returns the maximum width over all labels represented by this self loop label.
-     */
-    public double getWidth() {
-        return width;
-    }
-
-    /**
-     * Sets the maximum width over all labels represented by this self loop label.
-     */
-    public void setWidth(final double width) {
-        this.width = width;
+    public KVector getSize() {
+        return size;
     }
     
     /**

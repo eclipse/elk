@@ -73,8 +73,8 @@ public final class SelfLoopComponentMerger {
                 SelfLoopLabel componentLabel = component.getSelfLoopLabel();
                 if (componentLabel != null) {
                     label.getLabels().addAll(componentLabel.getLabels());
-                    label.setHeight(label.getHeight() + componentLabel.getHeight());
-                    label.setWidth(Math.max(label.getWidth(), componentLabel.getWidth()));
+                    label.getSize().y += componentLabel.getSize().y;
+                    label.getSize().x = Math.max(label.getSize().x, componentLabel.getSize().x);
                     
                     // delete old label reference
                     component.setSelfLoopLabel(null);
@@ -88,7 +88,7 @@ public final class SelfLoopComponentMerger {
                 double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(
                         lNode, LayeredOptions.SPACING_LABEL_LABEL);
                 double delta = Math.max(0, labelLabelSpacing * (componentsWithLabels - 1));
-                label.setHeight(label.getHeight() + delta);
+                label.getSize().y += delta;
             }
             
             // a random component holds the label now

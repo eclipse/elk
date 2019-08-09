@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import java.util.stream.StreamSupport;
+
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
-import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
@@ -43,28 +43,28 @@ public class SelfLoopPostProcessor implements ILayoutProcessor<LGraph> {
     public void process(final LGraph graph, final IElkProgressMonitor monitor) {
         monitor.begin("Self-Loop post-processing", 1);
         
-        for (Layer layer : graph) {
-            for (LNode node : layer.getNodes()) {
-                for (LEdge edge : node.getOutgoingEdges()) {
-                    if (edge.isSelfLoop()) {
-                        // offset all edge bend points
-                        final KVector offset = edge.getSource().getNode().getPosition();
-                        edge.getBendPoints().offset(offset);
-
-                        // offset all junction points of the edges
-                        KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
-                        junctionPoints.offset(offset);
-
-                        // offset all label positions
-                        for (final LLabel label : edge.getLabels()) {
-                            label.getPosition().add(offset);
-                        }
-                    }
-                }
-            }
-        }
+        graph.getLayers().stream()
+            .flatMap(layer -> layer.getNodes().stream())
+            .flatMap(node -> StreamSupport.stream(node.getOutgoingEdges().spliterator(), false))
+            .filter(edge -> edge.isSelfLoop())
+            .forEach(selfLoop -> processSelfLoop(selfLoop));
         
         monitor.done();
+    }
+
+    private void processSelfLoop(final LEdge edge) {
+        // offset all edge bend points
+        final KVector offset = edge.getSource().getNode().getPosition();
+        edge.getBendPoints().offset(offset);
+
+        // offset all junction points of the edges
+        KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
+        junctionPoints.offset(offset);
+
+        // offset all label positions
+        for (final LLabel label : edge.getLabels()) {
+            label.getPosition().add(offset);
+        }
     }
 
 }
