@@ -209,6 +209,8 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
         
         // Setup visual graph view
         visualGraphCanvasComposite = new ScrolledComposite(canvasStackComposite, SWT.H_SCROLL | SWT.V_SCROLL);
+        visualGraphCanvasComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+        
         visualGraphCanvas = new GraphRenderingCanvas(visualGraphCanvasComposite);
         visualGraphCanvasComposite.setContent(visualGraphCanvas);
         
