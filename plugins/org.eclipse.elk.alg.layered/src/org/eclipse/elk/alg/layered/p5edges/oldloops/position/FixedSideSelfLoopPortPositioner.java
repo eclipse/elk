@@ -21,14 +21,14 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.SelfLoopOrderingStrategy;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopType;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopType;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -48,7 +48,7 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /** The ordering strategy we're using. */
     private SelfLoopOrderingStrategy ordering;
     /** The node we're placing ports for. */
-    private SelfLoopNode slNode;
+    private OldSelfLoopNode slNode;
     /** The number of non-loop ports for each side. */
     private Map<PortSide, Integer> nonLoopsPerSide = new HashMap<PortSide, Integer>();
 
@@ -61,55 +61,55 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
 
     @Override
     public void position(final LNode node) {
-        slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
+        slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+        List<OldSelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // Sort by size
         components.sort((comp1, comp2) -> Integer.compare(comp1.getPorts().size(), comp2.getPorts().size()));
         
         // Find self loops of different types
-        Multimap<SelfLoopType, SelfLoopComponent> loopTypes = ArrayListMultimap.create();
+        Multimap<OldSelfLoopType, OldSelfLoopComponent> loopTypes = ArrayListMultimap.create();
         determineLoopTypes(components, loopTypes);
 
         // Place them
-        placeSideLoops(loopTypes.get(SelfLoopType.SIDE));
-        placeNonLoops(loopTypes.get(SelfLoopType.NON_LOOP));
-        placeOpposingLoops(loopTypes.get(SelfLoopType.OPPOSING));
-        placeThreeSidesLoop(loopTypes.get(SelfLoopType.THREE_CORNER));
-        placeFourSidesLoop(loopTypes.get(SelfLoopType.FOUR_CORNER));
-        placeCornerLoops(loopTypes.get(SelfLoopType.CORNER));
+        placeSideLoops(loopTypes.get(OldSelfLoopType.SIDE));
+        placeNonLoops(loopTypes.get(OldSelfLoopType.NON_LOOP));
+        placeOpposingLoops(loopTypes.get(OldSelfLoopType.OPPOSING));
+        placeThreeSidesLoop(loopTypes.get(OldSelfLoopType.THREE_CORNER));
+        placeFourSidesLoop(loopTypes.get(OldSelfLoopType.FOUR_CORNER));
+        placeCornerLoops(loopTypes.get(OldSelfLoopType.CORNER));
     }
 
     /**
      * Goes through all components and adds them to their respective loop type.
      */
-    public void determineLoopTypes(final List<SelfLoopComponent> components,
-            final Multimap<SelfLoopType, SelfLoopComponent> loopTypes) {
+    public void determineLoopTypes(final List<OldSelfLoopComponent> components,
+            final Multimap<OldSelfLoopType, OldSelfLoopComponent> loopTypes) {
 
-        for (SelfLoopComponent component : components) {
+        for (OldSelfLoopComponent component : components) {
             switch (component.getPortSides().size()) {
             case ONE_SIDE_COMP:
                 if (component.getPorts().size() == 1) {
-                    loopTypes.put(SelfLoopType.NON_LOOP, component);
+                    loopTypes.put(OldSelfLoopType.NON_LOOP, component);
                 } else {
-                    loopTypes.put(SelfLoopType.SIDE, component);
+                    loopTypes.put(OldSelfLoopType.SIDE, component);
                 }
                 break;
                 
             case TWO_SIDE_COMP:
                 if (component.isCornerComponent()) {
-                    loopTypes.put(SelfLoopType.CORNER, component);
+                    loopTypes.put(OldSelfLoopType.CORNER, component);
                 } else {
-                    loopTypes.put(SelfLoopType.OPPOSING, component);
+                    loopTypes.put(OldSelfLoopType.OPPOSING, component);
                 }
                 break;
                 
             case THREE_SIDE_COMP:
-                loopTypes.put(SelfLoopType.THREE_CORNER, component);
+                loopTypes.put(OldSelfLoopType.THREE_CORNER, component);
                 break;
                 
             case FOUR_SIDE_COMP:
-                loopTypes.put(SelfLoopType.FOUR_CORNER, component);
+                loopTypes.put(OldSelfLoopType.FOUR_CORNER, component);
                 break;
             }
         }
@@ -120,11 +120,11 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Side Loops
 
-    private void placeSideLoops(final Collection<SelfLoopComponent> sideComponents) {
-        Multimap<PortSide, SelfLoopComponent> sideMap = ArrayListMultimap.create();
+    private void placeSideLoops(final Collection<OldSelfLoopComponent> sideComponents) {
+        Multimap<PortSide, OldSelfLoopComponent> sideMap = ArrayListMultimap.create();
 
         // distribute to sides
-        for (SelfLoopComponent component : sideComponents) {
+        for (OldSelfLoopComponent component : sideComponents) {
             sideMap.put(component.getPorts().get(0).getPortSide(), component);
         }
 
@@ -147,16 +147,16 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Corner Loops
     
-    private void placeCornerLoops(final Collection<SelfLoopComponent> cornerComponents) {
-        List<SelfLoopComponent> leftTop = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> rightTop = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> leftBottom = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> rightBottom = new ArrayList<SelfLoopComponent>();
+    private void placeCornerLoops(final Collection<OldSelfLoopComponent> cornerComponents) {
+        List<OldSelfLoopComponent> leftTop = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> rightTop = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> leftBottom = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> rightBottom = new ArrayList<OldSelfLoopComponent>();
 
         // Distribute components to lists
-        for (SelfLoopComponent component : cornerComponents) {
+        for (OldSelfLoopComponent component : cornerComponents) {
             // Rotate to get the correct order to allow us to distribute by the first port's side
-            List<SelfLoopPort> ports = component.getPorts();
+            List<OldSelfLoopPort> ports = component.getPorts();
             rotatePorts(component);
             PortSide firstPortSide = ports.get(0).getPortSide();
 
@@ -186,12 +186,12 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Opposing Loops
     
-    private void placeOpposingLoops(final Collection<SelfLoopComponent> oppossingComponents) {
-        List<SelfLoopComponent> northSouth = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> westEast = new ArrayList<SelfLoopComponent>();
+    private void placeOpposingLoops(final Collection<OldSelfLoopComponent> oppossingComponents) {
+        List<OldSelfLoopComponent> northSouth = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> westEast = new ArrayList<OldSelfLoopComponent>();
 
         // distribute to sides
-        for (SelfLoopComponent component : oppossingComponents) {
+        for (OldSelfLoopComponent component : oppossingComponents) {
             PortSide side1 = component.getPorts().get(0).getPortSide();
             switch (side1) {
             case NORTH:
@@ -216,12 +216,12 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /**
      * TODO Document.
      */
-    private void addOpposingComponents(final Collection<SelfLoopComponent> oppossingComponents) {
+    private void addOpposingComponents(final Collection<OldSelfLoopComponent> oppossingComponents) {
         // position components
-        for (SelfLoopComponent component : oppossingComponents) {
+        for (OldSelfLoopComponent component : oppossingComponents) {
 
             // sort ports such that they point clockwise
-            List<SelfLoopPort> ports = component.getPorts();
+            List<OldSelfLoopPort> ports = component.getPorts();
             ports.sort(INCOMING_EDGE_PORT_COMPARATOR);
 
             // It's it's an opposing component, there must be exactly two port sides its ports occupy
@@ -231,8 +231,8 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
             PortSide side2 = sidesIterator.next();
             
             PortSide routeSide;
-            SelfLoopNodeSide westNorthSide;
-            SelfLoopNodeSide eastSouthSide;
+            OldSelfLoopNodeSide westNorthSide;
+            OldSelfLoopNodeSide eastSouthSide;
 
             if (side1 == PortSide.NORTH || side2 == PortSide.NORTH) {
                 westNorthSide = slNode.getNodeSide(PortSide.WEST);
@@ -268,18 +268,18 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
             
             // order the ports such that are ordered clockwise
             while (ports.get(0).getPortSide() != routeSide.left()) {
-                SelfLoopPort firstElementPort = ports.remove(0);
+                OldSelfLoopPort firstElementPort = ports.remove(0);
                 ports.add(firstElementPort);
             }
 
 
-            List<SelfLoopPort> firstSidePorts = new ArrayList<>();
-            List<SelfLoopPort> secondSidePorts = new ArrayList<>();
-            SelfLoopRoutingDirection direction = null;
+            List<OldSelfLoopPort> firstSidePorts = new ArrayList<>();
+            List<OldSelfLoopPort> secondSidePorts = new ArrayList<>();
+            OldSelfLoopRoutingDirection direction = null;
             boolean startPortOnFirstSide = false;
             
             for (int i = 0; i < ports.size(); i++) {
-                SelfLoopPort port = ports.get(i);
+                OldSelfLoopPort port = ports.get(i);
                 setDirection(port, i, ports.size());
                 PortSide side = port.getLPort().getSide();
                 port.setPortSide(side);
@@ -296,7 +296,7 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
                 }
             }
             
-            if (direction == SelfLoopRoutingDirection.LEFT) {
+            if (direction == OldSelfLoopRoutingDirection.LEFT) {
                 if (startPortOnFirstSide) {
                     slNode.prependPorts(firstSidePorts, side1);
                     slNode.appendPorts(secondSidePorts, side2);
@@ -315,14 +315,14 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
             }
             
             // create opposing segments
-            SelfLoopNodeSide routeSideRep = slNode.getNodeSide(routeSide);
-            Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segment =
-                    SelfLoopOpposingSegment.create(component, slNode);
+            OldSelfLoopNodeSide routeSideRep = slNode.getNodeSide(routeSide);
+            Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segment =
+                    OldSelfLoopOpposingSegment.create(component, slNode);
             routeSideRep.getOpposingSegments().putAll(segment.get(routeSide));
         }
 
-        List<SelfLoopPort> ports = new ArrayList<SelfLoopPort>();
-        for (SelfLoopNodeSide side : slNode.getSides()) {
+        List<OldSelfLoopPort> ports = new ArrayList<OldSelfLoopPort>();
+        for (OldSelfLoopNodeSide side : slNode.getSides()) {
             ports.addAll(side.getPorts());
         }
     }
@@ -331,8 +331,8 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Three Side Loops
     
-    private void placeThreeSidesLoop(final Collection<SelfLoopComponent> threeSideComponents) {
-        for (SelfLoopComponent component : threeSideComponents) {
+    private void placeThreeSidesLoop(final Collection<OldSelfLoopComponent> threeSideComponents) {
+        for (OldSelfLoopComponent component : threeSideComponents) {
             // find the side which holds no component ports
             Set<PortSide> portSideValues = new HashSet<>(Arrays.asList(PortSide.values()));
             Set<PortSide> componentPortSides = component.getPortSides();
@@ -341,17 +341,17 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
             PortSide freePortSide = portSideValues.iterator().next();
 
             // rotate to get the correct order
-            List<SelfLoopPort> ports = component.getPorts();
-            ports.sort(new Comparator<SelfLoopPort>() {
+            List<OldSelfLoopPort> ports = component.getPorts();
+            ports.sort(new Comparator<OldSelfLoopPort>() {
 
                 @Override
-                public int compare(final SelfLoopPort o1, final SelfLoopPort o2) {
+                public int compare(final OldSelfLoopPort o1, final OldSelfLoopPort o2) {
                     return Integer.compare(o1.getPortSide().ordinal(), o2.getPortSide().ordinal());
                 }
             });
             
             while (ports.get(0).getPortSide() != freePortSide.right()) {
-                SelfLoopPort firstElementPort = ports.remove(0);
+                OldSelfLoopPort firstElementPort = ports.remove(0);
                 ports.add(firstElementPort);
             }
 
@@ -376,30 +376,30 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
                 // do nothing but ensure this type is chosen first in case of equal crossings
                 updateSideAndDirection(ports);
 
-                Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segment =
-                        SelfLoopOpposingSegment.create(component, slNode);
+                Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segment =
+                        OldSelfLoopOpposingSegment.create(component, slNode);
                 slNode.getNodeSide(middleSide).getOpposingSegments().putAll(segment.get(middleSide));
 
             } else if (minimum == type2) {
-                SelfLoopPort firstElementPort = ports.remove(0);
+                OldSelfLoopPort firstElementPort = ports.remove(0);
                 ports.add(firstElementPort);
                 updateSideAndDirection(ports);
 
                 // Create segments
-                Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segment =
-                        SelfLoopOpposingSegment.create(component, slNode);
+                Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segment =
+                        OldSelfLoopOpposingSegment.create(component, slNode);
                 slNode.getNodeSide(lastPortSide).getOpposingSegments().putAll(segment.get(lastPortSide));
                 slNode.getNodeSide(middleOpposingSide).getOpposingSegments().putAll(segment.get(middleOpposingSide));
 
             } else {
                 // rotate to create constellation
-                SelfLoopPort lastElementPort = ports.remove(ports.size() - 1);
+                OldSelfLoopPort lastElementPort = ports.remove(ports.size() - 1);
                 ports.add(0, lastElementPort);
                 updateSideAndDirection(ports);
 
                 // Create segments
-                Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segment =
-                        SelfLoopOpposingSegment.create(component, slNode);
+                Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segment =
+                        OldSelfLoopOpposingSegment.create(component, slNode);
                 slNode.getNodeSide(firstPortSide).getOpposingSegments().putAll(segment.get(firstPortSide));
                 slNode.getNodeSide(middleOpposingSide).getOpposingSegments().putAll(segment.get(middleOpposingSide));
             }
@@ -409,13 +409,13 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /**
      * TODO Document.
      */
-    private void updateSideAndDirection(final List<SelfLoopPort> ports) {
+    private void updateSideAndDirection(final List<OldSelfLoopPort> ports) {
         for (int i = 0; i < ports.size(); i++) {
-            SelfLoopPort port = ports.get(i);
+            OldSelfLoopPort port = ports.get(i);
             setDirection(port, i, ports.size());
             PortSide side = port.getLPort().getSide();
             port.setPortSide(side);
-            if (port.getDirection() == SelfLoopRoutingDirection.LEFT) {
+            if (port.getDirection() == OldSelfLoopRoutingDirection.LEFT) {
                 slNode.prependPort(port, side);
             } else {
                 slNode.appendPort(port, side);
@@ -427,15 +427,15 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Four Side Loops
     
-    private void placeFourSidesLoop(final Collection<SelfLoopComponent> fourSideComponents) {
-        for (SelfLoopComponent component : fourSideComponents) {
+    private void placeFourSidesLoop(final Collection<OldSelfLoopComponent> fourSideComponents) {
+        for (OldSelfLoopComponent component : fourSideComponents) {
 
             // rotate to get the correct order
-            List<SelfLoopPort> ports = component.getPorts();
-            ports.sort(new Comparator<SelfLoopPort>() {
+            List<OldSelfLoopPort> ports = component.getPorts();
+            ports.sort(new Comparator<OldSelfLoopPort>() {
 
                 @Override
-                public int compare(final SelfLoopPort o1, final SelfLoopPort o2) {
+                public int compare(final OldSelfLoopPort o1, final OldSelfLoopPort o2) {
                     return Integer.compare(o1.getPortSide().ordinal(), o2.getPortSide().ordinal());
                 }
             });
@@ -469,14 +469,14 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
             PortSide secondOpposingSide = startSide.right().right();
 
             while (ports.get(0).getPortSide() != startSide) {
-                SelfLoopPort firstElementPort = ports.remove(0);
+                OldSelfLoopPort firstElementPort = ports.remove(0);
                 ports.add(firstElementPort);
             }
 
             updateSideAndDirection(ports);
 
-            Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segment =
-                    SelfLoopOpposingSegment.create(component, slNode);
+            Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segment =
+                    OldSelfLoopOpposingSegment.create(component, slNode);
             slNode.getNodeSide(firstOpposingSide).getOpposingSegments().putAll(segment.get(firstOpposingSide));
             slNode.getNodeSide(secondOpposingSide).getOpposingSegments().putAll(segment.get(secondOpposingSide));
         }
@@ -487,15 +487,15 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Non-Loops
 
-    private void placeNonLoops(final Collection<SelfLoopComponent> nonLoopComponents) {
-        List<SelfLoopComponent> nonLoopNorth = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> nonLoopSouth = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> nonLoopWest = new ArrayList<SelfLoopComponent>();
-        List<SelfLoopComponent> nonLoopEast = new ArrayList<SelfLoopComponent>();
+    private void placeNonLoops(final Collection<OldSelfLoopComponent> nonLoopComponents) {
+        List<OldSelfLoopComponent> nonLoopNorth = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> nonLoopSouth = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> nonLoopWest = new ArrayList<OldSelfLoopComponent>();
+        List<OldSelfLoopComponent> nonLoopEast = new ArrayList<OldSelfLoopComponent>();
 
         // Distribute components to their proper lists
-        for (SelfLoopComponent component : nonLoopComponents) {
-            SelfLoopPort port = component.getPorts().get(0);
+        for (OldSelfLoopComponent component : nonLoopComponents) {
+            OldSelfLoopPort port = component.getPorts().get(0);
             switch (port.getPortSide()) {
             case NORTH:
                 nonLoopNorth.add(component);

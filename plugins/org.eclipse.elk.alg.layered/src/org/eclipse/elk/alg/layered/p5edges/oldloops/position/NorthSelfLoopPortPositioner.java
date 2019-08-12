@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.SelfLoopOrderingStrategy;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -35,14 +35,14 @@ public class NorthSelfLoopPortPositioner extends AbstractSelfLoopPortPositioner 
     @Override
     public void position(final LNode node) {
         // receive the node representation and the self-loop components
-        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
+        OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+        List<OldSelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // sort by size
         components.sort((comp1, comp2) -> Integer.compare(comp1.getPorts().size(), comp2.getPorts().size()));
 
         // filter the non loop components
-        List<SelfLoopComponent> nonLoopComponents = components.stream()
+        List<OldSelfLoopComponent> nonLoopComponents = components.stream()
                 .filter(comp -> comp.getPorts().size() == 1)
                 .collect(Collectors.toList());
         components.removeAll(nonLoopComponents);

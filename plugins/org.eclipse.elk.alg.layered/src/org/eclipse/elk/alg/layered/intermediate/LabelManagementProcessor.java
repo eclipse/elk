@@ -22,9 +22,9 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
@@ -122,10 +122,10 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
                     }
 
                     // Self-loop
-                    if (node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION)) {
-                       SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-                        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-                            SelfLoopLabel slLabel = component.getSelfLoopLabel();
+                    if (node.hasProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION)) {
+                       OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+                        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+                            OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
                             if (slLabel != null) {
                                 doManageLabels(labelManager, slLabel.getLabels(), MIN_WIDTH_EDGE_LABELS,
                                         labelLabelSpacing, verticalLayout);

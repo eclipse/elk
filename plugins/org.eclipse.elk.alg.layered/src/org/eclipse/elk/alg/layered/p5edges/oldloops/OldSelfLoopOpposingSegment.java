@@ -24,10 +24,10 @@ import org.eclipse.elk.core.options.PortSide;
  * An opposing segment for a self loop describes the part of a self loop hich passes a side of the node without being
  * connected to a port there.
  */
-public final class SelfLoopOpposingSegment {
+public final class OldSelfLoopOpposingSegment {
     
     /** The component this segment belongs to. */
-    private SelfLoopComponent component;
+    private OldSelfLoopComponent component;
     /** The port side this segment passes. */
     private final PortSide side;
     /** The level of the segment. It represents the abstract distance to the node. */
@@ -35,7 +35,7 @@ public final class SelfLoopOpposingSegment {
     /** The segment's label offset. */
     private double labelOffset;
     /** The port this segment derives its level from. */
-    private SelfLoopPort levelGivingPort;
+    private OldSelfLoopPort levelGivingPort;
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public final class SelfLoopOpposingSegment {
     /**
      * Private constructor.
      */
-    private SelfLoopOpposingSegment(final SelfLoopComponent component, final PortSide side) {
+    private OldSelfLoopOpposingSegment(final OldSelfLoopComponent component, final PortSide side) {
         this.component = component;
         this.side = side;
     }
@@ -52,8 +52,8 @@ public final class SelfLoopOpposingSegment {
     /**
      * Private constructor.
      */
-    private SelfLoopOpposingSegment(final SelfLoopComponent component, final PortSide currentPortSide,
-            final SelfLoopPort port) {
+    private OldSelfLoopOpposingSegment(final OldSelfLoopComponent component, final PortSide currentPortSide,
+            final OldSelfLoopPort port) {
         
         this.component = component;
         this.side = currentPortSide;
@@ -68,10 +68,10 @@ public final class SelfLoopOpposingSegment {
      * Create segments for all edges that belong to the given self loop component. We return a map that maps each
      * edge to its corresponding segment, specific to each possible port side.
      */
-    public static Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> create(final SelfLoopComponent component,
-            final SelfLoopNode nodeRep) {
+    public static Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> create(final OldSelfLoopComponent component,
+            final OldSelfLoopNode nodeRep) {
         
-        Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segments = new HashMap<>();
+        Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segments = new HashMap<>();
         
         if (supportsHyperedges(nodeRep)) {
             segments = createHyperEdgeSegments(component);
@@ -83,18 +83,18 @@ public final class SelfLoopOpposingSegment {
     }
 
     /**
-     * Implements {@link #create(SelfLoopComponent, SelfLoopNode)} if the graph allows for self loops to be merged into
+     * Implements {@link #create(OldSelfLoopComponent, OldSelfLoopNode)} if the graph allows for self loops to be merged into
      * hyperedges.
      */
-    private static Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> createHyperEdgeSegments(
-            final SelfLoopComponent component) {
+    private static Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> createHyperEdgeSegments(
+            final OldSelfLoopComponent component) {
         
         // initialize map with all four node sides
-        Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segments = initSegmentMap();
+        Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segments = initSegmentMap();
 
         // compute the sides the component is spanning
         Set<PortSide> sides = new HashSet<>(component.getComponentSpanningSides());
-        List<SelfLoopPort> ports = component.getPorts();
+        List<OldSelfLoopPort> ports = component.getPorts();
         
         // remove the start and end side of the spanning sides; we are only interested in the sides in between
         sides.remove(ports.get(0).getPortSide());
@@ -102,19 +102,19 @@ public final class SelfLoopOpposingSegment {
 
         // for each remaining side a segment is created
         for (PortSide side : sides) {
-            List<SelfLoopPort> portsOfSide = component.getPortsOfSide(side);
-            SelfLoopOpposingSegment segment;
+            List<OldSelfLoopPort> portsOfSide = component.getPortsOfSide(side);
+            OldSelfLoopOpposingSegment segment;
 
             // depending on other ports on the side a level giving port is added
             if (portsOfSide != null && !portsOfSide.isEmpty()) {
-                segment = new SelfLoopOpposingSegment(component, side, portsOfSide.get(0));
+                segment = new OldSelfLoopOpposingSegment(component, side, portsOfSide.get(0));
             } else {
-                segment = new SelfLoopOpposingSegment(component, side);
+                segment = new OldSelfLoopOpposingSegment(component, side);
             }
 
             // add the new segments to their corresponding side
-            Map<SelfLoopEdge, SelfLoopOpposingSegment> sideSegments = segments.get(side);
-            for (SelfLoopEdge edge : component.getConnectedEdges()) {
+            Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment> sideSegments = segments.get(side);
+            for (OldSelfLoopEdge edge : component.getConnectedEdges()) {
                 sideSegments.put(edge, segment);
             }
         }
@@ -122,31 +122,31 @@ public final class SelfLoopOpposingSegment {
     }
 
     /**
-     * Implements {@link #create(SelfLoopComponent, SelfLoopNode)} if the graph does not allow for self loops to be
+     * Implements {@link #create(OldSelfLoopComponent, OldSelfLoopNode)} if the graph does not allow for self loops to be
      * merged into hyperedges.
      */
-    private static Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> createNonHyperEdgeSegments(
-            final SelfLoopComponent component, final SelfLoopNode nodeRep) {
+    private static Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> createNonHyperEdgeSegments(
+            final OldSelfLoopComponent component, final OldSelfLoopNode nodeRep) {
 
         // initialize map with all four node sides
-        Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segments = initSegmentMap();
+        Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segments = initSegmentMap();
 
         rotatePortsToBeRightPointing(component);
 
         // initialize the data types
-        Map<LPort, SelfLoopEdge> startedEdges = new HashMap<>();
-        List<SelfLoopPort> ports = component.getPorts();
-        Set<SelfLoopEdge> visitedEdges = new HashSet<SelfLoopEdge>();
+        Map<LPort, OldSelfLoopEdge> startedEdges = new HashMap<>();
+        List<OldSelfLoopPort> ports = component.getPorts();
+        Set<OldSelfLoopEdge> visitedEdges = new HashSet<OldSelfLoopEdge>();
 
         // only actual self-loops are processed normal edges are ignored
         if (ports.size() > 1) {
-            SelfLoopPort startPort = ports.get(0);
+            OldSelfLoopPort startPort = ports.get(0);
             PortSide startSide = startPort.getPortSide();
             updateConnectedEdges(startedEdges, startPort, visitedEdges);
 
             // remaining ports
-            List<SelfLoopPort> sidePorts = component.getPortsOfSide(startSide);
-            SelfLoopNodeSide nodeSide = nodeRep.getNodeSide(startSide);
+            List<OldSelfLoopPort> sidePorts = component.getPortsOfSide(startSide);
+            OldSelfLoopNodeSide nodeSide = nodeRep.getNodeSide(startSide);
             sidePorts.sort((port1, port2) -> {
                 return Integer.compare(nodeSide.getPorts().indexOf(port1), nodeSide.getPorts().indexOf(port2));
             });
@@ -155,20 +155,20 @@ public final class SelfLoopOpposingSegment {
             if (sidePorts.size() > 1 && startIndex < sidePorts.size()) {
                 sidePorts = sidePorts.subList(startIndex + 1, sidePorts.size());
             } else {
-                sidePorts = new ArrayList<SelfLoopPort>();
+                sidePorts = new ArrayList<OldSelfLoopPort>();
             }
 
             for (int i = 0; i < nodeRep.getSides().size(); i++) {
-                Map<LPort, SelfLoopEdge> startedEdges2 = new HashMap<>();
-                for (SelfLoopPort port : sidePorts) {
+                Map<LPort, OldSelfLoopEdge> startedEdges2 = new HashMap<>();
+                for (OldSelfLoopPort port : sidePorts) {
                     startedEdges.remove(port.getLPort());
                     updateConnectedEdges(startedEdges2, port, visitedEdges);
                 }
 
                 if (i != 0) {
-                    for (SelfLoopEdge startedEdge : startedEdges.values()) {
-                        SelfLoopOpposingSegment segment = new SelfLoopOpposingSegment(component, startSide);
-                        Map<SelfLoopEdge, SelfLoopOpposingSegment> sideSegment = segments.get(startSide);
+                    for (OldSelfLoopEdge startedEdge : startedEdges.values()) {
+                        OldSelfLoopOpposingSegment segment = new OldSelfLoopOpposingSegment(component, startSide);
+                        Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment> sideSegment = segments.get(startSide);
                         sideSegment.put(startedEdge, segment);
                     }
                 }
@@ -189,14 +189,14 @@ public final class SelfLoopOpposingSegment {
     /**
      * Returns the component this segment belongs to.
      */
-    public SelfLoopComponent getComponent() {
+    public OldSelfLoopComponent getComponent() {
         return component;
     }
 
     /**
      * Setss the component this segment belongs to.
      */
-    public void setComponent(final SelfLoopComponent component) {
+    public void setComponent(final OldSelfLoopComponent component) {
         this.component = component;
     }
 
@@ -238,14 +238,14 @@ public final class SelfLoopOpposingSegment {
     /**
      * Returns the port this segment derives its level from.
      */
-    public SelfLoopPort getLevelGivingPort() {
+    public OldSelfLoopPort getLevelGivingPort() {
         return levelGivingPort;
     }
 
     /**
      * Sets the port this segment derives its level from.
      */
-    public void setLevelGivingPort(final SelfLoopPort levelGivingPort) {
+    public void setLevelGivingPort(final OldSelfLoopPort levelGivingPort) {
         this.levelGivingPort = levelGivingPort;
     }
     
@@ -256,20 +256,20 @@ public final class SelfLoopOpposingSegment {
     /**
      * Checks whether or not the given node supports hyperedge self loops.
      */
-    private static boolean supportsHyperedges(final SelfLoopNode nodeRep) {
+    private static boolean supportsHyperedges(final OldSelfLoopNode nodeRep) {
         return nodeRep.getNode().getGraph().getProperty(LayeredOptions.EDGE_ROUTING) != EdgeRouting.SPLINES;
     }
 
     /**
      * Returns a map initialized with one hash map for each port side.
      */
-    private static Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> initSegmentMap() {
-        Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> segments = new EnumMap<>(PortSide.class);
+    private static Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> initSegmentMap() {
+        Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> segments = new EnumMap<>(PortSide.class);
         
-        segments.put(PortSide.NORTH, new HashMap<SelfLoopEdge, SelfLoopOpposingSegment>());
-        segments.put(PortSide.EAST, new HashMap<SelfLoopEdge, SelfLoopOpposingSegment>());
-        segments.put(PortSide.SOUTH, new HashMap<SelfLoopEdge, SelfLoopOpposingSegment>());
-        segments.put(PortSide.WEST, new HashMap<SelfLoopEdge, SelfLoopOpposingSegment>());
+        segments.put(PortSide.NORTH, new HashMap<OldSelfLoopEdge, OldSelfLoopOpposingSegment>());
+        segments.put(PortSide.EAST, new HashMap<OldSelfLoopEdge, OldSelfLoopOpposingSegment>());
+        segments.put(PortSide.SOUTH, new HashMap<OldSelfLoopEdge, OldSelfLoopOpposingSegment>());
+        segments.put(PortSide.WEST, new HashMap<OldSelfLoopEdge, OldSelfLoopOpposingSegment>());
         
         return segments;
     }
@@ -277,12 +277,12 @@ public final class SelfLoopOpposingSegment {
     /**
      * TODO Document.
      */
-    private static void rotatePortsToBeRightPointing(final SelfLoopComponent component) {
-        List<SelfLoopPort> ports = component.getPorts();
-        SelfLoopPort currPort = ports.get(0);
+    private static void rotatePortsToBeRightPointing(final OldSelfLoopComponent component) {
+        List<OldSelfLoopPort> ports = component.getPorts();
+        OldSelfLoopPort currPort = ports.get(0);
         
-        while (currPort.getDirection() != SelfLoopRoutingDirection.RIGHT) {
-            SelfLoopPort removedPort = ports.remove(0);
+        while (currPort.getDirection() != OldSelfLoopRoutingDirection.RIGHT) {
+            OldSelfLoopPort removedPort = ports.remove(0);
             ports.add(removedPort);
             currPort = ports.get(0);
         }
@@ -291,11 +291,11 @@ public final class SelfLoopOpposingSegment {
     /**
      * TODO Document.
      */
-    private static void updateConnectedEdges(final Map<LPort, SelfLoopEdge> startedEdges, final SelfLoopPort port,
-            final Set<SelfLoopEdge> visitedEdges) {
+    private static void updateConnectedEdges(final Map<LPort, OldSelfLoopEdge> startedEdges, final OldSelfLoopPort port,
+            final Set<OldSelfLoopEdge> visitedEdges) {
         
-        Iterable<SelfLoopEdge> connectedEdges = port.getConnectedEdges();
-        for (SelfLoopEdge edge : connectedEdges) {
+        Iterable<OldSelfLoopEdge> connectedEdges = port.getConnectedEdges();
+        for (OldSelfLoopEdge edge : connectedEdges) {
             if (!visitedEdges.contains(edge)) {
                 visitedEdges.add(edge);
                 if (edge.getTarget() == port) {

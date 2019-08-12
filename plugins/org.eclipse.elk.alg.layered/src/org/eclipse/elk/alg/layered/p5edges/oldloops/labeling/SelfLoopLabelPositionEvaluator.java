@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.calculators.SelfLoopOffsetCalculator;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
@@ -61,9 +61,9 @@ public final class SelfLoopLabelPositionEvaluator {
     private static final double LABEL_LABEL_CROSSING_PENALTY = 40.0;
     
     /** The node whose labels should be assigned to positions. */
-    private final SelfLoopNode slNode;
+    private final OldSelfLoopNode slNode;
     /** Those of the node's self loop components that actually have a label to be assigned. */
-    private final List<SelfLoopComponent> components;
+    private final List<OldSelfLoopComponent> components;
     /** The current assignment's penalty. */
     private double assignmentPenalty;
     
@@ -77,7 +77,7 @@ public final class SelfLoopLabelPositionEvaluator {
      * @param slNode the node to evaluate self loop positions for.
      * @param monitor progress monitor for debug output.
      */
-    public SelfLoopLabelPositionEvaluator(final SelfLoopNode slNode, final IElkProgressMonitor monitor) {
+    public SelfLoopLabelPositionEvaluator(final OldSelfLoopNode slNode, final IElkProgressMonitor monitor) {
         this.slNode = slNode;
         
         // We're only interested in components that actually have a label here
@@ -94,8 +94,8 @@ public final class SelfLoopLabelPositionEvaluator {
      * Assigns each label to the first of its candidate positions.
      */
     private void assignDefaultPositions() {
-        for (SelfLoopComponent component : components) {
-            SelfLoopLabel slLabel = component.getSelfLoopLabel();
+        for (OldSelfLoopComponent component : components) {
+            OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
             
             assert slLabel != null;
             assert !slLabel.getCandidatePositions().isEmpty();
@@ -109,7 +109,7 @@ public final class SelfLoopLabelPositionEvaluator {
     // Position Evaluation
     
     /**
-     * Chooses one {@link SelfLoopLabelPosition} for each self loop label with the aim of minimizing the penalties
+     * Chooses one {@link OldSelfLoopLabelPosition} for each self loop label with the aim of minimizing the penalties
      * that result from choosing those positions.
      * 
      * @param monitor progress monitor for debug output.
@@ -120,8 +120,8 @@ public final class SelfLoopLabelPositionEvaluator {
             
             monitor.log("SETUP Node (" + nodeSize.x + ", " + nodeSize.y + ")");
             
-            for (SelfLoopComponent component : components) {
-                SelfLoopLabel slLabel = component.getSelfLoopLabel();
+            for (OldSelfLoopComponent component : components) {
+                OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
                 
                 // Output component labels
                 StringJoiner joiner = new StringJoiner(", ");
@@ -131,7 +131,7 @@ public final class SelfLoopLabelPositionEvaluator {
                 monitor.log(joiner.toString() + " (" + slLabel.getSize().x + ", " + slLabel.getSize().y + ")");
                 
                 // Output possible positions
-                for (SelfLoopLabelPosition position : slLabel.getCandidatePositions()) {
+                for (OldSelfLoopLabelPosition position : slLabel.getCandidatePositions()) {
                     monitor.log("    " + position.getPosition().toString());
                     monitor.log("        Base penalty: " + position.getBasePenalty());
                     monitor.log("        Side: " + position.getSide());
@@ -152,7 +152,7 @@ public final class SelfLoopLabelPositionEvaluator {
             previousPenalty = assignmentPenalty;
             double currMinimum = Double.MAX_VALUE;
 
-            for (SelfLoopComponent component : components) {
+            for (OldSelfLoopComponent component : components) {
                 if (monitor.isLoggingEnabled()) {
                     StringJoiner joiner = new StringJoiner(", ");
                     for (LLabel llabel : component.getSelfLoopLabel().getLabels()) {
@@ -161,12 +161,12 @@ public final class SelfLoopLabelPositionEvaluator {
                     monitor.log(joiner.toString());
                 }
                 
-                SelfLoopLabel slLabel = component.getSelfLoopLabel();
-                List<SelfLoopLabelPosition> positions = slLabel.getCandidatePositions();
-                SelfLoopLabelPosition currMinPosition = slLabel.getLabelPosition();
+                OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
+                List<OldSelfLoopLabelPosition> positions = slLabel.getCandidatePositions();
+                OldSelfLoopLabelPosition currMinPosition = slLabel.getLabelPosition();
 
                 // search for the minimum of this component
-                for (SelfLoopLabelPosition currPosition : positions) {
+                for (OldSelfLoopLabelPosition currPosition : positions) {
                     slLabel.setLabelPosition(currPosition);
 
                     if (monitor.isLoggingEnabled()) {
@@ -202,7 +202,7 @@ public final class SelfLoopLabelPositionEvaluator {
         if (monitor.isLoggingEnabled()) {
             monitor.log("RESULT");
             
-            for (SelfLoopComponent component : components) {
+            for (OldSelfLoopComponent component : components) {
                 // Output component labels
                 StringJoiner joiner = new StringJoiner(", ");
                 for (LLabel llabel : component.getSelfLoopLabel().getLabels()) {
@@ -230,8 +230,8 @@ public final class SelfLoopLabelPositionEvaluator {
         
         // Reset the previous calculated coordinates since the current assignment of labels to candidate positions
         // may have changed where the self loops are actually routed
-        for (SelfLoopComponent component : components) {
-            SelfLoopLabelPosition position = component.getSelfLoopLabel().getLabelPosition();
+        for (OldSelfLoopComponent component : components) {
+            OldSelfLoopLabelPosition position = component.getSelfLoopLabel().getLabelPosition();
             position.resetPosition();
             totalBasePenalty += position.getBasePenalty();
         }
@@ -266,9 +266,9 @@ public final class SelfLoopLabelPositionEvaluator {
         // Turn each chosen label position into a rectangle so we can easily check for overlaps
         List<ElkRectangle> labelRects = new ArrayList<>(components.size());
         
-        for (SelfLoopComponent comp : components) {
-            SelfLoopLabel slLabel = comp.getSelfLoopLabel();
-            SelfLoopLabelPosition slPos = slLabel.getLabelPosition();
+        for (OldSelfLoopComponent comp : components) {
+            OldSelfLoopLabel slLabel = comp.getSelfLoopLabel();
+            OldSelfLoopLabelPosition slPos = slLabel.getLabelPosition();
             
             ElkRectangle labelRect = new ElkRectangle(
                     slPos.getPosition().x,
@@ -326,12 +326,12 @@ public final class SelfLoopLabelPositionEvaluator {
     private int calculateLabelEdgeCrossings() {
         int labelEdgeCrossings = 0;
         
-        for (SelfLoopComponent component : components) {
-            SelfLoopLabel slLabel = component.getSelfLoopLabel();
-            SelfLoopLabelPosition slLabelPos = slLabel.getLabelPosition();
+        for (OldSelfLoopComponent component : components) {
+            OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
+            OldSelfLoopLabelPosition slLabelPos = slLabel.getLabelPosition();
 
             // calculate if an edge starting at the same side would cross the label position
-            for (SelfLoopPort slPort : slNode.getNodeSide(slLabelPos.getSide()).getPorts()) {
+            for (OldSelfLoopPort slPort : slNode.getNodeSide(slLabelPos.getSide()).getPorts()) {
                 // The port must not belong to the same component and we must detect a crossing
                 if (slPort.getComponent() != component && isCrossing(slLabel, component, slPort)) {
                     labelEdgeCrossings++;
@@ -343,8 +343,8 @@ public final class SelfLoopLabelPositionEvaluator {
     }
     
     
-    private boolean isCrossing(final SelfLoopLabel slLabel, final SelfLoopComponent slLabelComponent,
-            final SelfLoopPort slPort) {
+    private boolean isCrossing(final OldSelfLoopLabel slLabel, final OldSelfLoopComponent slLabelComponent,
+            final OldSelfLoopPort slPort) {
         
         // Compute the routing level of the edge the label labels, if possible
         int labelEdgeLevel = computeEdgeLevel(slLabel, slLabelComponent);
@@ -362,7 +362,7 @@ public final class SelfLoopLabelPositionEvaluator {
         }
         
         // Construct a rectangle that describes the label position
-        SelfLoopLabelPosition slLabelPos = slLabel.getLabelPosition();
+        OldSelfLoopLabelPosition slLabelPos = slLabel.getLabelPosition();
         ElkRectangle labelRect = new ElkRectangle(
                 slLabelPos.getPosition().x,
                 slLabelPos.getPosition().y,
@@ -393,9 +393,9 @@ public final class SelfLoopLabelPositionEvaluator {
      * Tries to compute the edge level of the edge the given label belongs to. This method is trying to be really
      * defensive about the values it deems sensible since all this level stuff seems rather intricate.
      */
-    private int computeEdgeLevel(final SelfLoopLabel slLabel, final SelfLoopComponent slComponent) {
+    private int computeEdgeLevel(final OldSelfLoopLabel slLabel, final OldSelfLoopComponent slComponent) {
         // Check if the label is on the same side as one of the component's ports
-        for (SelfLoopPort slPort : slComponent.getPortsOfSide(slLabel.getLabelPosition().getSide())) {
+        for (OldSelfLoopPort slPort : slComponent.getPortsOfSide(slLabel.getLabelPosition().getSide())) {
             int maxLevel = slPort.getMaximumLevel();
             
             if (maxLevel >= 0) {
@@ -404,12 +404,12 @@ public final class SelfLoopLabelPositionEvaluator {
         }
         
         // The label must be one one of the component's segments, which we can reach through the component's edges
-        SelfLoopNodeSide slSide = slNode.getNodeSide(slLabel.getLabelPosition().getSide());
+        OldSelfLoopNodeSide slSide = slNode.getNodeSide(slLabel.getLabelPosition().getSide());
         
         int maxSegmentLevel = -1;
-        for (SelfLoopEdge slEdge : slComponent.getConnectedEdges()) {
+        for (OldSelfLoopEdge slEdge : slComponent.getConnectedEdges()) {
             // Check whether the edge has a segment on the given node side
-            SelfLoopOpposingSegment slSegment = slSide.getOpposingSegments().get(slEdge);
+            OldSelfLoopOpposingSegment slSegment = slSide.getOpposingSegments().get(slEdge);
             
             if (slSegment != null) {
                 maxSegmentLevel = Math.max(maxSegmentLevel, slSegment.getLevel());

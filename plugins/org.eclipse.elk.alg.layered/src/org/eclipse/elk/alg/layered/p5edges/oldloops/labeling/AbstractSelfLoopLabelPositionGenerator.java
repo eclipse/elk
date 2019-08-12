@@ -9,12 +9,12 @@ package org.eclipse.elk.alg.layered.p5edges.oldloops.labeling;
 
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition.LabelAlignment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition.LabelAlignment;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
@@ -32,7 +32,7 @@ import org.eclipse.elk.core.options.PortSide;
  * 
  * <p>
  * Position calculation methods (named {@code xxxPosition(...)} calculate not just coordinates, but complete
- * {@link SelfLoopLabelPosition} instances for different kinds of edge segments.
+ * {@link OldSelfLoopLabelPosition} instances for different kinds of edge segments.
  * </p>
  * 
  * <p>
@@ -86,7 +86,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
     protected static final double ANCHOR_SIZE = 5;
     
     /** The self loop node we're generating label positions for. */
-    private final SelfLoopNode slNode;
+    private final OldSelfLoopNode slNode;
     /** Spacing between edges. */
     private final double edgeEdgeSpacing;
     /** Spacing between edges and their labels. */
@@ -99,7 +99,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
     /**
      * Creates a new instance for the given node.
      */
-    public AbstractSelfLoopLabelPositionGenerator(final SelfLoopNode slNode) {
+    public AbstractSelfLoopLabelPositionGenerator(final OldSelfLoopNode slNode) {
         this.slNode = slNode;
         
         edgeEdgeSpacing = LGraphUtil.getIndividualOrInherited(slNode.getNode(), LayeredOptions.SPACING_EDGE_EDGE);
@@ -113,7 +113,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
     /**
      * Returns the self loop node this position generator was created for.
      */
-    protected SelfLoopNode getSelfLoopNode() {
+    protected OldSelfLoopNode getSelfLoopNode() {
         return slNode;
     }
     
@@ -140,7 +140,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * point is expected to be the left (horizontal line) or top (vertical line) point. The label is not placed such
      * that it crosses the line. Instead, it is offset enough in the given direction to not do so.
      */
-    protected KVector centeredCoordinates(final SelfLoopLabel label, final PortSide labelOffsetDirection,
+    protected KVector centeredCoordinates(final OldSelfLoopLabel label, final PortSide labelOffsetDirection,
             final KVector startPoint, final KVector endPoint) {
         
         // Distance between the points
@@ -183,7 +183,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * (horizontal line) or top (vertical line) point. The label is not placed such that it crosses the line. Instead,
      * it is offset enough in the given direction to not do so.
      */
-    protected KVector topOrLeftAlignedCoordinates(final SelfLoopLabel label, final PortSide labelOffsetDirection,
+    protected KVector topOrLeftAlignedCoordinates(final OldSelfLoopLabel label, final PortSide labelOffsetDirection,
             final KVector startPoint, final KVector endPoint) {
 
         // A unit vector that points in the label offset direction
@@ -212,7 +212,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * (horizontal line) or top (vertical line) point. The label is not placed such that it crosses the line. Instead,
      * it is offset enough in the given direction to not do so.
      */
-    protected KVector bottomOrRightAlignedCoordinates(final SelfLoopLabel label, final PortSide labelOffsetDirection,
+    protected KVector bottomOrRightAlignedCoordinates(final OldSelfLoopLabel label, final PortSide labelOffsetDirection,
             final KVector startPoint, final KVector endPoint) {
 
         // A unit vector that points in the label offset direction
@@ -280,7 +280,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * @param alignment
      *            how the self loop label position should be aligned on its segment.
      */
-    protected SelfLoopLabelPosition outerSegmentPosition(final SelfLoopLabel label, final PortSide portSide,
+    protected OldSelfLoopLabelPosition outerSegmentPosition(final OldSelfLoopLabel label, final PortSide portSide,
             final PortSide penaltySide, final KVector portPoint, final KVector bendPoint,
             final boolean leftFromCenterSegment, final Alignment alignment) {
         
@@ -303,7 +303,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
             break;
         }
         
-        SelfLoopLabelPosition position = doCreateLabelPosition(
+        OldSelfLoopLabelPosition position = doCreateLabelPosition(
                 label, portSide, labelSide, penaltySide, startPoint, endPoint, alignment);
         position.setBasePenalty(position.getBasePenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT);
         
@@ -312,7 +312,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
 
     /**
      * Calculates a label position (including base penalty) for a self-loop's short segment. This method always calls
-     * {@link #shortSegmentPosition(SelfLoopLabel, SelfLoopPort, PortSide, KVector, KVector, Alignment, boolean)}
+     * {@link #shortSegmentPosition(OldSelfLoopLabel, OldSelfLoopPort, PortSide, KVector, KVector, Alignment, boolean)}
      * with the closest port's port side as the penalty side.
      * 
      * @param label
@@ -331,7 +331,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      *            {@code true} if the penalty set on the position should include the short segment penalty. This will
      *            usually be the case, but self-loops that do not have a long segment will have no use for this penalty.
      */
-    protected SelfLoopLabelPosition shortSegmentPosition(final SelfLoopLabel label, final SelfLoopPort closestPort,
+    protected OldSelfLoopLabelPosition shortSegmentPosition(final OldSelfLoopLabel label, final OldSelfLoopPort closestPort,
             final KVector portPoint, final KVector bendPoint, final Alignment alignment,
             final boolean addShortSegmentPenalty) {
         
@@ -361,13 +361,13 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      *            {@code true} if the penalty set on the position should include the short segment penalty. This will
      *            usually be the case, but self-loops that do not have a long segment will have no use for this penalty.
      */
-    protected SelfLoopLabelPosition shortSegmentPosition(final SelfLoopLabel label, final SelfLoopPort closestPort,
+    protected OldSelfLoopLabelPosition shortSegmentPosition(final OldSelfLoopLabel label, final OldSelfLoopPort closestPort,
             final PortSide penaltySide, final KVector portPoint, final KVector bendPoint, final Alignment alignment,
             final boolean addShortSegmentPenalty) {
         
         // The side we're on and the direction the edge is heading into
         PortSide portSide = closestPort.getPortSide();
-        SelfLoopRoutingDirection routingDirection = closestPort.getDirection();
+        OldSelfLoopRoutingDirection routingDirection = closestPort.getDirection();
         
         // Start point needs to be to the left / top of the end point
         KVector startPoint = null;
@@ -376,18 +376,18 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         switch (portSide) {
         case NORTH:
         case EAST:
-            startPoint = routingDirection == SelfLoopRoutingDirection.RIGHT ? portPoint : bendPoint;
-            endPoint = routingDirection == SelfLoopRoutingDirection.RIGHT ? bendPoint : portPoint;
+            startPoint = routingDirection == OldSelfLoopRoutingDirection.RIGHT ? portPoint : bendPoint;
+            endPoint = routingDirection == OldSelfLoopRoutingDirection.RIGHT ? bendPoint : portPoint;
             break;
             
         case SOUTH:
         case WEST:
-            startPoint = routingDirection == SelfLoopRoutingDirection.LEFT ? portPoint : bendPoint;
-            endPoint = routingDirection == SelfLoopRoutingDirection.LEFT ? bendPoint : portPoint;
+            startPoint = routingDirection == OldSelfLoopRoutingDirection.LEFT ? portPoint : bendPoint;
+            endPoint = routingDirection == OldSelfLoopRoutingDirection.LEFT ? bendPoint : portPoint;
             break;
         }
         
-        SelfLoopLabelPosition position = doCreateLabelPosition(
+        OldSelfLoopLabelPosition position = doCreateLabelPosition(
                 label, portSide, portSide, penaltySide, startPoint, endPoint, alignment);
         
         if (addShortSegmentPenalty) {
@@ -411,7 +411,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * @param alignment
      *            how the self loop label position should be aligned on the segment.
      */
-    protected SelfLoopLabelPosition longSegmentPosition(final SelfLoopLabel label, final PortSide segmentSide,
+    protected OldSelfLoopLabelPosition longSegmentPosition(final OldSelfLoopLabel label, final PortSide segmentSide,
             final KVector firstBend, final KVector secondBend, final Alignment alignment) {
         
         // Start point needs to be to the left / top of the end point
@@ -457,7 +457,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * @param alignment
      *            the label's alignment with respect to the segment.
      */
-    private SelfLoopLabelPosition doCreateLabelPosition(final SelfLoopLabel label, final PortSide side,
+    private OldSelfLoopLabelPosition doCreateLabelPosition(final OldSelfLoopLabel label, final PortSide side,
             final KVector startPoint, final KVector endPoint, final Alignment alignment) {
         
         return doCreateLabelPosition(label, side, side, side, startPoint, endPoint, alignment);
@@ -482,7 +482,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
      * @param alignment
      *            the label's alignment with respect to the segment.
      */
-    private SelfLoopLabelPosition doCreateLabelPosition(final SelfLoopLabel label, final PortSide segmentSide,
+    private OldSelfLoopLabelPosition doCreateLabelPosition(final OldSelfLoopLabel label, final PortSide segmentSide,
             final PortSide labelSide, final PortSide penaltySide, final KVector startPoint, final KVector endPoint,
             final Alignment alignment) {
         
@@ -521,7 +521,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         }
         
         // Setup the label position
-        SelfLoopLabelPosition position = new SelfLoopLabelPosition(label, coordinates);
+        OldSelfLoopLabelPosition position = new OldSelfLoopLabelPosition(label, coordinates);
         position.setSide(segmentSide);
         position.setLabelAlignment(labelAlignment);
         position.setBasePenalty(

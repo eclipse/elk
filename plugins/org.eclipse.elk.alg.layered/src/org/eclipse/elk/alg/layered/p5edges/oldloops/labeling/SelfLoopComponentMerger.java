@@ -15,16 +15,16 @@ import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Knows how to merge the labels of {@link SelfLoopComponent}s.
+ * Knows how to merge the labels of {@link OldSelfLoopComponent}s.
  */
 public final class SelfLoopComponentMerger {
 
@@ -40,26 +40,26 @@ public final class SelfLoopComponentMerger {
     /**
      * Merges the labels of all components of the given node.
      */
-    public static void mergeComponents(final SelfLoopNode slNode) {
+    public static void mergeComponents(final OldSelfLoopNode slNode) {
         LNode lNode = slNode.getNode();
         
         // only with free port constraints the edges will be merged.
         if (lNode.getProperty(InternalProperties.ORIGINAL_PORT_CONSTRAINTS) == PortConstraints.FREE) {
-            List<SelfLoopPort> sourcePorts = new ArrayList<>();
-            List<SelfLoopPort> targetPorts = new ArrayList<>();
+            List<OldSelfLoopPort> sourcePorts = new ArrayList<>();
+            List<OldSelfLoopPort> targetPorts = new ArrayList<>();
 
-            SelfLoopLabel label = new SelfLoopLabel();
+            OldSelfLoopLabel label = new OldSelfLoopLabel();
             
             // for each component the labels are collected
             int componentsWithLabels = 0;
-            for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
                 // update the dependency graph to avoid offsets
                 slNode.getNodeSide(PortSide.NORTH).getComponentDependencies().add(component);
                 slNode.getNodeSide(PortSide.NORTH).setMaximumPortLevel(1);
                 component.getDependencyComponents().clear();
 
                 // set port level back to one and sort ports into target and source
-                for (SelfLoopPort port : component.getPorts()) {
+                for (OldSelfLoopPort port : component.getPorts()) {
                     if (port.getLPort().getIncomingEdges().isEmpty()) {
                         targetPorts.add(port);
                     } else {
@@ -70,7 +70,7 @@ public final class SelfLoopComponentMerger {
                 }
 
                 // collect components label and save them to a new one (label)
-                SelfLoopLabel componentLabel = component.getSelfLoopLabel();
+                OldSelfLoopLabel componentLabel = component.getSelfLoopLabel();
                 if (componentLabel != null) {
                     label.getLabels().addAll(componentLabel.getLabels());
                     label.getSize().y += componentLabel.getSize().y;
@@ -97,13 +97,13 @@ public final class SelfLoopComponentMerger {
 
             // route all edges anew
             double nodeWidth = lNode.getSize().x;
-            for (SelfLoopPort port : sourcePorts) {
+            for (OldSelfLoopPort port : sourcePorts) {
                 KVector source = port.getLPort().getPosition();
                 KVector size = port.getLPort().getSize();
                 source.set(new KVector(nodeWidth / 2 + PORT_DISTANCE - size.x / 2, -size.y));
             }
             
-            for (SelfLoopPort port : targetPorts) {
+            for (OldSelfLoopPort port : targetPorts) {
                 KVector target = port.getLPort().getPosition();
                 KVector size = port.getLPort().getSize();
                 target.set(new KVector(nodeWidth / 2 - PORT_DISTANCE - size.x / 2, -size.y));

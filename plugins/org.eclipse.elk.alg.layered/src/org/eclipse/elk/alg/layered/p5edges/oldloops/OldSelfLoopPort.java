@@ -20,22 +20,22 @@ import org.eclipse.elk.core.options.PortSide;
 /**
  * A port involved with self loops. Each self loop port represents an {@link LPort}.
  */
-public class SelfLoopPort {
+public class OldSelfLoopPort {
 
     /** The {@link LPort} represented by this self loop port. */
     private final LPort port;
     /** The side of the node the port is placed on. */
     private PortSide portSide;
     /** The direction edges will leave this port in. */
-    private SelfLoopRoutingDirection direction;
+    private OldSelfLoopRoutingDirection direction;
     /** The level of the edge segment. */
     private int maximumLevel = 0;
     /** Map about the different level for the different edges connected to this port. */
     private final Map<LEdge, Integer> edgeToLevelMap = new HashMap<>();
     /** The SelfLoopComponent the port belongs to. */
-    private SelfLoopComponent component;
+    private OldSelfLoopComponent component;
     /** Self loops connected to this port. */
-    private final List<SelfLoopEdge> connectedEdges = new ArrayList<>();
+    private final List<OldSelfLoopEdge> connectedEdges = new ArrayList<>();
     /** The port is connected to an edge connecting it to another node. */
     private boolean isNonLoopPort = false;
     /** The original index of the port before using the linear node representation or altering the port order. */
@@ -47,7 +47,7 @@ public class SelfLoopPort {
      * Create a new self-Loop port. For each self loop port the corresponding {@link LPort} and the the component it
      * belongs to are required.
      */
-    public SelfLoopPort(final LPort port, final SelfLoopComponent selfLoopComponent) {
+    public OldSelfLoopPort(final LPort port, final OldSelfLoopComponent selfLoopComponent) {
         this.port = port;
         this.setOriginalIndex(port.getIndex());
         this.portSide = port.getSide();
@@ -95,14 +95,14 @@ public class SelfLoopPort {
     /**
      * Returns the direction in which edges should leave this port.
      */
-    public SelfLoopRoutingDirection getDirection() {
+    public OldSelfLoopRoutingDirection getDirection() {
         return direction;
     }
 
     /**
      * Sets the direction in which edges should leave this port.
      */
-    public void setDirection(final SelfLoopRoutingDirection direction) {
+    public void setDirection(final OldSelfLoopRoutingDirection direction) {
         this.direction = direction;
     }
 
@@ -138,21 +138,21 @@ public class SelfLoopPort {
     /**
      * Returns the component this port is part of.
      */
-    public SelfLoopComponent getComponent() {
+    public OldSelfLoopComponent getComponent() {
         return component;
     }
 
     /**
      * Sets the component this port is part of.
      */
-    public void setComponent(final SelfLoopComponent component) {
+    public void setComponent(final OldSelfLoopComponent component) {
         this.component = component;
     }
     
     /**
      * Returns the self loops connected to this port.
      */
-    public List<SelfLoopEdge> getConnectedEdges() {
+    public List<OldSelfLoopEdge> getConnectedEdges() {
         return connectedEdges;
     }
 

@@ -15,28 +15,28 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * An edge which is part of a {@link SelfLoopComponent}. It holds the source and the target port, the original
+ * An edge which is part of a {@link OldSelfLoopComponent}. It holds the source and the target port, the original
  * {@link LEdge} and the component it belongs to.
  */
-public class SelfLoopEdge {
+public class OldSelfLoopEdge {
     
     /** The self loop's source port. */
-    private final SelfLoopPort source;
+    private final OldSelfLoopPort source;
     /** The self loop's target port. */
-    private final SelfLoopPort target;
+    private final OldSelfLoopPort target;
     /** The self loop's original edge. */
     private final LEdge edge;
     /** The component the self loop belongs to. */
-    private final SelfLoopComponent component;
+    private final OldSelfLoopComponent component;
     /** Other self loops this self loop depends on. */
-    private final Map<PortSide, List<SelfLoopEdge>> dependencyEdges = new HashMap<>();
+    private final Map<PortSide, List<OldSelfLoopEdge>> dependencyEdges = new HashMap<>();
     /** TODO Document. */
     private final Map<PortSide, Integer> edgeOrders = new HashMap<>();
 
     /**
      * Create a new self loop.
      */
-    public SelfLoopEdge(final SelfLoopComponent component, final SelfLoopPort source, final SelfLoopPort target,
+    public OldSelfLoopEdge(final OldSelfLoopComponent component, final OldSelfLoopPort source, final OldSelfLoopPort target,
             final LEdge edge) {
         this.component = component;
         this.source = source;
@@ -47,14 +47,14 @@ public class SelfLoopEdge {
     /**
      * Returns the self loop's source port.
      */
-    public SelfLoopPort getSource() {
+    public OldSelfLoopPort getSource() {
         return source;
     }
 
     /**
      * Returns the self loop's target port.
      */
-    public SelfLoopPort getTarget() {
+    public OldSelfLoopPort getTarget() {
         return target;
     }
 
@@ -68,14 +68,14 @@ public class SelfLoopEdge {
     /**
      * Returns the component this self loop belongs to.
      */
-    public SelfLoopComponent getComponent() {
+    public OldSelfLoopComponent getComponent() {
         return component;
     }
 
     /**
      * Returns the self loops this self loop depends on for each port side.
      */
-    public Map<PortSide, List<SelfLoopEdge>> getDependencyEdges() {
+    public Map<PortSide, List<OldSelfLoopEdge>> getDependencyEdges() {
         return dependencyEdges;
     }
 

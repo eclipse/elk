@@ -10,7 +10,7 @@ package org.eclipse.elk.alg.layered.p5edges.oldloops;
 /**
  * The direction in which the edges leave a port.
  */
-public enum SelfLoopRoutingDirection {
+public enum OldSelfLoopRoutingDirection {
 
     /** A port whose edges are routed leftwards. */
     LEFT,

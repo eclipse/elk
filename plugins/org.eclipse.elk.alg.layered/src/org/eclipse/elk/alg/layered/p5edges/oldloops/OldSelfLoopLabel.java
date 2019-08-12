@@ -14,18 +14,18 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.core.math.KVector;
 
 /**
- * A list of labels that belong to a {@link SelfLoopComponent}.
+ * A list of labels that belong to a {@link OldSelfLoopComponent}.
  */
-public class SelfLoopLabel {
+public class OldSelfLoopLabel {
 
     /** The list of labels this self loop label consists of. */
     private final List<LLabel> labels = new ArrayList<>();
     /** This label's size. */
     private final KVector size = new KVector();
     /** The candidate positions for this label. */
-    private final List<SelfLoopLabelPosition> candidatePositions = new ArrayList<>();
+    private final List<OldSelfLoopLabelPosition> candidatePositions = new ArrayList<>();
     /** The position chosen for this label. */
-    private SelfLoopLabelPosition labelPosition;
+    private OldSelfLoopLabelPosition labelPosition;
 
     /**
      * Return the list of labels represented by this self loop label.
@@ -46,21 +46,21 @@ public class SelfLoopLabel {
     /**
      * Returns the list of label candidate positions.
      */
-    public List<SelfLoopLabelPosition> getCandidatePositions() {
+    public List<OldSelfLoopLabelPosition> getCandidatePositions() {
         return candidatePositions;
     }
 
     /**
      * Returns this self loop label's position. This is {@code null} until it is initialized by someone.
      */
-    public SelfLoopLabelPosition getLabelPosition() {
+    public OldSelfLoopLabelPosition getLabelPosition() {
         return labelPosition;
     }
 
     /**
      * Sets this self loop label's position. This must be one of the candidate label positions available to this label.
      */
-    public void setLabelPosition(final SelfLoopLabelPosition labelPosition) {
+    public void setLabelPosition(final OldSelfLoopLabelPosition labelPosition) {
         assert candidatePositions.contains(labelPosition);
         
         this.labelPosition = labelPosition;

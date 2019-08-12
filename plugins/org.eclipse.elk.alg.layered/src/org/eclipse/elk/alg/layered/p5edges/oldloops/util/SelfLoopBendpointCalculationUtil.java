@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
@@ -40,27 +40,27 @@ public final class SelfLoopBendpointCalculationUtil {
     /**
      * Generates a list of bend points for where a self loop goes around a corner.
      */
-    public static List<KVector> generateCornerBendpoints(final SelfLoopNode nodeRep,
-            final SelfLoopPort source, final SelfLoopPort target, final KVector firstBendpoint,
-            final KVector secondBendpoint, final SelfLoopEdge edge) {
+    public static List<KVector> generateCornerBendpoints(final OldSelfLoopNode nodeRep,
+            final OldSelfLoopPort source, final OldSelfLoopPort target, final KVector firstBendpoint,
+            final KVector secondBendpoint, final OldSelfLoopEdge edge) {
 
         List<KVector> cornerBendpoints = new ArrayList<KVector>();
         KVector previousBendPoint = firstBendpoint.clone();
         PortSide sourceSide = source.getPortSide();
         PortSide targetSide = target.getPortSide();
 
-        SelfLoopRoutingDirection routingDirection = source.getDirection();
-        if (source.getDirection() == SelfLoopRoutingDirection.BOTH) {
-            routingDirection = target.getDirection() == SelfLoopRoutingDirection.LEFT ? SelfLoopRoutingDirection.RIGHT
-                    : SelfLoopRoutingDirection.LEFT;
+        OldSelfLoopRoutingDirection routingDirection = source.getDirection();
+        if (source.getDirection() == OldSelfLoopRoutingDirection.BOTH) {
+            routingDirection = target.getDirection() == OldSelfLoopRoutingDirection.LEFT ? OldSelfLoopRoutingDirection.RIGHT
+                    : OldSelfLoopRoutingDirection.LEFT;
         }
-        PortSide nextside = routingDirection == SelfLoopRoutingDirection.LEFT ? sourceSide.left() : sourceSide.right();
-        SelfLoopNodeSide nodeSide;
+        PortSide nextside = routingDirection == OldSelfLoopRoutingDirection.LEFT ? sourceSide.left() : sourceSide.right();
+        OldSelfLoopNodeSide nodeSide;
 
         // in case of a four corner loop the corner loop calculation should be done at least once
         do {
             nodeSide = nodeRep.getNodeSide(nextside);
-            SelfLoopOpposingSegment segment = nodeSide.getOpposingSegments().get(edge);
+            OldSelfLoopOpposingSegment segment = nodeSide.getOpposingSegments().get(edge);
             double middlePadding = (DISTANCE * segment.getLevel()) + ANCHOR_HEIGHT;
             // calculate second and third control points
             LNode node = source.getLPort().getNode();
@@ -69,7 +69,7 @@ public final class SelfLoopBendpointCalculationUtil {
 
             cornerBendpoints.add(secondCP);
             previousBendPoint = secondCP;
-            nextside = routingDirection == SelfLoopRoutingDirection.LEFT ? nextside.left() : nextside.right();
+            nextside = routingDirection == OldSelfLoopRoutingDirection.LEFT ? nextside.left() : nextside.right();
         } while (nextside != targetSide);
 
         final KVector secondCP = calculateCorner(previousBendPoint, secondBendpoint, target.getPortSide());
@@ -177,7 +177,7 @@ public final class SelfLoopBendpointCalculationUtil {
     }
 
     public static List<KVector> cutCornerBendPoints(final KVector firstBendpoint, final PortSide side,
-            final SelfLoopRoutingDirection routingDirection) {
+            final OldSelfLoopRoutingDirection routingDirection) {
         
         List<KVector> cutCornerBendPoints = new ArrayList<KVector>();
         double direction = SplinesMath.portSideToDirection(side);
@@ -185,7 +185,7 @@ public final class SelfLoopBendpointCalculationUtil {
         KVector firstCutBendpoint = firstBendpoint.clone().add(directionVector.scale(CORNER_CUT));
         cutCornerBendPoints.add(firstCutBendpoint);
 
-        PortSide nextSide = routingDirection == SelfLoopRoutingDirection.LEFT ? side.left() : side.right();
+        PortSide nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT ? side.left() : side.right();
         double directionSecondCut = SplinesMath.portSideToDirection(nextSide);
         KVector directionVectorSecondCut = new KVector(directionSecondCut);
         KVector secondCutBendpoint = firstBendpoint.clone().add(directionVectorSecondCut.scale(CORNER_CUT));

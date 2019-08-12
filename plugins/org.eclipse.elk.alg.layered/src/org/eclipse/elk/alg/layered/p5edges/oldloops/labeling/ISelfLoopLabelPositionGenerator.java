@@ -7,17 +7,17 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.oldloops.labeling;
 
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
 
 /**
  * Classes that implement this interface know how to generate candidate label positions for all labels of a
- * {@link SelfLoopComponent}.
+ * {@link OldSelfLoopComponent}.
  */
 public interface ISelfLoopLabelPositionGenerator {
 
     /**
      * Generate a list of possible positions for labels for the given component and saves them in the component.
      */
-    void generatePositions(SelfLoopComponent component);
+    void generatePositions(OldSelfLoopComponent component);
 
 }

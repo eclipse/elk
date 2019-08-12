@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 
@@ -22,7 +22,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
 
     @Override
-    public void routeSideSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeSideSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
 
         // Calculate all bend points
@@ -34,7 +34,7 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
 
         // Calculate all bend points
@@ -49,9 +49,9 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeOpposingSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeOpposingSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        SelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // Calculate all bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -67,9 +67,9 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeThreeCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeThreeCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        SelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // Calculate all bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -85,9 +85,9 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeFourCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeFourCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        SelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // Calculate all bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);

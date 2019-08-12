@@ -17,9 +17,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.calculators.SelfLoopComponentDependencyGraphCalculator;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.calculators.SelfLoopLevelCalculator;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.position.FixedOrderSelfLoopPortPositioner;
@@ -38,8 +38,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * <dt>Postconditions:</dt>
  * <dd>All ports are ordered over the node sides for the best possible self-loop placement.</dd>
  * <dd>Hidden ports are added back to their node.</dd>
- * <dd>The {@link SelfLoopNode} contains the {@link SelfLoopPort} corresponding to the node's port.</dd>
- * <dd>Each {@link SelfLoopPort} contains information about the routing direction and the height of their self
+ * <dd>The {@link OldSelfLoopNode} contains the {@link OldSelfLoopPort} corresponding to the node's port.</dd>
+ * <dd>Each {@link OldSelfLoopPort} contains information about the routing direction and the height of their self
  * loops.</dd>
  * <dt>Slots:</dt>
  * <dd>Before phase 4.</dd>
@@ -56,17 +56,17 @@ public final class OldSelfLoopPlacer implements ILayoutProcessor<LGraph> {
         layeredGraph.getLayers().stream()
             .flatMap(layer -> layer.getNodes().stream())
             .filter(node -> node.getType() == NodeType.NORMAL)
-            .filter(node -> node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION))
+            .filter(node -> node.hasProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION))
             .forEach(node -> processNode(node));
 
         monitor.done();
     }
 
     private void processNode(final LNode node) {
-        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
         assert slNode != null;
         
-        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
+        List<OldSelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // position the ports on the node
         ISelfLoopPortPositioner positioner = getPositioner(node);

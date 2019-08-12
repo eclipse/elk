@@ -9,11 +9,11 @@ package org.eclipse.elk.alg.layered.p5edges.oldloops.labeling;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
@@ -26,20 +26,20 @@ public class SideLoopLabelPositionGenerator extends AbstractSelfLoopLabelPositio
     /**
      * Creates a new instance for the given node.
      */
-    public SideLoopLabelPositionGenerator(final SelfLoopNode slNode) {
+    public SideLoopLabelPositionGenerator(final OldSelfLoopNode slNode) {
         super(slNode);
     }
     
 
     @Override
-    public void generatePositions(final SelfLoopComponent component) {
+    public void generatePositions(final OldSelfLoopComponent component) {
         // Retrieve the spacings active for this node
         double edgeEdgeSpacing = getEdgeEdgeSpacing();
         double edgeLabelSpacing = getEdgeLabelSpacing();
         
-        List<SelfLoopPort> ports = component.getPorts();
-        SelfLoopPort startPort = ports.get(0);
-        SelfLoopPort endPort = ports.get(ports.size() - 1);
+        List<OldSelfLoopPort> ports = component.getPorts();
+        OldSelfLoopPort startPort = ports.get(0);
+        OldSelfLoopPort endPort = ports.get(ports.size() - 1);
 
         // The loop's start and end points
         KVector startPoint = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
@@ -59,10 +59,10 @@ public class SideLoopLabelPositionGenerator extends AbstractSelfLoopLabelPositio
         addPositions(component.getSelfLoopLabel(), firstBend, secondBend, startPort, endPort);
     }
 
-    private void addPositions(final SelfLoopLabel label, final KVector firstBend,
-            final KVector secondBend, final SelfLoopPort startPort, final SelfLoopPort endPort) {
+    private void addPositions(final OldSelfLoopLabel label, final KVector firstBend,
+            final KVector secondBend, final OldSelfLoopPort startPort, final OldSelfLoopPort endPort) {
         
-        List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
+        List<OldSelfLoopLabelPosition> positions = label.getCandidatePositions();
 
         KVector startPoint = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
         KVector endPoint = endPort.getLPort().getPosition().clone().add(endPort.getLPort().getAnchor());

@@ -12,7 +12,7 @@ import org.eclipse.elk.core.options.PortSide;
 /**
  * The possible types of self loops.
  */
-public enum SelfLoopType {
+public enum OldSelfLoopType {
 
     /** Edge connects two different nodes. */
     NON_LOOP,
@@ -31,10 +31,10 @@ public enum SelfLoopType {
     /**
      * Compute the type of self loop.
      */
-    public static SelfLoopType getEdgeType(final SelfLoopEdge edge, final SelfLoopNode nodeRep) {
-        SelfLoopPort source = edge.getSource();
+    public static OldSelfLoopType getEdgeType(final OldSelfLoopEdge edge, final OldSelfLoopNode nodeRep) {
+        OldSelfLoopPort source = edge.getSource();
         PortSide sourceSide = source.getPortSide();
-        SelfLoopPort target = edge.getTarget();
+        OldSelfLoopPort target = edge.getTarget();
         
         // If there is no target, there is no self loop
         if (target == null) {
@@ -43,8 +43,8 @@ public enum SelfLoopType {
         
         PortSide targetSide = target.getPortSide();
         
-        boolean rightDir = source.getDirection() == SelfLoopRoutingDirection.RIGHT;
-        boolean leftDir = source.getDirection() == SelfLoopRoutingDirection.LEFT;
+        boolean rightDir = source.getDirection() == OldSelfLoopRoutingDirection.RIGHT;
+        boolean leftDir = source.getDirection() == OldSelfLoopRoutingDirection.LEFT;
         
         if (source.getLPort().getNode() != target.getLPort().getNode()) {
             // If the source's and the target's nodes differ, there is no self loop
@@ -53,7 +53,7 @@ public enum SelfLoopType {
         } else if (sourceSide == targetSide) {
             // Source and target are on the same side. We either have a same-side self loop, or we route the thing
             // around its whole node
-            SelfLoopNodeSide nodeRepside = nodeRep.getNodeSide(sourceSide);
+            OldSelfLoopNodeSide nodeRepside = nodeRep.getNodeSide(sourceSide);
             int sourceIndex = nodeRepside.getPorts().indexOf(source);
             int targetIndex = nodeRepside.getPorts().indexOf(target);
             
@@ -66,7 +66,7 @@ public enum SelfLoopType {
         } else if (sourceSide.areAdjacent(targetSide)) {
             // Source and target are on adjacent sides. This is either a corner self-loop, or we route it the long way
             if (rightDir && source.getPortSide().left() == target.getPortSide()
-                    || leftDir && source.getDirection() == SelfLoopRoutingDirection.LEFT) {
+                    || leftDir && source.getDirection() == OldSelfLoopRoutingDirection.LEFT) {
                 
                 return THREE_CORNER;
             } else {

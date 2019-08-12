@@ -13,14 +13,14 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
@@ -41,15 +41,15 @@ public final class SelfLoopOffsetCalculator {
     /**
      * Calculate the offset the components must not cross.
      */
-    public static void calculatePortLabelOffsets(final SelfLoopNode slNode) {
+    public static void calculatePortLabelOffsets(final OldSelfLoopNode slNode) {
         // Retrieve proper spacings
         double edgeEdgeSpacing = LGraphUtil.getIndividualOrInherited(
                 slNode.getNode(), LayeredOptions.SPACING_EDGE_EDGE);
         double edgeLabelSpacing = LGraphUtil.getIndividualOrInherited(
                 slNode.getNode(), LayeredOptions.SPACING_EDGE_LABEL);
         
-        for (SelfLoopNodeSide side : slNode.getSides()) {
-            ArrayList<SelfLoopComponent> sideComponentDependencies = new ArrayList<>(side.getComponentDependencies());
+        for (OldSelfLoopNodeSide side : slNode.getSides()) {
+            ArrayList<OldSelfLoopComponent> sideComponentDependencies = new ArrayList<>(side.getComponentDependencies());
             double maximumLabelOffsetOfNode = 0;
             if (!sideComponentDependencies.isEmpty()) {
                 maximumLabelOffsetOfNode = calculatePortLabelOffsets(side, sideComponentDependencies,
@@ -62,29 +62,29 @@ public final class SelfLoopOffsetCalculator {
     /**
      * TODO Document.
      */
-    private static double calculatePortLabelOffsets(final SelfLoopNodeSide side,
-            final List<SelfLoopComponent> components, final int previousLevel, final double edgeEdgeSpacing,
+    private static double calculatePortLabelOffsets(final OldSelfLoopNodeSide side,
+            final List<OldSelfLoopComponent> components, final int previousLevel, final double edgeEdgeSpacing,
             final double edgeLabelSpacing) {
 
         double maximumOffsetForNextComponent = 0;
         double maximumOffsetOfComponent = 0;
 
-        for (SelfLoopComponent component : components) {
+        for (OldSelfLoopComponent component : components) {
             if (component.getPorts().size() > 1) {
-                SelfLoopLabel slLabel = component.getSelfLoopLabel();
-                SelfLoopLabelPosition slLabelPos = slLabel == null ? null : slLabel.getLabelPosition();
+                OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
+                OldSelfLoopLabelPosition slLabelPos = slLabel == null ? null : slLabel.getLabelPosition();
 
                 // get the components side level by finding a port from this side
-                SelfLoopPort portOfSide = findPortOfSide(component, side.getSide());
+                OldSelfLoopPort portOfSide = findPortOfSide(component, side.getSide());
                 int level = portOfSide.getMaximumLevel();
 
-                List<SelfLoopComponent> sideDependencies = component.getDependencyComponents().get(side);
+                List<OldSelfLoopComponent> sideDependencies = component.getDependencyComponents().get(side);
 
                 if (sideDependencies == null || sideDependencies.isEmpty()) {
                     // there are no dependencies for this component maximumOffsetOfComponent remains the same
                     if (level + 1 == previousLevel) {
-                        SelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
-                        SelfLoopOpposingSegment segment = side.getOpposingSegments().get(edge);
+                        OldSelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
+                        OldSelfLoopOpposingSegment segment = side.getOpposingSegments().get(edge);
                         if (slLabelPos != null && slLabelPos.getSide() == side.getSide() && segment == null) {
                             double offset = getSimpleLabelOffset(
                                     slLabel, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing);
@@ -109,7 +109,7 @@ public final class SelfLoopOffsetCalculator {
                     slLabelPos.getPosition().add(new KVector(direction).scale(maximumOffsetOfComponent));
                 }
                 
-                for (SelfLoopPort port : component.getPorts()) {
+                for (OldSelfLoopPort port : component.getPorts()) {
                     if (port.getPortSide() == side.getSide()) {
                         port.setOtherEdgeOffset(maximumOffsetOfComponent);
                     }
@@ -123,7 +123,7 @@ public final class SelfLoopOffsetCalculator {
     /**
      * TODO Document.
      */
-    private static double getSimpleLabelOffset(final SelfLoopLabel slLabel, final PortSide portSide,
+    private static double getSimpleLabelOffset(final OldSelfLoopLabel slLabel, final PortSide portSide,
             final double edgeEdgeSpacing, final double edgeLabelSpacing) {
         
         double labelHeight = 0;
@@ -146,8 +146,8 @@ public final class SelfLoopOffsetCalculator {
     /**
      * Find a port of a component from a certain side or {@code null} if none could be found.
      */
-    private static SelfLoopPort findPortOfSide(final SelfLoopComponent component, final PortSide side) {
-        for (SelfLoopPort port : component.getPorts()) {
+    private static OldSelfLoopPort findPortOfSide(final OldSelfLoopComponent component, final PortSide side) {
+        for (OldSelfLoopPort port : component.getPorts()) {
             if (port.getPortSide() == side) {
                 return port;
             }
@@ -158,15 +158,15 @@ public final class SelfLoopOffsetCalculator {
     /**
      * TODO Document.
      */
-    public static void calculateOpposingSegmentLabelOffsets(final SelfLoopNode slNode) {
+    public static void calculateOpposingSegmentLabelOffsets(final OldSelfLoopNode slNode) {
         // Retrieve proper spacings
         double edgeEdgeSpacing = LGraphUtil.getIndividualOrInherited(
                 slNode.getNode(), LayeredOptions.SPACING_EDGE_EDGE);
         double edgeLabelSpacing = LGraphUtil.getIndividualOrInherited(
                 slNode.getNode(), LayeredOptions.SPACING_EDGE_LABEL);
         
-        for (SelfLoopNodeSide side : slNode.getSides()) {
-            List<SelfLoopOpposingSegment> segments =
+        for (OldSelfLoopNodeSide side : slNode.getSides()) {
+            List<OldSelfLoopOpposingSegment> segments =
                     new ArrayList<>(new HashSet<>(side.getOpposingSegments().values()));
             
             // sort segments descending by level
@@ -174,10 +174,10 @@ public final class SelfLoopOffsetCalculator {
 
             double previousOffset = side.getMaximumLabelOffset();
             double nextOffset = 0;
-            for (SelfLoopOpposingSegment segment : segments) {
+            for (OldSelfLoopOpposingSegment segment : segments) {
                 // get component and it's potential label position
-                SelfLoopComponent component = segment.getComponent();
-                SelfLoopLabel slLabel = component.getSelfLoopLabel();
+                OldSelfLoopComponent component = segment.getComponent();
+                OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
 
                 segment.setLabelOffset(previousOffset);
 

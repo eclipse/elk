@@ -26,17 +26,17 @@ import org.eclipse.elk.core.options.PortSide;
  * A self-loop component is basically a self-loop hyperedge. It comprises a number of ports, an optional label, and
  * dependencies to other self-loop components and self-loop edges which are later used to compute routes.
  */
-public class SelfLoopComponent {
+public class OldSelfLoopComponent {
 
     /** The ports of the self loop component. There are paths between all of them. */
-    private final List<SelfLoopPort> ports;
+    private final List<OldSelfLoopPort> ports;
     /** All center edge labels that occur at the component edges, if any. */
-    private SelfLoopLabel selfLoopLabel;
+    private OldSelfLoopLabel selfLoopLabel;
     
     /** The components that the self loop component depends on. */
-    private final Map<SelfLoopNodeSide, List<SelfLoopComponent>> componentDependencies = new HashMap<>();
+    private final Map<OldSelfLoopNodeSide, List<OldSelfLoopComponent>> componentDependencies = new HashMap<>();
     /** Any edges the component depends on. */
-    private final Map<PortSide, List<SelfLoopEdge>> edgeDependencies = new HashMap<>();
+    private final Map<PortSide, List<OldSelfLoopEdge>> edgeDependencies = new HashMap<>();
 
     
     /**
@@ -45,7 +45,7 @@ public class SelfLoopComponent {
      * @param ports
      *            Ports of the connected self loop component.
      */
-    public SelfLoopComponent(final List<LPort> ports) {
+    public OldSelfLoopComponent(final List<LPort> ports) {
         this.ports = new ArrayList<>(ports.size());
         addAllPorts(ports);
         calculateConnectedEdges();
@@ -58,7 +58,7 @@ public class SelfLoopComponent {
     /**
      * Creates all self loop components for the given node and adds them to the node.
      */
-    public static void createSelfLoopComponents(final SelfLoopNode slNode) {
+    public static void createSelfLoopComponents(final OldSelfLoopNode slNode) {
         LNode lNode = slNode.getNode();
         List<LPort> nodePorts = new ArrayList<LPort>(lNode.getPorts());
         
@@ -72,7 +72,7 @@ public class SelfLoopComponent {
             sortedPorts.sort(Comparator.comparing(lNode.getPorts()::indexOf));
             
             // create the actual component
-            SelfLoopComponent component = new SelfLoopComponent(sortedPorts);
+            OldSelfLoopComponent component = new OldSelfLoopComponent(sortedPorts);
             slNode.getSelfLoopComponents().add(component);
 
             nodePorts.removeAll(sortedPorts);
@@ -107,10 +107,10 @@ public class SelfLoopComponent {
     // Ports
 
     /**
-     * Adds a {@link SelfLoopPort} to the component that represents the given regular port.
+     * Adds a {@link OldSelfLoopPort} to the component that represents the given regular port.
      */
     private void addPort(final LPort port) {
-        ports.add(new SelfLoopPort(port, this));
+        ports.add(new OldSelfLoopPort(port, this));
     }
 
     /**
@@ -125,15 +125,15 @@ public class SelfLoopComponent {
     /**
      * Returns the list of ports this component represents.
      */
-    public List<SelfLoopPort> getPorts() {
+    public List<OldSelfLoopPort> getPorts() {
         return ports;
     }
 
     /**
-     * Find the corresponding {@link SelfLoopPort} for an {@link LPort} or {@code null} if it could not be found.
+     * Find the corresponding {@link OldSelfLoopPort} for an {@link LPort} or {@code null} if it could not be found.
      */
-    public SelfLoopPort findSelfLoopPort(final LPort port) {
-        for (SelfLoopPort selfLoopPort : ports) {
+    public OldSelfLoopPort findSelfLoopPort(final LPort port) {
+        for (OldSelfLoopPort selfLoopPort : ports) {
             if (selfLoopPort.getLPort() == port) {
                 return selfLoopPort;
             }
@@ -144,7 +144,7 @@ public class SelfLoopComponent {
     /**
      * Returns the port that follows the given port in the list of ports.
      */
-    public SelfLoopPort getNextPort(final SelfLoopPort port) {
+    public OldSelfLoopPort getNextPort(final OldSelfLoopPort port) {
         int index = ports.indexOf(port);
         if (index >= 0 && index < ports.size() - 1) {
             return ports.get(index + 1);
@@ -156,7 +156,7 @@ public class SelfLoopComponent {
     /**
      * Returns the last port in the list of ports.
      */
-    public SelfLoopPort getLastPort() {
+    public OldSelfLoopPort getLastPort() {
         if (ports.isEmpty()) {
             return null;
         } else {
@@ -176,7 +176,7 @@ public class SelfLoopComponent {
     /**
      * Returns a list of of ports that are on the given port side.
      */
-    public List<SelfLoopPort> getPortsOfSide(final PortSide side) {
+    public List<OldSelfLoopPort> getPortsOfSide(final PortSide side) {
         return ports.stream()
                 .filter(port -> port.getPortSide() == side)
                 .collect(Collectors.toList());
@@ -189,14 +189,14 @@ public class SelfLoopComponent {
     /**
      * Return the self loop label. May be {@code null} if there are no labels attached to this component.
      */
-    public SelfLoopLabel getSelfLoopLabel() {
+    public OldSelfLoopLabel getSelfLoopLabel() {
         return selfLoopLabel;
     }
 
     /**
      * Set the label.
      */
-    public void setSelfLoopLabel(final SelfLoopLabel selfLoopLabel) {
+    public void setSelfLoopLabel(final OldSelfLoopLabel selfLoopLabel) {
         this.selfLoopLabel = selfLoopLabel;
     }
 
@@ -207,22 +207,22 @@ public class SelfLoopComponent {
     /**
      * Return the edges that belong to this component.
      */
-    public Set<SelfLoopEdge> getConnectedEdges() {
+    public Set<OldSelfLoopEdge> getConnectedEdges() {
         return ports.stream()
                 .flatMap(port -> port.getConnectedEdges().stream())
                 .collect(Collectors.toSet());
     }
     
     /**
-     * Calculate the edges connecting the ports of the component. For each edge a {@link SelfLoopEdge} is created. This
-     * cannot be done while the ports are discovered since the edges are added to the {@link SelfLoopPort}s.
+     * Calculate the edges connecting the ports of the component. For each edge a {@link OldSelfLoopEdge} is created. This
+     * cannot be done while the ports are discovered since the edges are added to the {@link OldSelfLoopPort}s.
      */
     private void calculateConnectedEdges() {
-        for (SelfLoopPort sourcePort : ports) {
+        for (OldSelfLoopPort sourcePort : ports) {
             for (LEdge edge : sourcePort.getLPort().getOutgoingEdges()) {
-                SelfLoopPort targetPort = findSelfLoopPort(edge.getTarget());
+                OldSelfLoopPort targetPort = findSelfLoopPort(edge.getTarget());
                 if (targetPort != null) {
-                    SelfLoopEdge selfLoopEdge = new SelfLoopEdge(this, sourcePort, targetPort, edge);
+                    OldSelfLoopEdge selfLoopEdge = new OldSelfLoopEdge(this, sourcePort, targetPort, edge);
                     sourcePort.getConnectedEdges().add(selfLoopEdge);
                     targetPort.getConnectedEdges().add(selfLoopEdge);
                 }
@@ -237,14 +237,14 @@ public class SelfLoopComponent {
     /**
      * Returns the component dependencies for each self loop node side.
      */
-    public Map<SelfLoopNodeSide, List<SelfLoopComponent>> getDependencyComponents() {
+    public Map<OldSelfLoopNodeSide, List<OldSelfLoopComponent>> getDependencyComponents() {
         return componentDependencies;
     }
 
     /**
      * Returns the edge dependencies for each port side.
      */
-    public Map<PortSide, List<SelfLoopEdge>> getEdgeDependencies() {
+    public Map<PortSide, List<OldSelfLoopEdge>> getEdgeDependencies() {
         return edgeDependencies;
     }
 
@@ -303,46 +303,46 @@ public class SelfLoopComponent {
     /**
      * Determines this component's component type.
      */
-    public SelfLoopType getType(final SelfLoopNode nodeRep) {
+    public OldSelfLoopType getType(final OldSelfLoopNode nodeRep) {
         if (ports.size() == 1) {
-            return SelfLoopType.NON_LOOP;
+            return OldSelfLoopType.NON_LOOP;
         }
         
-        SelfLoopPort source = ports.get(0);
+        OldSelfLoopPort source = ports.get(0);
         PortSide sourceSide = source.getPortSide();
-        SelfLoopPort target = ports.get(ports.size() - 1);
+        OldSelfLoopPort target = ports.get(ports.size() - 1);
         PortSide targetSide = target.getPortSide();
         
-        boolean rightDir = source.getDirection() == SelfLoopRoutingDirection.RIGHT;
-        boolean leftDir = source.getDirection() == SelfLoopRoutingDirection.LEFT;
+        boolean rightDir = source.getDirection() == OldSelfLoopRoutingDirection.RIGHT;
+        boolean leftDir = source.getDirection() == OldSelfLoopRoutingDirection.LEFT;
 
         if (source.getLPort().getNode() != target.getLPort().getNode()) {
             // The ports don't belong to the same node in the first place
-            return SelfLoopType.NON_LOOP;
+            return OldSelfLoopType.NON_LOOP;
             
         } else if (sourceSide == targetSide) {
             // We have a self-loop, either routed on the same side or once around the node
-            SelfLoopNodeSide nodeRepside = nodeRep.getNodeSide(sourceSide);
+            OldSelfLoopNodeSide nodeRepside = nodeRep.getNodeSide(sourceSide);
             int sourceIndex = nodeRepside.getPorts().indexOf(source);
             int targetIndex = nodeRepside.getPorts().indexOf(target);
             
             if (leftDir && sourceIndex < targetIndex || rightDir && targetIndex < sourceIndex) {
-                return SelfLoopType.FOUR_CORNER;
+                return OldSelfLoopType.FOUR_CORNER;
             } else {
-                return SelfLoopType.SIDE;
+                return OldSelfLoopType.SIDE;
             }
             
         } else if (sourceSide.left() == targetSide || sourceSide.right() == targetSide) {
             // We either have a corner self-loop or one routed almost completely around the node
             if (leftDir && source.getPortSide().right() == target.getPortSide()
                     || rightDir && source.getPortSide().left() == target.getPortSide()) {
-                return SelfLoopType.THREE_CORNER;
+                return OldSelfLoopType.THREE_CORNER;
             } else {
-                return SelfLoopType.CORNER;
+                return OldSelfLoopType.CORNER;
             }
         }
 
-        return SelfLoopType.OPPOSING;
+        return OldSelfLoopType.OPPOSING;
     }
 
     
@@ -353,7 +353,7 @@ public class SelfLoopComponent {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("(");
-        for (SelfLoopPort port : ports) {
+        for (OldSelfLoopPort port : ports) {
             builder.append(port);
             if (ports.indexOf(port) != ports.size() - 1) {
                 builder.append(", ");

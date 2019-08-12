@@ -14,12 +14,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -40,9 +40,9 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * Calculate all dependencies for the given node and set each node site's component dependencies accordingly.
      */
-    public static void calculateComponentDependecies(final SelfLoopNode nodeRep) {
-        for (SelfLoopNodeSide nodeSide : nodeRep.getSides()) {
-            List<SelfLoopPort> sidePorts = nodeSide.getPorts();
+    public static void calculateComponentDependecies(final OldSelfLoopNode nodeRep) {
+        for (OldSelfLoopNodeSide nodeSide : nodeRep.getSides()) {
+            List<OldSelfLoopPort> sidePorts = nodeSide.getPorts();
 
             // Filter ports which have no connected edges
             sidePorts = sidePorts.stream()
@@ -52,8 +52,8 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                     .collect(Collectors.toList());
             
             // Calculate the dependencies
-            Set<SelfLoopComponent> dependencies =
-                    getDependencyComponents(nodeSide, sidePorts, sidePorts, new HashSet<SelfLoopPort>());
+            Set<OldSelfLoopComponent> dependencies =
+                    getDependencyComponents(nodeSide, sidePorts, sidePorts, new HashSet<OldSelfLoopPort>());
             
             nodeSide.getComponentDependencies().clear();
             nodeSide.getComponentDependencies().addAll(dependencies);
@@ -72,23 +72,23 @@ public final class SelfLoopComponentDependencyGraphCalculator {
      * @param visitedPorts
      *            ports that have already been visited (pass an empty set on the initial call)
      */
-    private static Set<SelfLoopComponent> getDependencyComponents(final SelfLoopNodeSide side,
-            final List<SelfLoopPort> sidePorts, final List<SelfLoopPort> relevantPorts,
-            final Set<SelfLoopPort> visitedPorts) {
+    private static Set<OldSelfLoopComponent> getDependencyComponents(final OldSelfLoopNodeSide side,
+            final List<OldSelfLoopPort> sidePorts, final List<OldSelfLoopPort> relevantPorts,
+            final Set<OldSelfLoopPort> visitedPorts) {
 
-        Set<SelfLoopComponent> dependencyComponents = new HashSet<SelfLoopComponent>();
+        Set<OldSelfLoopComponent> dependencyComponents = new HashSet<OldSelfLoopComponent>();
 
         // iterate all ports
         for (int i = 0; i < relevantPorts.size(); i++) {
             // get the port, the component and the current dependencies
-            SelfLoopPort port = relevantPorts.get(i);
-            SelfLoopComponent component = port.getComponent();
-            Map<SelfLoopNodeSide, List<SelfLoopComponent>> dependenciesOfSide = component.getDependencyComponents();
+            OldSelfLoopPort port = relevantPorts.get(i);
+            OldSelfLoopComponent component = port.getComponent();
+            Map<OldSelfLoopNodeSide, List<OldSelfLoopComponent>> dependenciesOfSide = component.getDependencyComponents();
 
             // only process port if not already visited
             if (!visitedPorts.contains(port)) {
-                SelfLoopRoutingDirection direction = port.getDirection();
-                SelfLoopPort lastPortOfComponent = getLastPortOnSide(side, component);
+                OldSelfLoopRoutingDirection direction = port.getDirection();
+                OldSelfLoopPort lastPortOfComponent = getLastPortOnSide(side, component);
                 int lastPortIndex = i;
 
                 if (direction == null) {
@@ -100,14 +100,14 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                 case LEFT:
                     // has to be left open, otherwise it was already visited
                     // therefore all earlier dependencies belong under the new component
-                    dependenciesOfSide.put(side, new ArrayList<SelfLoopComponent>(dependencyComponents));
+                    dependenciesOfSide.put(side, new ArrayList<OldSelfLoopComponent>(dependencyComponents));
                     dependencyComponents.removeAll(dependencyComponents);
                     dependencyComponents.add(component);
                     break;
 
                 case RIGHT:
                     // set components ports to be visited
-                    List<SelfLoopPort> portsOfSide = component.getPortsOfSide(side.getSide());
+                    List<OldSelfLoopPort> portsOfSide = component.getPortsOfSide(side.getSide());
                     visitedPorts.addAll(portsOfSide);
 
                     // has to be highest component otherwise it would have been visited earlier
@@ -120,10 +120,10 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                         lastPortIndex = sidePorts.size();
                     }
                     
-                    List<SelfLoopPort> wrappedPorts = sidePorts.subList(i + 1, lastPortIndex);
-                    Set<SelfLoopComponent> rightSideOpenDependencies =
+                    List<OldSelfLoopPort> wrappedPorts = sidePorts.subList(i + 1, lastPortIndex);
+                    Set<OldSelfLoopComponent> rightSideOpenDependencies =
                             getDependencyComponents(side, sidePorts, wrappedPorts, visitedPorts);
-                    dependenciesOfSide.put(side, new ArrayList<SelfLoopComponent>(rightSideOpenDependencies));
+                    dependenciesOfSide.put(side, new ArrayList<OldSelfLoopComponent>(rightSideOpenDependencies));
                     break;
                     
                 case BOTH:
@@ -134,7 +134,7 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                     }
 
                     // only the case where this port is the only one on this side can occur
-                    ArrayList<SelfLoopComponent> dependencies = new ArrayList<SelfLoopComponent>(dependencyComponents);
+                    ArrayList<OldSelfLoopComponent> dependencies = new ArrayList<OldSelfLoopComponent>(dependencyComponents);
                     dependencyComponents.removeAll(dependencyComponents);
                     dependencyComponents.add(component);
 
@@ -144,15 +144,15 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                         lastPortIndex = sidePorts.size();
                     }
                     
-                    Set<SelfLoopComponent> rightSideOpenDependencies2 = getDependencyComponents(side, sidePorts,
+                    Set<OldSelfLoopComponent> rightSideOpenDependencies2 = getDependencyComponents(side, sidePorts,
                             sidePorts.subList(i + 1, lastPortIndex), visitedPorts);
-                    dependencies.addAll(new ArrayList<SelfLoopComponent>(rightSideOpenDependencies2));
+                    dependencies.addAll(new ArrayList<OldSelfLoopComponent>(rightSideOpenDependencies2));
                     dependenciesOfSide.put(side, dependencies);
                     break;
                 }
                 
                 // set components ports to be visited
-                List<SelfLoopPort> portsOfSide = component.getPortsOfSide(side.getSide());
+                List<OldSelfLoopPort> portsOfSide = component.getPortsOfSide(side.getSide());
                 visitedPorts.addAll(portsOfSide);
             }
         }
@@ -163,12 +163,12 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * Get the last of the given component's ports placed on the given side.
      */
-    private static SelfLoopPort getLastPortOnSide(final SelfLoopNodeSide side, final SelfLoopComponent component) {
-        SelfLoopPort lastPort = null;
-        List<SelfLoopPort> ports = side.getPorts();
+    private static OldSelfLoopPort getLastPortOnSide(final OldSelfLoopNodeSide side, final OldSelfLoopComponent component) {
+        OldSelfLoopPort lastPort = null;
+        List<OldSelfLoopPort> ports = side.getPorts();
         
         for (int i = ports.size() - 1; i >= 0; i--) {
-            SelfLoopPort currentPort = ports.get(i);
+            OldSelfLoopPort currentPort = ports.get(i);
             if (currentPort.getComponent() == component) {
                 lastPort = currentPort;
                 break;
@@ -185,23 +185,23 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * Calculates edge dependencies for all components in the list and stores them in the components.
      */
-    public static void calculateEdgeDependecies(final List<SelfLoopComponent> components) {
-        for (SelfLoopComponent component : components) {
+    public static void calculateEdgeDependecies(final List<OldSelfLoopComponent> components) {
+        for (OldSelfLoopComponent component : components) {
             // iterate the sides
             int numberOfPortSides = PortSide.values().length - 1;
-            List<SelfLoopPort> ports = component.getPorts();
+            List<OldSelfLoopPort> ports = component.getPorts();
             PortSide currentSide = ports.get(0).getPortSide();
 
             for (int i = 0; i < numberOfPortSides; i++) {
-                List<SelfLoopPort> sidePorts = component.getPortsOfSide(currentSide);
+                List<OldSelfLoopPort> sidePorts = component.getPortsOfSide(currentSide);
                 
                 // filter non-loop components
                 if (ports.size() > 1) {
-                    List<SelfLoopEdge> dependencies = calculateEdgeOrder(
-                            ports, sidePorts, new HashSet<SelfLoopEdge>(), currentSide, false);
+                    List<OldSelfLoopEdge> dependencies = calculateEdgeOrder(
+                            ports, sidePorts, new HashSet<OldSelfLoopEdge>(), currentSide, false);
                     component.getEdgeDependencies().put(currentSide, dependencies);
                 } else {
-                    component.getEdgeDependencies().put(currentSide, new ArrayList<SelfLoopEdge>());
+                    component.getEdgeDependencies().put(currentSide, new ArrayList<OldSelfLoopEdge>());
                 }
                 
                 // update the side
@@ -213,36 +213,36 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * TODO: Document.
      */
-    private static List<SelfLoopEdge> calculateEdgeOrder(final List<SelfLoopPort> allPorts,
-            final List<SelfLoopPort> portsToVisit, final Set<SelfLoopEdge> visitedEdges, final PortSide side,
+    private static List<OldSelfLoopEdge> calculateEdgeOrder(final List<OldSelfLoopPort> allPorts,
+            final List<OldSelfLoopPort> portsToVisit, final Set<OldSelfLoopEdge> visitedEdges, final PortSide side,
             final boolean ignoreLeftPointing) {
 
-        List<SelfLoopEdge> dependencyEdges = new ArrayList<SelfLoopEdge>();
-        List<SelfLoopEdge> previousEdges = new ArrayList<SelfLoopEdge>();
+        List<OldSelfLoopEdge> dependencyEdges = new ArrayList<OldSelfLoopEdge>();
+        List<OldSelfLoopEdge> previousEdges = new ArrayList<OldSelfLoopEdge>();
 
         for (int i = 0; i < portsToVisit.size(); i++) {
             // keep track of visited edges, to process each one only once
-            SelfLoopPort port = portsToVisit.get(i);
-            List<SelfLoopEdge> portEdges = new ArrayList<>(port.getConnectedEdges());
+            OldSelfLoopPort port = portsToVisit.get(i);
+            List<OldSelfLoopEdge> portEdges = new ArrayList<>(port.getConnectedEdges());
             portEdges.removeAll(visitedEdges);
 
             if (portEdges.isEmpty()) { // if no edges are left, there is nothing to do
                 continue;
                 
             } else if (portEdges.size() == 1) {
-                SelfLoopEdge onlyPortEdge = portEdges.get(0);
+                OldSelfLoopEdge onlyPortEdge = portEdges.get(0);
                 visitedEdges.add(onlyPortEdge);
 
-                SelfLoopPort targetPort = oppositePort(port, onlyPortEdge);
+                OldSelfLoopPort targetPort = oppositePort(port, onlyPortEdge);
                 int targetIndexAllPorts = allPorts.indexOf(targetPort);
                 int targetIndexSidePorts = portsToVisit.indexOf(targetPort);
                 int portIndex = allPorts.indexOf(port);
-                List<SelfLoopPort> nextPortsToVisit = new ArrayList<SelfLoopPort>();
+                List<OldSelfLoopPort> nextPortsToVisit = new ArrayList<OldSelfLoopPort>();
 
                 if (targetPort.getPortSide() != side && targetIndexAllPorts < portIndex) {
                     // left-pointing
                     if (!ignoreLeftPointing) {
-                        addEdgeDependencyToEdge(onlyPortEdge, new ArrayList<SelfLoopEdge>(dependencyEdges), side);
+                        addEdgeDependencyToEdge(onlyPortEdge, new ArrayList<OldSelfLoopEdge>(dependencyEdges), side);
                         dependencyEdges.clear();
                         dependencyEdges.add(onlyPortEdge);
                         i--;
@@ -263,31 +263,31 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                 
             } else {
                 // there are multiple edges connected with one port
-                List<SelfLoopEdge> leftPointingEdges = getLeftwardPointingEdges(port, visitedEdges, allPorts);
+                List<OldSelfLoopEdge> leftPointingEdges = getLeftwardPointingEdges(port, visitedEdges, allPorts);
 
                 if (leftPointingEdges.isEmpty()) {
                     // the edges are all right pointing
 
                     // sort connected ports by
-                    portEdges.sort((SelfLoopEdge edge1, SelfLoopEdge edge2) -> {
-                        SelfLoopPort targetPort1 = oppositePort(port, edge1);
-                        SelfLoopPort targetPort2 = oppositePort(port, edge2);
+                    portEdges.sort((OldSelfLoopEdge edge1, OldSelfLoopEdge edge2) -> {
+                        OldSelfLoopPort targetPort1 = oppositePort(port, edge1);
+                        OldSelfLoopPort targetPort2 = oppositePort(port, edge2);
                         int index1 = allPorts.indexOf(targetPort1);
                         int index2 = allPorts.indexOf(targetPort2);
                         return -1 * Integer.compare(index1, index2);
                     });
                     
                     // outermost edge is marked as visited
-                    SelfLoopEdge outermostEdge = portEdges.get(0);
+                    OldSelfLoopEdge outermostEdge = portEdges.get(0);
                     visitedEdges.add(outermostEdge);
                     dependencyEdges.add(outermostEdge);
 
-                    SelfLoopPort otherPort = oppositePort(port, outermostEdge);
+                    OldSelfLoopPort otherPort = oppositePort(port, outermostEdge);
 
-                    List<SelfLoopPort> nextPortsToVisit = new ArrayList<SelfLoopPort>();
+                    List<OldSelfLoopPort> nextPortsToVisit = new ArrayList<OldSelfLoopPort>();
                     if (otherPort.getPortSide() == side) {
                         // the next port is on the same side
-                        List<SelfLoopEdge> hasOtherPortsConnected = getLeftwardPointingEdges(
+                        List<OldSelfLoopEdge> hasOtherPortsConnected = getLeftwardPointingEdges(
                                 otherPort, visitedEdges, allPorts);
 
                         // the list remains untouched if other edges might need the targetPort of the outermost edge
@@ -305,14 +305,14 @@ public final class SelfLoopComponentDependencyGraphCalculator {
                 } else {
                     if (!ignoreLeftPointing) {
 
-                        portEdges.sort((SelfLoopEdge edge1, SelfLoopEdge edge2) -> {
-                            SelfLoopPort targetPort1 = oppositePort(port, edge1);
-                            SelfLoopPort targetPort2 = oppositePort(port, edge2);
+                        portEdges.sort((OldSelfLoopEdge edge1, OldSelfLoopEdge edge2) -> {
+                            OldSelfLoopPort targetPort1 = oppositePort(port, edge1);
+                            OldSelfLoopPort targetPort2 = oppositePort(port, edge2);
                             int index1 = allPorts.indexOf(targetPort1);
                             int index2 = allPorts.indexOf(targetPort2);
                             return Integer.compare(index1, index2);
                         });
-                        SelfLoopEdge innermostLeftPointingEdge = portEdges.get(0);
+                        OldSelfLoopEdge innermostLeftPointingEdge = portEdges.get(0);
                         visitedEdges.add(innermostLeftPointingEdge);
                         addEdgeDependencyToEdge(innermostLeftPointingEdge, new ArrayList<>(dependencyEdges), side);
                         dependencyEdges.clear();
@@ -329,18 +329,18 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * Returns all edges incident ot the given port that connect it to ports to its left.
      */
-    private static List<SelfLoopEdge> getLeftwardPointingEdges(final SelfLoopPort port,
-            final Set<SelfLoopEdge> visitedEdges, final List<SelfLoopPort> allPorts) {
+    private static List<OldSelfLoopEdge> getLeftwardPointingEdges(final OldSelfLoopPort port,
+            final Set<OldSelfLoopEdge> visitedEdges, final List<OldSelfLoopPort> allPorts) {
         
-        List<SelfLoopEdge> connectedEdges = port.getConnectedEdges();
+        List<OldSelfLoopEdge> connectedEdges = port.getConnectedEdges();
         connectedEdges.removeAll(visitedEdges);
         int portIndex = allPorts.indexOf(port);
-        Set<SelfLoopPort> perviousPorts = new HashSet<>(allPorts.subList(0, portIndex));
+        Set<OldSelfLoopPort> perviousPorts = new HashSet<>(allPorts.subList(0, portIndex));
 
-        List<SelfLoopEdge> leftwardEdges = new ArrayList<SelfLoopEdge>();
+        List<OldSelfLoopEdge> leftwardEdges = new ArrayList<OldSelfLoopEdge>();
 
-        for (SelfLoopEdge edge : connectedEdges) {
-            SelfLoopPort otherEndPort = oppositePort(port, edge);
+        for (OldSelfLoopEdge edge : connectedEdges) {
+            OldSelfLoopPort otherEndPort = oppositePort(port, edge);
             if (perviousPorts.contains(otherEndPort)) {
                 leftwardEdges.add(edge);
             }
@@ -351,11 +351,11 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * Stores the given dependencies on the given side in the given edge.
      */
-    private static void addEdgeDependencyToEdge(final SelfLoopEdge edge, final List<SelfLoopEdge> newDependencies,
+    private static void addEdgeDependencyToEdge(final OldSelfLoopEdge edge, final List<OldSelfLoopEdge> newDependencies,
             final PortSide side) {
         
-        Map<PortSide, List<SelfLoopEdge>> dependencyMap = edge.getDependencyEdges();
-        List<SelfLoopEdge> sideDependencies = dependencyMap.get(side);
+        Map<PortSide, List<OldSelfLoopEdge>> dependencyMap = edge.getDependencyEdges();
+        List<OldSelfLoopEdge> sideDependencies = dependencyMap.get(side);
         if (sideDependencies == null) {
             dependencyMap.put(side, newDependencies);
         } else {
@@ -367,7 +367,7 @@ public final class SelfLoopComponentDependencyGraphCalculator {
     /**
      * Returns the port the given edge connects the given port to.
      */
-    private static SelfLoopPort oppositePort(final SelfLoopPort port, final SelfLoopEdge edge) {
+    private static OldSelfLoopPort oppositePort(final OldSelfLoopPort port, final OldSelfLoopEdge edge) {
         assert edge.getSource() == port || edge.getTarget() == port;
         
         if (port == edge.getSource()) {

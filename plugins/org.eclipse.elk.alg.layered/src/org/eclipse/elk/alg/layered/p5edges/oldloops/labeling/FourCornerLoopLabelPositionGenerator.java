@@ -9,13 +9,13 @@ package org.eclipse.elk.alg.layered.p5edges.oldloops.labeling;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.util.SelfLoopBendpointCalculationUtil;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
@@ -31,15 +31,15 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
     /**
      * Creates a new generator for the given self loop node.
      */
-    public FourCornerLoopLabelPositionGenerator(final SelfLoopNode slNode) {
+    public FourCornerLoopLabelPositionGenerator(final OldSelfLoopNode slNode) {
         super(slNode);
     }
 
     @Override
-    public void generatePositions(final SelfLoopComponent component) {
-        List<SelfLoopPort> ports = component.getPorts();
-        SelfLoopPort startPort = ports.get(0);
-        SelfLoopPort endPort = ports.get(ports.size() - 1);
+    public void generatePositions(final OldSelfLoopComponent component) {
+        List<OldSelfLoopPort> ports = component.getPorts();
+        OldSelfLoopPort startPort = ports.get(0);
+        OldSelfLoopPort endPort = ports.get(ports.size() - 1);
         
         // Retrieve the spacings active for this node
         double edgeEdgeSpacing = getEdgeEdgeSpacing();
@@ -59,7 +59,7 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
         KVector secondBend = endPosition.clone().add(dirVectorEnd.clone().scale(
                 (endPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
 
-        SelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
+        OldSelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
         List<KVector> cornerBends = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(getSelfLoopNode(),
                 startPort, endPort, firstBend, secondBend, edge);
         
@@ -68,7 +68,7 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
         PortSide[] segmentSides = new PortSide[3];
         PortSide startSide = startPort.getPortSide();
         
-        if (startPort.getDirection() == SelfLoopRoutingDirection.RIGHT) {
+        if (startPort.getDirection() == OldSelfLoopRoutingDirection.RIGHT) {
             segmentSides[0] = startSide.right();
             segmentSides[1] = segmentSides[0].right();
             segmentSides[2] = segmentSides[1].right();
@@ -81,12 +81,12 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
         addPositions(component, startPort, endPort, segmentSides, firstBend, cornerBends, secondBend);
     }
 
-    private void addPositions(final SelfLoopComponent component, final SelfLoopPort startPort,
-            final SelfLoopPort endPort, final PortSide[] segmentSides, final KVector firstBend,
+    private void addPositions(final OldSelfLoopComponent component, final OldSelfLoopPort startPort,
+            final OldSelfLoopPort endPort, final PortSide[] segmentSides, final KVector firstBend,
             final List<KVector> cornerBends, final KVector lastBend) {
         
-        SelfLoopLabel label = component.getSelfLoopLabel();
-        List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
+        OldSelfLoopLabel label = component.getSelfLoopLabel();
+        List<OldSelfLoopLabelPosition> positions = label.getCandidatePositions();
         
         // SUPPRESS CHECKSTYLE NEXT 40 MagicNumber
         

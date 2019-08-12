@@ -13,10 +13,10 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -30,10 +30,10 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     private static final double DISTANCE = 10.0;
 
     @Override
-    public void routeSideSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeSideSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        SelfLoopPort source = slEdge.getSource();
-        SelfLoopPort target = slEdge.getTarget();
+        OldSelfLoopPort source = slEdge.getSource();
+        OldSelfLoopPort target = slEdge.getTarget();
 
         // Calculate the basic bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -55,10 +55,10 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        final SelfLoopPort source = slEdge.getSource();
-        final SelfLoopPort target = slEdge.getTarget();
+        final OldSelfLoopPort source = slEdge.getSource();
+        final OldSelfLoopPort target = slEdge.getTarget();
 
         // Calculate the basic bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -87,13 +87,13 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeOpposingSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeOpposingSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        final SelfLoopPort source = slEdge.getSource();
-        final SelfLoopPort target = slEdge.getTarget();
+        final OldSelfLoopPort source = slEdge.getSource();
+        final OldSelfLoopPort target = slEdge.getTarget();
         
-        SelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        SelfLoopRoutingDirection routingDirection = computeRoutingDirection(source, target);
+        OldSelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+        OldSelfLoopRoutingDirection routingDirection = computeRoutingDirection(source, target);
 
         // Calculate the basic bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -107,13 +107,13 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
         List<KVector> sourceBendPoints = cutCornerBendPoints(sourceBendPoint, source,
                 source.getMaximumLevel() * DISTANCE, sourceBendPoint.distance(firstCorner));
 
-        PortSide nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        PortSide nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? source.getPortSide().left()
                 : source.getPortSide().right();
         List<KVector> firstCornerBendPoints = cutCornerBendPoints(firstCorner, nextSide, routingDirection,
                 sourceBendPoint.distance(firstCorner), secondCorner.distance(firstCorner), source.getMaximumLevel());
 
-        nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? nextSide.left()
                 : nextSide.right();
         List<KVector> secondCornerBendPoints = cutCornerBendPoints(secondCorner, nextSide, routingDirection,
@@ -133,13 +133,13 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeThreeCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeThreeCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge loop = slEdge.getEdge();
-        SelfLoopPort source = slEdge.getSource();
-        SelfLoopPort target = slEdge.getTarget();
+        OldSelfLoopPort source = slEdge.getSource();
+        OldSelfLoopPort target = slEdge.getTarget();
         
-        SelfLoopNode slNode = loop.getSource().getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        SelfLoopRoutingDirection routingDirection = computeRoutingDirection(source, target);
+        OldSelfLoopNode slNode = loop.getSource().getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+        OldSelfLoopRoutingDirection routingDirection = computeRoutingDirection(source, target);
 
         // Calculate the basic bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -154,21 +154,21 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
         List<KVector> sourceBendPoints = cutCornerBendPoints(sourceBendPoint, source,
                 source.getMaximumLevel() * DISTANCE, sourceBendPoint.distance(firstCornerBendPoint));
         
-        PortSide nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        PortSide nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? source.getPortSide().left()
                 : source.getPortSide().right();
         List<KVector> firstCornerBendPoints = cutCornerBendPoints(firstCornerBendPoint, nextSide, routingDirection,
                 sourceBendPoint.distance(firstCornerBendPoint),
                 secondCornerBendPoint.distance(firstCornerBendPoint), source.getMaximumLevel());
 
-        nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? nextSide.left()
                 : nextSide.right();
         List<KVector> secondCornerBendPoints = cutCornerBendPoints(secondCornerBendPoint, nextSide, routingDirection,
                 secondCornerBendPoint.distance(firstCornerBendPoint),
                 thirdCornerBendPoint.distance(secondCornerBendPoint), target.getMaximumLevel());
 
-        nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? nextSide.left()
                 : nextSide.right();
         List<KVector> thirdCornerBendPoints = cutCornerBendPoints(thirdCornerBendPoint, nextSide, routingDirection,
@@ -190,13 +190,13 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeFourCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeFourCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        final SelfLoopPort source = slEdge.getSource();
-        final SelfLoopPort target = slEdge.getTarget();
+        final OldSelfLoopPort source = slEdge.getSource();
+        final OldSelfLoopPort target = slEdge.getTarget();
         
-        SelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        SelfLoopRoutingDirection routingDirection = computeRoutingDirection(source, target);
+        OldSelfLoopNode slNode = lEdge.getSource().getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+        OldSelfLoopRoutingDirection routingDirection = computeRoutingDirection(source, target);
 
         // Calculate the basic bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge);
@@ -212,28 +212,28 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
         List<KVector> sourceBendPoints = cutCornerBendPoints(sourceBendPoint, source,
                 source.getMaximumLevel() * DISTANCE, sourceBendPoint.distance(firstCornerBendPoint));
 
-        PortSide nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        PortSide nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? source.getPortSide().left()
                 : source.getPortSide().right();
         List<KVector> firstCornerBendPoints = cutCornerBendPoints(firstCornerBendPoint, nextSide, routingDirection,
                 sourceBendPoint.distance(firstCornerBendPoint),
                 secondCornerBendPoint.distance(firstCornerBendPoint), source.getMaximumLevel());
 
-        nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? nextSide.left()
                 : nextSide.right();
         List<KVector> secondCornerBendPoints = cutCornerBendPoints(secondCornerBendPoint, nextSide, routingDirection,
                 secondCornerBendPoint.distance(firstCornerBendPoint),
                 thirdCornerBendPoint.distance(secondCornerBendPoint), target.getMaximumLevel());
 
-        nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? nextSide.left()
                 : nextSide.right();
         List<KVector> thirdCornerBendPoints = cutCornerBendPoints(thirdCornerBendPoint, nextSide, routingDirection,
                 secondCornerBendPoint.distance(thirdCornerBendPoint),
                 fourthCornerBendPoint.distance(thirdCornerBendPoint), target.getMaximumLevel());
 
-        nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? nextSide.left()
                 : nextSide.right();
         List<KVector> fourthCornerBendPoints = cutCornerBendPoints(fourthCornerBendPoint, nextSide, routingDirection,
@@ -264,10 +264,10 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     private static final double QUARTER = 0.25;
     
     /**
-     * Calls {@link #cutCornerBendPoints(KVector, PortSide, SelfLoopRoutingDirection, double, double, int)} by deriving
+     * Calls {@link #cutCornerBendPoints(KVector, PortSide, OldSelfLoopRoutingDirection, double, double, int)} by deriving
      * the port side, direction, and maximum level from the properties of the given port.
      */
-    private List<KVector> cutCornerBendPoints(final KVector bendPoint, final SelfLoopPort slPort,
+    private List<KVector> cutCornerBendPoints(final KVector bendPoint, final OldSelfLoopPort slPort,
             final double distanceToPreviousPoint, final double distanceToNextPoint) {
         
         return cutCornerBendPoints(bendPoint, slPort.getPortSide(), slPort.getDirection(), distanceToPreviousPoint,
@@ -278,7 +278,7 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
      * Turns the given bend point into two bend points placed such that they cut the corner.
      */
     private List<KVector> cutCornerBendPoints(final KVector bendPoint, final PortSide side,
-            final SelfLoopRoutingDirection routingDirection, final double distanceToPreviousPoint,
+            final OldSelfLoopRoutingDirection routingDirection, final double distanceToPreviousPoint,
             final double distanceToNextPoint, final int level) {
         
         List<KVector> result = new ArrayList<KVector>();
@@ -294,7 +294,7 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
         KVector firstCutBendpoint = bendPoint.clone().add(directionVector.scale(distanceValue));
         result.add(firstCutBendpoint);
 
-        PortSide nextSide = routingDirection == SelfLoopRoutingDirection.LEFT
+        PortSide nextSide = routingDirection == OldSelfLoopRoutingDirection.LEFT
                 ? side.left()
                 : side.right();
         
@@ -308,16 +308,16 @@ public class PolylineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     /**
-     * Returns the source port's routing direction or, if that is {@link SelfLoopRoutingDirection#BOTH}, a routing
+     * Returns the source port's routing direction or, if that is {@link OldSelfLoopRoutingDirection#BOTH}, a routing
      * direction derived from the target port.
      */
-    private SelfLoopRoutingDirection computeRoutingDirection(final SelfLoopPort source, final SelfLoopPort target) {
-        SelfLoopRoutingDirection result = source.getDirection();
+    private OldSelfLoopRoutingDirection computeRoutingDirection(final OldSelfLoopPort source, final OldSelfLoopPort target) {
+        OldSelfLoopRoutingDirection result = source.getDirection();
         
-        if (result == SelfLoopRoutingDirection.BOTH) {
-            result = target.getDirection() == SelfLoopRoutingDirection.LEFT
-                    ? SelfLoopRoutingDirection.RIGHT
-                    : SelfLoopRoutingDirection.LEFT;
+        if (result == OldSelfLoopRoutingDirection.BOTH) {
+            result = target.getDirection() == OldSelfLoopRoutingDirection.LEFT
+                    ? OldSelfLoopRoutingDirection.RIGHT
+                    : OldSelfLoopRoutingDirection.LEFT;
         }
         
         return result;

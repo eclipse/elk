@@ -17,14 +17,14 @@ import java.util.Set;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Represents the ports along one {@link PortSide side} of a {@link SelfLoopNode}.
+ * Represents the ports along one {@link PortSide side} of a {@link OldSelfLoopNode}.
  */
-public class SelfLoopNodeSide {
+public class OldSelfLoopNodeSide {
 
     /** The actual side information. */
     private final PortSide side;
     /** The ports which are placed on this node side. */
-    private final List<SelfLoopPort> ports = new ArrayList<>();
+    private final List<OldSelfLoopPort> ports = new ArrayList<>();
     /** The maximum level a port on this side has. */
     private int maximumPortLevel;
     /** The maximum level a segment on this side has. */
@@ -32,15 +32,15 @@ public class SelfLoopNodeSide {
     /** The maximum offset which has to be considered when calculating the margin of the node. */
     private double maximumLabelOffset;
     /** The segments which belong to an opposing self loop (space has to be reserved for them). */
-    private final Map<SelfLoopEdge, SelfLoopOpposingSegment> opposingSegments = new HashMap<>();
+    private final Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment> opposingSegments = new HashMap<>();
     /** The roots of the component dependency graph. They hold the outermost components of the node side. */
-    private final Set<SelfLoopComponent> componentDependencies = new HashSet<>();
+    private final Set<OldSelfLoopComponent> componentDependencies = new HashSet<>();
 
     
     /**
      * Creates a new instance that represents the given port side.
      */
-    public SelfLoopNodeSide(final PortSide side) {
+    public OldSelfLoopNodeSide(final PortSide side) {
         this.side = side;
     }
     
@@ -55,7 +55,7 @@ public class SelfLoopNodeSide {
     /**
      * Returns the ports on this node side.
      */
-    public List<SelfLoopPort> getPorts() {
+    public List<OldSelfLoopPort> getPorts() {
         return ports;
     }
 
@@ -104,14 +104,14 @@ public class SelfLoopNodeSide {
     /**
      * Returns the self loops that belong to an opposing segment.
      */
-    public Map<SelfLoopEdge, SelfLoopOpposingSegment> getOpposingSegments() {
+    public Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment> getOpposingSegments() {
         return opposingSegments;
     }
 
     /**
      * Returns component dependencies.
      */
-    public Set<SelfLoopComponent> getComponentDependencies() {
+    public Set<OldSelfLoopComponent> getComponentDependencies() {
         return componentDependencies;
     }
 

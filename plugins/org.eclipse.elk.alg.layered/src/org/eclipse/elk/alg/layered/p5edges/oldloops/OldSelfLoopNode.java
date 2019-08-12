@@ -17,28 +17,28 @@ import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Represents one node of the graph. Instead of one list of ports for one node it provides access to one
- * {@link SelfLoopNodeSide} object for each side of the node. It also keeps a list of self loop components.
+ * {@link OldSelfLoopNodeSide} object for each side of the node. It also keeps a list of self loop components.
  */
-public class SelfLoopNode {
+public class OldSelfLoopNode {
 
     /** The original node this class represents. */
     private final LNode node;
     /** A map from all four port sides to their respective node side objects. */
-    private final EnumMap<PortSide, SelfLoopNodeSide> nodeSides = new EnumMap<>(PortSide.class);
+    private final EnumMap<PortSide, OldSelfLoopNodeSide> nodeSides = new EnumMap<>(PortSide.class);
     /** List of self loop components this node has. */
-    private final List<SelfLoopComponent> selfLoopComponents = new ArrayList<>();
+    private final List<OldSelfLoopComponent> selfLoopComponents = new ArrayList<>();
 
     
     /**
      * Create a new instance to represent the given node.
      */
-    public SelfLoopNode(final LNode node) {
+    public OldSelfLoopNode(final LNode node) {
         this.node = node;
         
-        nodeSides.put(PortSide.NORTH, new SelfLoopNodeSide(PortSide.NORTH));
-        nodeSides.put(PortSide.EAST, new SelfLoopNodeSide(PortSide.EAST));
-        nodeSides.put(PortSide.SOUTH, new SelfLoopNodeSide(PortSide.SOUTH));
-        nodeSides.put(PortSide.WEST, new SelfLoopNodeSide(PortSide.WEST));
+        nodeSides.put(PortSide.NORTH, new OldSelfLoopNodeSide(PortSide.NORTH));
+        nodeSides.put(PortSide.EAST, new OldSelfLoopNodeSide(PortSide.EAST));
+        nodeSides.put(PortSide.SOUTH, new OldSelfLoopNodeSide(PortSide.SOUTH));
+        nodeSides.put(PortSide.WEST, new OldSelfLoopNodeSide(PortSide.WEST));
     }
     
     
@@ -53,16 +53,16 @@ public class SelfLoopNode {
     }
     
     /**
-     * Returns the {@link SelfLoopNodeSide} that represents this node's given port side. 
+     * Returns the {@link OldSelfLoopNodeSide} that represents this node's given port side. 
      */
-    public SelfLoopNodeSide getNodeSide(final PortSide side) {
+    public OldSelfLoopNodeSide getNodeSide(final PortSide side) {
         return nodeSides.get(side);
     }
 
     /**
      * Returns all sides of the node representation.
      */
-    public Collection<SelfLoopNodeSide> getSides() {
+    public Collection<OldSelfLoopNodeSide> getSides() {
         return nodeSides.values();
     }
 
@@ -81,7 +81,7 @@ public class SelfLoopNode {
     /**
      * Returns the list of self loop components this node has.
      */
-    public List<SelfLoopComponent> getSelfLoopComponents() {
+    public List<OldSelfLoopComponent> getSelfLoopComponents() {
         return selfLoopComponents;
     }
     
@@ -97,7 +97,7 @@ public class SelfLoopNode {
      * @param side
      *            the side the port will be added to.
      */
-    public void prependPort(final SelfLoopPort port, final PortSide side) {
+    public void prependPort(final OldSelfLoopPort port, final PortSide side) {
         nodeSides.get(side).getPorts().add(0, port);
     }
 
@@ -109,9 +109,9 @@ public class SelfLoopNode {
      * @param side
      *            the side the ports will be added to.
      */
-    public void prependPorts(final List<SelfLoopPort> ports, final PortSide side) {
+    public void prependPorts(final List<OldSelfLoopPort> ports, final PortSide side) {
         // TODO This will effectively reverse the order of the ports, is that okay?
-        for (SelfLoopPort port : ports) {
+        for (OldSelfLoopPort port : ports) {
             prependPort(port, side);
         }
     }
@@ -124,7 +124,7 @@ public class SelfLoopNode {
      * @param side
      *            the side the port will be added to.
      */
-    public void appendPort(final SelfLoopPort port, final PortSide side) {
+    public void appendPort(final OldSelfLoopPort port, final PortSide side) {
         nodeSides.get(side).getPorts().add(port);
     }
 
@@ -136,7 +136,7 @@ public class SelfLoopNode {
      * @param side
      *            the side the ports will be added to.
      */
-    public void appendPorts(final List<SelfLoopPort> ports, final PortSide side) {
+    public void appendPorts(final List<OldSelfLoopPort> ports, final PortSide side) {
         nodeSides.get(side).getPorts().addAll(ports);
     }
     
@@ -159,8 +159,8 @@ public class SelfLoopNode {
     private void sideSpecificString(final StringBuilder builder, final PortSide portSide) {
         builder.append(portSide.toString() +  ": [");
         
-        SelfLoopNodeSide nodeSide = nodeSides.get(portSide);
-        for (SelfLoopPort port : nodeSide.getPorts()) {
+        OldSelfLoopNodeSide nodeSide = nodeSides.get(portSide);
+        for (OldSelfLoopPort port : nodeSide.getPorts()) {
             builder.append(port);
 
             if (nodeSide.getPorts().indexOf(port) != nodeSide.getPorts().size()) {

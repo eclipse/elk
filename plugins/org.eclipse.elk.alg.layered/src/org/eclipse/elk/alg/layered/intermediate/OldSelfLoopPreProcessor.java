@@ -21,9 +21,9 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
@@ -39,7 +39,7 @@ import com.google.common.math.DoubleMath;
  *   <dt>Precondition:</dt>
  *     <dd>A layered graph.</dd>
  *   <dt>Postcondition:</dt>
- *     <dd>All ports are grouped into connected {@link SelfLoopComponent}s.</dd>
+ *     <dd>All ports are grouped into connected {@link OldSelfLoopComponent}s.</dd>
  *     <dd>The components are added to the {@link InternalProperties#SELFLOOP_COMPONENTS} property of the node.</dd>
  *     <dd>Some ports are removed from the node: all ports only having self loops connected to them.</dd>
  *   <dt>Slots:</dt>
@@ -71,11 +71,11 @@ public final class OldSelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
      */
     private void processNode(final LNode node, final Direction layoutDirection) {
         // create a self loop node representation
-        SelfLoopNode slNode = new SelfLoopNode(node);
-        node.setProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION, slNode);
+        OldSelfLoopNode slNode = new OldSelfLoopNode(node);
+        node.setProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION, slNode);
         
         // calculate the SelfLoopComponents of the node and save them to it's properties
-        SelfLoopComponent.createSelfLoopComponents(slNode);
+        OldSelfLoopComponent.createSelfLoopComponents(slNode);
         
         // pre-process labels
         preprocessLabels(slNode, layoutDirection);
@@ -88,14 +88,14 @@ public final class OldSelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
 
     /**
      * For each component the labels of the contained edges are collected and put together to one label. This joint
-     * label is stored in a {@link SelfLoopLabel}.
+     * label is stored in a {@link OldSelfLoopLabel}.
      */
-    public void preprocessLabels(final SelfLoopNode slNode, final Direction layoutDirection) {
+    public void preprocessLabels(final OldSelfLoopNode slNode, final Direction layoutDirection) {
         boolean verticalLayout = layoutDirection.isVertical();
         double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(
                 slNode.getNode(), LayeredOptions.SPACING_LABEL_LABEL);
         
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
             // Retrieve all labels attached to edges that belong to this component
             List<LLabel> labels = component.getConnectedEdges().stream()
                 .filter(edge -> edge.getEdge().isSelfLoop())
@@ -134,7 +134,7 @@ public final class OldSelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
             }
 
             // Create a SelfLoopLabel for this component
-            SelfLoopLabel label = new SelfLoopLabel();
+            OldSelfLoopLabel label = new OldSelfLoopLabel();
             label.getLabels().addAll(labels);
             label.getSize().x = width;
             label.getSize().y = height;

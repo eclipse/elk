@@ -7,12 +7,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.oldloops.routing;
 
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 
 /**
  * Provide an interface for the different self-loop routers. Each router has to provide a method for routing each
- * self-loop type. A default method, {@link #routeSelfLoop(SelfLoopEdge, SelfLoopNode)}, delegates to
+ * self-loop type. A default method, {@link #routeSelfLoop(OldSelfLoopEdge, OldSelfLoopNode)}, delegates to
  * the appropriate implementation.
  */
 public interface ISelfLoopRouter {
@@ -20,6 +20,6 @@ public interface ISelfLoopRouter {
     /**
      * Routes the given self loop.
      */
-    void routeSelfLoop(SelfLoopEdge slEdge, SelfLoopNode slNode);
+    void routeSelfLoop(OldSelfLoopEdge slEdge, OldSelfLoopNode slNode);
     
 }

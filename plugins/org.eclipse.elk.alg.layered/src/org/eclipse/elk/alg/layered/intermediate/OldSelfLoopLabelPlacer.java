@@ -19,10 +19,10 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopLabelPosition;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopLabelPosition;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.labeling.SelfLoopComponentMerger;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.labeling.SelfLoopLabelPositionEvaluator;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.labeling.SelfLoopLabelPositionGeneration;
@@ -62,14 +62,14 @@ public final class OldSelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
         layeredGraph.getLayers().stream()
             .flatMap(layer -> layer.getNodes().stream())
             .filter(node -> node.getType() == NodeType.NORMAL)
-            .filter(node -> node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION))
+            .filter(node -> node.hasProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION))
             .forEach(node -> processNode(node, layoutDirection, monitor));
         
         monitor.done();
     }
 
     private void processNode(final LNode node, final Direction layoutDirection, final IElkProgressMonitor monitor) {
-        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
         assert slNode != null;
 
         // merge loops before generating the positions
@@ -92,13 +92,13 @@ public final class OldSelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
     /**
      * Apply the position information to the labels.
      */
-    private void placeLabels(final SelfLoopNode slNode, final Direction layoutDirection) {
+    private void placeLabels(final OldSelfLoopNode slNode, final Direction layoutDirection) {
         boolean verticalLayout = layoutDirection.isVertical();
         double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(slNode.getNode(),
                 LayeredOptions.SPACING_LABEL_LABEL);
         
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            SelfLoopLabel slLabel = component.getSelfLoopLabel();
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            OldSelfLoopLabel slLabel = component.getSelfLoopLabel();
             if (slLabel == null) {
                 continue;
             }
@@ -111,8 +111,8 @@ public final class OldSelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
         }
     }
     
-    private void placeLabelsForHorizontalLayout(final SelfLoopLabel slLabel, final double labelLabelSpacing) {
-        SelfLoopLabelPosition slPosition = slLabel.getLabelPosition();
+    private void placeLabelsForHorizontalLayout(final OldSelfLoopLabel slLabel, final double labelLabelSpacing) {
+        OldSelfLoopLabelPosition slPosition = slLabel.getLabelPosition();
         KVector currCoordinates = slPosition.getPosition();
         
         for (LLabel lLabel : slLabel.getLabels()) {
@@ -137,10 +137,10 @@ public final class OldSelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
         }
     }
     
-    private void placeLabelsForVerticalLayout(final SelfLoopLabel slLabel, final double labelLabelSpacing,
+    private void placeLabelsForVerticalLayout(final OldSelfLoopLabel slLabel, final double labelLabelSpacing,
             final Direction layoutDirection) {
         
-        SelfLoopLabelPosition slPosition = slLabel.getLabelPosition();
+        OldSelfLoopLabelPosition slPosition = slLabel.getLabelPosition();
         KVector currCoordinates = slPosition.getPosition();
         
         // Due to the way layout directions work, we need to pay attention to the order in which we place labels. While

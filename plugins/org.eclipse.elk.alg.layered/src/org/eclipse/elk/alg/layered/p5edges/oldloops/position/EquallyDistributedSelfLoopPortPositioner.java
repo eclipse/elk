@@ -16,9 +16,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -46,20 +46,20 @@ public class EquallyDistributedSelfLoopPortPositioner extends AbstractSelfLoopPo
     @Override
     public void position(final LNode node) {
         // Receive the node representation and the self loop components
-        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
+        OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
+        List<OldSelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // Sort by size
         components.sort((comp1, comp2) -> Integer.compare(comp1.getPorts().size(), comp2.getPorts().size()));
         
         // Distribute non-loop ports
-        List<SelfLoopComponent> nonLoopWest = new ArrayList<>();
-        List<SelfLoopComponent> nonLoopEast = new ArrayList<>();
+        List<OldSelfLoopComponent> nonLoopWest = new ArrayList<>();
+        List<OldSelfLoopComponent> nonLoopEast = new ArrayList<>();
         
         distributeNonLoops(node, components, nonLoopWest, nonLoopEast);
         
         // Distribute the components over the different sides and corners
-        Multimap<Sides, SelfLoopComponent> sides = ArrayListMultimap.create();
+        Multimap<Sides, OldSelfLoopComponent> sides = ArrayListMultimap.create();
         
         distributeComponentsEqually(components, sides);
 
@@ -83,13 +83,13 @@ public class EquallyDistributedSelfLoopPortPositioner extends AbstractSelfLoopPo
     /**
      * Distribute the components over the different sides and corners.
      */
-    private void distributeComponentsEqually(final List<SelfLoopComponent> components,
-            final Multimap<Sides, SelfLoopComponent> sides) {
+    private void distributeComponentsEqually(final List<OldSelfLoopComponent> components,
+            final Multimap<Sides, OldSelfLoopComponent> sides) {
 
         Sides[] availableSides = Sides.values();
         int currSideIndex = 0;
         
-        for (SelfLoopComponent component : components) {
+        for (OldSelfLoopComponent component : components) {
             sides.put(availableSides[currSideIndex], component);
             currSideIndex = (currSideIndex + 1) % availableSides.length;
         }
@@ -98,19 +98,19 @@ public class EquallyDistributedSelfLoopPortPositioner extends AbstractSelfLoopPo
     /**
      * Distribute the non loop components over the west and east side.
      */
-    private void distributeNonLoops(final LNode node, final List<SelfLoopComponent> components,
-            final List<SelfLoopComponent> nonLoopWest, final List<SelfLoopComponent> nonLoopEast) {
+    private void distributeNonLoops(final LNode node, final List<OldSelfLoopComponent> components,
+            final List<OldSelfLoopComponent> nonLoopWest, final List<OldSelfLoopComponent> nonLoopEast) {
         
         // filter the non loop components
-        List<SelfLoopComponent> nonLoopComponents = components.stream()
+        List<OldSelfLoopComponent> nonLoopComponents = components.stream()
                 .filter(comp -> comp.getPorts().size() == 1)
                 .collect(Collectors.toList());
 
         Layer currentLayer = node.getLayer();
         int currentLayerIndex = currentLayer.getIndex();
 
-        for (SelfLoopComponent component : nonLoopComponents) {
-            SelfLoopPort port = component.getPorts().get(0);
+        for (OldSelfLoopComponent component : nonLoopComponents) {
+            OldSelfLoopPort port = component.getPorts().get(0);
             port.setPortSide(PortSide.UNDEFINED);
             LPort lport = port.getLPort();
 

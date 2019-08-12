@@ -11,11 +11,11 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Describes a (possible) position of a {@link SelfLoopLabel}, along with a number of properties used internally by the
+ * Describes a (possible) position of a {@link OldSelfLoopLabel}, along with a number of properties used internally by the
  * placement algorithms. Each position has a base penalty associated with it: the higher the base penalty, the lower
  * the probability of its label actually being placed there.
  */
-public class SelfLoopLabelPosition {
+public class OldSelfLoopLabelPosition {
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Inner Classes
@@ -37,7 +37,7 @@ public class SelfLoopLabelPosition {
     // Fields
 
     /** The label that will be placed at this position. */
-    private final SelfLoopLabel label;
+    private final OldSelfLoopLabel label;
     /** The side of the node where the labels will be placed at. */
     private PortSide side;
     /** The position relative to the start port position of the component of this side. */
@@ -56,7 +56,7 @@ public class SelfLoopLabelPosition {
     /**
      * Creates a new instance.
      */
-    public SelfLoopLabelPosition(final SelfLoopLabel label, final KVector position) {
+    public OldSelfLoopLabelPosition(final OldSelfLoopLabel label, final KVector position) {
         this.label = label;
         this.originalPosition = position.clone();
         this.position = position.clone();
@@ -69,7 +69,7 @@ public class SelfLoopLabelPosition {
     /**
      * Returns the self loop label this object was created for.
      */
-    public SelfLoopLabel getLabel() {
+    public OldSelfLoopLabel getLabel() {
         return label;
     }
 

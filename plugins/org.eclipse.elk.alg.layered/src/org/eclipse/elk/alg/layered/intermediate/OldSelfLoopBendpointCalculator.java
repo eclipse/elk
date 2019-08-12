@@ -18,11 +18,11 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.routing.ISelfLoopRouter;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.routing.OrthogonalSelfLoopRouter;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.routing.PolylineSelfLoopRouter;
@@ -63,7 +63,7 @@ public final class OldSelfLoopBendpointCalculator implements ILayoutProcessor<LG
         layeredGraph.getLayers().stream()
             .flatMap(layer -> layer.getNodes().stream())
             .filter(node -> node.getType() == NodeType.NORMAL)
-            .filter(node -> node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION))
+            .filter(node -> node.hasProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION))
             .forEach(node -> processNode(node, loopRouter, routingStyle));
 
         monitor.done();
@@ -85,11 +85,11 @@ public final class OldSelfLoopBendpointCalculator implements ILayoutProcessor<LG
     }
 
     private void processNode(final LNode node, final ISelfLoopRouter loopRouter, final EdgeRouting routingStyle) {
-        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
         assert slNode != null;
         
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            for (SelfLoopEdge edge : component.getConnectedEdges()) {
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            for (OldSelfLoopEdge edge : component.getConnectedEdges()) {
                 loopRouter.routeSelfLoop(edge, slNode);
             }
 
@@ -100,10 +100,10 @@ public final class OldSelfLoopBendpointCalculator implements ILayoutProcessor<LG
     /**
      * Calculates the junction points for the given self loop component.
      */
-    private void calculateJunctionPoints(final SelfLoopComponent component, final EdgeRouting routingStyle) {
-        for (SelfLoopPort port : component.getPorts()) {
+    private void calculateJunctionPoints(final OldSelfLoopComponent component, final EdgeRouting routingStyle) {
+        for (OldSelfLoopPort port : component.getPorts()) {
             // middle port or there exits a junction with a non-loop edge
-            if (port.getDirection() == SelfLoopRoutingDirection.BOTH
+            if (port.getDirection() == OldSelfLoopRoutingDirection.BOTH
                     || (port.isNonLoopPort() && component.getPorts().size() != 1)) {
 
                 Iterator<LEdge> connectedEdges = port.getLPort().getConnectedEdges().iterator();

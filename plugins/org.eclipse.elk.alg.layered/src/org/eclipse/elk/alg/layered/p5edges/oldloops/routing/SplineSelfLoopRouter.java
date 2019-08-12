@@ -12,9 +12,9 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.NubsSelfLoop;
 import org.eclipse.elk.core.math.KVector;
 
@@ -28,9 +28,9 @@ public class SplineSelfLoopRouter extends AbstractSelfLoopRouter {
     private static final double DISTANCE = 10.0;
 
     @Override
-    public void routeSideSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeSideSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        SelfLoopPort source = slEdge.getSource();
+        OldSelfLoopPort source = slEdge.getSource();
         LPort sourceLPort = lEdge.getSource();
         LPort targetLPort = lEdge.getTarget();
 
@@ -47,10 +47,10 @@ public class SplineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
-        SelfLoopPort source = slEdge.getSource();
-        SelfLoopPort target = slEdge.getTarget();
+        OldSelfLoopPort source = slEdge.getSource();
+        OldSelfLoopPort target = slEdge.getTarget();
         LPort sourceLPort = lEdge.getSource();
         LPort targetLPort = lEdge.getTarget();
 
@@ -72,11 +72,11 @@ public class SplineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeOpposingSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeOpposingSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
         final LPort sourceLPort = lEdge.getSource();
         final LPort targetLPort = lEdge.getTarget();
-        SelfLoopNode slNode = sourceLPort.getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = sourceLPort.getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // Calculate bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge, false);
@@ -93,11 +93,11 @@ public class SplineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeThreeCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeThreeCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
         LPort sourceLPort = lEdge.getSource();
         LPort targetLPort = lEdge.getTarget();
-        SelfLoopNode slNode = sourceLPort.getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = sourceLPort.getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // Calculate bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge, false);
@@ -114,11 +114,11 @@ public class SplineSelfLoopRouter extends AbstractSelfLoopRouter {
     }
 
     @Override
-    public void routeFourCornerSelfLoop(final SelfLoopEdge slEdge) {
+    public void routeFourCornerSelfLoop(final OldSelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getEdge();
         LPort sourceLPort = lEdge.getSource();
         LPort targetLPort = lEdge.getTarget();
-        SelfLoopNode slNode = sourceLPort.getNode().getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = sourceLPort.getNode().getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // Calculate bend points
         KVector sourceBendPoint = computeSourceBendPoint(slEdge, false);

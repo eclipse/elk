@@ -13,13 +13,13 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopRoutingDirection;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopType;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopType;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.util.SelfLoopBendpointCalculationUtil;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
@@ -41,9 +41,9 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
     // Self Loop Routing
     
     @Override
-    public void routeSelfLoop(final SelfLoopEdge slEdge, final SelfLoopNode slNode) {
+    public void routeSelfLoop(final OldSelfLoopEdge slEdge, final OldSelfLoopNode slNode) {
         // Establish the self loop type and delegate to one of our specialized abstract methods
-        SelfLoopType type = SelfLoopType.getEdgeType(slEdge, slNode);
+        OldSelfLoopType type = OldSelfLoopType.getEdgeType(slEdge, slNode);
         
         switch (type) {
         case SIDE:
@@ -67,27 +67,27 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
     /**
      * Routes a side self loop.
      */
-    protected abstract void routeSideSelfLoop(SelfLoopEdge slEdge);
+    protected abstract void routeSideSelfLoop(OldSelfLoopEdge slEdge);
 
     /**
      * Routes a corner self loop.
      */
-    protected abstract void routeCornerSelfLoop(SelfLoopEdge slEdge);
+    protected abstract void routeCornerSelfLoop(OldSelfLoopEdge slEdge);
 
     /**
      * Routes an opposing-sides self loop.
      */
-    protected abstract void routeOpposingSelfLoop(SelfLoopEdge slEdge);
+    protected abstract void routeOpposingSelfLoop(OldSelfLoopEdge slEdge);
 
     /**
      * Routes a three-corner self loop.
      */
-    protected abstract void routeThreeCornerSelfLoop(SelfLoopEdge slEdge);
+    protected abstract void routeThreeCornerSelfLoop(OldSelfLoopEdge slEdge);
 
     /**
      * Routes a four-corner self loop.
      */
-    protected abstract void routeFourCornerSelfLoop(SelfLoopEdge slEdge);
+    protected abstract void routeFourCornerSelfLoop(OldSelfLoopEdge slEdge);
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * Calculate a bend point for the given edge's source. This will be the first bend point on the path the edge
      * will take from its source to its target.
      */
-    protected KVector computeSourceBendPoint(final SelfLoopEdge slEdge) {
+    protected KVector computeSourceBendPoint(final OldSelfLoopEdge slEdge) {
         return computeSourceBendPoint(slEdge, true);
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * Calculate a bend point for the given edge's source. This will be the first bend point on the path the edge
      * will take from its source to its target.
      */
-    protected KVector computeSourceBendPoint(final SelfLoopEdge slEdge, final boolean supportsHyperEdges) {
+    protected KVector computeSourceBendPoint(final OldSelfLoopEdge slEdge, final boolean supportsHyperEdges) {
         return computeSourceOrTargetBendPoint(slEdge, slEdge.getSource(), supportsHyperEdges);
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * Calculate a bend point for the given edge's target. This will be the last bend point on the path the edge
      * will take from its source to its target.
      */
-    protected KVector computeTargetBendPoint(final SelfLoopEdge slEdge) {
+    protected KVector computeTargetBendPoint(final OldSelfLoopEdge slEdge) {
         return computeTargetBendPoint(slEdge, true);
     }
 
@@ -121,11 +121,11 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * Calculate a bend point for the given edge's target. This will be the last bend point on the path the edge
      * will take from its source to its target.
      */
-    protected KVector computeTargetBendPoint(final SelfLoopEdge slEdge, final boolean supportsHyperEdges) {
+    protected KVector computeTargetBendPoint(final OldSelfLoopEdge slEdge, final boolean supportsHyperEdges) {
         return computeSourceOrTargetBendPoint(slEdge, slEdge.getTarget(), supportsHyperEdges);
     }
     
-    private KVector computeSourceOrTargetBendPoint(final SelfLoopEdge slEdge, final SelfLoopPort slPort,
+    private KVector computeSourceOrTargetBendPoint(final OldSelfLoopEdge slEdge, final OldSelfLoopPort slPort,
             final boolean supportsHyperEdges) {
         
         LEdge lEdge = slEdge.getEdge();
@@ -196,30 +196,30 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * @param targetBendPoint
      *            the bend point right before entering the target.
      */
-    protected List<KVector> computeCornerBendpoints(final SelfLoopNode slNode, final SelfLoopEdge slEdge,
+    protected List<KVector> computeCornerBendpoints(final OldSelfLoopNode slNode, final OldSelfLoopEdge slEdge,
             final KVector sourceBendPoint, final KVector targetBendPoint) {
         
         List<KVector> cornerBendpoints = new ArrayList<KVector>();
         KVector previousBendPoint = sourceBendPoint.clone();
         
-        SelfLoopPort source = slEdge.getSource();
+        OldSelfLoopPort source = slEdge.getSource();
         PortSide sourceSide = source.getPortSide();
         
-        SelfLoopPort target = slEdge.getTarget();
+        OldSelfLoopPort target = slEdge.getTarget();
         PortSide targetSide = target.getPortSide();
 
-        SelfLoopRoutingDirection routingDirection = source.getDirection();
-        if (source.getDirection() == SelfLoopRoutingDirection.BOTH) {
-            routingDirection = target.getDirection() == SelfLoopRoutingDirection.LEFT ? SelfLoopRoutingDirection.RIGHT
-                    : SelfLoopRoutingDirection.LEFT;
+        OldSelfLoopRoutingDirection routingDirection = source.getDirection();
+        if (source.getDirection() == OldSelfLoopRoutingDirection.BOTH) {
+            routingDirection = target.getDirection() == OldSelfLoopRoutingDirection.LEFT ? OldSelfLoopRoutingDirection.RIGHT
+                    : OldSelfLoopRoutingDirection.LEFT;
         }
-        PortSide nextside = routingDirection == SelfLoopRoutingDirection.LEFT ? sourceSide.left() : sourceSide.right();
-        SelfLoopNodeSide nodeSide;
+        PortSide nextside = routingDirection == OldSelfLoopRoutingDirection.LEFT ? sourceSide.left() : sourceSide.right();
+        OldSelfLoopNodeSide nodeSide;
 
         // in case of a four corner loop the corner loop calculation should be done at least once
         do {
             nodeSide = slNode.getNodeSide(nextside);
-            SelfLoopOpposingSegment segment = nodeSide.getOpposingSegments().get(slEdge);
+            OldSelfLoopOpposingSegment segment = nodeSide.getOpposingSegments().get(slEdge);
             // if (segment != null) {
             double middlePadding = (DISTANCE * segment.getLevel()) + segment.getLabelOffset() + ANCHOR_HEIGHT;
             // calculate second and third control points
@@ -229,7 +229,7 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
 
             cornerBendpoints.add(secondCP);
             previousBendPoint = secondCP;
-            nextside = routingDirection == SelfLoopRoutingDirection.LEFT ? nextside.left() : nextside.right();
+            nextside = routingDirection == OldSelfLoopRoutingDirection.LEFT ? nextside.left() : nextside.right();
         } while (nextside != targetSide);
 
         final KVector secondCP = computeSingleCornerBendPoint(previousBendPoint, targetBendPoint, target.getPortSide());

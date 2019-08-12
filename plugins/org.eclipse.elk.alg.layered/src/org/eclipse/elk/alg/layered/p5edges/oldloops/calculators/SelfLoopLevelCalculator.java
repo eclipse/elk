@@ -16,12 +16,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -42,13 +42,13 @@ public final class SelfLoopLevelCalculator {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Comparators
 
-    private static final Comparator<SelfLoopOpposingSegment> OPPOSING_COMPARATOR = (segment1, segment2) -> {
-            SelfLoopComponent component1 = segment1.getComponent();
-            SelfLoopPort firstPort1 = component1.getPorts().get(0);
+    private static final Comparator<OldSelfLoopOpposingSegment> OPPOSING_COMPARATOR = (segment1, segment2) -> {
+            OldSelfLoopComponent component1 = segment1.getComponent();
+            OldSelfLoopPort firstPort1 = component1.getPorts().get(0);
             
-            SelfLoopComponent component2 = segment2.getComponent();
-            SelfLoopPort firstPort2 = component2.getPorts().get(0);
-            SelfLoopPort secondPort2 = component2.getPorts().get(component2.getPorts().size() - 1);
+            OldSelfLoopComponent component2 = segment2.getComponent();
+            OldSelfLoopPort firstPort2 = component2.getPorts().get(0);
+            OldSelfLoopPort secondPort2 = component2.getPorts().get(component2.getPorts().size() - 1);
 
             if (firstPort1.getDirection() == firstPort2.getDirection()) {
                 return -1 * Integer.compare(firstPort1.getOriginalIndex(), firstPort2.getOriginalIndex());
@@ -57,17 +57,17 @@ public final class SelfLoopLevelCalculator {
             }
         };
 
-    private static final Comparator<Entry<SelfLoopEdge, SelfLoopOpposingSegment>> OPPOSING_NON_HYPER_EDGE_COMPARATOR =
+    private static final Comparator<Entry<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> OPPOSING_NON_HYPER_EDGE_COMPARATOR =
         (entry1, entry2) -> {
-            SelfLoopOpposingSegment segment1 = entry1.getValue();
-            SelfLoopOpposingSegment segment2 = entry2.getValue();
-            SelfLoopComponent component1 = segment1.getComponent();
-            SelfLoopComponent component2 = segment2.getComponent();
+            OldSelfLoopOpposingSegment segment1 = entry1.getValue();
+            OldSelfLoopOpposingSegment segment2 = entry2.getValue();
+            OldSelfLoopComponent component1 = segment1.getComponent();
+            OldSelfLoopComponent component2 = segment2.getComponent();
 
             if (component1 == component2) {
                 PortSide segmentSide = segment1.getSide();
-                SelfLoopEdge edge1 = entry1.getKey();
-                SelfLoopEdge edge2 = entry2.getKey();
+                OldSelfLoopEdge edge1 = entry1.getKey();
+                OldSelfLoopEdge edge2 = entry2.getKey();
                 PortSide nextSide = segmentSide.left();
                 Integer order1;
                 Integer order2;
@@ -81,9 +81,9 @@ public final class SelfLoopLevelCalculator {
                 return Integer.compare(order1, order2);
             }
 
-            SelfLoopPort firstPort1 = component1.getPorts().get(0);
-            SelfLoopPort firstPort2 = component2.getPorts().get(0);
-            SelfLoopPort secondPort2 = component2.getPorts().get(component2.getPorts().size() - 1);
+            OldSelfLoopPort firstPort1 = component1.getPorts().get(0);
+            OldSelfLoopPort firstPort2 = component2.getPorts().get(0);
+            OldSelfLoopPort secondPort2 = component2.getPorts().get(component2.getPorts().size() - 1);
 
             if (firstPort1.getDirection() == firstPort2.getDirection()) {
                 return -1 * Integer.compare(firstPort1.getOriginalIndex(), firstPort2.getOriginalIndex());
@@ -100,9 +100,9 @@ public final class SelfLoopLevelCalculator {
      * The actual level of each port of a node is calculated by making use of the component's dependencies. In case
      * hyperedges are supported, depth-first search can be used.
      */
-    public static void calculatePortLevels(final SelfLoopNode slNode) {
-        for (SelfLoopNodeSide side : slNode.getSides()) {
-            ArrayList<SelfLoopComponent> sideComponentDependencies = new ArrayList<>(side.getComponentDependencies());
+    public static void calculatePortLevels(final OldSelfLoopNode slNode) {
+        for (OldSelfLoopNodeSide side : slNode.getSides()) {
+            ArrayList<OldSelfLoopComponent> sideComponentDependencies = new ArrayList<>(side.getComponentDependencies());
             
             if (!sideComponentDependencies.isEmpty()) {
                 int maximumPortLevel = 0;
@@ -120,15 +120,15 @@ public final class SelfLoopLevelCalculator {
     /**
      * Calculates the port levels for one side of a node.
      */
-    public static int calculateHyperedgePortLevels(final SelfLoopNodeSide side,
-            final List<SelfLoopComponent> components) {
+    public static int calculateHyperedgePortLevels(final OldSelfLoopNodeSide side,
+            final List<OldSelfLoopComponent> components) {
         
         int maximumLevel = 0;
         int componentLevel = 0;
 
-        for (SelfLoopComponent component : components) {
+        for (OldSelfLoopComponent component : components) {
             // check whether there are more dependencies
-            List<SelfLoopComponent> sideDependencies = component.getDependencyComponents().get(side);
+            List<OldSelfLoopComponent> sideDependencies = component.getDependencyComponents().get(side);
             if (sideDependencies == null || sideDependencies.isEmpty()) {
                 // if there are no dependencies the level is one
                 componentLevel = 1;
@@ -141,7 +141,7 @@ public final class SelfLoopLevelCalculator {
             maximumLevel = Math.max(maximumLevel, componentLevel);
 
             // assign level to each port of the component
-            for (SelfLoopPort port : component.getPorts()) {
+            for (OldSelfLoopPort port : component.getPorts()) {
                 if (port.getPortSide() == side.getSide()) {
                     port.setMaximumLevel(componentLevel);
                 }
@@ -154,14 +154,14 @@ public final class SelfLoopLevelCalculator {
     /**
      * Calculate the port levels for components for which hyperedges are not supported.
      */
-    private static int calculateNonHyperedgePortMaxLevels(final SelfLoopNodeSide side,
-            final ArrayList<SelfLoopComponent> components) {
+    private static int calculateNonHyperedgePortMaxLevels(final OldSelfLoopNodeSide side,
+            final ArrayList<OldSelfLoopComponent> components) {
         int maximumLevel = 0;
         int componentLevel = 0;
 
-        for (SelfLoopComponent component : components) {
+        for (OldSelfLoopComponent component : components) {
             // check whether there are more dependencies
-            List<SelfLoopComponent> sideDependencies = component.getDependencyComponents().get(side);
+            List<OldSelfLoopComponent> sideDependencies = component.getDependencyComponents().get(side);
             if (sideDependencies == null || sideDependencies.isEmpty()) {
                 // if there are no dependencies the level is one
                 componentLevel = 1;
@@ -174,7 +174,7 @@ public final class SelfLoopLevelCalculator {
             maximumLevel = Math.max(maximumLevel, componentLevel);
 
             // assign level to each port of the component
-            for (SelfLoopPort port : component.getPorts()) {
+            for (OldSelfLoopPort port : component.getPorts()) {
                 if (port.getPortSide() == side.getSide()) {
                     int connectedEdges = Iterables.size(port.getConnectedEdges());
                     port.setMaximumLevel(componentLevel + connectedEdges - 1);
@@ -190,11 +190,11 @@ public final class SelfLoopLevelCalculator {
     /**
      * Calculate the level for the opposing segments.
      */
-    public static void calculateOpposingSegmentLevel(final SelfLoopNode slNode) {
+    public static void calculateOpposingSegmentLevel(final OldSelfLoopNode slNode) {
         int maximumSegmentLevelOfNode = 0;
         boolean supportHyperedges = supportsHyperedges(slNode);
 
-        for (SelfLoopNodeSide side : slNode.getSides()) {
+        for (OldSelfLoopNodeSide side : slNode.getSides()) {
             if (supportHyperedges) {
                 maximumSegmentLevelOfNode = SelfLoopLevelCalculator.calculateHyperedgeOpposingSegmentMaxLevel(side,
                         new HashSet<>(side.getOpposingSegments().values()));
@@ -210,15 +210,15 @@ public final class SelfLoopLevelCalculator {
     /**
      * Calculates the maximum level for the given opposing segments on the given side.
      */
-    private static int calculateHyperedgeOpposingSegmentMaxLevel(final SelfLoopNodeSide side,
-            final Set<SelfLoopOpposingSegment> segments) {
+    private static int calculateHyperedgeOpposingSegmentMaxLevel(final OldSelfLoopNodeSide side,
+            final Set<OldSelfLoopOpposingSegment> segments) {
         
-        List<SelfLoopOpposingSegment> sortedSegments = new ArrayList<>(segments);
+        List<OldSelfLoopOpposingSegment> sortedSegments = new ArrayList<>(segments);
         sortedSegments.sort(OPPOSING_COMPARATOR);
         int level = side.getMaximumPortLevel();
         
-        for (SelfLoopOpposingSegment segment : sortedSegments) {
-            SelfLoopPort levelGivingPort = segment.getLevelGivingPort();
+        for (OldSelfLoopOpposingSegment segment : sortedSegments) {
+            OldSelfLoopPort levelGivingPort = segment.getLevelGivingPort();
             if (levelGivingPort != null) {
                 segment.setLevel(levelGivingPort.getMaximumLevel());
             } else {
@@ -232,16 +232,16 @@ public final class SelfLoopLevelCalculator {
     /**
      * Calculates the maximum level for the given opposing segments on the given side.
      */
-    public static int calculateNonHyperedgeOpposingSegmentMaxLevel(final SelfLoopNodeSide side,
-            final Map<SelfLoopEdge, SelfLoopOpposingSegment> opposingSegments) {
+    public static int calculateNonHyperedgeOpposingSegmentMaxLevel(final OldSelfLoopNodeSide side,
+            final Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment> opposingSegments) {
 
-        Set<Entry<SelfLoopEdge, SelfLoopOpposingSegment>> unsortedSegments = opposingSegments.entrySet();
-        ArrayList<Entry<SelfLoopEdge, SelfLoopOpposingSegment>> sortedSegments = new ArrayList<>(unsortedSegments);
+        Set<Entry<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> unsortedSegments = opposingSegments.entrySet();
+        ArrayList<Entry<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> sortedSegments = new ArrayList<>(unsortedSegments);
         sortedSegments.sort(OPPOSING_NON_HYPER_EDGE_COMPARATOR);
 
         int level = side.getMaximumPortLevel();
-        for (Entry<SelfLoopEdge, SelfLoopOpposingSegment> entry : sortedSegments) {
-            SelfLoopOpposingSegment segment = entry.getValue();
+        for (Entry<OldSelfLoopEdge, OldSelfLoopOpposingSegment> entry : sortedSegments) {
+            OldSelfLoopOpposingSegment segment = entry.getValue();
             segment.setLevel(++level);
         }
         return level;
@@ -254,11 +254,11 @@ public final class SelfLoopLevelCalculator {
     /**
      * Calculate the edge orders for the components on each side.
      */
-    public static void calculateEdgeOrders(final List<SelfLoopComponent> components) {
+    public static void calculateEdgeOrders(final List<OldSelfLoopComponent> components) {
         for (PortSide side : PortSide.values()) {
             if (side.ordinal() != 0) {
-                for (SelfLoopComponent component : components) {
-                    List<SelfLoopEdge> edgeDependencies = component.getEdgeDependencies().get(side);
+                for (OldSelfLoopComponent component : components) {
+                    List<OldSelfLoopEdge> edgeDependencies = component.getEdgeDependencies().get(side);
                     calculateEdgeOrder(side, edgeDependencies);
                 }
             }
@@ -268,11 +268,11 @@ public final class SelfLoopLevelCalculator {
     /**
      * Computes the edge order on the given side.
      */
-    private static int calculateEdgeOrder(final PortSide side, final List<SelfLoopEdge> edgeDependencies) {
+    private static int calculateEdgeOrder(final PortSide side, final List<OldSelfLoopEdge> edgeDependencies) {
         int maximumLevel = 0;
         int componentLevel = 0;
-        for (SelfLoopEdge edge : edgeDependencies) {
-            List<SelfLoopEdge> nextEdgeDependencies = edge.getDependencyEdges().get(side);
+        for (OldSelfLoopEdge edge : edgeDependencies) {
+            List<OldSelfLoopEdge> nextEdgeDependencies = edge.getDependencyEdges().get(side);
             if (nextEdgeDependencies == null || nextEdgeDependencies.isEmpty()) {
                 // if there are no dependencies the level is one
                 componentLevel = 1;
@@ -284,7 +284,7 @@ public final class SelfLoopLevelCalculator {
             maximumLevel = Math.max(maximumLevel, componentLevel);
         }
 
-        for (SelfLoopEdge edge : edgeDependencies) {
+        for (OldSelfLoopEdge edge : edgeDependencies) {
             Map<PortSide, Integer> orderMap = edge.getEdgeOrders();
             orderMap.put(side, maximumLevel);
         }
@@ -299,7 +299,7 @@ public final class SelfLoopLevelCalculator {
     /**
      * Checks whether the given node supports hyperedge routing.
      */
-    private static boolean supportsHyperedges(final SelfLoopNode nodeRep) {
+    private static boolean supportsHyperedges(final OldSelfLoopNode nodeRep) {
         return nodeRep.getNode().getGraph().getProperty(LayeredOptions.EDGE_ROUTING) != EdgeRouting.SPLINES;
     }
 }

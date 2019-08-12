@@ -20,8 +20,8 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -127,9 +127,9 @@ public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
     private void processSelfLoops(final LNode node) {
         LMargin nodeMargin = node.getMargin();
         ElkMargin selfLoopMargin = new ElkMargin();
-        SelfLoopNode nodeRep = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode nodeRep = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
         if (nodeRep != null) {
-            for (SelfLoopNodeSide side : nodeRep.getSides()) {
+            for (OldSelfLoopNodeSide side : nodeRep.getSides()) {
                 int maximumPortLevelOfNode = side.getMaximumPortLevel() + side.getMaximumSegmentLevel();
                 double maximumOffsetOfNode = side.getMaximumLabelOffset();
 

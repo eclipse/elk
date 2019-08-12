@@ -16,13 +16,13 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.core.math.KVector;
 
 /**
- * During self loop routing ports where processed using a {@link SelfLoopNode} object. These information now have to be
+ * During self loop routing ports where processed using a {@link OldSelfLoopNode} object. These information now have to be
  * added back to the original ports and the node, which is what the methods in this class do.
  */
 public final class SelfLoopNodePortRestorator {
@@ -37,15 +37,15 @@ public final class SelfLoopNodePortRestorator {
      * Copy the ports gathered while preprocessing back to the original node.
      */
     public static void restorePorts(final LNode node) {
-        SelfLoopNode nodeRep = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode nodeRep = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
         if (nodeRep == null) {
             return;
         }
         
         List<LPort> nodePorts = new ArrayList<LPort>();
 
-        for (SelfLoopNodeSide side : nodeRep.getSides()) {
-            for (SelfLoopPort port : side.getPorts()) {
+        for (OldSelfLoopNodeSide side : nodeRep.getSides()) {
+            for (OldSelfLoopPort port : side.getPorts()) {
                 LPort lPort = port.getLPort();
                 lPort.setSide(port.getPortSide());
                 nodePorts.add(lPort);
@@ -62,7 +62,7 @@ public final class SelfLoopNodePortRestorator {
      * position information to any port that was previously removed from the graph.
      */
     public static void restoreAndPlacePorts(final LNode node) {
-        SelfLoopNode nodeRep = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode nodeRep = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
         if (nodeRep == null) {
             return;
         }
@@ -71,12 +71,12 @@ public final class SelfLoopNodePortRestorator {
         List<LPort> realNodePorts = node.getPorts();
         Set<LPort> alreadyArranged = new HashSet<>(realNodePorts);
 
-        for (SelfLoopNodeSide side : nodeRep.getSides()) {
-            List<SelfLoopPort> sidePorts = side.getPorts();
+        for (OldSelfLoopNodeSide side : nodeRep.getSides()) {
+            List<OldSelfLoopPort> sidePorts = side.getPorts();
             double lastPosition = getInitialPosition(side, node);
             Double spacing = null;
             for (int i = 0; i < sidePorts.size(); i++) {
-                SelfLoopPort port = sidePorts.get(i);
+                OldSelfLoopPort port = sidePorts.get(i);
                 LPort lPort = port.getLPort();
                 if (alreadyArranged.contains(lPort)) {
                     spacing = null;
@@ -99,7 +99,7 @@ public final class SelfLoopNodePortRestorator {
     /**
      * Return the initial position for the given node side.
      */
-    private static double getInitialPosition(final SelfLoopNodeSide side, final LNode node) {
+    private static double getInitialPosition(final OldSelfLoopNodeSide side, final LNode node) {
         switch (side.getSide()) {
         case SOUTH:
             return node.getSize().x;
@@ -113,11 +113,11 @@ public final class SelfLoopNodePortRestorator {
     /**
      * Compute the spacing between ports to be positioned.
      */
-    private static double computeSpacing(final SelfLoopNodeSide side, final int startIndex,
+    private static double computeSpacing(final OldSelfLoopNodeSide side, final int startIndex,
             final double lastPosition, final LNode node, final Set<LPort> alreadyArranged) {
-        List<SelfLoopPort> sidePorts = side.getPorts();
+        List<OldSelfLoopPort> sidePorts = side.getPorts();
         for (int i = startIndex; i < sidePorts.size(); i++) {
-            SelfLoopPort port = sidePorts.get(i);
+            OldSelfLoopPort port = sidePorts.get(i);
             if (alreadyArranged.contains(port.getLPort())) {
                 KVector portPosition = port.getLPort().getPosition();
                 int divisor = i - startIndex + 2;

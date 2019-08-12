@@ -17,12 +17,12 @@ import java.util.Map;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p3order.counting.BinaryIndexedTree;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopEdge;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNode;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopNodeSide;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopOpposingSegment;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopEdge;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNodeSide;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopOpposingSegment;
+import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopPort;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -36,19 +36,19 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     @Override
     public void position(final LNode node) {
         // receive the node representation and the nodes components
-        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        OldSelfLoopNode slNode = node.getProperty(InternalProperties.SELF_LOOP_NODE_REPRESENTATION);
 
         // retrieve the ports from the components and sort them by their original index
-        List<SelfLoopPort> allPorts = new ArrayList<SelfLoopPort>();
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            List<SelfLoopPort> ports = component.getPorts();
+        List<OldSelfLoopPort> allPorts = new ArrayList<OldSelfLoopPort>();
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            List<OldSelfLoopPort> ports = component.getPorts();
             allPorts.addAll(ports);
         }
         allPorts.sort(ORIGINAL_INDEX_PORT_COMPARATOR);
 
         // add the original index to the ports
         for (int i = 0; i < allPorts.size(); i++) {
-            SelfLoopPort port = allPorts.get(i);
+            OldSelfLoopPort port = allPorts.get(i);
             port.setOriginalIndex(i);
             slNode.appendPort(port, port.getPortSide());
         }
@@ -58,12 +58,12 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
         minimizeCrossings(slNode);
 
         // create the opposing segments
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            Map<PortSide, Map<SelfLoopEdge, SelfLoopOpposingSegment>> componentSegments =
-                    SelfLoopOpposingSegment.create(component, slNode);
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            Map<PortSide, Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment>> componentSegments =
+                    OldSelfLoopOpposingSegment.create(component, slNode);
 
-            for (SelfLoopNodeSide side : slNode.getSides()) {
-                Map<SelfLoopEdge, SelfLoopOpposingSegment> segmentsOfSide = componentSegments.get(side.getSide());
+            for (OldSelfLoopNodeSide side : slNode.getSides()) {
+                Map<OldSelfLoopEdge, OldSelfLoopOpposingSegment> segmentsOfSide = componentSegments.get(side.getSide());
                 if (segmentsOfSide != null) {
                     side.getOpposingSegments().putAll(segmentsOfSide);
                 }
@@ -75,25 +75,25 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private void minimizeSides(final SelfLoopNode slNode) {
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            List<SelfLoopPort> ports = component.getPorts();
-            SelfLoopPort portWithGreatestDistanceToRight = ports.get(0);
+    private void minimizeSides(final OldSelfLoopNode slNode) {
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            List<OldSelfLoopPort> ports = component.getPorts();
+            OldSelfLoopPort portWithGreatestDistanceToRight = ports.get(0);
             int portDistance = 0;
             int greatestDistance = 0;
 
             for (int i = 0; i < ports.size(); i++) {
-                SelfLoopPort currentPort = ports.get(i);
-                SelfLoopPort nextPort = ports.get((i + 1) % ports.size());
+                OldSelfLoopPort currentPort = ports.get(i);
+                OldSelfLoopPort nextPort = ports.get((i + 1) % ports.size());
 
                 // First port's side and index
                 PortSide currentSide = currentPort.getPortSide();
-                SelfLoopNodeSide currentSideNodeRep = slNode.getNodeSide(currentSide);
+                OldSelfLoopNodeSide currentSideNodeRep = slNode.getNodeSide(currentSide);
                 int currentPortSideIndex = currentSideNodeRep.getPorts().indexOf(currentPort);
 
                 // Second port's side and index
                 PortSide nextSide = nextPort.getPortSide();
-                SelfLoopNodeSide nextSideNodeRep = slNode.getNodeSide(nextSide);
+                OldSelfLoopNodeSide nextSideNodeRep = slNode.getNodeSide(nextSide);
                 int nextPortSideIndex = nextSideNodeRep.getPorts().indexOf(nextPort);
 
                 int newPortDistance = 0;
@@ -129,8 +129,8 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
                     ? ports.size()
                     : portWithGreatestDistanceToRightIndex + 1;
                     
-            List<SelfLoopPort> startList = new ArrayList<>(ports.subList(0, rightIndex));
-            List<SelfLoopPort> endList = new ArrayList<>(ports.subList(rightIndex, ports.size()));
+            List<OldSelfLoopPort> startList = new ArrayList<>(ports.subList(0, rightIndex));
+            List<OldSelfLoopPort> endList = new ArrayList<>(ports.subList(rightIndex, ports.size()));
 
             ports.clear();
             ports.addAll(endList);
@@ -146,13 +146,13 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private void minimizeCrossings(final SelfLoopNode slNode) {
+    private void minimizeCrossings(final OldSelfLoopNode slNode) {
         int numberOfPorts = slNode.getNumberOfPorts();
         
         // initialize
         Multimap<Integer, Integer> componentsConfiguration = ArrayListMultimap.create();
-        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            List<SelfLoopPort> ports = component.getPorts();
+        for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            List<OldSelfLoopPort> ports = component.getPorts();
             int startIndex = ports.get(0).getOriginalIndex() + 1;
             int endIndex = ports.get(ports.size() - 1).getOriginalIndex() + 1;
             updateComponentConfiguration(componentsConfiguration, ports, startIndex, endIndex, numberOfPorts, true);
@@ -164,9 +164,9 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
 
         while (minimumCrossings != 0 && minimumCrossings != previousMinimumCrossings) {
             previousMinimumCrossings = minimumCrossings;
-            for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-                List<SelfLoopPort> ports = component.getPorts();
-                List<SelfLoopPort> minimumRotation = new ArrayList<>(ports);
+            for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+                List<OldSelfLoopPort> ports = component.getPorts();
+                List<OldSelfLoopPort> minimumRotation = new ArrayList<>(ports);
 
                 for (int cnt = 0; cnt < ports.size() - 1; cnt++) {
                     // remove previous configuration
@@ -176,7 +176,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
                             numberOfPorts, false);
 
                     // rotate and add to configuration
-                    List<SelfLoopPort> newRotation = rotate(component.getPorts());
+                    List<OldSelfLoopPort> newRotation = rotate(component.getPorts());
                     component.getPorts().clear();
                     component.getPorts().addAll(newRotation);
 
@@ -200,8 +200,8 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
             }
 
             // set direction for the final setup
-            for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-                List<SelfLoopPort> ports = component.getPorts();
+            for (OldSelfLoopComponent component : slNode.getSelfLoopComponents()) {
+                List<OldSelfLoopPort> ports = component.getPorts();
                 for (int i = 0; i < ports.size(); i++) {
                     setDirection(ports.get(i), i, ports.size());
                 }
@@ -214,7 +214,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
      * TODO Document.
      */
     private void updateComponentConfiguration(final Multimap<Integer, Integer> componentsConfiguration,
-            final List<SelfLoopPort> ports, final int startIndex, final int endIndex, final int totalNumberOfPorts,
+            final List<OldSelfLoopPort> ports, final int startIndex, final int endIndex, final int totalNumberOfPorts,
             final boolean addValue) {
 
         if (addValue) {
@@ -241,8 +241,8 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private List<SelfLoopPort> rotate(final List<SelfLoopPort> formerRotation) {
-        List<SelfLoopPort> newRotation = new ArrayList<>();
+    private List<OldSelfLoopPort> rotate(final List<OldSelfLoopPort> formerRotation) {
+        List<OldSelfLoopPort> newRotation = new ArrayList<>();
         newRotation.addAll(formerRotation.subList(1, formerRotation.size()));
         newRotation.add(formerRotation.get(0));
         return newRotation;
@@ -251,7 +251,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     /**
      * TODO Document.
      */
-    private int countCrossings(final SelfLoopNode slNode, final Multimap<Integer, Integer> componentsConfiguration) {
+    private int countCrossings(final OldSelfLoopNode slNode, final Multimap<Integer, Integer> componentsConfiguration) {
         int numberOfPorts = slNode.getNumberOfPorts();
         BinaryIndexedTree indexTree = new BinaryIndexedTree(numberOfPorts * 2 + 1);
         Deque<Integer> ends = new ArrayDeque<>();
