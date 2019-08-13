@@ -43,7 +43,6 @@ import com.google.common.collect.Lists;
  *
  * @author alan
  */
-@SuppressWarnings("restriction")
 @RunWith(Parameterized.class)
 public class SwitchDeciderTest extends TestGraphCreator {
 
