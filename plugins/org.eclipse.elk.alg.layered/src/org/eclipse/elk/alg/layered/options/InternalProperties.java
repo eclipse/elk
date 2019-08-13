@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
@@ -414,6 +415,12 @@ public final class InternalProperties {
      */
     public static final IProperty<OldSelfLoopNode> SELF_LOOP_NODE_REPRESENTATION =
             new Property<OldSelfLoopNode>("selfLoopNodeRepresentation");
+    
+    /**
+     * Holds all of the information necessary to route self loops around a node.
+     */
+    public static final IProperty<SelfLoopHolder> SELF_LOOP_HOLDER =
+            new Property<>("selfLoopHolder");
 
     /**
      * Holds the y-coordinate of a deleted {@link NodeType#NORTH_SOUTH_PORT} dummy node. To be read by the
