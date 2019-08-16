@@ -22,12 +22,13 @@ public class SelfLoopPort {
     private final LPort lPort;
     /** Whether the port was only incident to self loop edges. */
     private final boolean hadOnlySelfLoops;
-    /** Whether the original {@link LPort} is currently hidden from its node. */
-    private boolean isHidden = false;
     /** List of incoming self loops. */
     private final List<SelfLoopEdge> incomingSLEdges = new ArrayList<>();
     /** List of outgoing self loops. */
     private final List<SelfLoopEdge> outgoingSLEdges = new ArrayList<>();
+    
+    /** Whether the original {@link LPort} is currently hidden from its node. */
+    private boolean isHidden = false;
     
     /**
      * Creates a new instance to represent the given port.

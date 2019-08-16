@@ -86,8 +86,13 @@ public class SelfLoopPreprocessor implements ILayoutProcessor<LGraph> {
         
         for (SelfLoopPort slPort : slHolder.getSLPortMap().values()) {
             if (slPort.hadOnlySelfLoops()) {
+                // Hide the port
                 LPort lPort = slPort.getLPort();
                 lPort.setNode(null);
+                
+                // Remember that we actually did so
+                slPort.setHidden(true);
+                slHolder.setPortsHidden(true);
                 
                 // Remove external port dummy this port belongs to, if any (#352)
                 LNode dummy = lPort.getProperty(InternalProperties.PORT_DUMMY);

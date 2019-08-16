@@ -7,29 +7,82 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.loops;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
+import org.eclipse.elk.core.options.PortSide;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * A self loop hyperedge consisting of at least one self loop edge.
+ * 
+ * <p>Since a self hyper loop may connect more than two ports, it is a relevant question how exactly the involved edges
+ * are routed to connect them. The edges will later appear as one <em>trunk</em> which runs around the node, with little
+ * <em>branches</em> establishing the actual connections to the ports involved. Thus, it is only required to remember
+ * the outermost ports that limit the trunk. We remember the left and right boundary of the trunk: the trunk will leave
+ * the leftmost port rightwards and approach the rightmost port from the left. The leftmost and rightmost ports are
+ * computed after the port order has been established.</p>
  */
 public class SelfHyperLoop {
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Properties
 
+    // Structural properties
+    
     /** The {@link SelfLoopHolder} which owns this instance. */
     private final SelfLoopHolder slHolder;
+    /** Set of ports that belong to this hyper loop. */
+    private final Set<SelfLoopPort> slPorts = new HashSet<>();
     /** Set of edges that belong to this instance. */
     private final Set<SelfLoopEdge> slEdges = new HashSet<>();
     /** This hyper loop's labels. */
     private SelfHyperLoopLabels slLabels = null;
+    
+    // Routing properties (will be filled with values as self loop placement progresses)
+    
+    /** This self loop's loop type. Determined once port sides have been assigned. */
+    private SelfLoopType selfLoopType;
+    /** List of ports per port side. */
+    private Multimap<PortSide, SelfLoopPort> slPortsBySide;
+    /** The hyper loop trunk's leftmost port. Computed after initialization. */
+    private SelfLoopPort leftmostPort = null;
+    /** The hyper loop trunk's rightmost port. Computed after initialization. */
+    private SelfLoopPort rightmostPort = null;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Creation
 
     /**
      * Creates a new instance owned by the given {@link SelfLoopHolder}.
      */
     SelfHyperLoop(final SelfLoopHolder slHolder) {
         this.slHolder = slHolder;
+    }
+    
+    /**
+     * Fills our {@link #slPortsBySide} multimap and determines this self loop's type. This method should be called as
+     * soon as ports have been assigned to a side.
+     */
+    public void computePortsPerSide() {
+        assert slPortsBySide == null;
+        
+        // Remember ports for each side
+        slPortsBySide = HashMultimap.create(PortSide.values().length, slPorts.size());
+        for (SelfLoopPort slPort : slPorts) {
+            PortSide portSide = slPort.getLPort().getSide();
+            assert portSide != PortSide.UNDEFINED;
+            
+            slPortsBySide.put(portSide, slPort);
+        }
+        
+        // Determine this self loop's loop type
+        selfLoopType = SelfLoopType.fromPortSides(slPortsBySide.keySet());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +103,9 @@ public class SelfHyperLoop {
         if (slEdges.add(slEdge)) {
             slEdge.setSLHyperLoop(this);
             
+            slPorts.add(slEdge.getSLSource());
+            slPorts.add(slEdge.getSLTarget());
+            
             // Check if we need to take care of any edge labels
             List<LLabel> lLabels = slEdge.getLEdge().getLabels();
             if (!lLabels.isEmpty()) {
@@ -68,4 +124,68 @@ public class SelfHyperLoop {
     public Set<SelfLoopEdge> getSLEdges() {
         return slEdges;
     }
+    
+    /**
+     * Returns the set of ports connected by this hyper loop.
+     */
+    public Set<SelfLoopPort> getSLPorts() {
+        return slPorts;
+    }
+    
+    /**
+     * Returns the loop's self loop type.
+     */
+    public SelfLoopType getSelfLoopType() {
+        return selfLoopType;
+    }
+    
+    /**
+     * Returns a map of port sides mapped to ports on that side.
+     */
+    public Multimap<PortSide, SelfLoopPort> getSLPortsBySide() {
+        return slPortsBySide;
+    }
+    
+    /**
+     * Returns the loop's ports on the given side.
+     */
+    public Collection<SelfLoopPort> getSLPortsBySide(final PortSide portSide) {
+        return slPortsBySide.get(portSide);
+    }
+    
+    /**
+     * Returns whether the loop has ports on the given side.
+     */
+    public boolean hasSLPortsOnSide(final PortSide portSide) {
+        return slPortsBySide.containsKey(portSide);
+    }
+    
+    /**
+     * Returns the hyper loop's leftmost port. See the class description for more details.
+     */
+    public SelfLoopPort getLeftmostPort() {
+        return leftmostPort;
+    }
+    
+    /**
+     * Sets the hyper loop's leftmost port. See the class description for more details.
+     */
+    public void setLeftmostPort(final SelfLoopPort leftmostPort) {
+        this.leftmostPort = leftmostPort;
+    }
+    
+    /**
+     * Returns the hyper loop's rightmost port. See the class description for more details.
+     */
+    public SelfLoopPort getRightmostPort() {
+        return rightmostPort;
+    }
+    
+    /**
+     * Sets the hyper loop's rightmost port. See the class description for more details.
+     */
+    public void setRightmostPort(final SelfLoopPort rightmostPort) {
+        this.rightmostPort = rightmostPort;
+    }
+    
 }

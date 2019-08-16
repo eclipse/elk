@@ -33,6 +33,9 @@ public final class SelfLoopHolder {
     private final List<SelfHyperLoop> slHyperLoops = new ArrayList<>();
     /** Map of original ports to the {@link SelfLoopPort}s created to represent them. */
     private final Map<LPort, SelfLoopPort> slPorts = new HashMap<>();
+    
+    /** Whether at least one self loop port is currently hidden from its node. */
+    private boolean arePortsHidden = false;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Creation
@@ -182,6 +185,21 @@ public final class SelfLoopHolder {
      */
     public Map<LPort, SelfLoopPort> getSLPortMap() {
         return slPorts;
+    }
+    
+    /**
+     * Returns whether at least one self loop port is currently hidden from its node. Which one it is can be found by
+     * iterating over our {@link SelfLoopPort}s and calling {@link SelfLoopPort#isHidden()}.
+     */
+    public boolean arePortsHidden() {
+        return arePortsHidden;
+    }
+    
+    /**
+     * Sets whether at least one self loop port is currently hidden.
+     */
+    public void setPortsHidden(final boolean hidden) {
+        arePortsHidden = hidden;
     }
 
 }
