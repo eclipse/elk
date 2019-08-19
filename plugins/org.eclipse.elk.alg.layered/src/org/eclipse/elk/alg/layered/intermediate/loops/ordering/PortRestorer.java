@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.loops.restoring;
+package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -206,7 +207,7 @@ public class PortRestorer {
     /**
      * Returns the port sides spanned by a two-side self loop in a clockwise order.
      */
-    private PortSide[] sortedPortSides(final SelfHyperLoop slLoop) {
+    public static PortSide[] sortedPortSides(final SelfHyperLoop slLoop) {
         // Sort the port sides such that they follow a clockwise order
         PortSide[] sides = slLoop.getSLPortsBySide().keySet().toArray(new PortSide[2]);
         Arrays.sort(sides);
@@ -311,7 +312,10 @@ public class PortRestorer {
     private void addToTargetArea(final Collection<SelfLoopPort> slPorts, final PortSide portSide,
             final PortSideArea area, final AddMode addMode) {
         
-        List<SelfLoopPort> targetArea = targetAreas.get(portSide, area);
+        // Gather those ports that are currently hidden (if they're not hidden, there's no point restoring them)
+        List<SelfLoopPort> targetArea = targetAreas.get(portSide, area).stream()
+                .filter(slPort -> slPort.isHidden())
+                .collect(Collectors.toList());
         
         if (addMode == AddMode.PREPEND) {
             targetArea.addAll(0, slPorts);

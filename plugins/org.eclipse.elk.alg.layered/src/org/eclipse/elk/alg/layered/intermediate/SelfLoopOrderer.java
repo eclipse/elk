@@ -10,8 +10,9 @@ package org.eclipse.elk.alg.layered.intermediate;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
-import org.eclipse.elk.alg.layered.intermediate.loops.restoring.PortRestorer;
-import org.eclipse.elk.alg.layered.intermediate.loops.restoring.PortSideAssigner;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortSideAssigner;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingDirector;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -38,6 +39,8 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
     private final PortSideAssigner portSideAssigner = new PortSideAssigner();
     /** Port restorer we'll use for fixed side port constraints. */
     private final PortRestorer portRestorer = new PortRestorer();
+    /** Routing director we'll use to compute how the loops are routed around the node. */
+    private final RoutingDirector routingDirector = new RoutingDirector();
 
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
@@ -76,7 +79,7 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
         
         // Compute how each hyper loop is routed around the node (from a "leftmost" to a "rightmost" port involved in
         // the loop, but those must be computed and will influence the number of crossings)
-        // TODO Compute them!
+        routingDirector.determineLoopRoutes(slHolder);
         
         // Find out which port side each hyper loop appears on and assign routing slots such that the self loop "trunks"
         // (the pieces of the self loop that seem to run around the node, parallel to the respective node boundary) do

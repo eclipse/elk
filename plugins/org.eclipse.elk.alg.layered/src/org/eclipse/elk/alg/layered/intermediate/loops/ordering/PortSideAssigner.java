@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.loops.restoring;
+package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 
 import java.util.ArrayList;
 import java.util.List;
