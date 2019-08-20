@@ -45,7 +45,7 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     
     // Actions
     private final LayoutUponLoadSettingAction layoutUponLoadSettingAction = new LayoutUponLoadSettingAction();
-    private final LoadGraphAction loadGraphAction = new LoadGraphAction();
+    private final LoadGraphAction loadGraphAction = new LoadGraphAction(this);
     private final ReloadFromFileAction reloadFromFileAction = new ReloadFromFileAction(this);
     private final ImageExportAction saveImageAction = new ImageExportAction(this);
     
