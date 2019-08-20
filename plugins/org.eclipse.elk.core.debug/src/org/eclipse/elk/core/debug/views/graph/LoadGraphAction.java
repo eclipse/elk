@@ -72,14 +72,24 @@ public class LoadGraphAction extends Action {
 
         // Open the file dialog and wait for file name
         String fileName = fileDialog.open();
-
-        if (fileName != null) {
-            prefStore.setValue(LAST_FILE_NAME_PREF, fileName);
+        run(fileName, view);
+    }
+    
+    /**
+     * Load an ELK graph file and performing layout on it.
+     * 
+     * @param fullFilePath The full path of the file to load.
+     * @param layoutGraphView The Layout Graph view
+     */
+    public static void run(final String fullFilePath, final LayoutGraphView layoutGraphView) {
+        IPreferenceStore prefStore = ElkDebugPlugin.getDefault().getPreferenceStore();
+        if (fullFilePath != null) {
+            prefStore.setValue(LAST_FILE_NAME_PREF, fullFilePath);
 
             // Load the file content
             try {
-                ElkNode content = loadFromFile(fileName);
-                ExecutionInfo info = layout(fileName, content);
+                ElkNode content = loadFromFile(fullFilePath);
+                ExecutionInfo info = layout(fullFilePath, content);
                 ElkDebugPlugin.getDefault().getModel().addExecution(info);
                 // Select the new loaded element (made in async to let the view refresh before)
                 layoutGraphView.getSite().getShell().getDisplay().asyncExec(new Runnable() {

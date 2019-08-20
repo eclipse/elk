@@ -32,6 +32,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -177,6 +180,10 @@ public class LayoutGraphView extends AbstractLayoutDebugView {
     @Override
     protected void customizeTreeViewer(TreeViewer treeViewer) {
         treeViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(new GraphTreeLabelProvider()));
+        // Add drop support for file
+        int ops = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] transfers = new Transfer[] {FileTransfer.getInstance()};
+        treeViewer.addDropSupport(ops, transfers, new LayoutGraphViewDropAdapter(this, treeViewer));
     }
     
     @Override
