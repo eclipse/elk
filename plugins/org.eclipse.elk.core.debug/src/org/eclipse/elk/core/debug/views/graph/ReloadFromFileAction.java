@@ -68,7 +68,13 @@ public class ReloadFromFileAction extends Action {
             ElkNode graph = LoadGraphAction.loadFromFile(oldInfo.getFileName());
             ExecutionInfo newInfo = LoadGraphAction.layout(oldInfo.getFileName(), oldInfo.isLaidOutAfterLoad(), graph);
             ElkDebugPlugin.getDefault().getModel().replaceExecution(oldInfo, newInfo);
-            view.setSelectedExecutionInfos(Lists.newArrayList(newInfo));
+            // We change selection in async to let the view refresh before
+            view.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    view.setSelectedExecutionInfos(Lists.newArrayList(newInfo));
+                }
+            });
             
         } catch (IOException e) {
             throw new WrappedException(e);
