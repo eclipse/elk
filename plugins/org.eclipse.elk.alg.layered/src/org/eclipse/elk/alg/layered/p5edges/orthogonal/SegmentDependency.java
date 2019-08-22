@@ -32,7 +32,7 @@ public final class SegmentDependency {
      * Creates a dependency from the given source to the given target and adds it to the dependency lists of those
      * segments.
      */
-    SegmentDependency(final HyperEdgeSegment thesource, final HyperEdgeSegment thetarget, final int theweight) {
+    public SegmentDependency(final HyperEdgeSegment thesource, final HyperEdgeSegment thetarget, final int theweight) {
         this.target = thetarget;
         this.source = thesource;
         this.weight = theweight;

@@ -9,6 +9,7 @@ package org.eclipse.elk.alg.layered.intermediate.loops;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,7 @@ import com.google.common.collect.Multimap;
  * <em>branches</em> establishing the actual connections to the ports involved. Thus, it is only required to remember
  * the outermost ports that limit the trunk. We remember the left and right boundary of the trunk: the trunk will leave
  * the leftmost port rightwards and approach the rightmost port from the left. The leftmost and rightmost ports are
- * computed after the port order has been established.</p>
+ * computed after the port order has been established. Routing slots are computed thereafter as well.</p>
  */
 public class SelfHyperLoop {
     
@@ -59,6 +60,10 @@ public class SelfHyperLoop {
     private SelfLoopPort leftmostPort = null;
     /** The hyper loop trunk's rightmost port. Computed after initialization. */
     private SelfLoopPort rightmostPort = null;
+    /** The set of port sides this loop is routed along. */
+    private final Set<PortSide> occupiedPortSides = EnumSet.noneOf(PortSide.class);
+    /** The routing slot we're assigned to on each side. Indexed by port side ordinals. */
+    private int[] routingSlot = new int[PortSide.values().length];
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Creation
@@ -199,6 +204,27 @@ public class SelfHyperLoop {
      */
     public void setRightmostPort(final SelfLoopPort rightmostPort) {
         this.rightmostPort = rightmostPort;
+    }
+    
+    /**
+     * Returns the set of port sides this loop is routed along.
+     */
+    public Set<PortSide> getOccupiedPortSides() {
+        return occupiedPortSides;
+    }
+    
+    /**
+     * Returns the routing slot this loop should occupy on the given port side.
+     */
+    public int getRoutingSlot(final PortSide portSide) {
+        return routingSlot[portSide.ordinal()];
+    }
+    
+    /**
+     * Sets which routing slot this loop should occupy on the given port side.
+     */
+    public void setRoutingSlot(final PortSide portSide, final int slot) {
+        routingSlot[portSide.ordinal()] = slot;
     }
     
 }

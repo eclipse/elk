@@ -77,6 +77,9 @@ public class RoutingDirector {
             default:
                 assert false;
             }
+            
+            // Setup the loop's set of occupied port sides
+            computeOccupiedPortSides(slLoop);
         }
         
         portPenalties = null;
@@ -92,6 +95,18 @@ public class RoutingDirector {
         slHolder.getSLHyperLoops().stream()
             .map(slLoop -> slLoop.getSLPorts())
             .forEach(slPorts -> slPorts.sort(COMPARE_BY_ID));
+    }
+
+    private void computeOccupiedPortSides(final SelfHyperLoop slLoop) {
+        PortSide currPortSide = slLoop.getLeftmostPort().getLPort().getSide();
+        PortSide targetSide = slLoop.getRightmostPort().getLPort().getSide();
+        
+        while (currPortSide != targetSide) {
+            slLoop.getOccupiedPortSides().add(currPortSide);
+            currPortSide = currPortSide.right();
+        }
+        
+        slLoop.getOccupiedPortSides().add(currPortSide);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

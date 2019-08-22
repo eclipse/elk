@@ -13,6 +13,7 @@ import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortSideAssigner;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingDirector;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingSlotAssigner;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -41,6 +42,8 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
     private final PortRestorer portRestorer = new PortRestorer();
     /** Routing director we'll use to compute how the loops are routed around the node. */
     private final RoutingDirector routingDirector = new RoutingDirector();
+    /** The crossing minimizer we use to assign self loops to routing slots. */
+    private final RoutingSlotAssigner routingSlotAssigner = new RoutingSlotAssigner();
 
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
@@ -84,7 +87,7 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
         // Find out which port side each hyper loop appears on and assign routing slots such that the self loop "trunks"
         // (the pieces of the self loop that seem to run around the node, parallel to the respective node boundary) do
         // not intersect
-        // TODO Do it!
+        routingSlotAssigner.assignRoutingSlots(slHolder);
         
         // TODO Can we also find out where to place labels? If so, can we even invoke label management now?
     }
