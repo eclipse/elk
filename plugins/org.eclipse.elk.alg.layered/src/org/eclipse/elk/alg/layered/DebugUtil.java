@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.LoggedGraph;
 
@@ -102,7 +102,7 @@ public final class DebugUtil {
      * @see {@link JsonDebugUtil#createDebugGraph(LGraph, int, List, String, String)}
      */
     public static void logDebugGraph(final IElkProgressMonitor monitor, final LGraph layeredGraph,
-            final int layerIndex, final List<HyperNode> hypernodes, final String debugPrefix, final String label) {
+            final int layerIndex, final List<HyperEdgeSegment> hypernodes, final String debugPrefix, final String label) {
 
         String tag = debugPrefix + " - " + label;
         monitor.logGraph(

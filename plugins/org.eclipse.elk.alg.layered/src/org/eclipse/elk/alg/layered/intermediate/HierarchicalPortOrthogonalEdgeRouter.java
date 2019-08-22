@@ -29,7 +29,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.RoutingDirection;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -541,7 +542,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         if (!northernSourceLayer.isEmpty()) {
             // Route the edges using a south-to-north orthogonal edge router
             OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                    OrthogonalRoutingGenerator.RoutingDirection.SOUTH_TO_NORTH, edgeSpacing, "extnorth");
+                    RoutingDirection.SOUTH_TO_NORTH, edgeSpacing, "extnorth");
             
             int slots = routingGenerator.routeEdges(
                     monitor,
@@ -564,7 +565,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         if (!southernSourceLayer.isEmpty()) {
             // Route the edges using a north-to-south orthogonal edge router
             OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                    OrthogonalRoutingGenerator.RoutingDirection.NORTH_TO_SOUTH, edgeSpacing, "extsouth");
+                    RoutingDirection.NORTH_TO_SOUTH, edgeSpacing, "extsouth");
             
             int slots = routingGenerator.routeEdges(
                     monitor,

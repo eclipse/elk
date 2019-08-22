@@ -23,6 +23,8 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.RoutingDirection;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -230,7 +232,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, "phase5");
+                RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, "phase5");
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
