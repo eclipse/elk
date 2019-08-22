@@ -10,7 +10,6 @@ package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
@@ -50,6 +49,7 @@ public class RoutingDirector {
     public void determineLoopRoutes(final SelfLoopHolder slHolder) {
         // Start by giving IDs to all ports according to their order in the port list
         assignPortIds(slHolder.getLNode().getPorts());
+        sortHyperLoopPortLists(slHolder);
 
         // Now assign stuff! Preferrably, assign leftmost and rightmost ports...
         for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
@@ -88,6 +88,12 @@ public class RoutingDirector {
         }
     }
 
+    private void sortHyperLoopPortLists(final SelfLoopHolder slHolder) {
+        slHolder.getSLHyperLoops().stream()
+            .map(slLoop -> slLoop.getSLPorts())
+            .forEach(slPorts -> slPorts.sort(COMPARE_BY_ID));
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Route Determination (One Side)
 
@@ -95,7 +101,7 @@ public class RoutingDirector {
      * One-sided self loops should always be routed within their one side, so that's easy.
      */
     private void determineOneSideLoopRoutes(final SelfHyperLoop slLoop) {
-        PortSide side = slLoop.getSLPorts().iterator().next().getLPort().getSide();
+        PortSide side = slLoop.getSLPorts().get(0).getLPort().getSide();
         assignLeftmostRightmostPorts(slLoop, side, side);
     }
 
@@ -106,7 +112,7 @@ public class RoutingDirector {
      * Two-sided corner self loops are easy as well since we only want to span that corner.
      */
     private void determineTwoSideCornerLoopRoutes(final SelfHyperLoop slLoop) {
-        PortSide[] sides = PortRestorer.sortedPortSides(slLoop);
+        PortSide[] sides = PortRestorer.sortedTwoSideLoopPortSides(slLoop);
         assignLeftmostRightmostPorts(slLoop, sides[0], sides[1]);
     }
 
@@ -209,10 +215,8 @@ public class RoutingDirector {
      * routing will produce.
      */
     private void determineFourSideLoopRoutes(final SelfHyperLoop slLoop) {
-        // Sort self loop ports by ID
-        List<SelfLoopPort> sortedSLPorts =
-                slLoop.getSLPorts().stream().sorted(COMPARE_BY_ID).collect(Collectors.toList());
-
+        // The self loop ports are sorted by ID
+        List<SelfLoopPort> sortedSLPorts = slLoop.getSLPorts();
         SelfLoopHolder slHolder = slLoop.getSLHolder();
 
         // Go through each pair of adjacent ports and find the one which incurs the highest penalty if we drew an edge

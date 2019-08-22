@@ -48,6 +48,9 @@ public class PortRestorer {
      * both the {@link SelfLoopPort}s and the {@link SelfLoopHolder}.
      */
     public void restorePorts(final SelfLoopHolder slHolder, final IElkProgressMonitor monitor) {
+        // Have the loops compute which of their ports are on which side
+        slHolder.getSLHyperLoops().stream().forEach(slLoop -> slLoop.computePortsPerSide());
+        
         // Initialize all of the port lists we'll be working on before finally merging them into the node's list of
         // ports
         initTargetAreas();
@@ -112,7 +115,7 @@ public class PortRestorer {
     private void processOneSideLoops(final SelfLoopOrderingStrategy ordering) {
         for (SelfHyperLoop slLoop : slLoopsByType.get(SelfLoopType.ONE_SIDE)) {
             // Obtain the port side
-            PortSide side = slLoop.getSLPorts().iterator().next().getLPort().getSide();
+            PortSide side = slLoop.getSLPorts().get(0).getLPort().getSide();
             
             // We want ports with more outgoing edges to be to the left of ports with more incoming edges, so we need
             // a sorted list of ports
@@ -185,7 +188,7 @@ public class PortRestorer {
     private void processTwoSideCornerLoops() {
         for (SelfHyperLoop slLoop : slLoopsByType.get(SelfLoopType.TWO_SIDES_CORNER)) {
             // Sort the port sides such that they follow a clockwise order
-            PortSide[] sides = sortedPortSides(slLoop);
+            PortSide[] sides = sortedTwoSideLoopPortSides(slLoop);
             
             // Add the ports to their target area
             addToTargetArea(slLoop, sides[0], PortSideArea.END, AddMode.PREPEND);
@@ -194,9 +197,9 @@ public class PortRestorer {
     }
 
     private void processTwoSideOpposingLoops() {
-        for (SelfHyperLoop slLoop : slLoopsByType.get(SelfLoopType.TWO_SIDES_CORNER)) {
+        for (SelfHyperLoop slLoop : slLoopsByType.get(SelfLoopType.TWO_SIDES_OPPOSING)) {
             // Sort the port sides such that they follow a clockwise order
-            PortSide[] sides = sortedPortSides(slLoop);
+            PortSide[] sides = sortedTwoSideLoopPortSides(slLoop);
             
             // We prepend to the start side's end area, and append to the target side's start area 
             addToTargetArea(slLoop, sides[0], PortSideArea.END, AddMode.PREPEND);
@@ -207,7 +210,7 @@ public class PortRestorer {
     /**
      * Returns the port sides spanned by a two-side self loop in a clockwise order.
      */
-    public static PortSide[] sortedPortSides(final SelfHyperLoop slLoop) {
+    public static PortSide[] sortedTwoSideLoopPortSides(final SelfHyperLoop slLoop) {
         // Sort the port sides such that they follow a clockwise order
         PortSide[] sides = slLoop.getSLPortsBySide().keySet().toArray(new PortSide[2]);
         Arrays.sort(sides);

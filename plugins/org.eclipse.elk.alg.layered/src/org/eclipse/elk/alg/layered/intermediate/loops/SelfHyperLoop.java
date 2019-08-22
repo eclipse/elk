@@ -7,12 +7,17 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.loops;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
+import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingDirector;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.HashMultimap;
@@ -37,8 +42,8 @@ public class SelfHyperLoop {
     
     /** The {@link SelfLoopHolder} which owns this instance. */
     private final SelfLoopHolder slHolder;
-    /** Set of ports that belong to this hyper loop. */
-    private final Set<SelfLoopPort> slPorts = new HashSet<>();
+    /** List of ports that belong to this hyper loop. */
+    private final List<SelfLoopPort> slPorts = new ArrayList<>();
     /** Set of edges that belong to this instance. */
     private final Set<SelfLoopEdge> slEdges = new HashSet<>();
     /** This hyper loop's labels. */
@@ -66,8 +71,8 @@ public class SelfHyperLoop {
     }
     
     /**
-     * Fills our {@link #slPortsBySide} multimap and determines this self loop's type. This method should be called as
-     * soon as ports have been assigned to a side.
+     * Fills our {@link #slPortsBySide} multimap and determines this self loop's type. This method is called by
+     * {@link PortRestorer} right before it gets to work since it has to know which ports are on which side.
      */
     public void computePortsPerSide() {
         assert slPortsBySide == null;
@@ -103,8 +108,15 @@ public class SelfHyperLoop {
         if (slEdges.add(slEdge)) {
             slEdge.setSLHyperLoop(this);
             
-            slPorts.add(slEdge.getSLSource());
-            slPorts.add(slEdge.getSLTarget());
+            SelfLoopPort slSource = slEdge.getSLSource();
+            if (!slPorts.contains(slSource)) {
+                slPorts.add(slSource);
+            }
+            
+            SelfLoopPort slTarget = slEdge.getSLTarget();
+            if (!slPorts.contains(slTarget)) {
+                slPorts.add(slTarget);
+            }
             
             // Check if we need to take care of any edge labels
             List<LLabel> lLabels = slEdge.getLEdge().getLabels();
@@ -126,9 +138,10 @@ public class SelfHyperLoop {
     }
     
     /**
-     * Returns the set of ports connected by this hyper loop.
+     * Returns the list of ports connected by this hyper loop. Once the {@link RoutingDirector} has run, this list will
+     * be sorted according to the {@link LNode}'s list of {@link LPort}s.
      */
-    public Set<SelfLoopPort> getSLPorts() {
+    public List<SelfLoopPort> getSLPorts() {
         return slPorts;
     }
     

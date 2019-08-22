@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -48,9 +47,6 @@ public class PortSideAssigner {
         default:
             assert false;
         }
-        
-        // Have the loops compute which of their ports are on which side
-        slHolder.getSLHyperLoops().stream().forEach(slLoop -> slLoop.computePortsPerSide());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,13 +156,15 @@ public class PortSideAssigner {
      */
     private void assignToTarget(final SelfHyperLoop slLoop, final Target target) {
         // Gather the self loop's ports
-        List<SelfLoopPort> slPorts = new ArrayList<>(slLoop.getSLPorts());
+        List<SelfLoopPort> slPorts = slLoop.getSLPorts();
         
         // If this is a corner target, we sort the list of ports by net flow: ports with more outgoing edges should end
         // up at the first side, while ports with more incoming edges should end up on the second side. This is an
         // attempt to have most edges point clockwise. If this is not a corner target, all ports will end up on the
         // same side anyway, so there's no need for us to sort anything
         if (target.isCornerTarget()) {
+            // This will sort the port's original list, but that's okay since it doesn't have any particular order
+            // prior to running the PortRestorer
             slPorts.sort((slPort1, slPort2) -> Integer.compare(
                     slPort1.getLPort().getNetFlow(),
                     slPort2.getLPort().getNetFlow()));
