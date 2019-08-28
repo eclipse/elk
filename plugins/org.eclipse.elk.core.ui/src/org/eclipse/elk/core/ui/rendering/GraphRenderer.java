@@ -53,7 +53,7 @@ public class GraphRenderer {
     /** configurator used to configure what the drawing looks like. */
     private GraphRenderingConfigurator configurator;
     /** the scale factor for all coordinates. */
-    private double scale = 2.0;
+    private double scale = 1.0;
     /** the base offset for all coordinates. */
     private KVector baseOffset = new KVector();
     /**
@@ -69,25 +69,12 @@ public class GraphRenderer {
     // Initialization / Cleanup
 
     /**
-     * Creates new renderer that uses the given configurator to define the way drawings look and a
-     * default scaling of 1.0.
+     * Creates new renderer that uses the given configurator to define the way drawings look.
      * 
      * @param configurator the rendering configurator.
      */
     public GraphRenderer(final GraphRenderingConfigurator configurator) {
-        this(configurator, 1.0);
-    }
-
-    /**
-     * Creates new renderer that uses the given configurator to define the way drawings look.
-     * 
-     * @param configurator the rendering configurator.
-     * @param scale the scaling factor to draw graphs with.
-     */
-    public GraphRenderer(final GraphRenderingConfigurator configurator, final double scale) {
-        this.scale = scale;
         this.configurator = configurator;
-        this.configurator.initialize(scale);
     }
 
     /**
@@ -121,6 +108,29 @@ public class GraphRenderer {
         } else {
             this.baseOffset = baseOffset;
         }
+        flushCache();
+    }
+    
+    /**
+     * Returns the scale to be applied to all element coordinates and sizes when drawing them.
+     */
+    public double getScale() {
+        return scale;
+    }
+    
+    /**
+     * Sets the scale to be applied to all element coordinates and sizes when drawing them.
+     * 
+     * @param scale the new scale value.
+     */
+    public void setScale(final double scale) {
+        this.scale = scale;
+        this.configurator.setScale(scale);
+        flushCache();
+    }
+    
+    private int scale(final double value) {
+        return (int) Math.round(scale * value);
     }
 
 
@@ -179,7 +189,7 @@ public class GraphRenderer {
         // paint the area that is given by the graph
         graphics.setBackground(configurator.getRootNodeColor());
         graphics.fillRectangle((int) baseOffset.x, (int) baseOffset.y,
-                (int) parentNode.getWidth() + 1, (int) parentNode.getHeight() + 1);
+                scale(parentNode.getWidth() + 1), scale(parentNode.getHeight() + 1));
         
         // render the nodes and ports and edges
         renderNodeChildren(parentNode, graphics, area, baseOffset, nodeAlpha);
@@ -568,7 +578,8 @@ public class GraphRenderer {
          * Creates a paint rectangle from a shape layout object.
          * 
          * @param shape shape layout from which values shall be taken
-         * @param offset offset to be added to coordinate values
+         * @param offset offset to be added to coordinate values (after scaling)
+         * @param scale scale to apply to the shape coordinates
          */
         PaintRectangle(final ElkShape shape, final KVector offset, final double scale) {
             this.x = (int) Math.round(shape.getX() * scale + offset.x);
