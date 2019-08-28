@@ -40,16 +40,19 @@ public class GraphRenderingConfigurator {
     protected Color nodeFillColor;
     /** font used for node labels. */
     protected Font nodeLabelFont;
+    private int nodeFontSize;
     /** border color used for ports. */
     protected Color portBorderColor;
     /** fill color used for ports. */
     protected Color portFillColor;
     /** font used for port labels. */
     protected Font portLabelFont;
+    private int portFontSize;
     /** color used for edges. */
     protected Color edgeColor;
     /** font used for edge labels. */
     protected Font edgeLabelFont;
+    private int edgeFontSize;
     /** border color for labels. */
     protected Color labelBorderColor;
     /** fill color for labels. */
@@ -75,6 +78,7 @@ public class GraphRenderingConfigurator {
      */
     public GraphRenderingConfigurator(final Display display) {
         this.display = display;
+        initialize();
     }
     
     
@@ -97,26 +101,20 @@ public class GraphRenderingConfigurator {
     /**
      * Called once by the constructor. Override to create custom resources. Be sure to call the
      * super class implementation unless the configuration methods only return custom resources.
-     * 
-     * @param scale
-     *            Scaling used by the graph renderer. Can be used to adapt font sizes.
      */
-    public void initialize(final double scale) {
+    protected void initialize() {
         // CHECKSTYLEOFF MagicNumber
         // No sense in introducing constants for the RGB values below...
         
-        int nodeFontSize = Math.max((int) Math.round(NODE_FONT_SIZE * scale), 2);
-        nodeLabelFont = new Font(display, "sans", nodeFontSize, SWT.NORMAL);
+        nodeLabelFont = new Font(display, "sans", NODE_FONT_SIZE, SWT.NORMAL);
         nodeBorderColor = new Color(display, 2, 15, 3);
         nodeFillColor = new Color(display, 168, 220, 190);
         
-        int portFontSize = Math.max((int) Math.round(PORT_FONT_SIZE * scale), 2);
-        portLabelFont = new Font(display, "sans", portFontSize, SWT.NORMAL);
+        portLabelFont = new Font(display, "sans", PORT_FONT_SIZE, SWT.NORMAL);
         portBorderColor = new Color(display, 2, 9, 40);
         portFillColor = new Color(display, 2, 9, 40);
         
-        int edgeFontSize = Math.max((int) Math.round(EDGE_FONT_SIZE * scale), 2);
-        edgeLabelFont = new Font(display, "sans", edgeFontSize, SWT.NORMAL);
+        edgeLabelFont = new Font(display, "sans", EDGE_FONT_SIZE, SWT.NORMAL);
         edgeColor = new Color(display, 23, 36, 54);
         
         labelBorderColor = new Color(display, 63, 117, 67);
@@ -178,6 +176,40 @@ public class GraphRenderingConfigurator {
         
         if (rootNodeColor != null) {
             rootNodeColor.dispose();
+        }
+    }
+    
+    /**
+     * Change the scale of the graph rendering.
+     * 
+     * @param scale the scale value for font sizes
+     */
+    public void setScale(final double scale) {
+        int newNodeFontSize = Math.max((int) Math.round(NODE_FONT_SIZE * scale), 2);
+        if (newNodeFontSize != nodeFontSize) {
+            if (nodeLabelFont != null) {
+                nodeLabelFont.dispose();
+            }
+            nodeLabelFont = new Font(display, "sans", newNodeFontSize, SWT.NORMAL);
+            nodeFontSize = newNodeFontSize;
+        }
+        
+        int newPortFontSize = Math.max((int) Math.round(PORT_FONT_SIZE * scale), 2);
+        if (newPortFontSize != portFontSize) {
+            if (portLabelFont != null) {
+                portLabelFont.dispose();
+            }
+            portLabelFont = new Font(display, "sans", newPortFontSize, SWT.NORMAL);
+            portFontSize = newPortFontSize;
+        }
+        
+        int newEdgeFontSize = Math.max((int) Math.round(EDGE_FONT_SIZE * scale), 2);
+        if (newEdgeFontSize != edgeFontSize) {
+            if (edgeLabelFont != null) {
+                edgeLabelFont.dispose();
+            }
+            edgeLabelFont = new Font(display, "sans", newEdgeFontSize, SWT.NORMAL);
+            edgeFontSize = newEdgeFontSize;
         }
     }
     

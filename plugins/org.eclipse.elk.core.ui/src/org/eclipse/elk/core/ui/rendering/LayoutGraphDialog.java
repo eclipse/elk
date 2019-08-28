@@ -10,8 +10,6 @@ package org.eclipse.elk.core.ui.rendering;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -61,11 +59,10 @@ public class LayoutGraphDialog extends Dialog {
     @Override
     protected Control createContents(final Composite parent) {
         parent.setLayout(new FillLayout());
-        ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        graphCanvas = new GraphRenderingCanvas(scrolledComposite, configurator);
-        scrolledComposite.setContent(graphCanvas);
+        graphCanvas = new GraphRenderingCanvas(parent, configurator);
+        graphCanvas.setupMouseInteraction();
         graphCanvas.setLayoutGraph(graph);
-        return scrolledComposite;
+        return graphCanvas;
     }
 
 }
