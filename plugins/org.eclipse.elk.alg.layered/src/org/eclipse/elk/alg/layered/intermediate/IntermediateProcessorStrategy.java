@@ -328,19 +328,19 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             return new SemiInteractiveCrossMinProcessor();
             
         case SELF_LOOP_PREPROCESSOR:
-            return new OldSelfLoopPreProcessor();
+            return new SelfLoopPreprocessor();
             
         case SELF_LOOP_PLACER:
-            return new OldSelfLoopPlacer();
+            return new SelfLoopOrderer();
             
         case SELF_LOOP_LABEL_PLACER:
-            return new OldSelfLoopLabelPlacer();
+            return new SelfLoopLabelPlacer();
             
         case SELF_LOOP_BENDPOINT_CALCULATOR:
-            return new OldSelfLoopBendpointCalculator();
+            return new SelfLoopRouter();
 
         case SELF_LOOP_POSTPROCESSOR:
-            return new OldSelfLoopPostProcessor();
+            return new SelfLoopPostprocessor();
 
         default:
             throw new IllegalArgumentException(

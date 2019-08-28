@@ -21,7 +21,8 @@ import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingDirector;
 import org.eclipse.elk.core.options.PortSide;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -55,7 +56,7 @@ public class SelfHyperLoop {
     /** This self loop's loop type. Determined once port sides have been assigned. */
     private SelfLoopType selfLoopType;
     /** List of ports per port side. */
-    private Multimap<PortSide, SelfLoopPort> slPortsBySide;
+    private ListMultimap<PortSide, SelfLoopPort> slPortsBySide;
     /** The hyper loop trunk's leftmost port. Computed after initialization. */
     private SelfLoopPort leftmostPort = null;
     /** The hyper loop trunk's rightmost port. Computed after initialization. */
@@ -83,7 +84,7 @@ public class SelfHyperLoop {
         assert slPortsBySide == null;
         
         // Remember ports for each side
-        slPortsBySide = HashMultimap.create(PortSide.values().length, slPorts.size());
+        slPortsBySide = ArrayListMultimap.create(PortSide.values().length, slPorts.size());
         for (SelfLoopPort slPort : slPorts) {
             PortSide portSide = slPort.getLPort().getSide();
             assert portSide != PortSide.UNDEFINED;

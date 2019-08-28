@@ -53,13 +53,15 @@ public class SelfLoopPostprocessor implements ILayoutProcessor<LGraph> {
         
         slHolder.getSLHyperLoops().stream()
             .flatMap(slLoop -> slLoop.getSLEdges().stream())
-            .forEach(slEdge -> restoreEdge(slEdge));
+            .forEach(slEdge -> restoreEdge(lNode, slEdge));
     }
 
-    private void restoreEdge(final SelfLoopEdge slEdge) {
+    private void restoreEdge(final LNode lNode, final SelfLoopEdge slEdge) {
         LEdge lEdge = slEdge.getLEdge();
         lEdge.setSource(slEdge.getSLSource().getLPort());
         lEdge.setTarget(slEdge.getSLTarget().getLPort());
+        
+        lEdge.getBendPoints().offset(lNode.getPosition());
     }
 
 }

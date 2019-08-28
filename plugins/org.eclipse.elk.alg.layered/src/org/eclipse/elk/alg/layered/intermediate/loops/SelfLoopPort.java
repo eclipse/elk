@@ -88,5 +88,13 @@ public class SelfLoopPort {
     public List<SelfLoopEdge> getOutgoingSLEdges() {
         return outgoingSLEdges;
     }
+    
+    /**
+     * Returns the port's self loop net flow. This is the number of self loop edges entering the port minus the number
+     * of self loop edges leaving it.
+     */
+    public int getSLNetFlow() {
+        return incomingSLEdges.size() - outgoingSLEdges.size();
+    }
 
 }

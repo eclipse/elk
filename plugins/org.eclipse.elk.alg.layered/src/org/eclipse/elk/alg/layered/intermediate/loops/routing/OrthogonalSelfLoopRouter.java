@@ -12,6 +12,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.ElkMargin;
@@ -20,34 +21,49 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Routes self loops orthogonally. The routing functionality is exposed to subclasses for
+ * Routes self loops orthogonally. The routing functionality is exposed to subclasses. If a subclass wants to base its
+ * routing on the orthogonal routing, it can simply override {@link #modifyBendPoints(SelfLoopEdge, KVectorChain)} to
+ * turn an orthogonal routing into some kind of a strange, exotic, exciting new routing style!
  */
 public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     
+    // TODO Replace by spacing option.
     private static final double DISTANCE = 10.0;
 
     @Override
-    public void routeSelfLoop(final SelfHyperLoop slLoop) {
-        for (SelfLoopEdge slEdge : slLoop.getSLEdges()) {
-            LEdge lEdge = slEdge.getLEdge();
-            
-            lEdge.getBendPoints().clear();
-            lEdge.getBendPoints().addAll(computeOrthogonalBendPoints(slEdge));
+    public void routeSelfLoops(final SelfLoopHolder slHolder) {
+        ElkMargin nodeMargins = computeMargins(slHolder.getLNode());
+        
+        for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
+            for (SelfLoopEdge slEdge : slLoop.getSLEdges()) {
+                LEdge lEdge = slEdge.getLEdge();
+                
+                KVectorChain bendPoints = computeOrthogonalBendPoints(slEdge, nodeMargins);
+                bendPoints = modifyBendPoints(slEdge, bendPoints);
+                
+                lEdge.getBendPoints().clear();
+                lEdge.getBendPoints().addAll(bendPoints);
+            }
         }
     }
     
     /**
      * Computes the bend points necessary to route the given self loop edge orthogonally.
      */
-    protected KVectorChain computeOrthogonalBendPoints(final SelfLoopEdge slEdge) {
+    protected KVectorChain computeOrthogonalBendPoints(final SelfLoopEdge slEdge, final ElkMargin nodeMargins) {
         KVectorChain bendPoints = new KVectorChain();
         
-        ElkMargin margins = computeMargins(slEdge.getSLHyperLoop().getSLHolder().getLNode());
+        addOuterBendPoint(slEdge, slEdge.getSLSource(), nodeMargins, bendPoints);
+        addCornerBendPoints(slEdge, nodeMargins, bendPoints);
+        addOuterBendPoint(slEdge, slEdge.getSLTarget(), nodeMargins, bendPoints);
         
-        addOuterBendPoint(slEdge, slEdge.getSLSource(), margins, bendPoints);
-        addCornerBendPoints(slEdge, margins, bendPoints);
-        addOuterBendPoint(slEdge, slEdge.getSLTarget(), margins, bendPoints);
-        
+        return bendPoints;
+    }
+    
+    /**
+     * Allows subclasses to turn the given list of bend points into a new list of bend points.
+     */
+    protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final KVectorChain bendPoints) {
         return bendPoints;
     }
 
@@ -133,6 +149,8 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Proper Level Computation
     
+    // TODO We should probably use the margins computed by the MarginCalculator here (provided that runs before this)
+    
     /**
      * Computes the margin area around the node blocked by ports. This then becomes the baseline for computing the self
      * loop levels.
@@ -147,11 +165,11 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
                 break;
                 
             case EAST:
-                margin.right = Math.max(margin.right, lPort.getPosition().x - lNode.getSize().x);
+                margin.right = Math.max(margin.right, lPort.getPosition().x + lPort.getSize().x - lNode.getSize().x);
                 break;
                 
             case SOUTH:
-                margin.bottom = Math.max(margin.bottom, lPort.getPosition().y - lNode.getSize().y);
+                margin.bottom = Math.max(margin.bottom, lPort.getPosition().y + lPort.getSize().y - lNode.getSize().y);
                 break;
                 
             case WEST:
@@ -173,13 +191,13 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     private KVector computeBaseline(final PortSide portSide, final LNode lNode, final ElkMargin nodeMargins) {
         switch (portSide) {
         case NORTH:
-            return new KVector(0, -nodeMargins.top);
+            return new KVector(0, -nodeMargins.top - DISTANCE);
         case EAST:
-            return new KVector(lNode.getSize().x + nodeMargins.right, 0);
+            return new KVector(lNode.getSize().x + nodeMargins.right + DISTANCE, 0);
         case SOUTH:
-            return new KVector(0, lNode.getSize().y + nodeMargins.bottom);
+            return new KVector(0, lNode.getSize().y + nodeMargins.bottom + DISTANCE);
         case WEST:
-            return new KVector(-nodeMargins.left, 0);
+            return new KVector(-nodeMargins.left - DISTANCE, 0);
         default:
             assert false;
             return null;

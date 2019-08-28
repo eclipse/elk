@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
-import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 
 /**
  * Abstract base class for self loop routers. 
@@ -17,6 +17,6 @@ public abstract class AbstractSelfLoopRouter {
     /**
      * Routes the given self loop.
      */
-    public abstract void routeSelfLoop(SelfHyperLoop slLoop);
+    public abstract void routeSelfLoops(SelfLoopHolder slHolder);
 
 }

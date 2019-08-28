@@ -7,9 +7,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
@@ -47,6 +46,8 @@ public class PortSideAssigner {
         default:
             assert false;
         }
+        
+        assert slHolder.getSLPortMap().keySet().stream().noneMatch(lPort -> lPort.getSide() == PortSide.UNDEFINED);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +137,8 @@ public class PortSideAssigner {
     private void assignToAllSides(final SelfLoopHolder slHolder) {
         // Obtain a list of self hyper loops, ordered descendingly by the number of involved ports. This will later tend
         // to place hyper loops with many ports not across corners, but on a single side
-        SortedSet<SelfHyperLoop> slSortedLoops = new TreeSet<>(
+        List<SelfHyperLoop> slSortedLoops = new ArrayList<>(slHolder.getSLHyperLoops());
+        slSortedLoops.sort(
                 (slLoop1, slLoop2) -> Integer.compare(slLoop2.getSLPorts().size(), slLoop1.getSLPorts().size()));
         
         // Iterate over our self loops and assign each to the next target

@@ -72,12 +72,18 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
             case FIXED_SIDE:
                 // Restore ports (which by now have port sides assigned to them). After this call, arePortsHidden() will
                 // report false
+                computeSelfLoopTypes(slHolder);
                 portRestorer.restorePorts(slHolder, monitor);
+                break;
                 
             default:
                 // This should not happen. If ports were hidden this must have been because their order was not fixed
                 assert false;
             }
+            
+        } else {
+            // Ensure that self loops types are computed
+            computeSelfLoopTypes(slHolder);
         }
         
         // Compute how each hyper loop is routed around the node (from a "leftmost" to a "rightmost" port involved in
@@ -90,6 +96,10 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
         routingSlotAssigner.assignRoutingSlots(slHolder);
         
         // TODO Can we also find out where to place labels? If so, can we even invoke label management now?
+    }
+    
+    private void computeSelfLoopTypes(final SelfLoopHolder slHolder) {
+        slHolder.getSLHyperLoops().stream().forEach(slLoop -> slLoop.computePortsPerSide());
     }
 
 }

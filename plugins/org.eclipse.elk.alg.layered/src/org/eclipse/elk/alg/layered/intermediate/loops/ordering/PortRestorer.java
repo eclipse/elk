@@ -28,9 +28,9 @@ import org.eclipse.elk.alg.layered.options.SelfLoopOrderingStrategy;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ArrayTable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Table;
 
 /**
@@ -39,7 +39,7 @@ import com.google.common.collect.Table;
 public class PortRestorer {
     
     /** {@link SelfHyperLoop}s indexed by {@link SelfLoopType}. */
-    private Multimap<SelfLoopType, SelfHyperLoop> slLoopsByType;
+    private ListMultimap<SelfLoopType, SelfHyperLoop> slLoopsByType;
     /** A table of all of the different areas around the node to place self loop ports. */
     private Table<PortSide, PortSideArea, List<SelfLoopPort>> targetAreas;
 
@@ -48,9 +48,6 @@ public class PortRestorer {
      * both the {@link SelfLoopPort}s and the {@link SelfLoopHolder}.
      */
     public void restorePorts(final SelfLoopHolder slHolder, final IElkProgressMonitor monitor) {
-        // Have the loops compute which of their ports are on which side
-        slHolder.getSLHyperLoops().stream().forEach(slLoop -> slLoop.computePortsPerSide());
-        
         // Initialize all of the port lists we'll be working on before finally merging them into the node's list of
         // ports
         initTargetAreas();
@@ -103,8 +100,8 @@ public class PortRestorer {
     /**
      * Gathers all of the self loops and distributes them by type.
      */
-    private Multimap<SelfLoopType, SelfHyperLoop> gatherSelfLoopsByType(final SelfLoopHolder slHolder) {
-        Multimap<SelfLoopType, SelfHyperLoop> loops = HashMultimap.create();
+    private ListMultimap<SelfLoopType, SelfHyperLoop> gatherSelfLoopsByType(final SelfLoopHolder slHolder) {
+        ListMultimap<SelfLoopType, SelfHyperLoop> loops = ArrayListMultimap.create();
         slHolder.getSLHyperLoops().stream().forEach(slLoop -> loops.put(slLoop.getSelfLoopType(), slLoop));
         return loops;
     }
@@ -120,8 +117,7 @@ public class PortRestorer {
             // We want ports with more outgoing edges to be to the left of ports with more incoming edges, so we need
             // a sorted list of ports
             List<SelfLoopPort> sortedPorts = new ArrayList<>(slLoop.getSLPorts());
-            sortedPorts.sort((slPort1, slPort2) -> Integer.compare(
-                    slPort1.getLPort().getNetFlow(), slPort2.getLPort().getNetFlow()));
+            sortedPorts.sort((slPort1, slPort2) -> Integer.compare(slPort1.getSLNetFlow(), slPort2.getSLNetFlow()));
             
             switch (ordering) {
             case SEQUENCED:
@@ -155,26 +151,26 @@ public class PortRestorer {
         // Find index of the first port with a positive net flow
         int positiveNetFlowIndex = 0;
         for (; positiveNetFlowIndex < sortedPorts.size(); positiveNetFlowIndex++) {
-            if (sortedPorts.get(positiveNetFlowIndex).getLPort().getNetFlow() > 0) {
+            if (sortedPorts.get(positiveNetFlowIndex).getSLNetFlow() > 0) {
                 break;
             }
         }
         
-        // If this is not the first port, return its index
-        if (positiveNetFlowIndex > 0) {
+        // If this is neither the first, nor the last port, return its index
+        if (positiveNetFlowIndex > 0 && positiveNetFlowIndex < sortedPorts.size() - 1) {
             return positiveNetFlowIndex;
         }
         
         // Find index of the first port with a non-negative net flow
         int nonNegativeNetFlowIndex = 0;
         for (; nonNegativeNetFlowIndex < sortedPorts.size(); nonNegativeNetFlowIndex++) {
-            if (sortedPorts.get(nonNegativeNetFlowIndex).getLPort().getNetFlow() > 0) {
+            if (sortedPorts.get(nonNegativeNetFlowIndex).getSLNetFlow() > 0) {
                 break;
             }
         }
         
-        // If this is not the first port, return its index
-        if (nonNegativeNetFlowIndex > 0) {
+        // If this is neither the first, nor the last port, return its index
+        if (nonNegativeNetFlowIndex > 0 && positiveNetFlowIndex < sortedPorts.size() - 1) {
             return nonNegativeNetFlowIndex;
         }
         
@@ -316,14 +312,15 @@ public class PortRestorer {
             final PortSideArea area, final AddMode addMode) {
         
         // Gather those ports that are currently hidden (if they're not hidden, there's no point restoring them)
-        List<SelfLoopPort> targetArea = targetAreas.get(portSide, area).stream()
+        List<SelfLoopPort> hiddenPorts = slPorts.stream()
                 .filter(slPort -> slPort.isHidden())
                 .collect(Collectors.toList());
         
+        List<SelfLoopPort> targetArea = targetAreas.get(portSide, area);
         if (addMode == AddMode.PREPEND) {
-            targetArea.addAll(0, slPorts);
+            targetArea.addAll(0, hiddenPorts);
         } else {
-            targetArea.addAll(slPorts);
+            targetArea.addAll(hiddenPorts);
         }
     }
 
@@ -332,67 +329,75 @@ public class PortRestorer {
 
     private void restorePorts(final SelfLoopHolder slHolder) {
         // We're building up a new port list and replace the old one once we're finished. That's more efficient than
-        // continually inserting ports into the existing list.
-        List<LPort> existingPorts = slHolder.getLNode().getPorts();
-        int nextExistingPortIndex = 0;
+        // continually inserting ports into the middle of the existing list.
+        LNode lNode = slHolder.getLNode();
         
-        List<LPort> newPorts = new ArrayList<>(existingPorts.size() + slHolder.getSLPortMap().size());
+        // We'll add the old ports in bursts and always remember where the next burst starts
+        List<LPort> oldPortList = new ArrayList<>(lNode.getPorts());
+        int nextOldPortIndex = 0;
+        
+        List<LPort> newPortList = lNode.getPorts();
+        newPortList.clear();
         
         // Go over the target areas and add them in between the regular ports
-        addAll(targetAreas.get(PortSide.NORTH, PortSideArea.START), newPorts);
-        nextExistingPortIndex = addAllThat(
-                existingPorts,
-                nextExistingPortIndex,
+        addAll(targetAreas.get(PortSide.NORTH, PortSideArea.START), lNode);
+        nextOldPortIndex = addAllThat(
+                oldPortList,
+                nextOldPortIndex,
                 (lPort) -> lPort.getSide() == PortSide.NORTH && isNorthSouthPortWithWestOrWestEastConnections(lPort),
-                newPorts);
-        addAll(targetAreas.get(PortSide.NORTH, PortSideArea.MIDDLE), newPorts);
-        nextExistingPortIndex = addAllThat(
-                existingPorts,
-                nextExistingPortIndex,
+                newPortList);
+        addAll(targetAreas.get(PortSide.NORTH, PortSideArea.MIDDLE), lNode);
+        nextOldPortIndex = addAllThat(
+                oldPortList,
+                nextOldPortIndex,
                 (lPort) -> lPort.getSide() == PortSide.NORTH,
-                newPorts);
-        addAll(targetAreas.get(PortSide.NORTH, PortSideArea.END), newPorts);
+                newPortList);
+        addAll(targetAreas.get(PortSide.NORTH, PortSideArea.END), lNode);
         
-        addAll(targetAreas.get(PortSide.EAST, PortSideArea.START), newPorts);
-        addAll(targetAreas.get(PortSide.EAST, PortSideArea.MIDDLE), newPorts);
-        nextExistingPortIndex = addAllThat(
-                existingPorts,
-                nextExistingPortIndex,
+        addAll(targetAreas.get(PortSide.EAST, PortSideArea.START), lNode);
+        addAll(targetAreas.get(PortSide.EAST, PortSideArea.MIDDLE), lNode);
+        nextOldPortIndex = addAllThat(
+                oldPortList,
+                nextOldPortIndex,
                 (lPort) -> lPort.getSide() == PortSide.EAST,
-                newPorts);
-        addAll(targetAreas.get(PortSide.EAST, PortSideArea.END), newPorts);
+                newPortList);
+        addAll(targetAreas.get(PortSide.EAST, PortSideArea.END), lNode);
         
-        addAll(targetAreas.get(PortSide.SOUTH, PortSideArea.START), newPorts);
-        nextExistingPortIndex = addAllThat(
-                existingPorts,
-                nextExistingPortIndex,
+        addAll(targetAreas.get(PortSide.SOUTH, PortSideArea.START), lNode);
+        nextOldPortIndex = addAllThat(
+                oldPortList,
+                nextOldPortIndex,
                 (lPort) -> lPort.getSide() == PortSide.SOUTH && isNorthSouthPortWithEastConnections(lPort),
-                newPorts);
-        addAll(targetAreas.get(PortSide.SOUTH, PortSideArea.MIDDLE), newPorts);
-        nextExistingPortIndex = addAllThat(
-                existingPorts,
-                nextExistingPortIndex,
+                newPortList);
+        addAll(targetAreas.get(PortSide.SOUTH, PortSideArea.MIDDLE), lNode);
+        nextOldPortIndex = addAllThat(
+                oldPortList,
+                nextOldPortIndex,
                 (lPort) -> lPort.getSide() == PortSide.SOUTH,
-                newPorts);
-        addAll(targetAreas.get(PortSide.SOUTH, PortSideArea.END), newPorts);
+                newPortList);
+        addAll(targetAreas.get(PortSide.SOUTH, PortSideArea.END), lNode);
         
-        addAll(targetAreas.get(PortSide.WEST, PortSideArea.START), newPorts);
-        nextExistingPortIndex = addAllThat(
-                existingPorts,
-                nextExistingPortIndex,
+        addAll(targetAreas.get(PortSide.WEST, PortSideArea.START), lNode);
+        nextOldPortIndex = addAllThat(
+                oldPortList,
+                nextOldPortIndex,
                 (lPort) -> lPort.getSide() == PortSide.WEST,
-                newPorts);
-        addAll(targetAreas.get(PortSide.WEST, PortSideArea.MIDDLE), newPorts);
-        addAll(targetAreas.get(PortSide.WEST, PortSideArea.END), newPorts);
+                newPortList);
+        addAll(targetAreas.get(PortSide.WEST, PortSideArea.MIDDLE), lNode);
+        addAll(targetAreas.get(PortSide.WEST, PortSideArea.END), lNode);
+        
+        assert newPortList.size() >= oldPortList.size() && newPortList.size() >= slHolder.getSLPortMap().size();
+        assert !slHolder.arePortsHidden() || newPortList.size() > oldPortList.size();
     }
     
     /**
-     * Adds the {@link LPort}s of all of the {@link SelfLoopPort}s to the target list of {@link LPort}s.
+     * Adds the {@link LPort}s of all of the {@link SelfLoopPort}s to the given node. It does so by calling
+     * {@link LPort#setNode(LNode)}, which will automatically add them to the node's port list.
      */
-    private void addAll(final List<SelfLoopPort> slPorts, final List<LPort> target) {
+    private void addAll(final List<SelfLoopPort> slPorts, final LNode lNode) {
         slPorts.stream()
             .map(slPort -> slPort.getLPort())
-            .forEach(lPort -> target.add(lPort));
+            .forEach(lPort -> lPort.setNode(lNode));
     }
     
     /**

@@ -80,9 +80,13 @@ public class RoutingSlotAssigner {
         
         // To be able to quickly count crossings later, we remember for each loop whether it's active at a given port
         // ID or not
+        slLoopActivityOverPorts = new HashMap<>();
         computeLoopActivity(slHolder);
         
-        // For each pair of hyper loops, determine the crossings for one segment routed above the other and vice versa
+        // For each pair of hyper loops, determine the crossings for one segment routed above the other and vice versa.
+        // Note that this will create dependencies between all pairs of self loops, even if they don't share ports. This
+        // is intentional. It assigns unique routing slots to each segment, which ensures that there won't be any
+        // collisions on sides without ports. The routing space will be compacted at a later step.
         for (int firstIdx = 0; firstIdx < slLoops.size() - 1; firstIdx++) {
             SelfHyperLoop slLoop1 = slHolder.getSLHyperLoops().get(firstIdx);
             for (int secondIdx = firstIdx + 1; secondIdx < slLoops.size(); secondIdx++) {
@@ -105,12 +109,13 @@ public class RoutingSlotAssigner {
             
             // Run from the loop's start port to the end port, possibly wrapping around, and set everything to true
             // along the way
-            int lPortIdx = slLoop.getLeftmostPort().getLPort().id;
+            int lPortIdx = slLoop.getLeftmostPort().getLPort().id - 1;
             int lPortTargetIdx = slLoop.getRightmostPort().getLPort().id;
-            do {
-                loopActivity[lPortIdx] = true;
+            
+            while (lPortIdx != lPortTargetIdx) {
                 lPortIdx = (lPortIdx + 1) % lPorts.size();
-            } while (lPortIdx != lPortTargetIdx);
+                loopActivity[lPortIdx] = true;
+            }
         }
     }
 
@@ -137,8 +142,8 @@ public class RoutingSlotAssigner {
             // The second loop should be above the first loop
             new SegmentDependency(segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
             
-        } else {
-            // Doesn't matter, let the cycle breaker decide
+        } else if (firstAboveSecondCrossings != 0) {
+            // Both orders cause the same number of crossings, but at least one
             new SegmentDependency(segment1, segment2, 0);
             new SegmentDependency(segment2, segment1, 0);
         }
@@ -173,10 +178,8 @@ public class RoutingSlotAssigner {
         // We first compute raw slots
         assignRawRoutingSlotsToSegments();
         
-        // Simply assigning those raw slots to the loop has the effect of loops being routed through the same slots on
-        // all sides, without paying regard to the fact that on some sides, some loops might occupy lower slots since
-        // they are free there. What we're going to do, therefore, is to first apply the raw routing slots to all self
-        // loops and then shift them towards the node on each side, if possible
+        // We assign raw routing slots, but try to compact the routing slot assignment afterwards (this might not
+        // actually be necessary)
         assignRawRoutingSlotsToLoops(slHolder);
         shiftTowardsNode(slHolder);
     }

@@ -47,8 +47,7 @@ public class SelfLoopRouter implements ILayoutProcessor<LGraph> {
             .filter(lNode -> lNode.getType() == NodeType.NORMAL)
             .filter(lNode -> lNode.hasProperty(InternalProperties.SELF_LOOP_HOLDER))
             .map(lNode -> lNode.getProperty(InternalProperties.SELF_LOOP_HOLDER))
-            .flatMap(slHolder -> slHolder.getSLHyperLoops().stream())
-            .forEach(slLoop -> router.routeSelfLoop(slLoop));
+            .forEach(slHolder -> router.routeSelfLoops(slHolder));
         
         progressMonitor.done();
     }

@@ -8,7 +8,7 @@
 package org.eclipse.elk.alg.layered.intermediate.loops;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +31,12 @@ public final class SelfLoopHolder {
     private final LNode lNode;
     /** List of the node's {@link SelfHyperLoop}s. */
     private final List<SelfHyperLoop> slHyperLoops = new ArrayList<>();
-    /** Map of original ports to the {@link SelfLoopPort}s created to represent them. */
-    private final Map<LPort, SelfLoopPort> slPorts = new HashMap<>();
+    /**
+     * Map of original ports to the {@link SelfLoopPort}s created to represent them. This is a {@link LinkedHashMap}
+     * because we need a stable iteration order over the values later on so that we create {@link SelfHyperLoop}s in a
+     * predictable order, thus preventing self loops from reordering between layout runs.
+     */
+    private final Map<LPort, SelfLoopPort> slPorts = new LinkedHashMap<>();
     
     /** Whether at least one self loop port is currently hidden from its node. */
     private boolean arePortsHidden = false;
