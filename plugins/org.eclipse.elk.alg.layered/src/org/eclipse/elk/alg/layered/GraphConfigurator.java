@@ -53,7 +53,7 @@ final class GraphConfigurator {
     /** intermediate processing configuration for basic graphs. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSING_CONFIGURATION =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.INNERMOST_NODE_MARGIN_CALCULATOR)
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
             .addBefore(LayeredPhases.P5_EDGE_ROUTING,
                     IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
@@ -234,6 +234,8 @@ final class GraphConfigurator {
         if (graphProperties.contains(GraphProperties.COMMENTS)) {
             configuration
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
+                .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
+                        IntermediateProcessorStrategy.COMMENT_NODE_MARGIN_CALCULATOR)
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
         

@@ -76,7 +76,7 @@ import com.google.common.collect.Lists;
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link NodeLabelAndSizeCalculator}</dd>
- *     <dd>{@link NodeMarginCalculator}</dd>
+ *     <dd>{@link InnermostNodeMarginCalculator}</dd>
  *     <dd>{@link EndLabelPreprocessor}</dd>
  * </dl>
  * 

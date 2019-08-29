@@ -8,6 +8,7 @@
 package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
@@ -15,7 +16,6 @@ import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
-import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
@@ -32,7 +32,11 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
 
     @Override
     public void routeSelfLoops(final SelfLoopHolder slHolder) {
-        ElkMargin nodeMargins = computeMargins(slHolder.getLNode());
+        KVector nodeSize = slHolder.getLNode().getSize();
+        LMargin nodeMargins = slHolder.getLNode().getMargin();
+        
+        LMargin newNodeMargins = new LMargin();
+        newNodeMargins.set(nodeMargins);
         
         for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
             for (SelfLoopEdge slEdge : slLoop.getSLEdges()) {
@@ -43,14 +47,19 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
                 
                 lEdge.getBendPoints().clear();
                 lEdge.getBendPoints().addAll(bendPoints);
+                
+                bendPoints.stream().forEach(bp -> updateNewNodeMargins(nodeSize, newNodeMargins, bp));
             }
         }
+        
+        // Update the node's margins to include the space required for self loops
+        nodeMargins.set(newNodeMargins);
     }
-    
+
     /**
      * Computes the bend points necessary to route the given self loop edge orthogonally.
      */
-    protected KVectorChain computeOrthogonalBendPoints(final SelfLoopEdge slEdge, final ElkMargin nodeMargins) {
+    protected KVectorChain computeOrthogonalBendPoints(final SelfLoopEdge slEdge, final LMargin nodeMargins) {
         KVectorChain bendPoints = new KVectorChain();
         
         addOuterBendPoint(slEdge, slEdge.getSLSource(), nodeMargins, bendPoints);
@@ -66,11 +75,22 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final KVectorChain bendPoints) {
         return bendPoints;
     }
+    
+    /**
+     * Extends the node margins to include the given bend point.
+     */
+    private void updateNewNodeMargins(final KVector nodeSize, final LMargin newNodeMargins, final KVector bendPoint) {
+        newNodeMargins.left = Math.max(newNodeMargins.left, -bendPoint.x);
+        newNodeMargins.right = Math.max(newNodeMargins.right, bendPoint.x - nodeSize.x);
+        
+        newNodeMargins.top = Math.max(newNodeMargins.top, -bendPoint.y);
+        newNodeMargins.bottom = Math.max(newNodeMargins.bottom, bendPoint.y - nodeSize.y);
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Actual Bend Point Computation
 
-    private void addOuterBendPoint(final SelfLoopEdge slEdge, final SelfLoopPort slPort, final ElkMargin nodeMargins,
+    private void addOuterBendPoint(final SelfLoopEdge slEdge, final SelfLoopPort slPort, final LMargin nodeMargins,
             final KVectorChain bendPoints) {
         
         SelfHyperLoop slLoop = slEdge.getSLHyperLoop();
@@ -104,7 +124,7 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         bendPoints.add(result);
     }
 
-    private void addCornerBendPoints(final SelfLoopEdge slEdge, final ElkMargin nodeMargins,
+    private void addCornerBendPoints(final SelfLoopEdge slEdge, final LMargin nodeMargins,
             final KVectorChain bendPoints) {
         
         // Check if we even need corner bend points
@@ -148,47 +168,12 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Proper Level Computation
-    
-    // TODO We should probably use the margins computed by the MarginCalculator here (provided that runs before this)
-    
-    /**
-     * Computes the margin area around the node blocked by ports. This then becomes the baseline for computing the self
-     * loop levels.
-     */
-    private ElkMargin computeMargins(final LNode lNode) {
-        ElkMargin margin = new ElkMargin();
-        
-        for (LPort lPort : lNode.getPorts()) {
-            switch (lPort.getSide()) {
-            case NORTH:
-                margin.top = Math.max(margin.top, -lPort.getPosition().y);
-                break;
-                
-            case EAST:
-                margin.right = Math.max(margin.right, lPort.getPosition().x + lPort.getSize().x - lNode.getSize().x);
-                break;
-                
-            case SOUTH:
-                margin.bottom = Math.max(margin.bottom, lPort.getPosition().y + lPort.getSize().y - lNode.getSize().y);
-                break;
-                
-            case WEST:
-                margin.left = Math.max(margin.left, -lPort.getPosition().x);
-                break;
-                
-            default:
-                assert false;
-            }
-        }
-        
-        return margin;
-    }
 
     /**
      * Based on the margin area, this computes the offset from the node origin to add to escape the area occupied by
      * ports.
      */
-    private KVector computeBaseline(final PortSide portSide, final LNode lNode, final ElkMargin nodeMargins) {
+    private KVector computeBaseline(final PortSide portSide, final LNode lNode, final LMargin nodeMargins) {
         switch (portSide) {
         case NORTH:
             return new KVector(0, -nodeMargins.top - DISTANCE);

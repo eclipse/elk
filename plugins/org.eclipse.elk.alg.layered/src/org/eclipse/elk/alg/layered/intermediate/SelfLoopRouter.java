@@ -23,14 +23,14 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * 
  * <dl>
  * <dt>Preconditions:</dt>
- *   <dd>A layered graph whose self-loop nodes have been preprocessed by {@link SelfLoopPreprocessor}.</dd>
+ *   <dd>Self loops have had routing slots assigned by {@link SelfLoopOrderer}.</dd>
  * <dt>Postconditions:</dt>
- *   <dd>All ports previously removed are restored.</dd>
- *   <dd>All ports are ordered such that they yield the best possible self-loop placement.</dd>
+ *   <dd>All self loop edges are routed, but not yet restored.</dd>
+ *   <dd>Node margins are extended by the space required to route self loops.</dd>
  * <dt>Slots:</dt>
  *   <dd>Before phase 4.</dd>
  * <dt>Same-slot dependencies:</dt>
- *   <dd>None</dd>
+ *   <dd>{@link InnermostNodeMarginCalculator}</dd>
  * </dl>
  */
 public class SelfLoopRouter implements ILayoutProcessor<LGraph> {
