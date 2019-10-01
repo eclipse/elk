@@ -135,6 +135,14 @@ public class SelfHyperLoop {
             }
         }
     }
+    
+    /**
+     * Returns the list of ports connected by this hyper loop. Once the {@link RoutingDirector} has run, this list will
+     * be sorted according to the {@link LNode}'s list of {@link LPort}s.
+     */
+    public List<SelfLoopPort> getSLPorts() {
+        return slPorts;
+    }
 
     /**
      * Returns the list of edges that belong to this instance.
@@ -144,11 +152,10 @@ public class SelfHyperLoop {
     }
     
     /**
-     * Returns the list of ports connected by this hyper loop. Once the {@link RoutingDirector} has run, this list will
-     * be sorted according to the {@link LNode}'s list of {@link LPort}s.
+     * Returns the self loop labels, if any. Can be {@code null}.
      */
-    public List<SelfLoopPort> getSLPorts() {
-        return slPorts;
+    public SelfHyperLoopLabels getSLLabels() {
+        return slLabels;
     }
     
     /**

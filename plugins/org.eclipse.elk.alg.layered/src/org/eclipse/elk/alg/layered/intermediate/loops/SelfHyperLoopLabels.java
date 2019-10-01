@@ -14,24 +14,52 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.intermediate.LabelManagementProcessor;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Represents the labels associated with a {@link SelfHyperLoop}. The labels are gathered as edges are added to the
- * hyper loop.
+ * hyper loop. Their actual position is determined by a port side and an alignment on that side.
  */
 public class SelfHyperLoopLabels {
+    
+    /**
+     * Describes all the different alignments a label might have. Most are alignments for labels on the northern or
+     * southern side. Labels on the eastern or western side are restricted to {@link Alignment#TOP}. 
+     */
+    public static enum Alignment {
+        /** A northern or southern centered label. */
+        CENTER,
+        /** A northern or southern left-aligned label. */
+        LEFT,
+        /** A northern or southern right-aligned label. */
+        RIGHT,
+        /** An eastern or western top-aligned label. */
+        TOP
+    }
     
     /** The labels represented by this instance. */
     private final List<LLabel> lLabels = new ArrayList<>();
     /** The size required to place all labels. */
     private final KVector size = new KVector();
+    /** The position of our bounding box's top left corner. */
+    private final KVector position = new KVector();
     /** The graph's layout direction. Influences the way the labels will be placed. */
     private final Direction layoutDirection;
     /** Space to leave between adjacent labels. */
     private final double labelLabelSpacing;
+    
+    /** The side the label is placed on. */
+    private PortSide side;
+    /** The label's alignment. */
+    private Alignment alignment;
+    /** The port any non-center alignment is relative to. */
+    private SelfLoopPort alignmentReferenceSLPort;
+    
     
     /**
      * Creates a new instance for the given {@link SelfHyperLoop}.
@@ -45,7 +73,7 @@ public class SelfHyperLoopLabels {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Accessors
+    // LLabel Access
     
     /**
      * Adds the given collection of labels to this instance.
@@ -63,9 +91,6 @@ public class SelfHyperLoopLabels {
     public List<LLabel> getLLabels() {
         return lLabels;
     }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Label Placement
     
     /**
      * Updates our size under the assumption that the given label was just added to this instance.
@@ -94,8 +119,76 @@ public class SelfHyperLoopLabels {
             if (lLabels.size() > 1) {
                 size.x += labelLabelSpacing;
             }
-            
         }
+    }
+    
+    /**
+     * Applies label management with the given target width to our labels and updates our size. 
+     */
+    public void applyLabelManagement(final ILabelManager labelManager, final double targetWidth) {
+        size.set(LabelManagementProcessor.doManageLabels(
+                labelManager, lLabels, targetWidth, labelLabelSpacing, layoutDirection.isVertical()));
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Label Placement
+    
+    /**
+     * The size of the box required to place the labels. Shouldn't be modified by clients.
+     */
+    public KVector getSize() {
+        return size;
+    }
+    
+    /**
+     * Position of the bounding box's top left corner. To be modified by clients.
+     */
+    public KVector getPosition() {
+        return position;
+    }
+    
+    /**
+     * Returns the side this label is placed on. May be {@code null} if the side was not determined yet.
+     */
+    public PortSide getSide() {
+        return side;
+    }
+    
+    /**
+     * Sets the side this label is placed on.
+     */
+    public void setSide(final PortSide side) {
+        this.side = side;
+    }
+    
+    /**
+     * Returns this label's alignment May be {@code null} if the alignment was not determined yet.
+     */
+    public Alignment getAlignment() {
+        return alignment;
+    }
+    
+    /**
+     * Sets this label's alignment.
+     */
+    public void setAlignment(final Alignment alignment) {
+        this.alignment = alignment;
+    }
+    
+    /**
+     * Returns the port the alignment is relative to. This will only be non-{@code null} (and thus meaningful) if the
+     * alignment is not {@link Alignment#CENTER}.
+     */
+    public SelfLoopPort getAlignmentReferenceSLPort() {
+        return alignmentReferenceSLPort;
+    }
+    
+    /**
+     * Sets the port the alignment is relative to. Should only be called if the alignment is not
+     * {@link Alignment#CENTER}.
+     */
+    public void setAlignmentReferenceSLPort(final SelfLoopPort alignmentReferenceSLPort) {
+        this.alignmentReferenceSLPort = alignmentReferenceSLPort;
     }
     
 }

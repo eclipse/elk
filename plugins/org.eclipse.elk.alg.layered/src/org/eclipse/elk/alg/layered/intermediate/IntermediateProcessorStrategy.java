@@ -104,10 +104,10 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR,
     /** Sets the positions of ports and labels, and sets the node sizes. */
     LABEL_AND_NODE_SIZE_PROCESSOR,
-    /** Calculates the self loops with relative position to the parent node.*/
-    SELF_LOOP_LABEL_PLACER,
     /** Calculates the margins of nodes according to the sizes of ports and port labels. */
     INNERMOST_NODE_MARGIN_CALCULATOR,
+    /** Calculates the self loops with relative position to the parent node.*/
+    SELF_LOOP_LABEL_PLACER,
     /** Calculate the bendpoints for the self-loop edges. */
     SELF_LOOP_ROUTER,
     /** Extends node margin by the space required for comment boxes. */
