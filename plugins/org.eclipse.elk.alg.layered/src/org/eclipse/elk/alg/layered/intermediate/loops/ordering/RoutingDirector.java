@@ -136,7 +136,7 @@ public class RoutingDirector {
 
     /**
      * Opposing side loops have two ways to be routed. Those can be identified by the otherwise uninvolved port side the
-     * loop is routed through. The exact routing we choose determines the number of
+     * loop is routed through. The exact routing we choose determines the number of edge crossings.
      */
     private void determineTwoSideOpposingLoopRoutes(final SelfHyperLoop slLoop) {
         PortSide[] sides = slLoop.getSLPortsBySide().keySet().toArray(new PortSide[2]);
