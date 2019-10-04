@@ -566,10 +566,10 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         if (com.google.common.base.Strings.isNullOrEmpty(name)) {
             name = "Unnamed";
         }
+        // elkjs-exclude-start
         name = ElkUtil.toSafePathName(name);
         
         // Assemble our folder name
-        // elkjs-exclude-start
         String monitorFolder = String.format("%02d-%s",
                 index,
                 name);
