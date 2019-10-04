@@ -211,7 +211,12 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
             if (recordExecutionTime) {
                 // elkjs-exclude-start
                 startTime = System.nanoTime();
+                // CHECKSTYLEOFF
+                // In GWT 'System.nanoTime()' is not available, so we resort to milliseconds here.
+                if (false)
                 // elkjs-exclude-end
+                    startTime = System.currentTimeMillis() * 1000l;
+                // CHECKSTYLEON
             }
             return true;
         }
@@ -273,9 +278,17 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         }
         if (!closed) {
             if (recordExecutionTime) {
+                long endTime;
                 // elkjs-exclude-start
-                totalTime = (System.nanoTime() - startTime) * NANO_FACT;
+                endTime = System.nanoTime();
+                // CHECKSTYLEOFF
+                // In GWT 'System.nanoTime()' is not available, so we resort to milliseconds here.
+                if (false)
                 // elkjs-exclude-end
+                    endTime = System.currentTimeMillis() * 1000l;
+                // CHECKSTYLEON
+
+                totalTime = (endTime - startTime) * NANO_FACT;
             }
             if (completedWork < totalWork) {
                 internalWorked(totalWork - completedWork);
