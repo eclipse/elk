@@ -1030,6 +1030,7 @@ public final class ElkUtil {
      * @param name the name to convert to a proper path name.
      * @return the proper path name.
      */
+    // elkjs-exclude-start
     public static String toSafePathName(final String name) {
         // Replace whitespace by _
         Pattern whitespace = Pattern.compile("\\s");
@@ -1039,6 +1040,7 @@ public final class ElkUtil {
         Pattern allButAllowedCharacters = Pattern.compile("[^a-zA-Z0-9_]");
         return allButAllowedCharacters.matcher(nameWithoutWhitespace).replaceAll("-");
     }
+    // elkjs-exclude-end
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
