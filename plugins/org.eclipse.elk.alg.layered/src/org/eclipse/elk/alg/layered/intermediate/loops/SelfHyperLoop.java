@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
-import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingDirector;
+import org.eclipse.elk.alg.layered.intermediate.loops.routing.RoutingDirector;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -229,10 +229,14 @@ public class SelfHyperLoop {
     }
     
     /**
-     * Sets which routing slot this loop should occupy on the given port side.
+     * Sets which routing slot this loop should occupy on the given port side. Also updates the number of routing slots
+     * kept by the {@link SelfLoopHolder}.
      */
     public void setRoutingSlot(final PortSide portSide, final int slot) {
         routingSlot[portSide.ordinal()] = slot;
+        
+        int[] slotCount = slHolder.getRoutingSlotCount();
+        slotCount[portSide.ordinal()] = Math.max(slotCount[portSide.ordinal()], slot + 1);
     }
     
 }

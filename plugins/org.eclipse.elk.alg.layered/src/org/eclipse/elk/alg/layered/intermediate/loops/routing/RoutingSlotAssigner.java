@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
+package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -142,8 +143,9 @@ public class RoutingSlotAssigner {
             // The second loop should be above the first loop
             new SegmentDependency(segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
             
-        } else if (firstAboveSecondCrossings != 0) {
-            // Both orders cause the same number of crossings, but at least one
+        } else if (firstAboveSecondCrossings != 0 || labelsOverlap(slLoop1, slLoop2)) {
+            // Either both orders cause the same number of crossings (and at least one), or the labels of the two loops
+            // overlap and the loops must thus be forced onto different slots
             new SegmentDependency(segment1, segment2, 0);
             new SegmentDependency(segment2, segment1, 0);
         }
@@ -166,6 +168,37 @@ public class RoutingSlotAssigner {
         }
         
         return crossings;
+    }
+
+    /**
+     * Returns {@code true} if the labels of the two loops would overlap if the loops were assigned to the same routing
+     * slot.
+     */
+    private boolean labelsOverlap(final SelfHyperLoop slLoop1, final SelfHyperLoop slLoop2) {
+        assert slLoop1 != slLoop2;
+        
+        SelfHyperLoopLabels slLabels1 = slLoop1.getSLLabels();
+        SelfHyperLoopLabels slLabels2 = slLoop2.getSLLabels();
+        
+        // There won't be overlaps unless both loops have labels
+        if (slLabels1 == null || slLabels2 == null) {
+            return false;
+        }
+        
+        // The labels must be assigned to the same side, and that side (currently) needs to be either north or south
+        if (slLabels1.getSide() != slLabels2.getSide() || slLabels1.getSide() == PortSide.EAST
+                || slLabels1.getSide() == PortSide.WEST) {
+            return false;
+        }
+        
+        // Check if the labels overlap horizontally (remember that at this point, horizontal coordinates of north and
+        // south labels have been set by the label placer)
+        double start1 = slLabels1.getPosition().x;
+        double end1 = start1 + slLabels1.getSize().x;
+        double start2 = slLabels2.getPosition().x;
+        double end2 = start2 + slLabels2.getSize().x;
+        
+        return start1 <= end2 && end1 >= start2;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

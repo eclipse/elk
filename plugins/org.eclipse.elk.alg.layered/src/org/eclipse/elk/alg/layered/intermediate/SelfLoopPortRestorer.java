@@ -12,38 +12,30 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
 import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortSideAssigner;
-import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingDirector;
-import org.eclipse.elk.alg.layered.intermediate.loops.ordering.RoutingSlotAssigner;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Restores self loop ports and computes everything required to decide where the self loops will be routed. The
- * information will later be used to compute the actual routes.
+ * Restores self loop ports and computes self loop types.
  * 
  * <dl>
  * <dt>Preconditions:</dt>
- * <dd>A layered graph whose self-loop nodes have been preprocessed by {@link SelfLoopPreprocessor}.</dd>
+ *   <dd>A layered graph whose self-loop nodes have been preprocessed by {@link SelfLoopPreprocessor}.</dd>
  * <dt>Postconditions:</dt>
- * <dd>All ports previously removed are restored.</dd>
- * <dd>All ports are ordered such that they yield the best possible self-loop placement.</dd>
+ *   <dd>All ports previously removed are restored.</dd>
  * <dt>Slots:</dt>
- * <dd>Before phase 4.</dd>
+ *   <dd>Before phase 4.</dd>
  * <dt>Same-slot dependencies:</dt>
- * <dd>None</dd>
+ *   <dd>None</dd>
  * </dl>
  */
-public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
+public class SelfLoopPortRestorer implements ILayoutProcessor<LGraph> {
     
     /** This thing will assign hidden ports to port sides if port constraints were initially free. */
     private final PortSideAssigner portSideAssigner = new PortSideAssigner();
     /** Port restorer we'll use for fixed side port constraints. */
     private final PortRestorer portRestorer = new PortRestorer();
-    /** Routing director we'll use to compute how the loops are routed around the node. */
-    private final RoutingDirector routingDirector = new RoutingDirector();
-    /** The crossing minimizer we use to assign self loops to routing slots. */
-    private final RoutingSlotAssigner routingSlotAssigner = new RoutingSlotAssigner();
 
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
@@ -85,17 +77,6 @@ public class SelfLoopOrderer implements ILayoutProcessor<LGraph> {
             // Ensure that self loops types are computed
             computeSelfLoopTypes(slHolder);
         }
-        
-        // Compute how each hyper loop is routed around the node (from a "leftmost" to a "rightmost" port involved in
-        // the loop, but those must be computed and will influence the number of crossings)
-        routingDirector.determineLoopRoutes(slHolder);
-        
-        // Find out which port side each hyper loop appears on and assign routing slots such that the self loop "trunks"
-        // (the pieces of the self loop that seem to run around the node, parallel to the respective node boundary) do
-        // not intersect
-        routingSlotAssigner.assignRoutingSlots(slHolder);
-        
-        // TODO Can we also find out where to place labels? If so, can we even invoke label management now?
     }
     
     private void computeSelfLoopTypes(final SelfLoopHolder slHolder) {

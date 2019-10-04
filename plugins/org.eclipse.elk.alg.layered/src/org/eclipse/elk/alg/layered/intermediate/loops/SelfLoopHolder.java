@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Holds all the information required to route self loops of a particular node. Each node with self loops has one of
@@ -40,6 +41,8 @@ public final class SelfLoopHolder {
     
     /** Whether at least one self loop port is currently hidden from its node. */
     private boolean arePortsHidden = false;
+    /** The number of routing slots on each side of the node, indexed by {@link PortSide} ordinal. */
+    private int[] routingSlotCount = new int[PortSide.values().length];
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Creation
@@ -204,6 +207,13 @@ public final class SelfLoopHolder {
      */
     public void setPortsHidden(final boolean hidden) {
         arePortsHidden = hidden;
+    }
+    
+    /**
+     * Number of routing slots per side, indexed by {@link PortSide} ordinal. To be updated by clients.
+     */
+    public int[] getRoutingSlotCount() {
+        return routingSlotCount;
     }
 
 }

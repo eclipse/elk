@@ -11,6 +11,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -54,6 +56,10 @@ public class SelfLoopPostprocessor implements ILayoutProcessor<LGraph> {
         slHolder.getSLHyperLoops().stream()
             .flatMap(slLoop -> slLoop.getSLEdges().stream())
             .forEach(slEdge -> restoreEdge(lNode, slEdge));
+        
+        slHolder.getSLHyperLoops().stream()
+            .filter(slLoop -> slLoop.getSLLabels() != null)
+            .forEach(slLoop -> slLoop.getSLLabels().applyPlacement(lNode.getPosition()));
     }
 
     private void restoreEdge(final LNode lNode, final SelfLoopEdge slEdge) {

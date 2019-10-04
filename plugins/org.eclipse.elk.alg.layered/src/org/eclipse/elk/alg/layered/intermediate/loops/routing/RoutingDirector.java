@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
+package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
 import java.util.Comparator;
 import java.util.List;
@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.intermediate.loops.ordering.PortRestorer;
 import org.eclipse.elk.core.options.PortSide;
 
 /**

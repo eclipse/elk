@@ -129,6 +129,16 @@ public class SelfHyperLoopLabels {
         size.set(LabelManagementProcessor.doManageLabels(
                 labelManager, lLabels, targetWidth, labelLabelSpacing, layoutDirection.isVertical()));
     }
+    
+    /**
+     * Applies the bounding box placement to the individual labels.
+     */
+    public void applyPlacement(final KVector offset) {
+        // TODO Do this properly, including alignment
+        for (LLabel lLabel : lLabels) {
+            lLabel.getPosition().set(position.x + offset.x, position.y + offset.y);
+        }
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Label Placement

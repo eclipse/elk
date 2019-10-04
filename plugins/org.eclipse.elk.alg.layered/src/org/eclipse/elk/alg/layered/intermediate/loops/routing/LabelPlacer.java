@@ -8,29 +8,28 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate;
+package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
-import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.intermediate.InnermostNodeMarginCalculator;
+import org.eclipse.elk.alg.layered.intermediate.LabelManagementProcessor;
+import org.eclipse.elk.alg.layered.intermediate.SelfLoopPortRestorer;
+import org.eclipse.elk.alg.layered.intermediate.SelfLoopRouter;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels.Alignment;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.SelfLoopOrderingStrategy;
-import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.labels.ILabelManager;
-import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -57,29 +56,16 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dd>Before phase 4.</dd>
  * <dt>Same-slot dependencies:</dt>
  *   <dd>{@link NodeLabelAndSizeCalculator}</dd>
- *   <dd>{@link SelfLoopOrderer}</dd>
+ *   <dd>{@link SelfLoopPortRestorer}</dd>
  *   <dd>{@link InnermostNodeMarginCalculator}</dd>
  * </dl>
  */
-public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
+public final class LabelPlacer {
 
-    @Override
-    public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Self-Loop Label Placement", 1);
-        
-        ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
-        
-        layeredGraph.getLayers().stream()
-            .flatMap(layer -> layer.getNodes().stream())
-            .filter(lNode -> lNode.getType() == NodeType.NORMAL)
-            .filter(lNode -> lNode.hasProperty(InternalProperties.SELF_LOOP_HOLDER))
-            .map(lNode -> lNode.getProperty(InternalProperties.SELF_LOOP_HOLDER))
-            .forEach(slHolder -> processNode(slHolder, labelManager, monitor));
-        
-        monitor.done();
-    }
-
-    private void processNode(final SelfLoopHolder slHolder, final ILabelManager labelManager,
+    /**
+     * Places labels for the given {@link SelfLoopHolder}.
+     */
+    public void placeLabels(final SelfLoopHolder slHolder, final ILabelManager labelManager,
             final IElkProgressMonitor monitor) {
         
         assignSideAndAlignment(slHolder);
@@ -126,10 +112,10 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
             case ONE_SIDE:
                 PortSide loopSide = slLoop.getOccupiedPortSides().iterator().next();
                 
-                if (orderingStrategy == SelfLoopOrderingStrategy.STACKED && (loopSide == PortSide.NORTH)) {
+                if (orderingStrategy == SelfLoopOrderingStrategy.SEQUENCED && (loopSide == PortSide.NORTH)) {
                     // Collect for deferred processing
                     northernOneSidedSLLoops.add(slLoop);
-                } else if (orderingStrategy == SelfLoopOrderingStrategy.STACKED && (loopSide == PortSide.SOUTH)) {
+                } else if (orderingStrategy == SelfLoopOrderingStrategy.SEQUENCED && (loopSide == PortSide.SOUTH)) {
                     // Collect for deferred processing
                     southernOneSidedSLLoops.add(slLoop);
                 } else {

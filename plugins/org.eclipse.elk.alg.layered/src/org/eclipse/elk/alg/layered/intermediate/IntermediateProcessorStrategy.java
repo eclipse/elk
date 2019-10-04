@@ -93,7 +93,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     /** Hierarchical two-sided greedy switch crossing reduction. */
     TWO_SIDED_GREEDY_SWITCH,
     /** Position self loops after phase 3. */
-    SELF_LOOP_ORDERER,
+    SELF_LOOP_PORT_RESTORER,
     /** Wraps graphs such that they better fit a given drawing area, allowing only a single edge per cut. */
     SINGLE_EDGE_GRAPH_WRAPPER,
     /** Makes sure that in-layer constraints are handled. */
@@ -106,8 +106,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the margins of nodes according to the sizes of ports and port labels. */
     INNERMOST_NODE_MARGIN_CALCULATOR,
-    /** Calculates the self loops with relative position to the parent node.*/
-    SELF_LOOP_LABEL_PLACER,
     /** Calculate the bendpoints for the self-loop edges. */
     SELF_LOOP_ROUTER,
     /** Extends node margin by the space required for comment boxes. */
@@ -326,11 +324,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case SELF_LOOP_PREPROCESSOR:
             return new SelfLoopPreprocessor();
             
-        case SELF_LOOP_LABEL_PLACER:
-            return new SelfLoopLabelPlacer();
-            
-        case SELF_LOOP_ORDERER:
-            return new SelfLoopOrderer();
+        case SELF_LOOP_PORT_RESTORER:
+            return new SelfLoopPortRestorer();
 
         case SELF_LOOP_POSTPROCESSOR:
             return new SelfLoopPostprocessor();
