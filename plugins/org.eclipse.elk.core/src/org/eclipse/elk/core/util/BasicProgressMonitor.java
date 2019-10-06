@@ -86,10 +86,12 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     private List<String> logMessages = null;
     /** list of logged graphs (only non-null if logs are enabled). */
     private List<LoggedGraph> logGraphs = null;
+    // elkjs-exclude-start
     /** path to save debug output in. */
     private Path debugFolder = null;
     /** file to save log messages to. */
     private Path logFile = null;
+    // elkjs-exclude-end
     /** whether the execution time shall be measured when the task is done. */
     private boolean recordExecutionTime = false;
     /** the start time of the associated task, in nanoseconds. */
@@ -209,7 +211,12 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
             if (recordExecutionTime) {
                 // elkjs-exclude-start
                 startTime = System.nanoTime();
+                // CHECKSTYLEOFF
+                // In GWT 'System.nanoTime()' is not available, so we resort to milliseconds here.
+                if (false)
                 // elkjs-exclude-end
+                    startTime = System.currentTimeMillis() * 1000l;
+                // CHECKSTYLEON
             }
             return true;
         }
@@ -271,9 +278,17 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         }
         if (!closed) {
             if (recordExecutionTime) {
+                long endTime;
                 // elkjs-exclude-start
-                totalTime = (System.nanoTime() - startTime) * NANO_FACT;
+                endTime = System.nanoTime();
+                // CHECKSTYLEOFF
+                // In GWT 'System.nanoTime()' is not available, so we resort to milliseconds here.
+                if (false)
                 // elkjs-exclude-end
+                    endTime = System.currentTimeMillis() * 1000l;
+                // CHECKSTYLEON
+
+                totalTime = (endTime - startTime) * NANO_FACT;
             }
             if (completedWork < totalWork) {
                 internalWorked(totalWork - completedWork);
@@ -421,7 +436,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
             LoggedGraph loggedGraph = new LoggedGraph(object, tag, graphType);
             logGraphs.add(loggedGraph);
 
-            // elkjs-exclude-end
+            // elkjs-exclude-start
             if (persistLogs) {
                 // Find out which file to write to
                 String actualTag = Strings.isNullOrEmpty(tag) ? "Unnamed" : tag;
@@ -450,12 +465,14 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
                 ? null
                 : Collections.unmodifiableList(logGraphs);
     }
-    
+
+    // elkjs-exclude-start
     @Override
     public Path getDebugFolder() {
         initDebugFolder(false);
         return debugFolder;
     }
+    // elkjs-exclude-end
 
     @Override
     public boolean isExecutionTimeMeasured() {
@@ -477,7 +494,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
      * @param ensureExistence if {@code true}, tries to ensure that the folder exists.
      */
     private void initDebugFolder(final boolean ensureExistence) {
-     // elkjs-exclude-start
+        // elkjs-exclude-start
         if (recordLogs && persistLogs && debugFolder == null) {
             // Our debug path hasn't been computed yet. How we do so depends on whether we have a parent or not
             if (getParentMonitor() == null) {
@@ -524,6 +541,8 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         if (com.google.common.base.Strings.isNullOrEmpty(name)) {
             name = "Unnamed";
         }
+
+        // elkjs-exclude-start
         name = ElkUtil.toSafePathName(name);
         
         // Assemble our folder name
@@ -533,6 +552,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
                 randChar2,
                 name);
         debugFolder = Paths.get(ElkUtil.debugFolderPath(ROOT_DEBUG_FOLDER_NAME, monitorFolder));
+        // elkjs-exclude-end
     }
     
     /**
@@ -546,6 +566,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         if (com.google.common.base.Strings.isNullOrEmpty(name)) {
             name = "Unnamed";
         }
+        // elkjs-exclude-start
         name = ElkUtil.toSafePathName(name);
         
         // Assemble our folder name
@@ -553,11 +574,13 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
                 index,
                 name);
         debugFolder = getParentMonitor().getDebugFolder().resolve(monitorFolder);
+	    // elkjs-exclude-end
     }
     
     /**
      * Returns the path to this monitor's log text file.
      */
+    // elkjs-exclude-start
     private Path retrieveLogFilePath() {
         // Determine the log file's path if we haven't already
         if (logFile == null) {
@@ -566,7 +589,8 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         
         return logFile;
     }
-    
+    // elkjs-exclude-end
+
     /**
      * Returns the path to a file in our monitor's debug output folder. The file name will be based on the given base
      * name and the given extension. If a file with that name already exists, numbers are appended to the name until we
@@ -576,6 +600,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
      * @param extension the file's extension, without leading period.
      * @return path to a file that doesn't exist.
      */
+    // elkjs-exclude-start
     private Path retrieveFilePath(final String name, final String extension) {
         initDebugFolder(true);
         if (debugFolder == null) {
@@ -595,5 +620,6 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         // We now have a path to a file that doesn't exist
         return filePath;
     }
+    // elkjs-exclude-end
 
 }

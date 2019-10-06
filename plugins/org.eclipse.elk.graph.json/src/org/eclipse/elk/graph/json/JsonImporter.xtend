@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Kiel University - initial API and implementation
  */
@@ -42,25 +42,25 @@ import org.eclipse.elk.graph.util.ElkGraphUtil
  * (throws an exeption otherwise). If the result may be null and may always be a string
  * (e.g. when assembling the text for an exception) use 'getIdSave'. 
  */
-public final class JsonImporter {
+final class JsonImporter {
 
     extension JsonAdapter = new JsonAdapter
 
     /* Id -> ElkGraph element maps
      * Id can be string or integer, thus {@link Object} is used. */
-    private val BiMap<Object, ElkNode> nodeIdMap = HashBiMap.create()
-    private val BiMap<Object, ElkPort> portIdMap = HashBiMap.create()
-    private val Map<Object, ElkEdge> edgeIdMap = Maps.newHashMap
-    private val BiMap<Object, ElkEdgeSection> edgeSectionIdMap = HashBiMap.create()
+    val BiMap<Object, ElkNode> nodeIdMap = HashBiMap.create()
+    val BiMap<Object, ElkPort> portIdMap = HashBiMap.create()
+    val Map<Object, ElkEdge> edgeIdMap = Maps.newHashMap
+    val BiMap<Object, ElkEdgeSection> edgeSectionIdMap = HashBiMap.create()
 
     /* ElkGraph element -> Json element maps */
-    private val BiMap<ElkNode, Object> nodeJsonMap = HashBiMap.create()
-    private val Map<ElkPort, Object> portJsonMap = Maps.newHashMap
-    private val Map<ElkEdge, Object> edgeJsonMap = Maps.newHashMap
-    private val Map<ElkEdgeSection, Object> edgeSectionJsonMap = Maps.newHashMap
-    private val Map<ElkLabel, Object> labelJsonMap = Maps.newHashMap
-    
-    private var Object inputModel
+    val BiMap<ElkNode, Object> nodeJsonMap = HashBiMap.create()
+    val Map<ElkPort, Object> portJsonMap = Maps.newHashMap
+    val Map<ElkEdge, Object> edgeJsonMap = Maps.newHashMap
+    val Map<ElkEdgeSection, Object> edgeSectionJsonMap = Maps.newHashMap
+    val Map<ElkLabel, Object> labelJsonMap = Maps.newHashMap
+
+    var Object inputModel
 
     /* ---------------------------------------------------------------------------
      *   JSON --> ElkGraph
@@ -69,7 +69,7 @@ public final class JsonImporter {
       * Main entry point for the json to ELK graph transformation. Runs through all elements
       * of the graph (nodes, ports, edges, edge sections) and creates correlating ELK graph elements.
       */
-    public def ElkNode transform(Object graph) {
+    def ElkNode transform(Object graph) {
         inputModel = graph
         clearMaps
 
@@ -83,7 +83,7 @@ public final class JsonImporter {
         return root
     }
 
-    public def getInputModel() {
+    def getInputModel() {
         return inputModel
     }
 
@@ -511,7 +511,7 @@ public final class JsonImporter {
     /**
       * Transfer the layout back to the formerly imported graph, using {@link #transform(Object)}.
       */
-    public def transferLayout(ElkNode graph) {
+    def transferLayout(ElkNode graph) {
         // transfer layout of all elements (including root)
         ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
             element.transferLayoutInt

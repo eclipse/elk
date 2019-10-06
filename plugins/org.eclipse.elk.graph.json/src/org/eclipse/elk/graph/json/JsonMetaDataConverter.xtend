@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,10 @@ import org.eclipse.elk.core.data.LayoutOptionData
  * Utility class, allows to convert {@link ILayoutMetaData}s retrieved from the {@link ILayoutMetaDataService}
  * to a json representation.
  */
-public final class JsonMetaDataConverter {
-    
-    private static extension JsonAdapter = new JsonAdapter
-   
+final class JsonMetaDataConverter {
+
+    static extension JsonAdapter = new JsonAdapter
+
     private static def createCommon(ILayoutMetaData data) {
         val jsonObj = newJsonObject
         if (data.id !== null) {
@@ -33,8 +33,8 @@ public final class JsonMetaDataConverter {
         }
         return jsonObj
     }
-    
-    public static def dispatch toJson(LayoutAlgorithmData lad) {
+
+    static def dispatch toJson(LayoutAlgorithmData lad) {
         val jsonObj = lad.createCommon
         if (lad.categoryId !== null) {
             jsonObj.addJsonObj("category", lad.categoryId)
@@ -51,8 +51,8 @@ public final class JsonMetaDataConverter {
         }
         return jsonObj
     }
-    
-    public static def dispatch toJson(LayoutCategoryData lcd) {
+
+    static def dispatch toJson(LayoutCategoryData lcd) {
         val jsonObj = lcd.createCommon
         if (!lcd.layouters.nullOrEmpty) {
             val jsonArr = newJsonArray
@@ -66,7 +66,7 @@ public final class JsonMetaDataConverter {
         return jsonObj 
     }
 
-    public static def dispatch toJson(LayoutOptionData lod) {
+    static def dispatch toJson(LayoutOptionData lod) {
         val jsonObj = lod.createCommon
         if (lod.group !== null) {
             jsonObj.addJsonObj("group", lod.group)
