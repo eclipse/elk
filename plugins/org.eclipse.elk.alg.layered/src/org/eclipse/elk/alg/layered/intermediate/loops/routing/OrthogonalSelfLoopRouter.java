@@ -16,7 +16,6 @@ import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
-import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
@@ -82,7 +81,7 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         
         switch (labelSide) {
         case NORTH:
-            labelPosition -= LABEL_EDGE_DISTANCE - slLabels.getSize().y;
+            labelPosition -= LABEL_EDGE_DISTANCE + slLabels.getSize().y;
             slLabels.getPosition().y = labelPosition;
             break;
             
@@ -92,7 +91,7 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
             break;
             
         case WEST:
-            labelPosition -= LABEL_EDGE_DISTANCE - slLabels.getSize().x;
+            labelPosition -= LABEL_EDGE_DISTANCE + slLabels.getSize().x;
             slLabels.getPosition().x = labelPosition;
             break;
             
@@ -310,12 +309,10 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
             nextPortSide = clockwise ? currPortSide.right() : currPortSide.left();
             
             // Compute the coordinates contributes by the current and next port sides
-//            KVector currPortSideComponent = new KVector(SplinesMath.portSideToDirection(currPortSide))
-//                    .scale(routingSlotPositions[currPortSide.ordinal()][slLoop.getRoutingSlot(currPortSide)]);
-//            KVector nextPortSideComponent = new KVector(SplinesMath.portSideToDirection(nextPortSide))
-//                    .scale(routingSlotPositions[nextPortSide.ordinal()][slLoop.getRoutingSlot(nextPortSide)]);
-            KVector currPortSideComponent = getBaseVector(currPortSide, slLoop.getRoutingSlot(currPortSide), routingSlotPositions);
-            KVector nextPortSideComponent = getBaseVector(nextPortSide, slLoop.getRoutingSlot(nextPortSide), routingSlotPositions);
+            KVector currPortSideComponent = getBaseVector(
+                    currPortSide, slLoop.getRoutingSlot(currPortSide), routingSlotPositions);
+            KVector nextPortSideComponent = getBaseVector(
+                    nextPortSide, slLoop.getRoutingSlot(nextPortSide), routingSlotPositions);
             
             // One has its x coordinate set, the other has its y coordinate set -- their sum is our final bend point
             bendPoints.add(currPortSideComponent.add(nextPortSideComponent));

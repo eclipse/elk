@@ -41,6 +41,11 @@ public class SelfHyperLoopLabels {
         /** An eastern or western top-aligned label. */
         TOP
     }
+
+    // CHECKSTYLEOFF VisibilityModifier
+    /** An ID that can be used arbitrarily. */
+    public int id = 0;
+    // CHECKSTYLEON VisibilityModifier
     
     /** The labels represented by this instance. */
     private final List<LLabel> lLabels = new ArrayList<>();
@@ -134,9 +139,57 @@ public class SelfHyperLoopLabels {
      * Applies the bounding box placement to the individual labels.
      */
     public void applyPlacement(final KVector offset) {
-        // TODO Do this properly, including alignment
+        if (layoutDirection.isHorizontal()) {
+            applyHorizontalPlacement(offset);
+            
+        } else {
+            applyVerticalPlacement(offset);
+        }
+    }
+
+    private void applyHorizontalPlacement(final KVector offset) {
+        double x = position.x;
+        double y = position.y;
+        
         for (LLabel lLabel : lLabels) {
-            lLabel.getPosition().set(position.x + offset.x, position.y + offset.y);
+            KVector labelPos = lLabel.getPosition();
+            
+            // X coordinate depends on alignment and / or side
+            if (alignment == Alignment.LEFT || side == PortSide.EAST) {
+                labelPos.x = x;
+            } else if (alignment == Alignment.RIGHT || side == PortSide.WEST) {
+                labelPos.x = x + size.x - lLabel.getSize().x;
+            } else {
+                // Alignment is center
+                labelPos.x = x + (size.x - lLabel.getSize().x) / 2;
+            }
+            
+            labelPos.y = y;
+            labelPos.add(offset);
+            
+            y += lLabel.getSize().y + labelLabelSpacing;
+        }
+    }
+
+    private void applyVerticalPlacement(final KVector offset) {
+        double x = position.x;
+        double y = position.y;
+        
+        for (LLabel lLabel : lLabels) {
+            KVector labelPos = lLabel.getPosition();
+            
+            labelPos.x = x;
+            
+            // We always top-align, except for the northern side
+            if (side == PortSide.NORTH) {
+                labelPos.y = y + size.y - lLabel.getSize().y;
+            } else {
+                labelPos.y = y;
+            }
+            
+            labelPos.add(offset);
+            
+            x += lLabel.getSize().x + labelLabelSpacing;
         }
     }
 

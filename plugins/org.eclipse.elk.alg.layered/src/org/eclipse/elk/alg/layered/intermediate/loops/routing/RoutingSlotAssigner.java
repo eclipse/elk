@@ -8,11 +8,14 @@
 package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -45,19 +48,97 @@ public class RoutingSlotAssigner {
      * Assigns routing slots to all self loops per port side they span.
      */
     public void assignRoutingSlots(final SelfLoopHolder slHolder) {
+        // To be able to check whether labels potentially overlap, we build an overlap matrix to be passed to subsequent
+        // phases of the crossing graph
+        boolean[][] labelCrossingMatrix = computeLabelCrossingMatrix(slHolder);
+        
         // We're using the orthogonal edge router's cycle breaker for this, so create the crossing graph for our loops
-        createCrossingGraph(slHolder);
+        createCrossingGraph(slHolder, labelCrossingMatrix);
         HyperEdgeCycleBreaker.breakCycles(hyperEdgeSegments,
                 slHolder.getLNode().getGraph().getProperty(InternalProperties.RANDOM));
         
         // Assign routing slots based on the graph
-        doAssignRoutingSlots(slHolder);
+        doAssignRoutingSlots(slHolder, labelCrossingMatrix);
         
         // Cleanup
         hyperEdgeSegments = null;
         slLoopToSegmentMap = null;
         slLoopActivityOverPorts = null;
     }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Label Crossing Matrix
+    
+    /**
+     * Computes a two-dimensional array with elements set to {@code true} if the labels with the corresponding IDs
+     * overlap.
+     */
+    private boolean[][] computeLabelCrossingMatrix(final SelfLoopHolder slHolder) {
+        // We need to start by giving the labels proper IDs
+        int labelID = 0;
+        for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
+            if (slLoop.getSLLabels() != null) {
+                slLoop.getSLLabels().id = labelID++;
+            }
+        }
+        
+        boolean[][] crossingMatrix = new boolean[labelID][labelID];
+        
+        // Now check for each pair of labels whether or not they overlap
+        List<SelfHyperLoop> slLoops = slHolder.getSLHyperLoops();
+        for (int sl1Idx = 0; sl1Idx < slLoops.size(); sl1Idx++) {
+            SelfHyperLoop slLoop1 = slLoops.get(sl1Idx);
+            
+            if (slLoop1.getSLLabels() != null) {
+                for (int sl2Idx = sl1Idx + 1; sl2Idx < slLoops.size(); sl2Idx++) {
+                    SelfHyperLoop slLoop2 = slLoops.get(sl2Idx);
+                    
+                    if (slLoop2.getSLLabels() != null) {
+                        boolean overlap = labelsOverlap(slLoop1, slLoop2);
+                        
+                        crossingMatrix[slLoop1.getSLLabels().id][slLoop2.getSLLabels().id] = overlap;
+                        crossingMatrix[slLoop2.getSLLabels().id][slLoop1.getSLLabels().id] = overlap;
+                    }
+                }
+            }
+        }
+        
+        return crossingMatrix;
+    }
+
+    /**
+     * Returns {@code true} if the labels of the two loops would overlap if the loops were assigned to the same routing
+     * slot.
+     */
+    private boolean labelsOverlap(final SelfHyperLoop slLoop1, final SelfHyperLoop slLoop2) {
+        assert slLoop1 != slLoop2;
+        
+        SelfHyperLoopLabels slLabels1 = slLoop1.getSLLabels();
+        SelfHyperLoopLabels slLabels2 = slLoop2.getSLLabels();
+        
+        // There won't be overlaps unless both loops have labels
+        if (slLabels1 == null || slLabels2 == null) {
+            return false;
+        }
+        
+        // The labels must be assigned to the same side, and that side (currently) needs to be either north or south
+        if (slLabels1.getSide() != slLabels2.getSide() || slLabels1.getSide() == PortSide.EAST
+                || slLabels1.getSide() == PortSide.WEST) {
+            
+            return false;
+        }
+        
+        // Check if the labels overlap horizontally (remember that at this point, horizontal coordinates of north and
+        // south labels have been set by the label placer)
+        double start1 = slLabels1.getPosition().x;
+        double end1 = start1 + slLabels1.getSize().x;
+        double start2 = slLabels2.getPosition().x;
+        double end2 = start2 + slLabels2.getSize().x;
+        
+        return start1 <= end2 && end1 >= start2;
+    }
+    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Crossing Graph
@@ -66,7 +147,7 @@ public class RoutingSlotAssigner {
      * Create the crossing graph by creating one {@link HyperEdgeSegment} for each {@link SelfHyperLoop} and computing
      * the proper dependencies between them.
      */
-    private void createCrossingGraph(final SelfLoopHolder slHolder) {
+    private void createCrossingGraph(final SelfLoopHolder slHolder, final boolean[][] labelCrossingMatrix) {
         List<SelfHyperLoop> slLoops = slHolder.getSLHyperLoops();
         
         // Create an edge segment for each loop
@@ -91,7 +172,7 @@ public class RoutingSlotAssigner {
         for (int firstIdx = 0; firstIdx < slLoops.size() - 1; firstIdx++) {
             SelfHyperLoop slLoop1 = slHolder.getSLHyperLoops().get(firstIdx);
             for (int secondIdx = firstIdx + 1; secondIdx < slLoops.size(); secondIdx++) {
-                createDependencies(slLoop1, slHolder.getSLHyperLoops().get(secondIdx));
+                createDependencies(slLoop1, slHolder.getSLHyperLoops().get(secondIdx), labelCrossingMatrix);
             }
         }
     }
@@ -125,7 +206,9 @@ public class RoutingSlotAssigner {
      * a one-to-one correspondence between loops and segments, that is, the i-th loop must be represented by the i-th
      * segment. The array says at which ports each loop is active.
      */
-    private void createDependencies(final SelfHyperLoop slLoop1, final SelfHyperLoop slLoop2) {
+    private void createDependencies(final SelfHyperLoop slLoop1, final SelfHyperLoop slLoop2,
+            final boolean[][] labelCrossingMatrix) {
+        
         // Count the numbers of crossings that would ensue if placing to first segment above the second segment and
         // vice versa
         int firstAboveSecondCrossings = countCrossings(slLoop1, slLoop2);
@@ -143,7 +226,7 @@ public class RoutingSlotAssigner {
             // The second loop should be above the first loop
             new SegmentDependency(segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
             
-        } else if (firstAboveSecondCrossings != 0 || labelsOverlap(slLoop1, slLoop2)) {
+        } else if (firstAboveSecondCrossings != 0 || labelsOverlap(slLoop1, slLoop2, labelCrossingMatrix)) {
             // Either both orders cause the same number of crossings (and at least one), or the labels of the two loops
             // overlap and the loops must thus be forced onto different slots
             new SegmentDependency(segment1, segment2, 0);
@@ -171,34 +254,16 @@ public class RoutingSlotAssigner {
     }
 
     /**
-     * Returns {@code true} if the labels of the two loops would overlap if the loops were assigned to the same routing
-     * slot.
+     * Looks at the label crossing matrix to determine whether the labels of the two loops overlap.
      */
-    private boolean labelsOverlap(final SelfHyperLoop slLoop1, final SelfHyperLoop slLoop2) {
-        assert slLoop1 != slLoop2;
+    private boolean labelsOverlap(final SelfHyperLoop slLoop1, final SelfHyperLoop slLoop2,
+            final boolean[][] labelCrossingMatrix) {
         
-        SelfHyperLoopLabels slLabels1 = slLoop1.getSLLabels();
-        SelfHyperLoopLabels slLabels2 = slLoop2.getSLLabels();
-        
-        // There won't be overlaps unless both loops have labels
-        if (slLabels1 == null || slLabels2 == null) {
+        if (slLoop1.getSLLabels() == null || slLoop2.getSLLabels() == null) {
             return false;
+        } else {
+            return labelCrossingMatrix[slLoop1.getSLLabels().id][slLoop2.getSLLabels().id];
         }
-        
-        // The labels must be assigned to the same side, and that side (currently) needs to be either north or south
-        if (slLabels1.getSide() != slLabels2.getSide() || slLabels1.getSide() == PortSide.EAST
-                || slLabels1.getSide() == PortSide.WEST) {
-            return false;
-        }
-        
-        // Check if the labels overlap horizontally (remember that at this point, horizontal coordinates of north and
-        // south labels have been set by the label placer)
-        double start1 = slLabels1.getPosition().x;
-        double end1 = start1 + slLabels1.getSize().x;
-        double start2 = slLabels2.getPosition().x;
-        double end2 = start2 + slLabels2.getSize().x;
-        
-        return start1 <= end2 && end1 >= start2;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -207,14 +272,14 @@ public class RoutingSlotAssigner {
     /**
      * Based on the acyclic crossing graph, assign routing slots to all combinations of self loops and port sides.
      */
-    private void doAssignRoutingSlots(final SelfLoopHolder slHolder) {
+    private void doAssignRoutingSlots(final SelfLoopHolder slHolder, final boolean[][] labelCrossingMatrix) {
         // We first compute raw slots
         assignRawRoutingSlotsToSegments();
         
         // We assign raw routing slots, but try to compact the routing slot assignment afterwards (this might not
         // actually be necessary)
         assignRawRoutingSlotsToLoops(slHolder);
-        shiftTowardsNode(slHolder);
+        shiftTowardsNode(slHolder, labelCrossingMatrix);
     }
 
     /**
@@ -269,18 +334,18 @@ public class RoutingSlotAssigner {
     /**
      * Moves the self loops towards the node on each of the node's sides to avoid empty routing slots.
      */
-    private void shiftTowardsNode(final SelfLoopHolder slHolder) {
+    private void shiftTowardsNode(final SelfLoopHolder slHolder, final boolean[][] labelCrossingMatrix) {
         // For each port, this array specifies the next routing slot we can assign a self loop on that side to
         int[] nextFreeRoutingSlotAtPort = new int[slHolder.getLNode().getPorts().size()];
         
-        shiftTowardsNodeOnSide(slHolder, PortSide.NORTH, nextFreeRoutingSlotAtPort);
-        shiftTowardsNodeOnSide(slHolder, PortSide.EAST, nextFreeRoutingSlotAtPort);
-        shiftTowardsNodeOnSide(slHolder, PortSide.SOUTH, nextFreeRoutingSlotAtPort);
-        shiftTowardsNodeOnSide(slHolder, PortSide.WEST, nextFreeRoutingSlotAtPort);
+        shiftTowardsNodeOnSide(slHolder, PortSide.NORTH, nextFreeRoutingSlotAtPort, labelCrossingMatrix);
+        shiftTowardsNodeOnSide(slHolder, PortSide.EAST, nextFreeRoutingSlotAtPort, labelCrossingMatrix);
+        shiftTowardsNodeOnSide(slHolder, PortSide.SOUTH, nextFreeRoutingSlotAtPort, labelCrossingMatrix);
+        shiftTowardsNodeOnSide(slHolder, PortSide.WEST, nextFreeRoutingSlotAtPort, labelCrossingMatrix);
     }
 
     private void shiftTowardsNodeOnSide(final SelfLoopHolder slHolder, final PortSide side,
-            final int[] nextFreeRoutingSlotAtPort) {
+            final int[] nextFreeRoutingSlotAtPort, final boolean[][] labelCrossingMatrix) {
         
         // We will iterate over the self loops that occupy that port side, sorted ascendingly by routing slot
         List<SelfHyperLoop> slLoops = slHolder.getSLHyperLoops().stream()
@@ -299,14 +364,18 @@ public class RoutingSlotAssigner {
         }
         
         if (minLPortIndex == Integer.MAX_VALUE) {
-            // There are no ports on this side, so we simply assign the loops to consecutive slots starting with 0
+            // There are no ports on this side, so we simply assign the loops to consecutive slots starting with 0. We
+            // won't cause label overlaps.
             for (int i = 0; i < slLoops.size(); i++) {
                 slLoops.get(i).setRoutingSlot(side, i);
             }
         
         } else {
-            // There are ports on this side. Find the lowest free slot across all slots spanned by each loop over all of
-            // the ports spanned by the loop there
+            int[] slotAssignedToLabel = new int[labelCrossingMatrix.length];
+            Arrays.fill(slotAssignedToLabel, -1);
+            
+            // There are ports on this side. Find the lowest free slot across all ports our loop spans, and ensure that
+            // no label our loop label conflicts with is assigned to that slot
             for (SelfHyperLoop slLoop : slLoops) {
                 boolean[] activeAtPort = slLoopActivityOverPorts.get(slLoop);
                 int lowestAvailableSlot = 0;
@@ -317,12 +386,37 @@ public class RoutingSlotAssigner {
                     }
                 }
                 
+                // If we have a label, it could be that we are in conflict with another label placed at the lowest
+                // available slot. There might also be labels at higher slots. We thus need to assemble all slots
+                // occupied by conflicting labels that have already been assigned to one and find the first
+                // conflict-free slot
+                if (slLoop.getSLLabels() != null) {
+                    int ourLabelIdx = slLoop.getSLLabels().id;
+                    Set<Integer> slotsWithLabelConflicts = new HashSet<>();
+                    
+                    for (int otherLabelIdx = 0; otherLabelIdx < labelCrossingMatrix.length; otherLabelIdx++) {
+                        if (labelCrossingMatrix[ourLabelIdx][otherLabelIdx]) {
+                            slotsWithLabelConflicts.add(slotAssignedToLabel[otherLabelIdx]);
+                        }
+                    }
+                    
+                    // Find the first slot (starting with out lowest available) that does not appear in the set
+                    while (slotsWithLabelConflicts.contains(lowestAvailableSlot)) {
+                        lowestAvailableSlot++;
+                    }
+                }
+                
                 // Assign the loop to that routing slot and update out routing slot array
                 slLoop.setRoutingSlot(side, lowestAvailableSlot);
                 for (int portIndex = minLPortIndex; portIndex <= maxLPortIndex; portIndex++) {
                     if (activeAtPort[portIndex]) {
                         nextFreeRoutingSlotAtPort[portIndex] = lowestAvailableSlot + 1;
                     }
+                }
+                
+                // If we have a label, update the label's routing slot
+                if (slLoop.getSLLabels() != null) {
+                    slotAssignedToLabel[slLoop.getSLLabels().id] = lowestAvailableSlot;
                 }
             }
         }

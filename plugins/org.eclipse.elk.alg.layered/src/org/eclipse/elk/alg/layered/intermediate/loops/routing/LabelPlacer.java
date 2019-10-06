@@ -71,11 +71,13 @@ public final class LabelPlacer {
         assignSideAndAlignment(slHolder);
         
         for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
-            if (labelManager != null) {
-                manageLabels(slLoop, labelManager);
+            if (slLoop.getSLLabels() != null) {
+                if (labelManager != null) {
+                    manageLabels(slLoop, labelManager);
+                }
+                
+                computeCoordinates(slLoop);
             }
-            
-            computeCoordinates(slLoop);
         }
     }
 
@@ -211,8 +213,17 @@ public final class LabelPlacer {
             SelfHyperLoop leftSlLoop = slLoops.get(leftSlLoopIdx);
             SelfHyperLoop rightSlLoop = slLoops.get(rightSlLoopIdx);
             
-            assignSideAndAlignment(leftSlLoop, portSide, Alignment.RIGHT, leftSlLoop.getRightmostPort());
-            assignSideAndAlignment(rightSlLoop, portSide, Alignment.LEFT, rightSlLoop.getLeftmostPort());
+            // If the loop is on the northern side, the leftmost port actually is left of the rightmost port. It's
+            // flipped for the southern side
+            SelfLoopPort leftLoopAlignmentReference = portSide == PortSide.NORTH
+                    ? leftSlLoop.getRightmostPort()
+                    : leftSlLoop.getLeftmostPort();
+            SelfLoopPort rightLoopAlignmentReference = portSide == PortSide.NORTH
+                    ? rightSlLoop.getLeftmostPort()
+                    : rightSlLoop.getRightmostPort();
+            
+            assignSideAndAlignment(leftSlLoop, portSide, Alignment.RIGHT, leftLoopAlignmentReference);
+            assignSideAndAlignment(rightSlLoop, portSide, Alignment.LEFT, rightLoopAlignmentReference);
             
             leftSlLoopIdx++;
             rightSlLoopIdx--;
@@ -229,7 +240,7 @@ public final class LabelPlacer {
         // the loop goes towards the eastern side and we can left-align the label on the nortern side. The other cases
         // are similar.
         PortSide leftmostPortSide = slLoop.getLeftmostPort().getLPort().getSide();
-        PortSide rightmostPortSide = slLoop.getLeftmostPort().getLPort().getSide();
+        PortSide rightmostPortSide = slLoop.getRightmostPort().getLPort().getSide();
         
         if (leftmostPortSide == PortSide.NORTH) {
             assignSideAndAlignment(slLoop, PortSide.NORTH, Alignment.LEFT, slLoop.getLeftmostPort());
