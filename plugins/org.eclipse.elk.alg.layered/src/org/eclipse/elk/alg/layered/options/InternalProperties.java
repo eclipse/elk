@@ -27,7 +27,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
-import org.eclipse.elk.alg.layered.p5edges.oldloops.OldSelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -409,12 +408,6 @@ public final class InternalProperties {
      */
     public static final IProperty<PortConstraints> ORIGINAL_PORT_CONSTRAINTS =  
             new Property<PortConstraints>("originalPortConstraints");
-
-    /**
-     * The linear node representation used from the self-loop calculation.
-     */
-    public static final IProperty<OldSelfLoopNode> SELF_LOOP_NODE_REPRESENTATION =
-            new Property<OldSelfLoopNode>("selfLoopNodeRepresentation");
     
     /**
      * Holds all of the information necessary to route self loops around a node.
