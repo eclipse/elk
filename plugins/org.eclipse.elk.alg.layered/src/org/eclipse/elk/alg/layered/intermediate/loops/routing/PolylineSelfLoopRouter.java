@@ -29,7 +29,9 @@ public class PolylineSelfLoopRouter extends OrthogonalSelfLoopRouter {
      * Turns a vector chain of orthogonal bend points into polyline bend points by cutting the corners.
      */
     @Override
-    protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final KVectorChain bendPoints) {
+    protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final EdgeRoutingDirection routingDirection,
+            final KVectorChain bendPoints) {
+        
         // Add the source and target points
         LPort lSourcePort = slEdge.getSLSource().getLPort();
         bendPoints.add(0, lSourcePort.getPosition().clone().add(lSourcePort.getAnchor()));

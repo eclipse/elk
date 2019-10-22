@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.layered.intermediate.loops.routing.OrthogonalSelfLoop
 import org.eclipse.elk.alg.layered.intermediate.loops.routing.PolylineSelfLoopRouter;
 import org.eclipse.elk.alg.layered.intermediate.loops.routing.RoutingDirector;
 import org.eclipse.elk.alg.layered.intermediate.loops.routing.RoutingSlotAssigner;
+import org.eclipse.elk.alg.layered.intermediate.loops.routing.SplineSelfLoopRouter;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -72,8 +73,7 @@ public class SelfLoopRouter implements ILayoutProcessor<LGraph> {
             return new PolylineSelfLoopRouter();
             
         case SPLINES:
-            // TODO Implement
-            return null;
+            return new SplineSelfLoopRouter();
             
         default:
             return new OrthogonalSelfLoopRouter();

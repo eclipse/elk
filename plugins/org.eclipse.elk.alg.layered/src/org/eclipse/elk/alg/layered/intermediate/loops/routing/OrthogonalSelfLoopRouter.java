@@ -27,9 +27,19 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     
+    /**
+     * The direction in which an edge goes around a node in its quest to reach its target.
+     */
+    protected enum EdgeRoutingDirection {
+        /** Clockwise direction. */
+        CLOCKWISE,
+        /** Counter-clockwise direction. */
+        COUNTER_CLOCKWISE;
+    }
+    
     // TODO Replace by spacing options.
     private static final double DISTANCE = 10.0;
-    private static final double LABEL_EDGE_DISTANCE = 5.0;
+    public static final double LABEL_EDGE_DISTANCE = 5.0;
 
     @Override
     public void routeSelfLoops(final SelfLoopHolder slHolder) {
@@ -46,8 +56,10 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
             for (SelfLoopEdge slEdge : slLoop.getSLEdges()) {
                 LEdge lEdge = slEdge.getLEdge();
                 
-                KVectorChain bendPoints = computeOrthogonalBendPoints(slEdge, routingSlotPositions);
-                bendPoints = modifyBendPoints(slEdge, bendPoints);
+                EdgeRoutingDirection routingDirection = computeEdgeRoutingDirection(slEdge);
+                
+                KVectorChain bendPoints = computeOrthogonalBendPoints(slEdge, routingDirection, routingSlotPositions);
+                bendPoints = modifyBendPoints(slEdge, routingDirection, bendPoints);
                 
                 lEdge.getBendPoints().clear();
                 lEdge.getBendPoints().addAll(bendPoints);
@@ -66,6 +78,44 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         
         // Update the node's margins to include the space required for self loops
         nodeMargins.set(newNodeMargins);
+    }
+
+    /**
+     * Computes how the edge reaches its target.
+     */
+    private EdgeRoutingDirection computeEdgeRoutingDirection(final SelfLoopEdge slEdge) {
+        LPort sourceLPort = slEdge.getSLSource().getLPort();
+        PortSide sourcePortSide = sourceLPort.getSide();
+        
+        LPort targetLPort = slEdge.getSLTarget().getLPort();
+        PortSide targetPortSide = targetLPort.getSide();
+        
+        if (sourcePortSide == targetPortSide) {
+            // If the port sides are equal, it doesn't really matter what we return, but we'll make a best effort based
+            // on port IDs
+            return sourceLPort.id < targetLPort.id
+                    ? EdgeRoutingDirection.CLOCKWISE
+                    : EdgeRoutingDirection.COUNTER_CLOCKWISE;
+        
+        } else if (sourcePortSide.right() == targetPortSide) {
+            return EdgeRoutingDirection.CLOCKWISE;
+            
+        } else if (sourcePortSide.left() == targetPortSide) {
+            return EdgeRoutingDirection.COUNTER_CLOCKWISE;
+            
+        } else {
+            assert sourcePortSide.opposed() == targetPortSide;
+            
+            // What we do here totally depends on the port sides occupied by the self hyper loop. We prefer clockwise
+            // routing.
+            SelfHyperLoop slLoop = slEdge.getSLHyperLoop();
+            if (slLoop.getOccupiedPortSides().contains(sourcePortSide.right())) {
+                return EdgeRoutingDirection.CLOCKWISE;
+            } else {
+                assert slLoop.getOccupiedPortSides().contains(sourcePortSide.left());
+                return EdgeRoutingDirection.COUNTER_CLOCKWISE;
+            }
+        }
     }
 
     /**
@@ -231,12 +281,12 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * Computes the bend points necessary to route the given self loop edge orthogonally.
      */
     protected KVectorChain computeOrthogonalBendPoints(final SelfLoopEdge slEdge,
-            final double[][] routingSlotPositions) {
+            final EdgeRoutingDirection routingDirection, final double[][] routingSlotPositions) {
         
         KVectorChain bendPoints = new KVectorChain();
         
         addOuterBendPoint(slEdge, slEdge.getSLSource(), routingSlotPositions, bendPoints);
-        addCornerBendPoints(slEdge, routingSlotPositions, bendPoints);
+        addCornerBendPoints(slEdge, routingDirection, routingSlotPositions, bendPoints);
         addOuterBendPoint(slEdge, slEdge.getSLTarget(), routingSlotPositions, bendPoints);
         
         return bendPoints;
@@ -245,7 +295,9 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     /**
      * Allows subclasses to turn the given list of bend points into a new list of bend points.
      */
-    protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final KVectorChain bendPoints) {
+    protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final EdgeRoutingDirection routingDirection,
+            final KVectorChain bendPoints) {
+        
         return bendPoints;
     }
 
@@ -261,8 +313,6 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         
         // We'll start by computing the coordinate of the level we're on
         KVector result = getBaseVector(portSide, slLoop.getRoutingSlot(portSide), routingSlotPositions);
-//        KVector result = new KVector(SplinesMath.portSideToDirection(portSide))
-//                .scale(routingSlotPositions[portSide.ordinal()][slLoop.getRoutingSlot(portSide)]);
         
         // Now take care of the port anchor
         KVector anchor = lPort.getPosition().clone().add(lPort.getAnchor());
@@ -284,8 +334,8 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         bendPoints.add(result);
     }
 
-    private void addCornerBendPoints(final SelfLoopEdge slEdge, final double[][] routingSlotPositions,
-            final KVectorChain bendPoints) {
+    private void addCornerBendPoints(final SelfLoopEdge slEdge, final EdgeRoutingDirection routingDirection,
+            final double[][] routingSlotPositions, final KVectorChain bendPoints) {
         
         // Check if we even need corner bend points
         LPort lSourcePort = slEdge.getSLSource().getLPort();
@@ -295,18 +345,17 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
             return;
         }
         
-        // Check whether we need to route clockwise or anticlockwise
         SelfHyperLoop slLoop = slEdge.getSLHyperLoop();
         
-        PortSide currPortSide = lSourcePort.getSide();
-        boolean clockwise = slLoop.getOccupiedPortSides().contains(currPortSide.right());
-        
         // Compute corner points
+        PortSide currPortSide = lSourcePort.getSide();
         PortSide nextPortSide = null;
         
         while (currPortSide != lTargetPort.getSide()) {
             // Next port side depends on the direction we're going
-            nextPortSide = clockwise ? currPortSide.right() : currPortSide.left();
+            nextPortSide = routingDirection == EdgeRoutingDirection.CLOCKWISE
+                    ? currPortSide.right()
+                    : currPortSide.left();
             
             // Compute the coordinates contributes by the current and next port sides
             KVector currPortSideComponent = getBaseVector(
