@@ -146,7 +146,7 @@ public class NubSpline {
      * @param kVectors The control points of this NubSpline.
      */
     public NubSpline(final boolean clamped, final int dimension, final KVector... kVectors) {
-        this(true, dimension, Lists.newArrayList(kVectors));
+        this(clamped, dimension, Lists.newArrayList(kVectors));
     }
 
     /**
