@@ -14,13 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.intermediate.InnermostNodeMarginCalculator;
 import org.eclipse.elk.alg.layered.intermediate.LabelManagementProcessor;
-import org.eclipse.elk.alg.layered.intermediate.SelfLoopPortRestorer;
 import org.eclipse.elk.alg.layered.intermediate.SelfLoopRouter;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
@@ -40,25 +37,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * the northern and southern sides, the x coordinate will be computed as well. The same goes for the y coordinate of
  * labels assigned to the eastern and western sides. The other coordinate must be computed by the
  * {@link SelfLoopRouter}.
- * 
- * <dl>
- * <dt>Preconditions:</dt>
- *   <dd>A layered graph.</dd>
- *   <dd>Ports are placed.</dd>
- *   <dd>Innermost margins are calculated.</dd>
- *   <dd>Self loops have loop types and routing directions computed.</dd>
- * <dt>Postconditions:</dt>
- *   <dd>Labels have their side and alignment set.</dd>
- *   <dd>If label management is configured, it is applied to the labels.</dd>
- *   <dd>Labels placed north or south have their x coordinate set.</dd>
- *   <dd>Labels placed east or west have their y coordinate set.</dd>
- * <dt>Slots:</dt>
- *   <dd>Before phase 4.</dd>
- * <dt>Same-slot dependencies:</dt>
- *   <dd>{@link NodeLabelAndSizeCalculator}</dd>
- *   <dd>{@link SelfLoopPortRestorer}</dd>
- *   <dd>{@link InnermostNodeMarginCalculator}</dd>
- * </dl>
  */
 public final class LabelPlacer {
 

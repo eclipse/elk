@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 le-cds and others.
+ * Copyright (c) 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,9 @@ public enum SelfLoopType {
     FOUR_SIDES;
     
     /**
-     * Determines the self loop type for a self loop involving ports on the given sides.
+     * Determines the self loop type for a self loop involving ports on the given sides. The result only depends on the
+     * port configuration. In theory, a one-side self loop could be routed around the whole node to reach its target
+     * port, thus causing it to occupy all four sides.
      */
     public static SelfLoopType fromPortSides(final Set<PortSide> portSides) {
         if (portSides.contains(PortSide.UNDEFINED)) {

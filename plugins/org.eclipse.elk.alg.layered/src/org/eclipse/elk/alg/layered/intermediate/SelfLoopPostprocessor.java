@@ -11,8 +11,6 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
-import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -25,7 +23,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>A layered graph.</dd>
- *     <dd>Edges are routed.</dd>
+ *     <dd>Self loops are routed.</dd>
  *     <dd>Node coordinates are set.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>All self loops are restored and routed.</dd>

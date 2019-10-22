@@ -24,7 +24,7 @@ import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Holds all the information required to route self loops of a particular node. Each node with self loops has one of
- * these attached to it, through the
+ * these attached to it through the {@link InternalProperties#SELF_LOOP_HOLDER} property.
  */
 public final class SelfLoopHolder {
 

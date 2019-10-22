@@ -17,7 +17,7 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Restores self loop ports and computes self loop types.
+ * Restores self loop ports and computes self loop types. Does not restore the self loops themselves.
  * 
  * <dl>
  * <dt>Preconditions:</dt>

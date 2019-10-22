@@ -25,17 +25,19 @@ import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * TODO Document.
+ * Computes bend points for self loops and places self loop labels. This is done in several steps:
  * 
  * <dl>
  * <dt>Preconditions:</dt>
- *   <dd>Self loops have had routing slots assigned by {@link SelfLoopPortRestorer}.</dd>
+ *   <dd>Self loop ports have been restored.</dd>
+ *   <dd>The node's inner margins for ports and port labels have been computed.</dd>
  * <dt>Postconditions:</dt>
- *   <dd>All self loop edges are routed, but not yet restored.</dd>
- *   <dd>Node margins are extended by the space required to route self loops.</dd>
+ *   <dd>All self loops are properly routed.</dd>
+ *   <dd>All self loop labels are placed.</dd>
  * <dt>Slots:</dt>
  *   <dd>Before phase 4.</dd>
  * <dt>Same-slot dependencies:</dt>
+ *   <dd>{@link SelfLoopPortRestorer}</dd>
  *   <dd>{@link InnermostNodeMarginCalculator}</dd>
  * </dl>
  */

@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Assigns self loop ports to the northern or southern port side. How this is done exactly depends on the
+ * Assigns free self loop ports to the northern or southern port side. How this is done exactly depends on the
  * {@link LayeredOptions#EDGE_ROUTING_SELF_LOOP_DISTRIBUTION self loop distribution strategy}. All this class will do
  * is assign port sides to hidden self loop ports. It will not make them visible again.
  */
