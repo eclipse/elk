@@ -9,6 +9,8 @@ package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoop;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
@@ -58,7 +60,7 @@ public class PortSideAssigner {
      */
     private void assignToNorthSide(final SelfLoopHolder slHolder) {
         slHolder.getSLHyperLoops().stream()
-            .flatMap(slLoop -> slLoop.getSLPorts().stream())
+            .flatMap(slLoop -> hiddenSelfLoopPortStream(slLoop))
             .map(slPort -> slPort.getLPort())
             .forEach(lPort -> lPort.setSide(PortSide.NORTH));
     }
@@ -78,20 +80,22 @@ public class PortSideAssigner {
         int southPorts = 0;
         
         for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
+            List<SelfLoopPort> slHiddenPorts = hiddenSelfLoopPortStream(slLoop).collect(Collectors.toList());
+            
             // Decide on a port side
             PortSide newPortSide = null;
             if (northPorts <= southPorts) {
                 newPortSide = PortSide.NORTH;
-                northPorts += slLoop.getSLPorts().size();
+                northPorts += slHiddenPorts.size();
                 
             } else if (southPorts < northPorts) {
                 newPortSide = PortSide.SOUTH;
-                southPorts += slLoop.getSLPorts().size();
+                southPorts += slHiddenPorts.size();
             }
             
             // Assign the ports
             final PortSide finalNewPortSide = newPortSide;
-            slLoop.getSLPorts().stream()
+            slHiddenPorts.stream()
                 .map(slPort -> slPort.getLPort())
                 .forEach(lPort -> lPort.setSide(finalNewPortSide));
         }
@@ -172,16 +176,32 @@ public class PortSideAssigner {
                     slPort2.getLPort().getNetFlow()));
         }
         
-        // Assign the first half of the ports to the first side, and the second half to the second side
+        // Assign the first half of the ports to the first side, and the second half to the second side. However, only
+        // assign ports that have been hidden and can thus be freely assigned to a side. This could be done way more
+        // intelligently, but hopefully bad cases won't be common enough to warrant more effort here.
         int secondHalfStartIndex = slPorts.size() / 2;
         
         for (int i = 0; i < secondHalfStartIndex; i++) {
-            slPorts.get(i).getLPort().setSide(target.firstSide);
+            SelfLoopPort slPort = slPorts.get(i);
+            if (slPort.isHidden()) {
+                slPort.getLPort().setSide(target.firstSide);
+            }
         }
         
         for (int i = secondHalfStartIndex; i < slPorts.size(); i++) {
-            slPorts.get(i).getLPort().setSide(target.secondSide);
+            SelfLoopPort slPort = slPorts.get(i);
+            if (slPort.isHidden()) {
+                slPort.getLPort().setSide(target.secondSide);
+            }
         }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+    
+    private Stream<SelfLoopPort> hiddenSelfLoopPortStream(final SelfHyperLoop slLoop) {
+        return slLoop.getSLPorts().stream()
+                .filter(slPort -> slPort.isHidden());
     }
 
 }
