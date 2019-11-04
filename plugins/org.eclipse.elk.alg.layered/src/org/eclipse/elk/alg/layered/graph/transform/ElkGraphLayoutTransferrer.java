@@ -265,6 +265,8 @@ class ElkGraphLayoutTransferrer {
         
         // Give the edge a proper edge section to store routing information
         ElkEdgeSection elkedgeSection = ElkGraphUtil.firstEdgeSection(elkedge, true, true);
+        elkedgeSection.setIncomingShape(elkedge.getSources().get(0));
+        elkedgeSection.setOutgoingShape(elkedge.getTargets().get(0));
         ElkUtil.applyVectorChain(bendPoints, elkedgeSection);
 
         // Apply layout to labels
