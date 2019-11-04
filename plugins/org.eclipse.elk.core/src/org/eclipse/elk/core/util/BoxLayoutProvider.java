@@ -177,8 +177,9 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      */
     private void placeBoxes(final List<ElkNode> sortedBoxes, final ElkNode parentNode,
             final double objSpacing, final ElkPadding padding, final boolean expandNodes) {
-        
-        KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
+
+        // Work on a copy of the minimum size to avoid changing the property's value
+        KVector minSize = new KVector(parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM));
         minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
         minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
         
@@ -326,7 +327,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private void placeBoxesGrouping(final ElkNode parentNode,
             final float objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
-        KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
+        // Work on a copy of the minimum size to avoid changing the property's value
+        KVector minSize = new KVector(parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM));
         minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
         minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
         
