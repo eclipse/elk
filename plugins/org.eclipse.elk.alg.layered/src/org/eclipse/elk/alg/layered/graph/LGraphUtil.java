@@ -808,13 +808,6 @@ public final class LGraphUtil {
         dummy.setProperty(LayeredOptions.PORT_BORDER_OFFSET,
                 propertyHolder.getProperty(LayeredOptions.PORT_BORDER_OFFSET));
         
-        // set the anchor point
-        KVector anchor = propertyHolder.getProperty(LayeredOptions.PORT_ANCHOR);
-        if (anchor == null) {
-            anchor = new KVector(portSize.x / 2, portSize.y / 2);
-        }
-        dummy.setProperty(LayeredOptions.PORT_ANCHOR, anchor);
-        
         LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
         
@@ -830,6 +823,18 @@ public final class LGraphUtil {
             propertyHolder.setProperty(LayeredOptions.PORT_SIDE, finalExternalPortSide);
         }
         
+        // Retrieve the anchor point, possibly to be modified later
+        KVector anchor = new KVector();
+        boolean explicitAnchor = false;
+        
+        if (propertyHolder.hasProperty(LayeredOptions.PORT_ANCHOR)) {
+            anchor.set(propertyHolder.getProperty(LayeredOptions.PORT_ANCHOR));
+            explicitAnchor = true;
+            
+        } else {
+            anchor.set(portSize.x / 2, portSize.y / 2);
+        }
+        
         // With the port side at hand, set the necessary properties and place the dummy's port
         // at the dummy's center
         switch (finalExternalPortSide) {
@@ -838,7 +843,9 @@ public final class LGraphUtil {
             dummy.setProperty(InternalProperties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
             dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.EAST);
-            dummyPort.getPosition().y = anchor.y;
+            if (!explicitAnchor) {
+                anchor.x = portSize.x;
+            }
             break;
         
         case EAST:
@@ -846,27 +853,36 @@ public final class LGraphUtil {
             dummy.setProperty(InternalProperties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.WEST);
-            dummyPort.getPosition().y = anchor.y;
+            if (!explicitAnchor) {
+                anchor.x = 0;
+            }
             break;
         
         case NORTH:
             dummy.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.SOUTH);
-            dummyPort.getPosition().x = anchor.x;
+            if (!explicitAnchor) {
+                anchor.y = portSize.y;
+            }
             break;
         
         case SOUTH:
             dummy.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
             dummy.getSize().x = portSize.x;
             dummyPort.setSide(PortSide.NORTH);
-            dummyPort.getPosition().x = anchor.x;
+            if (!explicitAnchor) {
+                anchor.y = 0;
+            }
             break;
         
         default:
             // Should never happen!
             assert false : finalExternalPortSide;
         }
+        
+        // Finally apply the anchor by setting the dummy port position accordingly
+        dummyPort.getPosition().set(anchor);
         
         if (portConstraints.isOrderFixed()) {
             // The order of ports is fixed in some way, so what we will have to do is to remember information about it

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -20,6 +23,35 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 public final class GraphTestUtils {
 
     private GraphTestUtils() { }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph Traversal
+    
+    /**
+     * Returns all nodes in the given graph, with or without the graph itself.
+     */
+    public static List<ElkNode> allNodes(final ElkNode graph, final boolean includeGraph) {
+        List<ElkNode> nodes = new ArrayList<>();
+        
+        if (includeGraph) {
+            nodes.add(graph);
+        } else {
+            nodes.addAll(graph.getChildren());
+        }
+        
+        // We walk through the list, adding all children we find in the process. It's important here that the list's
+        // size can grow during each iteration and thus cannot be cached
+        for (int i = 0; i < nodes.size(); i++) {
+            nodes.addAll(nodes.get(i).getChildren());
+        }
+        
+        return nodes;
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph Creation
 
     /**
      * Creates a KGraph, represented by a parent node that contains the actual nodes and edges of the graph.
