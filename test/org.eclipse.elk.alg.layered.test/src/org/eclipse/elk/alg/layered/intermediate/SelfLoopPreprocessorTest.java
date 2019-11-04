@@ -32,11 +32,11 @@ import org.junit.Test;
  */
 public class SelfLoopPreprocessorTest {
 
-    private SelfLoopPreprocessor slPreprocessor;
+    private SelfLoopPreProcessor slPreprocessor;
 
     @Before
     public void createProcessor() {
-        slPreprocessor = new SelfLoopPreprocessor();
+        slPreprocessor = new SelfLoopPreProcessor();
     }
 
     @Test

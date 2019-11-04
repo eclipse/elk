@@ -33,6 +33,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
+import com.google.common.collect.Lists;
+
 /**
  * An action for loading an ELK graph file and performing layout on it.
  */
@@ -46,11 +48,16 @@ public class LoadGraphAction extends Action {
     /** preference identifier for the last used file name. */
     private static final String LAST_FILE_NAME_PREF = "loadGraphAction.lastGraphFile";
 
-    public LoadGraphAction() {
+    /** The layout graph view associated with this action. */
+    private LayoutGraphView view;
+    
+    public LoadGraphAction(final LayoutGraphView theview) {
         setId(ACTION_ID);
         setText("Load Graph");
         setToolTipText("Load, layout, and display a saved ELK graph.");
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
+        
+        this.view = theview;
     }
 
     @Override
@@ -65,15 +72,32 @@ public class LoadGraphAction extends Action {
 
         // Open the file dialog and wait for file name
         String fileName = fileDialog.open();
-
-        if (fileName != null) {
-            prefStore.setValue(LAST_FILE_NAME_PREF, fileName);
+        run(fileName, view);
+    }
+    
+    /**
+     * Load an ELK graph file and performing layout on it.
+     * 
+     * @param fullFilePath The full path of the file to load.
+     * @param layoutGraphView The Layout Graph view
+     */
+    public static void run(final String fullFilePath, final LayoutGraphView layoutGraphView) {
+        IPreferenceStore prefStore = ElkDebugPlugin.getDefault().getPreferenceStore();
+        if (fullFilePath != null) {
+            prefStore.setValue(LAST_FILE_NAME_PREF, fullFilePath);
 
             // Load the file content
             try {
-                ElkNode content = loadFromFile(fileName);
-                ExecutionInfo info = layout(fileName, content);
+                ElkNode content = loadFromFile(fullFilePath);
+                ExecutionInfo info = layout(fullFilePath, content);
                 ElkDebugPlugin.getDefault().getModel().addExecution(info);
+                // Select the new loaded element (made in async to let the view refresh before)
+                layoutGraphView.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        layoutGraphView.setSelectedExecutionInfos(Lists.newArrayList(info));
+                    }
+                });
             } catch (IOException exception) {
                 throw new WrappedException(exception);
             }

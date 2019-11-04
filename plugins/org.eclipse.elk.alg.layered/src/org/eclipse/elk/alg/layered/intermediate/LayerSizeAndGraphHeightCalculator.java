@@ -13,7 +13,9 @@ package org.eclipse.elk.alg.layered.intermediate;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -73,9 +75,17 @@ public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor
             // Calculate the layer's height
             LNode firstNode = layer.getNodes().get(0);
             double top = firstNode.getPosition().y - firstNode.getMargin().top;
+            if (firstNode.getType() == NodeType.EXTERNAL_PORT) {
+                // Consider port spacing options for first node
+                top -= layeredGraph.getProperty(LayeredOptions.SPACING_PORTS_SURROUNDING).getTop();
+            }
             LNode lastNode = layer.getNodes().get(layer.getNodes().size() - 1);
             double bottom = lastNode.getPosition().y + lastNode.getSize().y
                     + lastNode.getMargin().bottom;
+            if (lastNode.getType() == NodeType.EXTERNAL_PORT) {
+                // Consider port spacing options for last node
+                bottom += layeredGraph.getProperty(LayeredOptions.SPACING_PORTS_SURROUNDING).getBottom();
+            }
             layerSize.y = bottom - top;
             
             // Update the lowest and highest encountered Y coordinate

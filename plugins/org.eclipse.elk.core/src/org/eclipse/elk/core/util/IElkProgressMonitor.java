@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+// elkjs-exclude-start
 import java.nio.file.Path;
+// elkjs-exclude-end
 import java.util.List;
 
 import org.eclipse.elk.graph.ElkNode;
@@ -165,7 +167,9 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
      * 
      * @return debug path.
      */
+    // elkjs-exclude-start
     Path getDebugFolder();
+    // elkjs-exclude-end
     
     /**
      * Returns whether this monitor measures execution time. If it is, the value returned by {@link #getExecutionTime()}

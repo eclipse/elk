@@ -322,13 +322,13 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             return new ReversedEdgeRestorer();
             
         case SELF_LOOP_PREPROCESSOR:
-            return new SelfLoopPreprocessor();
+            return new SelfLoopPreProcessor();
             
         case SELF_LOOP_PORT_RESTORER:
             return new SelfLoopPortRestorer();
 
         case SELF_LOOP_POSTPROCESSOR:
-            return new SelfLoopPostprocessor();
+            return new SelfLoopPostProcessor();
             
         case SELF_LOOP_ROUTER:
             return new SelfLoopRouter();

@@ -413,7 +413,7 @@
           point="org.eclipse.ui.commands">
        <command
              categoryId="org.eclipse.ui.category.file"
-             defaultHandler="org.eclipse.elk.graph.text.ui.ConvertGraphHandler"
+             defaultHandler="org.eclipse.elk.graph.text.ui.ElkGraphExecutableExtensionFactory:org.eclipse.elk.graph.text.ui.ConvertGraphHandler"
              id="org.eclipse.elk.graph.text.convert"
              name="Convert Graph">
           <commandParameter

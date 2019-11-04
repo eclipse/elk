@@ -21,17 +21,21 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * A canvas that is able to paint ELK layout graphs. Colors and fonts used for painting can be
  * customized by supplying a subclass of {@link GraphRenderingConfigurator}.
  */
 public class GraphRenderingCanvas extends Canvas implements PaintListener {
+    
+    private static final double ZOOM_PER_WHEEL_UNIT = 1.01;
 
     /** the painted layout graph. */
     private ElkNode layoutGraph;
     /** the graph renderer used for painting. */
-    private GraphRenderer graphRenderer;
+    private final GraphRenderer graphRenderer;
     
     /** background color. */
     private Color backgroundColor;
@@ -43,13 +47,7 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
      *            the parent widget
      */
     public GraphRenderingCanvas(final Composite parent) {
-        super(parent, SWT.NONE);
-        addPaintListener(this);
-        graphRenderer = new GraphRenderer(new GraphRenderingConfigurator(parent.getDisplay()));
-        
-        // SUPPRESS CHECKSTYLE NEXT MagicNumber
-        backgroundColor = new Color(parent.getDisplay(), 255, 255, 255);
-        setBackground(backgroundColor);
+        this(parent, new GraphRenderingConfigurator(parent.getDisplay()));
     }
 
     /**
@@ -83,6 +81,40 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
     public void dispose() {
         graphRenderer.dispose();
         backgroundColor.dispose();
+    }
+    
+    @Override
+    public Point computeSize(final int wHint, final int hHint, final boolean changed) {
+        if (layoutGraph == null) {
+            return super.computeSize(wHint, hHint, changed);
+        }
+        checkWidget();
+        int width = (int) (layoutGraph.getWidth() + 0.5);   // SUPPRESS CHECKSTYLE MagicNumber
+        int height = (int) (layoutGraph.getHeight() + 0.5); // SUPPRESS CHECKSTYLE MagicNumber
+        if (wHint > width) {
+            width = wHint;
+        }
+        if (hHint > height) {
+            height = hHint;
+        }
+        int border = getBorderWidth();
+        width += border * 2;
+        height += border * 2;
+        return new Point(width, height);
+    }
+    
+    /**
+     * Returns the KGraph renderer used for painting.
+     */
+    public GraphRenderer getRenderer() {
+        return graphRenderer;
+    }
+
+    /**
+     * Returns the currently painted layout graph.
+     */
+    public ElkNode getLayoutGraph() {
+        return layoutGraph;
     }
 
     /**
@@ -167,21 +199,66 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
     }
 
     /**
-     * Returns the currently painted layout graph.
-     * 
-     * @return the painted layout graph
+     * Set up mouse interaction: wheel for zooming, drag for panning.
      */
-    public ElkNode getLayoutGraph() {
-        return layoutGraph;
+    public void setupMouseInteraction() {
+        // Add a mouse wheel listener for zooming
+        addListener(SWT.MouseWheel, event -> {
+            double zoom = Math.pow(ZOOM_PER_WHEEL_UNIT, -event.count);
+            this.zoom(zoom, new KVector(event.x, event.y));
+            this.redraw();
+            event.doit = false;
+        });
+        
+        // Add a mouse drag listener for panning
+        Listener dragListener = new Listener() {
+            private boolean isDragging;
+            private int lastX;
+            private int lastY;
+            @Override
+            public void handleEvent(final Event event) {
+                switch (event.type) {
+                case SWT.MouseDown:
+                    isDragging = true;
+                    break;
+                case SWT.MouseUp:
+                    isDragging = false;
+                    break;
+                case SWT.MouseMove:
+                    if (isDragging) {
+                        KVector delta = new KVector(event.x - lastX, event.y - lastY);
+                        GraphRenderingCanvas.this.pan(delta);
+                        GraphRenderingCanvas.this.redraw();
+                    }
+                    break;
+                }
+                lastX = event.x;
+                lastY = event.y;
+            }
+        };
+        addListener(SWT.MouseDown, dragListener);
+        addListener(SWT.MouseUp, dragListener);
+        addListener(SWT.MouseMove, dragListener);
     }
     
     /**
-     * Returns the KGraph renderer used for painting.
-     * 
-     * @return the KGraph renderer
+     * Zoom the canvas by adjusting the scale value by the given factor.
      */
-    public GraphRenderer getRenderer() {
-        return graphRenderer;
+    protected void zoom(final double zoom, final KVector focusPoint) {
+        double newScale = graphRenderer.getScale() * zoom;
+        graphRenderer.setScale(newScale);
+        // Adjust the offset so the focus point stays the same
+        KVector absFocus = KVector.diff(focusPoint, graphRenderer.getBaseOffset());
+        graphRenderer.setBaseOffset(absFocus.scale(zoom).sub(focusPoint).negate());
+    }
+    
+    /**
+     * Pan the canvas by adjusting the base offset by the given delta.
+     */
+    protected void pan(final KVector delta) {
+        KVector offset = graphRenderer.getBaseOffset().add(delta);
+        // Though the offset is modified in place, it needs to be reset in order to flush the cache
+        graphRenderer.setBaseOffset(offset);
     }
 
     /**

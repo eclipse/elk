@@ -10,7 +10,9 @@ package org.eclipse.elk.core.util;
 import java.io.StringWriter;
 import java.util.Collections;
 
+// elkjs-exclude-start
 import org.eclipse.elk.core.util.persistence.ElkGraphResource;
+// elkjs-exclude-end
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -54,10 +56,12 @@ public final class LoggedGraph {
          *            the object whose type compatibility to check.
          * @return {@code true} if the type is compatible.
          */
+        // elkjs-exclude-start
         public boolean isTypeCompatible(final Object o) {
             return expectedType.isAssignableFrom(o.getClass());
         }
-        
+        // elkjs-exclude-end
+
         /**
          * Throws a {@link ClassCastException} if {@link #isTypeCompatible(Object)} returns {@code false} for the
          * object.
@@ -67,9 +71,11 @@ public final class LoggedGraph {
          * @throws ClassCastException if the type is unexpected.
          */
         public void checkTypeCompatibility(final Object o) {
+            // elkjs-exclude-start
             if (!isTypeCompatible(o)) {
                 throw new ClassCastException("Type " + o.getClass().getName() + " incompatible for " + this.name());
             }
+            // elkjs-exclude-end
         }
         
         /**
@@ -130,6 +136,7 @@ public final class LoggedGraph {
     public String serialize() {
         // Depending on our type, different things are to be done
         switch (graphType) {
+        // elkjs-exclude-start
         case ELK:
             ResourceSet resourceSet = new ResourceSetImpl();
             Resource resource = resourceSet.createResource(URI.createFileURI("dummy.elkg"));
@@ -149,7 +156,8 @@ public final class LoggedGraph {
             }
             
             return "Unexpected problem serializing ELK Graph.";
-            
+
+        // elkjs-exclude-end
         default:
             return graph.toString();
         }

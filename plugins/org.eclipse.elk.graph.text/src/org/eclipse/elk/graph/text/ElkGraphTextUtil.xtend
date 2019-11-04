@@ -27,7 +27,7 @@ final class ElkGraphTextUtil {
      * might be ambiguous: e.g. a port of a composite node can be handled both by the algorithm that
      * arranges that node and the algorithm that arranges its container node.
      */
-    public static def getAlgorithm(ElkGraphElement element) {
+    static def getAlgorithm(ElkGraphElement element) {
         val node = switch element {
             ElkNode:
                 element

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ package org.eclipse.elk.graph.json
  * Exception indicating that something is wrong with 
  * a passed json.
  */
-public class JsonImportException extends RuntimeException {
-    new() { 
+class JsonImportException extends RuntimeException {
+    new() {
         super()
     }
 

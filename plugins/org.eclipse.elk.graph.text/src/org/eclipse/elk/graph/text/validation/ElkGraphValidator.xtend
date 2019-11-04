@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
 
 import static org.eclipse.elk.graph.ElkGraphPackage.Literals.*
+import static org.eclipse.elk.graph.text.validation.IssueCodes.*
 
 import static extension org.eclipse.elk.graph.text.ElkGraphTextUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
@@ -115,7 +116,7 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
     private def void checkOptionTarget(LayoutOptionData option, LayoutOptionData.Target... targetTypes) {
         if (!targetTypes.exists[option.targets.contains(it)])
             warning("The layout option '" + option.id + "' is not applicable to " + targetTypes.head.toString.toLowerCase + '.',
-                ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
+                ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY, OPTION_NOT_APPLICABLE)
     }
     
     private def void checkAlgorithmSupport(LayoutOptionData option, ElkGraphElement element) {

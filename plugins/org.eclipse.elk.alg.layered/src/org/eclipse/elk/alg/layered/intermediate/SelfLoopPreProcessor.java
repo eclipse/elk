@@ -38,7 +38,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *     <dd>None.</dd>
  * </dl>
  */
-public class SelfLoopPreprocessor implements ILayoutProcessor<LGraph> {
+public class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
 
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
