@@ -15,3 +15,4 @@ docs/content/reference/options/
 docs/content/reference/groups/
 docs/static/img_gen/
 docs/public
+*.prefs

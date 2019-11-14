@@ -645,12 +645,17 @@ public class GraphRenderer {
      * @param parent the graph to be drawn
      */
     public void calculateBaseOffsetFromTopLevelGraph(final ElkNode parent) {
-        int minX = Integer.MAX_VALUE;
-        int minY = Integer.MAX_VALUE;
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
         
         for (ElkNode childNode : parent.getChildren()) {
-            minX = Math.min(minX, (int) childNode.getX());
-            minY = Math.min(minY, (int) childNode.getY());
+            minX = Math.min(minX, childNode.getX());
+            minY = Math.min(minY, childNode.getY());
+            
+            for (ElkLabel childNodeLabel : childNode.getLabels()) {
+                minX = Math.min(minX, childNode.getX() + childNodeLabel.getX());
+                minY = Math.min(minY, childNode.getY() + childNodeLabel.getY());
+            }
         }
         
         for (ElkEdge edge : parent.getContainedEdges()) {
@@ -658,6 +663,11 @@ public class GraphRenderer {
 
             minX = Math.min(minX, edgeRect.x);
             minY = Math.min(minY, edgeRect.y);
+            
+            for (ElkLabel edgeLabel : edge.getLabels()) {
+                minX = Math.min(minX, edgeLabel.getX());
+                minY = Math.min(minY, edgeLabel.getY());
+            }
         }
         
         baseOffset.x = -Math.min(0, minX);

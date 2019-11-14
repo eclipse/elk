@@ -22,8 +22,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.SegmentDependency;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
 
 /**
  * A utility class for debugging of ELK Layered.
@@ -121,20 +121,20 @@ public final class DotDebugUtil {
      * @param hypernodes a list of hypernodes
      * @return hypernodes graph in DOT format.
      */
-    public static String createDebugGraph(final LGraph layeredGraph, final List<HyperNode> hypernodes) {
+    public static String createDebugGraph(final LGraph layeredGraph, final List<HyperEdgeSegment> hypernodes) {
         StringWriter writer = new StringWriter();
         
         writer.write("digraph {\n");
         
         // Write hypernode information
-        for (HyperNode hypernode : hypernodes) {
+        for (HyperEdgeSegment hypernode : hypernodes) {
             writer.write("  " + hypernode.hashCode() + "[label=\""
                     + hypernode.toString() + "\"]\n");
         }
         
         // Write dependency information
-        for (HyperNode hypernode : hypernodes) {
-            for (Dependency dependency : hypernode.getOutgoing()) {
+        for (HyperEdgeSegment hypernode : hypernodes) {
+            for (SegmentDependency dependency : hypernode.getOutgoingDependencies()) {
                 writer.write("  " + hypernode.hashCode() + "->" + dependency.getTarget().hashCode()
                         + "[label=\"" + dependency.getWeight() + "\"]\n");
             }

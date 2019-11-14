@@ -56,6 +56,16 @@ public abstract class Spacing implements IDataObject, Cloneable {
     protected Spacing(final double top, final double right, final double bottom, final double left) {
         set(top, right, bottom, left);
     }
+    
+    /**
+     * Sets all spacings to the ones of the given {@link Spacing} object.
+     * 
+     * @param spacing
+     *            the spacing object to set this instance's values to.
+     */
+    public void set(final Spacing spacing) {
+        set(spacing.top, spacing.right, spacing.bottom, spacing.left);
+    }
 
     /**
      * Sets all four spacings at once.

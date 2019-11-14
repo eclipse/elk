@@ -22,9 +22,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
@@ -57,7 +54,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
     /** Minimum width for shortened node labels. */
     private static final double MIN_WIDTH_NODE_LABELS = 40;
     /** Minimum width for shortened edge labels. */
-    private static final double MIN_WIDTH_EDGE_LABELS = 60;
+    public static final double MIN_WIDTH_EDGE_LABELS = 60;
 
     /** Whether we should only manage edge center labels. */
     private boolean centerLabels;
@@ -119,18 +116,6 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
                     for (LPort port : ports) {
                         doManageLabels(labelManager, port.getLabels(), MIN_WIDTH_PORT_LABELS, labelLabelSpacing,
                                 verticalLayout);
-                    }
-
-                    // Self-loop
-                    if (node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION)) {
-                       SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-                        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-                            SelfLoopLabel slLabel = component.getSelfLoopLabel();
-                            if (slLabel != null) {
-                                doManageLabels(labelManager, slLabel.getLabels(), MIN_WIDTH_EDGE_LABELS,
-                                        labelLabelSpacing, verticalLayout);
-                            }
-                        }
                     }
 
                     // Handle attached comments
@@ -226,7 +211,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
      *            returned by the label manager need to be turned 90 degrees.
      * @return size required to place the labels. Does not include the edge-label space yet.
      */
-    private KVector doManageLabels(final ILabelManager labelManager, final Iterable<LLabel> labels,
+    public static KVector doManageLabels(final ILabelManager labelManager, final Iterable<LLabel> labels,
             final double targetWidth, final double labelLabelSpacing, final boolean verticalLayout) {
 
         KVector requiredLabelSpace = new KVector();

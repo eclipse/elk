@@ -25,12 +25,11 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.LabelSide;
@@ -363,12 +362,6 @@ public final class InternalProperties {
             new Property<KVector>("splineLabelSize", new KVector());
 
     /**
-     * A node's property storing the margins of a node required for it's self loops.
-     */
-    public static final IProperty<ElkMargin> SELF_LOOP_MARGINS = new Property<ElkMargin>(
-            "splineSelfLoopMargins", new ElkMargin());
-
-    /**
      * Internal container for all possible spacing variations that we support.
      */
     public static final IProperty<Spacings> SPACINGS =
@@ -415,12 +408,12 @@ public final class InternalProperties {
      */
     public static final IProperty<PortConstraints> ORIGINAL_PORT_CONSTRAINTS =  
             new Property<PortConstraints>("originalPortConstraints");
-
+    
     /**
-     * The linear node representation used from the self-loop calculation.
+     * Holds all of the information necessary to route self loops around a node.
      */
-    public static final IProperty<SelfLoopNode> SELFLOOP_NODE_REPRESENTATION =
-            new Property<SelfLoopNode>("selfLoopNodeRepresentation");
+    public static final IProperty<SelfLoopHolder> SELF_LOOP_HOLDER =
+            new Property<>("selfLoopHolder");
 
     /**
      * Holds the y-coordinate of a deleted {@link NodeType#NORTH_SOUTH_PORT} dummy node. To be read by the

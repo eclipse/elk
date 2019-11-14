@@ -24,8 +24,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.SegmentDependency;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -138,7 +138,7 @@ public final class JsonDebugUtil {
      *            a list of hypernodes
      * @return hypernode graph in JSON format.
      */
-    public static String createDebugGraph(final LGraph layeredGraph, final List<HyperNode> hypernodes) {
+    public static String createDebugGraph(final LGraph layeredGraph, final List<HyperEdgeSegment> hypernodes) {
         StringWriter writer = new StringWriter();
         
         beginGraph(writer, layeredGraph);
@@ -148,12 +148,12 @@ public final class JsonDebugUtil {
         String indent2 = Strings.repeat(INDENT, 3); // SUPPRESS CHECKSTYLE MagicNumber
         int edgeId = 0;
         
-        Iterator<HyperNode> hypernodeIterator = hypernodes.iterator();
+        Iterator<HyperEdgeSegment> hypernodeIterator = hypernodes.iterator();
         
         StringBuffer edges = new StringBuffer();
         
         while (hypernodeIterator.hasNext()) {
-            HyperNode hypernode = hypernodeIterator.next();
+            HyperEdgeSegment hypernode = hypernodeIterator.next();
             writer.write("\n" + indent1 + "{\n"
                     + indent2 + "\"id\": \"n" + System.identityHashCode(hypernode) + "\",\n"
                     + indent2 + "\"labels\": [ { \"text\": \"" + hypernode.toString() + "\" } ],\n"
@@ -164,10 +164,10 @@ public final class JsonDebugUtil {
                 writer.write(",");
             }
 
-            Iterator<Dependency> dependencyIterator = hypernode.getOutgoing().iterator();
+            Iterator<SegmentDependency> dependencyIterator = hypernode.getOutgoingDependencies().iterator();
             
             while (dependencyIterator.hasNext()) {
-                Dependency dependency = dependencyIterator.next();
+                SegmentDependency dependency = dependencyIterator.next();
                 edges.append("\n" + indent1 + "{\n"
                     + indent2 + "\"id\": \"e" + edgeId++ + "\",\n"
                     + indent2 + "\"source\": \"n" + System.identityHashCode(hypernode) + "\",\n"

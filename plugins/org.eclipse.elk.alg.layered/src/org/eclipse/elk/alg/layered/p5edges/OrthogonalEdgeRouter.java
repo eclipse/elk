@@ -23,6 +23,8 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.RoutingDirection;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -141,9 +143,8 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.SELF_LOOP_PREPROCESSOR)
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.SELF_LOOP_POSTPROCESSOR)
                 .before(LayeredPhases.P4_NODE_PLACEMENT)
-                    .add(IntermediateProcessorStrategy.SELF_LOOP_PLACER)
-                    .add(IntermediateProcessorStrategy.SELF_LOOP_LABEL_PLACER)
-                    .add(IntermediateProcessorStrategy.SELF_LOOP_BENDPOINT_CALCULATOR);
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_PORT_RESTORER)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_ROUTER);
     
     /** additional processor dependencies for graphs with hypernodes. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HYPERNODE_PROCESSING_ADDITIONS =
@@ -230,7 +231,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, "phase5");
+                RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, "phase5");
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;

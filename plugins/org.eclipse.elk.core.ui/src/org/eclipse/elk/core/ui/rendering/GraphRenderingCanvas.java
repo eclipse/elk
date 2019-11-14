@@ -1,16 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Kiel University and others.
+ * Copyright (c) 2008, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.ui.rendering;
 
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -26,8 +27,6 @@ import org.eclipse.swt.widgets.Listener;
 /**
  * A canvas that is able to paint ELK layout graphs. Colors and fonts used for painting can be
  * customized by supplying a subclass of {@link GraphRenderingConfigurator}.
- * 
- * @author msp
  */
 public class GraphRenderingCanvas extends Canvas implements PaintListener {
     
@@ -78,9 +77,6 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
         setBackground(backgroundColor);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void dispose() {
         graphRenderer.dispose();
@@ -124,16 +120,84 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
     /**
      * Sets the given layout graph as the painted graph.
      * 
-     * @param thelayoutGraph layout graph to be painted
+     * @param graph layout graph to be painted
      */
-    public void setLayoutGraph(final ElkNode thelayoutGraph) {
-        this.layoutGraph = thelayoutGraph;
-        if (thelayoutGraph != null) {
-            setSize(computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        }
+    public void setLayoutGraph(final ElkNode graph) {
+        KVector baseOffset = calculateRequiredCanvasSizeAndBaseOffset(graph);
+        this.layoutGraph = graph;
+        graphRenderer.setBaseOffset(baseOffset);
         redraw();
     }
     
+    /**
+     * Sets size of the canvas by looking up the biggest distances between graph elements in x- and y-direction
+     * and return a KVector with the required offset of the origin coordinates to fit all elements on the canvas.
+     * 
+     * @param graph to be painted
+     */
+    private KVector calculateRequiredCanvasSizeAndBaseOffset(final ElkNode graph) {
+        if (graph != null) {
+            double minX = Double.MAX_VALUE;
+            double maxX = Double.MIN_VALUE;
+            double minY = Double.MAX_VALUE;
+            double maxY = Double.MIN_VALUE;
+
+            // check all nodes for their coordinates
+            for (ElkNode node : graph.getChildren()) {
+                minX = Math.min(minX, node.getX());
+                maxX = Math.max(maxX, node.getX() + node.getWidth());
+                minY = Math.min(minY, node.getY());
+                maxY = Math.max(maxY, node.getY() + node.getHeight());
+                
+                // check node labels
+                for (ElkLabel nodeLabel : node.getLabels()) {
+                    minX = Math.min(minX, node.getX() + nodeLabel.getX());
+                    maxX = Math.max(maxX, node.getX() + nodeLabel.getX() + nodeLabel.getWidth());
+                    minY = Math.min(minY, node.getY() + nodeLabel.getY());
+                    maxY = Math.max(maxY, node.getY() + nodeLabel.getY() + nodeLabel.getHeight());
+                }
+            }
+            
+            for (ElkEdge edge : graph.getContainedEdges()) {
+                // check all sections of the edges for their coordinates
+                for (ElkEdgeSection edgeSection : edge.getSections()) {
+                    minX = Math.min(minX, edgeSection.getStartX());
+                    minY = Math.min(minY, edgeSection.getStartY());
+                    maxX = Math.max(maxX, edgeSection.getStartX());
+                    maxY = Math.max(maxY, edgeSection.getStartY());
+
+                    minX = Math.min(minX, edgeSection.getEndX());
+                    minY = Math.min(minY, edgeSection.getEndY());
+                    maxX = Math.max(maxX, edgeSection.getEndX());
+                    maxY = Math.max(maxY, edgeSection.getEndY());
+
+                    for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
+                        minX = Math.min(minX, bendPoint.getX());
+                        minY = Math.min(minY, bendPoint.getY());
+                        maxX = Math.max(maxX, bendPoint.getX());
+                        maxY = Math.max(maxY, bendPoint.getY());
+                    }
+                }
+                
+                // check edge labels
+                for (ElkLabel edgeLabel : edge.getLabels()) {
+                    minX = Math.min(minX, edgeLabel.getX());
+                    maxX = Math.max(maxX, edgeLabel.getX() + edgeLabel.getWidth());
+                    minY = Math.min(minY, edgeLabel.getY());
+                    maxY = Math.max(maxY, edgeLabel.getY() + edgeLabel.getHeight());
+                }
+            }
+            
+            int x = ((int) (Math.max(graph.getWidth(), maxX) - Math.min(0, minX))) + 1;
+            int y = ((int) (Math.max(graph.getHeight(), maxY) - Math.min(0, minY))) + 1;
+            
+            setSize(new Point(x, y));
+            return new KVector((-Math.min(0, minX)), (-Math.min(0, minY)));
+        }
+        
+        return new KVector();
+    }
+
     /**
      * Set up mouse interaction: wheel for zooming, drag for panning.
      */

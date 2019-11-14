@@ -30,7 +30,7 @@ import com.google.common.collect.Lists;
  * Post-processor for comment boxes. If any comments are found that were removed by the
  * {@link CommentPreprocessor}, they are reinserted and placed above or below their
  * corresponding connected node. This requires the margin around the node to be large
- * enough to hold all comments, which is ensured by the {@link NodeMarginCalculator}.
+ * enough to hold all comments, which is ensured by the {@link InnermostNodeMarginCalculator}.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>Comments have been processed by {@link CommentPreprocessor}.

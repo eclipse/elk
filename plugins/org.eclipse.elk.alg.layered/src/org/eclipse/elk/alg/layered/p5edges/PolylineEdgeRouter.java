@@ -125,9 +125,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.SELF_LOOP_PREPROCESSOR)
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.SELF_LOOP_POSTPROCESSOR)
                 .before(LayeredPhases.P4_NODE_PLACEMENT)
-                    .add(IntermediateProcessorStrategy.SELF_LOOP_PLACER)
-                    .add(IntermediateProcessorStrategy.SELF_LOOP_LABEL_PLACER)
-                    .add(IntermediateProcessorStrategy.SELF_LOOP_BENDPOINT_CALCULATOR);
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_PORT_RESTORER)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_ROUTER);
     
     /** additional processor dependencies for graphs with center edge labels. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
