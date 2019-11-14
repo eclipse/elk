@@ -42,10 +42,9 @@ public class SelfHyperLoopLabels {
         TOP
     }
 
-    // CHECKSTYLEOFF VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 2 VisibilityModifier
     /** An ID that can be used arbitrarily. */
     public int id = 0;
-    // CHECKSTYLEON VisibilityModifier
     
     /** The labels represented by this instance. */
     private final List<LLabel> lLabels = new ArrayList<>();
@@ -140,14 +139,13 @@ public class SelfHyperLoopLabels {
      */
     public void applyPlacement(final KVector offset) {
         if (layoutDirection.isHorizontal()) {
-            applyHorizontalPlacement(offset);
-            
+            applyPlacementForHorizontalLayout(offset);
         } else {
-            applyVerticalPlacement(offset);
+            applyPlacementVerticalForVerticalLayout(offset);
         }
     }
 
-    private void applyHorizontalPlacement(final KVector offset) {
+    private void applyPlacementForHorizontalLayout(final KVector offset) {
         double x = position.x;
         double y = position.y;
         
@@ -171,7 +169,7 @@ public class SelfHyperLoopLabels {
         }
     }
 
-    private void applyVerticalPlacement(final KVector offset) {
+    private void applyPlacementVerticalForVerticalLayout(final KVector offset) {
         double x = position.x;
         double y = position.y;
         

@@ -7,9 +7,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.splines.NubSpline;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
@@ -34,10 +36,13 @@ public class SplineSelfLoopRouter extends OrthogonalSelfLoopRouter {
     protected KVectorChain modifyBendPoints(final SelfLoopEdge slEdge, final EdgeRoutingDirection routingDirection,
             final KVectorChain bendPoints) {
         
+        double edgeLabelDistance = LGraphUtil.getIndividualOrInherited(
+                slEdge.getSLHyperLoop().getSLHolder().getLNode(), LayeredOptions.SPACING_EDGE_LABEL);
+        
         // For the splines to be routed correctly, we also have to include the source and target positions, so we build
         // up the new list of bend points bit by bit
         KVectorChain splineBendPoints = new KVectorChain(relativePortAnchor(slEdge.getSLSource()));
-        addSplineControlPoints(slEdge, routingDirection, bendPoints, splineBendPoints);
+        addSplineControlPoints(slEdge, routingDirection, bendPoints, splineBendPoints, edgeLabelDistance);
         splineBendPoints.add(relativePortAnchor(slEdge.getSLTarget()));
         
         return new NubSpline(true, DIM, splineBendPoints).getBezierCP();
@@ -53,7 +58,7 @@ public class SplineSelfLoopRouter extends OrthogonalSelfLoopRouter {
      * loop router. The spline control points are slightly offset away from the node.
      */
     private void addSplineControlPoints(final SelfLoopEdge slEdge, final EdgeRoutingDirection routingDirection,
-            final KVectorChain orthoBendPoints, final KVectorChain newBendPoints) {
+            final KVectorChain orthoBendPoints, final KVectorChain newBendPoints, final double edgeLabelDistance) {
         
         assert orthoBendPoints.size() >= 2;
         
@@ -71,7 +76,7 @@ public class SplineSelfLoopRouter extends OrthogonalSelfLoopRouter {
             // Compute a middle bend point and move it away from the node a little
             KVector midBP = new KVector(firstBP).add(secondBP).scale(HALF);
             KVector offset = new KVector(SplinesMath.portSideToDirection(currPortSide))
-                    .scale(OrthogonalSelfLoopRouter.LABEL_EDGE_DISTANCE);
+                    .scale(edgeLabelDistance);
             midBP.add(offset);
             
             newBendPoints.add(midBP);

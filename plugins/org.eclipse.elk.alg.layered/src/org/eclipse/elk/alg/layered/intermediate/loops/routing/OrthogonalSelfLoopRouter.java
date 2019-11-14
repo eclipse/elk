@@ -8,6 +8,7 @@
 package org.eclipse.elk.alg.layered.intermediate.loops.routing;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -16,6 +17,7 @@ import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
@@ -37,20 +39,21 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         COUNTER_CLOCKWISE;
     }
     
-    // TODO Replace by spacing options.
-    private static final double DISTANCE = 10.0;
-    public static final double LABEL_EDGE_DISTANCE = 5.0;
-
     @Override
     public void routeSelfLoops(final SelfLoopHolder slHolder) {
-        KVector nodeSize = slHolder.getLNode().getSize();
-        LMargin nodeMargins = slHolder.getLNode().getMargin();
+        LNode lNode = slHolder.getLNode();
+        
+        KVector nodeSize = lNode.getSize();
+        LMargin nodeMargins = lNode.getMargin();
+        
+        double edgeEdgeDistance = LGraphUtil.getIndividualOrInherited(lNode, LayeredOptions.SPACING_EDGE_EDGE);
+        double edgeLabelDistance = LGraphUtil.getIndividualOrInherited(lNode, LayeredOptions.SPACING_EDGE_LABEL);
         
         LMargin newNodeMargins = new LMargin();
         newNodeMargins.set(nodeMargins);
         
-        // Compute how far away from the node each routing slot on each side is
-        double[][] routingSlotPositions = computeRoutingSlotPositions(slHolder);
+        // Compute how far away from the node each routing slot on each side is (this takes labels into account)
+        double[][] routingSlotPositions = computeRoutingSlotPositions(slHolder, edgeEdgeDistance, edgeLabelDistance);
         
         for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
             for (SelfLoopEdge slEdge : slLoop.getSLEdges()) {
@@ -58,6 +61,8 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
                 
                 EdgeRoutingDirection routingDirection = computeEdgeRoutingDirection(slEdge);
                 
+                // Compute orthogonal bend points and give subclasses a chance to modify them to suit their particular
+                // routing style. The default implementation in this class won't change the bend points.
                 KVectorChain bendPoints = computeOrthogonalBendPoints(slEdge, routingDirection, routingSlotPositions);
                 bendPoints = modifyBendPoints(slEdge, routingDirection, bendPoints);
                 
@@ -67,10 +72,10 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
                 bendPoints.stream().forEach(bp -> updateNewNodeMargins(nodeSize, newNodeMargins, bp));
             }
             
-            // Place the self loop's labels
+            // Place the self loop's labels (the edges were routed such that there is enough space available)
             SelfHyperLoopLabels slLabels = slLoop.getSLLabels();
             if (slLabels != null) {
-                placeLabels(slLoop, slLabels, routingSlotPositions);
+                placeLabels(slLoop, slLabels, routingSlotPositions, edgeLabelDistance);
                 updateNewNodeMargins(nodeSize, newNodeMargins, slLabels);
             }
             
@@ -122,7 +127,7 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * Places any labels of the given self loop.
      */
     private void placeLabels(final SelfHyperLoop slLoop, final SelfHyperLoopLabels slLabels,
-            final double[][] routingSlotPositions) {
+            final double[][] routingSlotPositions, final double edgeLabelDistance) {
         
         // Find the baseline of the routing slot (we need to offset this by the spacing to be left between label and
         // edge)
@@ -131,22 +136,22 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         
         switch (labelSide) {
         case NORTH:
-            labelPosition -= LABEL_EDGE_DISTANCE + slLabels.getSize().y;
+            labelPosition -= edgeLabelDistance + slLabels.getSize().y;
             slLabels.getPosition().y = labelPosition;
             break;
             
         case SOUTH:
-            labelPosition += LABEL_EDGE_DISTANCE;
+            labelPosition += edgeLabelDistance;
             slLabels.getPosition().y = labelPosition;
             break;
             
         case WEST:
-            labelPosition -= LABEL_EDGE_DISTANCE + slLabels.getSize().x;
+            labelPosition -= edgeLabelDistance + slLabels.getSize().x;
             slLabels.getPosition().x = labelPosition;
             break;
             
         case EAST:
-            labelPosition += LABEL_EDGE_DISTANCE;
+            labelPosition += edgeLabelDistance;
             slLabels.getPosition().x = labelPosition;
             break;
         
@@ -186,7 +191,9 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * Computes the position of each routing slot on each side, taking care to leave enough space for labels between
      * adjacent routing slots on the north and south sides.
      */
-    private double[][] computeRoutingSlotPositions(final SelfLoopHolder slHolder) {
+    private double[][] computeRoutingSlotPositions(final SelfLoopHolder slHolder, final double edgeEdgeDistance,
+            final double edgeLabelDistance) {
+        
         // Initialize array
         double[][] positions = new double[PortSide.values().length][];
         for (PortSide portSide : PortSide.values()) {
@@ -199,10 +206,10 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         initializeWithMaxLabelHeight(positions, slHolder, PortSide.SOUTH);
         
         // Compute the positions for each side
-        computePositions(positions, slHolder, PortSide.NORTH);
-        computePositions(positions, slHolder, PortSide.EAST);
-        computePositions(positions, slHolder, PortSide.SOUTH);
-        computePositions(positions, slHolder, PortSide.WEST);
+        computePositions(positions, slHolder, PortSide.NORTH, edgeEdgeDistance, edgeLabelDistance);
+        computePositions(positions, slHolder, PortSide.EAST, edgeEdgeDistance, edgeLabelDistance);
+        computePositions(positions, slHolder, PortSide.SOUTH, edgeEdgeDistance, edgeLabelDistance);
+        computePositions(positions, slHolder, PortSide.WEST, edgeEdgeDistance, edgeLabelDistance);
         
         return positions;
     }
@@ -230,8 +237,10 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
     /**
      * Computes the positions for each routing slot, taking labels into account.
      */
-    private void computePositions(final double[][] positions, final SelfLoopHolder slHolder, final PortSide portSide) {
-        double currPos = computeBaselinePosition(slHolder, portSide);
+    private void computePositions(final double[][] positions, final SelfLoopHolder slHolder, final PortSide portSide,
+            final double edgeEdgeDistance, final double edgeLabelDistance) {
+        
+        double currPos = computeBaselinePosition(slHolder, portSide, edgeEdgeDistance);
         
         // For northern and western coordinates, we have to subtract from the current position
         double factor = portSide == PortSide.NORTH || portSide == PortSide.WEST ? -1 : 1;
@@ -242,12 +251,12 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
             double largestLabelSize = sidePositions[slot];
             if (largestLabelSize > 0) {
                 // Account for label spacing
-                largestLabelSize += LABEL_EDGE_DISTANCE;
+                largestLabelSize += edgeLabelDistance;
             }
             
             // Place the slot at the current position and advance the position
             sidePositions[slot] = currPos;
-            currPos += factor * (largestLabelSize + DISTANCE);
+            currPos += factor * (largestLabelSize + edgeEdgeDistance);
         }
     }
 
@@ -255,19 +264,21 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * Based on the margin area, this computes the offset from the node origin to add to escape the area occupied by
      * ports.
      */
-    private double computeBaselinePosition(final SelfLoopHolder slHolder, final PortSide portSide) {
+    private double computeBaselinePosition(final SelfLoopHolder slHolder, final PortSide portSide,
+            final double edgeEdgeDistance) {
+        
         LNode lNode = slHolder.getLNode();
         LMargin lMargins = lNode.getMargin();
         
         switch (portSide) {
         case NORTH:
-            return -lMargins.top - DISTANCE;
+            return -lMargins.top - edgeEdgeDistance;
         case EAST:
-            return lNode.getSize().x + lMargins.right + DISTANCE;
+            return lNode.getSize().x + lMargins.right + edgeEdgeDistance;
         case SOUTH:
-            return lNode.getSize().y + lMargins.bottom + DISTANCE;
+            return lNode.getSize().y + lMargins.bottom + edgeEdgeDistance;
         case WEST:
-            return -lMargins.left - DISTANCE;
+            return -lMargins.left - edgeEdgeDistance;
         default:
             assert false;
             return -1;

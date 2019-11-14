@@ -39,7 +39,7 @@ public class PolylineSelfLoopRouter extends OrthogonalSelfLoopRouter {
         LPort lTargetPort = slEdge.getSLTarget().getLPort();
         bendPoints.add(lTargetPort.getPosition().clone().add(lTargetPort.getAnchor()));
         
-        return cornerfy(bendPoints, CORNER_DISTANCE);
+        return cutCorners(bendPoints, CORNER_DISTANCE);
     }
     
     /** Tolerance for double comparisons. */
@@ -50,7 +50,7 @@ public class PolylineSelfLoopRouter extends OrthogonalSelfLoopRouter {
      * bend point always remain untouched (and are not included in the returned list of bend points anyway). The other
      * bend points are replaced by two each which are ideally the given distance away from the original bend point.
      */
-    protected KVectorChain cornerfy(final KVectorChain bendPoints, final double distance) {
+    protected KVectorChain cutCorners(final KVectorChain bendPoints, final double distance) {
         // The incoming list should consist of more than just the two end points
         assert bendPoints.size() > 2;
         

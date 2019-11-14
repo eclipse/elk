@@ -206,7 +206,8 @@ public class RoutingDirector {
     private PortSide computeMissingPortSide(final SelfHyperLoop slLoop) {
         Set<PortSide> sides = slLoop.getSLPortsBySide().keySet();
 
-        assert sides.size() == 1 + 1 + 1;
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        assert sides.size() == 3;
         assert !sides.contains(PortSide.UNDEFINED);
 
         for (PortSide side : PortSide.values()) {
