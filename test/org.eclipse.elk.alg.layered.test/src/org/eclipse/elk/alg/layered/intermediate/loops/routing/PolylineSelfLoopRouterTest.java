@@ -39,7 +39,7 @@ public class PolylineSelfLoopRouterTest {
         expected.add(new KVector(-100, -90));
         expected.add(new KVector(-90, -100));
         
-        Assert.assertEquals(expected, router.cornerfy(input, 10));
+        Assert.assertEquals(expected, router.cutCorners(input, 10));
     }
     
     @Test
@@ -62,7 +62,7 @@ public class PolylineSelfLoopRouterTest {
         expected.add(new KVector(-100, -50));
         expected.add(new KVector(-50, -100));
         
-        Assert.assertEquals(expected, router.cornerfy(input, 80));
+        Assert.assertEquals(expected, router.cutCorners(input, 80));
     }
     
 }
