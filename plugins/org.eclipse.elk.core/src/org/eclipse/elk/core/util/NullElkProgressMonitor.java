@@ -96,10 +96,12 @@ public class NullElkProgressMonitor implements IElkProgressMonitor {
         return null;
     }
 
+    // elkjs-exclude-start
     @Override
     public Path getDebugFolder() {
         return null;
     }
+    // elkjs-exclude-end
 
     @Override
     public boolean isExecutionTimeMeasured() {
