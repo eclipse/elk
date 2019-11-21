@@ -104,9 +104,6 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase<LayeredP
             for (LNode node : layer) {
                 node.id = nextIndex++;
                 pos[node.id] = getPos(node, horizPos);
-                if (Double.isNaN(pos[node.id])) {
-                    System.out.println("PANIC!!!");
-                }
                 
                 // if we have a long edge dummy node, save the calculated position in a property
                 // to be used by the interactive node placer (for dummy nodes other than long edge
@@ -156,7 +153,6 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase<LayeredP
     private double getPos(final LNode node, final double horizPos) {
         switch (node.getType()) {
         case LONG_EDGE:
-            System.out.println("LONG EDGE");
             LEdge edge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
             
             // reconstruct the original bend points from the node annotations
@@ -204,7 +200,6 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase<LayeredP
             break;
             
         case NORTH_SOUTH_PORT:
-            System.out.println("NORTH SOUTH");
             // Get one of the ports the dummy node was created for, and its original node
             LPort originPort = (LPort) node.getPorts().get(0).getProperty(InternalProperties.ORIGIN);
             LNode originNode = originPort.getNode();
