@@ -49,8 +49,10 @@ public class PolylineSelfLoopRouter extends OrthogonalSelfLoopRouter {
      * Turns the given list of bend points into a new list of bend points by cutting the corners. The first and last
      * bend point always remain untouched (and are not included in the returned list of bend points anyway). The other
      * bend points are replaced by two each which are ideally the given distance away from the original bend point.
+     * 
+     * This method is public for it to be accessible by our unit tests.
      */
-    protected KVectorChain cutCorners(final KVectorChain bendPoints, final double distance) {
+    public KVectorChain cutCorners(final KVectorChain bendPoints, final double distance) {
         // The incoming list should consist of more than just the two end points
         assert bendPoints.size() > 2;
         
