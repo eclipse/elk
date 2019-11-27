@@ -294,6 +294,13 @@ group spacing {
         targets parents
         legacyIds de.cau.cs.kieler.spacing
     }
+    option nodeSelfLoop: double {
+        label "Node Self Loop Spacing"
+        description "Spacing to be preserved between a node and its self loops."
+        default = 10
+        lowerBound = 0.0
+        targets parents
+    }
     option portPort: double {
         label "Port Spacing"
         description "Spacing between pairs of ports of the same node."

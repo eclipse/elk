@@ -48,12 +48,14 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         
         double edgeEdgeDistance = LGraphUtil.getIndividualOrInherited(lNode, LayeredOptions.SPACING_EDGE_EDGE);
         double edgeLabelDistance = LGraphUtil.getIndividualOrInherited(lNode, LayeredOptions.SPACING_EDGE_LABEL);
+        double nodeSLDistance = LGraphUtil.getIndividualOrInherited(lNode, LayeredOptions.SPACING_NODE_SELF_LOOP);
         
         LMargin newNodeMargins = new LMargin();
         newNodeMargins.set(nodeMargins);
         
         // Compute how far away from the node each routing slot on each side is (this takes labels into account)
-        double[][] routingSlotPositions = computeRoutingSlotPositions(slHolder, edgeEdgeDistance, edgeLabelDistance);
+        double[][] routingSlotPositions = computeRoutingSlotPositions(
+                slHolder, edgeEdgeDistance, edgeLabelDistance, nodeSLDistance);
         
         for (SelfHyperLoop slLoop : slHolder.getSLHyperLoops()) {
             for (SelfLoopEdge slEdge : slLoop.getSLEdges()) {
@@ -192,7 +194,7 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * adjacent routing slots on the north and south sides.
      */
     private double[][] computeRoutingSlotPositions(final SelfLoopHolder slHolder, final double edgeEdgeDistance,
-            final double edgeLabelDistance) {
+            final double edgeLabelDistance, final double nodeSLDistance) {
         
         // Initialize array
         double[][] positions = new double[PortSide.values().length][];
@@ -206,10 +208,10 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
         initializeWithMaxLabelHeight(positions, slHolder, PortSide.SOUTH);
         
         // Compute the positions for each side
-        computePositions(positions, slHolder, PortSide.NORTH, edgeEdgeDistance, edgeLabelDistance);
-        computePositions(positions, slHolder, PortSide.EAST, edgeEdgeDistance, edgeLabelDistance);
-        computePositions(positions, slHolder, PortSide.SOUTH, edgeEdgeDistance, edgeLabelDistance);
-        computePositions(positions, slHolder, PortSide.WEST, edgeEdgeDistance, edgeLabelDistance);
+        computePositions(positions, slHolder, PortSide.NORTH, edgeEdgeDistance, edgeLabelDistance, nodeSLDistance);
+        computePositions(positions, slHolder, PortSide.EAST, edgeEdgeDistance, edgeLabelDistance, nodeSLDistance);
+        computePositions(positions, slHolder, PortSide.SOUTH, edgeEdgeDistance, edgeLabelDistance, nodeSLDistance);
+        computePositions(positions, slHolder, PortSide.WEST, edgeEdgeDistance, edgeLabelDistance, nodeSLDistance);
         
         return positions;
     }
@@ -238,9 +240,9 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * Computes the positions for each routing slot, taking labels into account.
      */
     private void computePositions(final double[][] positions, final SelfLoopHolder slHolder, final PortSide portSide,
-            final double edgeEdgeDistance, final double edgeLabelDistance) {
+            final double edgeEdgeDistance, final double edgeLabelDistance, final double nodeSelfLoopDistance) {
         
-        double currPos = computeBaselinePosition(slHolder, portSide, edgeEdgeDistance);
+        double currPos = computeBaselinePosition(slHolder, portSide, nodeSelfLoopDistance);
         
         // For northern and western coordinates, we have to subtract from the current position
         double factor = portSide == PortSide.NORTH || portSide == PortSide.WEST ? -1 : 1;
@@ -265,20 +267,20 @@ public class OrthogonalSelfLoopRouter extends AbstractSelfLoopRouter {
      * ports.
      */
     private double computeBaselinePosition(final SelfLoopHolder slHolder, final PortSide portSide,
-            final double edgeEdgeDistance) {
+            final double nodeSelfLoopDistance) {
         
         LNode lNode = slHolder.getLNode();
         LMargin lMargins = lNode.getMargin();
         
         switch (portSide) {
         case NORTH:
-            return -lMargins.top - edgeEdgeDistance;
+            return -lMargins.top - nodeSelfLoopDistance;
         case EAST:
-            return lNode.getSize().x + lMargins.right + edgeEdgeDistance;
+            return lNode.getSize().x + lMargins.right + nodeSelfLoopDistance;
         case SOUTH:
-            return lNode.getSize().y + lMargins.bottom + edgeEdgeDistance;
+            return lNode.getSize().y + lMargins.bottom + nodeSelfLoopDistance;
         case WEST:
-            return -lMargins.left - edgeEdgeDistance;
+            return -lMargins.left - nodeSelfLoopDistance;
         default:
             assert false;
             return -1;
