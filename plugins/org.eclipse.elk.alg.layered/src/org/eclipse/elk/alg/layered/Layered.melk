@@ -133,7 +133,6 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
 	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
     supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
-    supports org.eclipse.elk.alg.layered.edgeRouting.mergeSelfLoops
 	supports contentAlignment
 	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
 	supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
@@ -501,14 +500,6 @@ group edgeRouting {
                 It only takes effect for PortConstraints.FREE."
         default = SelfLoopOrderingStrategy.STACKED
         targets nodes
-    }
-    option mergeSelfLoops: boolean {
-        label "Merge Self-Loops"
-        description "If different self-loops are not important, they can be merged to be displayed on above another. 
-                This saves space and labels will not be crossed if multiple labels are stacked.
-                It only takes effect for PortConstraints.FREE."
-        default = false
-        targets parents
     }
 
 }
