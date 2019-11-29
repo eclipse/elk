@@ -3,11 +3,11 @@ Automatic-Module-Name: org.eclipse.elk.alg.packing.rectangles
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Rectangle Packing Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.packing.rectangles;singleton:=true
-Bundle-Version: 0.5.0.qualifier
+Bundle-Version: 0.6.0
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.elk.graph;bundle-version="0.5.0",
- org.eclipse.elk.core;bundle-version="0.5.0",
+Require-Bundle: org.eclipse.elk.graph,
+ org.eclipse.elk.core,
  com.google.guava
 Export-Package: org.eclipse.elk.alg.packing.rectangles,
  org.eclipse.elk.alg.packing.rectangles.options
