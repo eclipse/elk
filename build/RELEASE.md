@@ -13,15 +13,17 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 
 ## The Release Branch
 
+1. Ensure that all bundles to be built and released are in fact built and are part of the update site.
 1. Create a release branch `releases/VERSION`.
 1. Remove `-SNAPSHOT` and `.qualifier` from any version numbers. This is necessary for Maven to push the build to the proper Maven Central release staging area.
 1. Open `build/org.eclipse.elk.repository/category.xml` and update its description like this:
     
     ```xml
-    <description name="Eclipse Layout Kernel (Release 0.5.0)" url="http://build.eclipse.org/modeling/elk/updates/releases(0.5.0">
+    <description name="Eclipse Layout Kernel (Release 0.5.0)" url="http://build.eclipse.org/modeling/elk/updates/releases/0.5.0">
       Update site for the Eclipse Layout Kernel, version 0.5.0.
     </description>
     ```
+1. Remove the `DeployWebsite` stage from the release build's `Jenkinsfile`.
 1. Update the _ReleaseNightly_ build and run it.
 1. Update the version numbers on `master`.
 
