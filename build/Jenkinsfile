@@ -25,6 +25,13 @@ pipeline {
       defaultValue: 'master'
     )
 
+    // For the version number
+    string(
+      name: 'VERSION',
+      description: 'The build version number. Used to generate download file names.',
+      defaultValue: 'nightly'
+    )
+
     // Regarding the meta-data compiler...
     string(
       name: 'META_REPOSITORY_URL',
@@ -168,19 +175,21 @@ pipeline {
       steps {
         sh "ant -f elk/build/org.eclipse.elk.repository/publish.xml" +
            " -DtargetDir=${params.ELK_TARGET_DIR}" +
+           " -Dversion=${params.VERSION}" +
            " -Dhugo=/shared/common/hugo/latest/hugo" +
            " docs zipIt publish"
       }
     }
 
-    stage('DeployWebsite') {
-      // Deploys the previously built website
-      steps {
-        dir ('elk/build/org.eclipse.elk.repository') {
-          sh "./publish-website.sh"
-        }
-      }
-    }
+    // The website is not deployed in release builds.
+    // stage('DeployWebsite') {
+    //   // Deploys the previously built website
+    //   steps {
+    //     dir ('elk/build/org.eclipse.elk.repository') {
+    //       sh "./publish-website.sh"
+    //     }
+    //   }
+    // }
   }
 
   post {
