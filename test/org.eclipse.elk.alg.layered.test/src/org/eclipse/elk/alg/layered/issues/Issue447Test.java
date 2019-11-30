@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
 @DefaultConfiguration
-public class Issue447 {
+public class Issue447Test {
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
