@@ -29,27 +29,27 @@ pipeline {
     string(
       name: 'VERSION',
       description: 'The build version number. Used to generate download file names.',
-      defaultValue: 'nightly'
+      defaultValue: '0.6.0'
     )
 
     // Regarding the meta-data compiler...
     string(
       name: 'META_REPOSITORY_URL',
       description: 'URL of the repository the meta data compiler will be published at.',
-      defaultValue: 'http://build.eclipse.org/modeling/elk/maven/meta/nightly'
+      defaultValue: 'http://build.eclipse.org/modeling/elk/maven/meta/0.6.0'
     )
 
     string(
       name: 'META_PUBLISH_URL',
       description: 'Path to the repository the meta data compiler will be published at.',
-      defaultValue: 'file:///shared/modeling/elk/maven/meta/nightly/'
+      defaultValue: 'file:///shared/modeling/elk/maven/meta/0.6.0/'
     )
 
     // Regarding ELK proper...
     string(
       name: 'ELK_TARGET_DIR',
       description: 'Path to the directory the build will copy all downloadable artifacts to.',
-      defaultValue: '/shared/modeling/elk/updates/nightly/'
+      defaultValue: '/shared/modeling/elk/updates/0.6.0/'
     )
   }
 
