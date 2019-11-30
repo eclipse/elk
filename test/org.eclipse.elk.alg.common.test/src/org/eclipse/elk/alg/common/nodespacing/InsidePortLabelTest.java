@@ -1,20 +1,20 @@
 package org.eclipse.elk.alg.common.nodespacing;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.test.GraphTestUtils;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPort;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,41 +45,25 @@ public class InsidePortLabelTest {
      */
     @Test
     public void testNoLabelOverlaps(final ElkNode graph) {
-        graph.getChildren().stream()
-            .map(node -> assembleLabelRectangles(node))
-            .forEach(labels -> ensureNoOverlaps(labels));
+        boolean overlaps = graph.getChildren().stream()
+            .map(node -> assembleLabels(node))
+            .anyMatch(GraphTestUtils::haveOverlaps);
+        
+        if (overlaps) {
+            fail("Overlaps between labels detected!");
+        }
     }
     
-    private List<Rectangle2D> assembleLabelRectangles(final ElkNode node) {
-        List<Rectangle2D> labelRects = new ArrayList<>();
+    private List<ElkLabel> assembleLabels(final ElkNode node) {
+        List<ElkLabel> labels = new ArrayList<>();
         
         // Add all node labels
-        node.getLabels().stream()
-                .map(label -> new Rectangle2D.Double(label.getX(), label.getY(), label.getWidth(), label.getHeight()))
-                .forEach(rect -> labelRects.add(rect));
+        labels.addAll(node.getLabels());
+        node.getPorts().stream()
+            .flatMap(port -> port.getLabels().stream())
+            .forEach(label -> labels.add(label));
         
-        // Add labels of each port (convert to absolute positions)
-        for (ElkPort port : node.getPorts()) {
-            port.getLabels().stream()
-                .map(label-> new Rectangle2D.Double(
-                        port.getX() + label.getX(), port.getY() + label.getY(), label.getWidth(), label.getHeight()))
-                .forEach(rect -> labelRects.add(rect));
-        }
-        
-        return labelRects;
-    }
-    
-    private void ensureNoOverlaps(final List<Rectangle2D> labels) {
-        for (int first = 0; first < labels.size(); first++) {
-            Rectangle2D firstRect = labels.get(first);
-            
-            for (int second = first + 1; second < labels.size(); second++) {
-                Rectangle2D secondRect = labels.get(second);
-                
-                assertFalse("Detected intersection between " + firstRect + " and " + secondRect,
-                        firstRect.intersects(secondRect));
-            }
-        }
+        return labels;
     }
 
 }

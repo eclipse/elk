@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test;
 
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
@@ -47,6 +51,32 @@ public final class GraphTestUtils {
         }
         
         return nodes;
+    }
+    
+    /**
+     * Returns whether any of the shapes in the list overlap.
+     */
+    public static boolean haveOverlaps(final List<? extends ElkShape> shapes) {
+        // Obtain absolute rectangles for us to do the comparisons on
+        List<Rectangle2D> shapeRects = new ArrayList<>(shapes.size());
+        for (ElkShape shape : shapes) {
+            KVector pos = ElkUtil.absolutePosition(shape);
+            shapeRects.add(new Rectangle2D.Double(pos.x, pos.y, shape.getWidth(), shape.getHeight()));
+        }
+
+        for (int first = 0; first < shapeRects.size(); first++) {
+            Rectangle2D firstRect = shapeRects.get(first);
+            
+            for (int second = first + 1; second < shapeRects.size(); second++) {
+                Rectangle2D secondRect = shapeRects.get(second);
+                
+                if (firstRect.intersects(secondRect)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
     
     

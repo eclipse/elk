@@ -594,6 +594,34 @@ public final class ElkUtil {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // COORDINATE-SYSTEM AND TYPE "CONVERSION"
+    
+    /**
+     * Returns the absolute position of the given element. For nodes and ports, this is exactly what you would expect.
+     * Edges don't exactly have an absolute position, so we simply return the absolute position of their containign
+     * node. For labels, we walk up the parent relationship and keep adding up positions.
+     */
+    public static KVector absolutePosition(final ElkGraphElement element) {
+        if (element instanceof ElkNode) {
+            ElkNode node = (ElkNode) element;
+            return toAbsolute(new KVector(node.getX(), node.getY()), node.getParent());
+        
+        } else if (element instanceof ElkPort) {
+            ElkPort port = (ElkPort) element;
+            return toAbsolute(new KVector(port.getX(), port.getY()), port.getParent());
+            
+        } else if (element instanceof ElkEdge) {
+            ElkEdge edge = (ElkEdge) element;
+            return absolutePosition(edge.getContainingNode());
+            
+        } else if (element instanceof ElkLabel) {
+            ElkLabel label = (ElkLabel) element;
+            KVector absoluteParentPosition = absolutePosition(label.getParent());
+            return new KVector(absoluteParentPosition.x + label.getX(), absoluteParentPosition.y + label.getY());
+        
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Converts the given relative point to an absolute location.
