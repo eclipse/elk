@@ -25,6 +25,7 @@
     <module>org.eclipse.elk.alg.graphviz.layouter</module>
     <module>org.eclipse.elk.alg.layered</module>
     <module>org.eclipse.elk.alg.mrtree</module>
+    <module>org.eclipse.elk.alg.packing.rectangles</module>
     <module>org.eclipse.elk.alg.spore</module>
     <module>org.eclipse.elk.conn.gmf</module>
     <module>org.eclipse.elk.conn.graphiti</module>
