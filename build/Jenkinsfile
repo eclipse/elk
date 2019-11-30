@@ -25,6 +25,13 @@ pipeline {
       defaultValue: 'master'
     )
 
+    // For the version number
+    string(
+      name: 'VERSION',
+      description: 'The build version number. Used to generate download file names.',
+      defaultValue: 'nightly'
+    )
+
     // Regarding the meta-data compiler...
     string(
       name: 'META_REPOSITORY_URL',
