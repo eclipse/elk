@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2019 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.issues;
 
 import static org.junit.Assert.fail;
@@ -12,8 +19,8 @@ import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkShape;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,11 +64,14 @@ public class Issue316Test {
         for (ElkNode node : GraphTestUtils.allNodes(graph, false)) {
             // We only care about hierarchical nodes
             if (!node.getChildren().isEmpty()) {
-                List<ElkShape> nodeAndLabels = Lists.newArrayList(node);
-                nodeAndLabels.addAll(node.getLabels());
-                
-                if (GraphTestUtils.haveOverlaps(nodeAndLabels)) {
-                    fail("Node/label overlaps detected!");
+                for (ElkLabel label : node.getLabels()) {
+                    if (label.getX() < 0
+                            || label.getY() < 0
+                            || label.getX() + label.getWidth() > node.getWidth()
+                            || label.getY() + label.getHeight() > node.getHeight()) {
+                        
+                        fail("Node label not fully contained in node.");
+                    }
                 }
             }
         }

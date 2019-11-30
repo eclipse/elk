@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2019 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph.transform;
 
@@ -63,8 +60,6 @@ import com.google.common.collect.Maps;
 
 /**
  * Implements the graph import aspect of {@link ElkGraphTransformer}.
- * 
- * @author cds
  */
 class ElkGraphImporter {
     
@@ -99,7 +94,9 @@ class ElkGraphImporter {
         }
         
         // Calculate the graph's minimum size
-        calculateMinimumGraphSize(elkgraph, topLevelGraph);
+        if (shouldCalculateMinimumGraphSize(elkgraph)) {
+            calculateMinimumGraphSize(elkgraph, topLevelGraph);
+        }
         
         // Remember things
         if (topLevelGraph.getProperty(LayeredOptions.PARTITIONING_ACTIVATE)) {
@@ -151,6 +148,13 @@ class ElkGraphImporter {
     }
     
     /**
+     * Checks whether {@link #calculateMinimumGraphSize(ElkNode, LGraph)} should be called on the given graph.
+     */
+    private boolean shouldCalculateMinimumGraphSize(final ElkNode elkgraph) {
+        return !elkgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).isEmpty();
+    }
+    
+    /**
      * Asks the label and node size thing to calculate the minimum size necessary for the graph to be large enough for
      * its ports and stuff (if it's not the top level graph).
      * 
@@ -167,9 +171,9 @@ class ElkGraphImporter {
         
         // If the graph has no size constraints, don't bother either
         EnumSet<SizeConstraint> sizeConstraints = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
-        if (sizeConstraints.isEmpty()) {
-            return;
-        }
+        
+        // The method should only be called if shouldCalculateMinimumGraphSize(...) returns true
+        assert !sizeConstraints.isEmpty();
         
         // Ensure that the port constraints are not UNDEFINED
         if (elkgraph.getProperty(LayeredOptions.PORT_CONSTRAINTS) == PortConstraints.UNDEFINED) {
@@ -269,13 +273,6 @@ class ElkGraphImporter {
             // Check if the current node is to be laid out in the first place
             boolean isNodeToBeLaidOut = !elknode.getProperty(LayeredOptions.NO_LAYOUT);
             if (isNodeToBeLaidOut) {
-                // Transform da node!!!
-                LGraph parentLGraph = lgraph;
-                LNode parentLNode = (LNode) nodeAndPortMap.get(elknode.getParent());
-                if (parentLNode != null) {
-                    parentLGraph = parentLNode.getNestedGraph();
-                }
-                LNode lnode = transformNode(elknode, parentLGraph);
                 
                 // Check if there has to be an LGraph for this node (which is the case if it has
                 // children or inside self-loops)
@@ -284,11 +281,34 @@ class ElkGraphImporter {
                 boolean hasHierarchyHandlingEnabled = elknode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
                         == HierarchyHandling.INCLUDE_CHILDREN;
 
+                LGraph nestedGraph = null;
                 if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
-                    LGraph nestedGraph = createLGraph(elknode);
+                    nestedGraph = createLGraph(elknode);
                     nestedGraph.setProperty(LayeredOptions.DIRECTION, parentGraphDirection);
+                    
+                    // We need to make sure that we make the graph large enough for any ports, node labels, etc.
+                    // if the size constraints are not empty
+                    if (shouldCalculateMinimumGraphSize(elknode)) {
+                        final LGraph finalNestedGraph = nestedGraph;
+                        elknode.getPorts().stream()
+                            .forEach(elkport -> ensureDefinedPortSide(finalNestedGraph, elkport));
+                        calculateMinimumGraphSize(elknode, nestedGraph);
+                    }
+                }
+                
+                // Transform da node!!!
+                LGraph parentLGraph = lgraph;
+                LNode parentLNode = (LNode) nodeAndPortMap.get(elknode.getParent());
+                if (parentLNode != null) {
+                    parentLGraph = parentLNode.getNestedGraph();
+                }
+                LNode lnode = transformNode(elknode, parentLGraph);
+                
+                // Setup hierarchical relationships
+                if (nestedGraph != null) {
                     lnode.setNestedGraph(nestedGraph);
                     nestedGraph.setParentNode(lnode);
+                    
                     elknodeQueue.addAll(elknode.getChildren());
                 }
             }
