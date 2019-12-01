@@ -131,7 +131,7 @@ public class SelfHyperLoop {
                     slLabels = new SelfHyperLoopLabels(this);
                 }
                 
-                slLabels.getLLabels().addAll(lLabels);
+                slLabels.addLLabels(lLabels);
             }
         }
     }
