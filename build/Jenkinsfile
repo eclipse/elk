@@ -22,7 +22,7 @@ pipeline {
     string(
       name: 'BRANCH',
       description: 'The repository branch to checkout.',
-      defaultValue: 'master'
+      defaultValue: 'releases/0.6.0'
     )
 
     // For the version number
