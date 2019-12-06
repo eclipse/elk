@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright (c) 2019 Kiel University and others.
   This program and the accompanying materials are made available under the
@@ -6,7 +7,6 @@
   
   SPDX-License-Identifier: EPL-2.0
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description name="Eclipse Layout Kernel (Release 0.6.0)" url="http://build.eclipse.org/modeling/elk/updates/releases/0.6.0">
       Update site for the Eclipse Layout Kernel, version 0.6.0.
