@@ -89,6 +89,7 @@ algorithm fixed (FixedLayoutProvider) {
     supports bendPoints
     supports nodeSize.constraints
     supports nodeSize.minimum
+    supports nodeSize.fixedGraphSize
 }
 algorithm box (BoxLayoutProvider) {
     label "Box Layout"
@@ -453,6 +454,13 @@ group nodeSize {
         description "The minimal size to which a node can be reduced."
         default = new KVector(0, 0)
         targets nodes
+    }
+    option fixedGraphSize: boolean {
+        label "Fixed Graph Size"
+        description "By default, the fixed layout provider will enlarge a graph until it is large enough to contain
+            its children. If this option is set, it won't do so."
+        default = false
+        targets parents
     }
 }
 //------- PROGRAMMATIC OPTIONS
