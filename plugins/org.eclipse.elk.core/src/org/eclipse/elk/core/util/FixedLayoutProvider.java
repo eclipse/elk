@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2019 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -42,19 +42,17 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  * <p>
  * MIGRATE The fixed layout provider does not support hyperedges yet.
  * </p>
- *
- * @author msp
  */
 public class FixedLayoutProvider extends AbstractLayoutProvider {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Fixed Layout", 1);
+        
         EdgeRouting edgeRouting = layoutNode.getProperty(CoreOptions.EDGE_ROUTING);
-        double maxx = 0, maxy = 0;
+        
+        double maxx = 0;
+        double maxy = 0;
         
         for (ElkNode node : layoutNode.getChildren()) {
             // set the fixed position of the node, or leave it as it is
@@ -63,7 +61,6 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 node.setLocation(pos.x, pos.y);
                 
                 // set the fixed size of the node
-                // TODO Think about whether this makes sense with the new size constraint options.
                 if (node.getProperty(FixedLayouterOptions.NODE_SIZE_CONSTRAINTS).contains(
                         SizeConstraint.MINIMUM_SIZE)) {
                     
@@ -136,11 +133,13 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        // set size of the parent node
-        ElkPadding padding = layoutNode.getProperty(FixedLayouterOptions.PADDING);
-        double newWidth = maxx + padding.getLeft() + padding.getRight();
-        double newHeight = maxy + padding.getTop() + padding.getBottom();
-        ElkUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
+        // set size of the parent node unless its size should be fixed as well
+        if (!layoutNode.getProperty(FixedLayouterOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            ElkPadding padding = layoutNode.getProperty(FixedLayouterOptions.PADDING);
+            double newWidth = maxx + padding.getLeft() + padding.getRight();
+            double newHeight = maxy + padding.getTop() + padding.getBottom();
+            ElkUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
+        }
         progressMonitor.done();
     }
     
