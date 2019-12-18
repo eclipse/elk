@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2019 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -45,13 +45,17 @@ public final class NodeLabelCellCreator {
      * @param onlyInside
      *            {@code true} if only inside node labels should be assigned to their respective label cells. Used for
      *            computing the space required for inside node label cells, but nothing else.
+     * @param horizontalLayoutMode 
+     *            Whether we operate in horizontal or vertical layout mode.
      */
-    public static void createNodeLabelCells(final NodeContext nodeContext, final boolean onlyInside) {
+    public static void createNodeLabelCells(final NodeContext nodeContext, final boolean onlyInside,
+            final boolean horizontalLayoutMode) {
         // Make sure all the relevant containers exist
         createNodeLabelCellContainers(nodeContext, onlyInside);
         
         // Handle each of the node's labels
-        nodeContext.node.getLabels().forEach(label -> handleNodeLabel(nodeContext, label, onlyInside));
+        nodeContext.node.getLabels().forEach(label -> handleNodeLabel(nodeContext, label, onlyInside, 
+                horizontalLayoutMode));
     }
     
     /**
@@ -59,7 +63,7 @@ public final class NodeLabelCellCreator {
      * yet, it is created and added to the correct container cell.
      */
     private static void handleNodeLabel(final NodeContext nodeContext, final LabelAdapter<?> label,
-            final boolean onlyInside) {
+            final boolean onlyInside, final boolean horizontalLayoutMode) {
         
         // Find the effective label location
         Set<NodeLabelPlacement> labelPlacement = label.hasProperty(CoreOptions.NODE_LABELS_PLACEMENT)
@@ -77,7 +81,7 @@ public final class NodeLabelCellCreator {
             return;
         }
         
-        retrieveNodeLabelCell(nodeContext, labelLocation).addLabel(label);
+        retrieveNodeLabelCell(nodeContext, labelLocation, horizontalLayoutMode).addLabel(label);
     }
     
 
@@ -128,13 +132,13 @@ public final class NodeLabelCellCreator {
      * Retrieves the node label cell for the given location. If it doesn't exist yet, it is created.
      */
     private static LabelCell retrieveNodeLabelCell(final NodeContext nodeContext,
-            final NodeLabelLocation nodeLabelLocation) {
+            final NodeLabelLocation nodeLabelLocation, final boolean horizontalLayoutMode) {
         
         LabelCell nodeLabelCell = nodeContext.nodeLabelCells.get(nodeLabelLocation);
         
         if (nodeLabelCell == null) {
             // The node label cell doesn't exist yet, so create one and add it to the relevant container
-            nodeLabelCell = new LabelCell(nodeContext.labelLabelSpacing, nodeLabelLocation);
+            nodeLabelCell = new LabelCell(nodeContext.labelLabelSpacing, nodeLabelLocation, horizontalLayoutMode);
             nodeContext.nodeLabelCells.put(nodeLabelLocation, nodeLabelCell);
             
             // Find the correct container and add the cell to it

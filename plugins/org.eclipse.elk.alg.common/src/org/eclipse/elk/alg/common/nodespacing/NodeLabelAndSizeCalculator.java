@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2019 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -26,6 +26,7 @@ import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.PortPlacementCa
 import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 
@@ -102,7 +103,8 @@ public final class NodeLabelAndSizeCalculator {
          * set the width of the eastern and western ones to the maximum width of the labels they will contain. We can't
          * do that for the northern and southern cells yet because port label placement is more complicated there.
          */
-        NodeLabelCellCreator.createNodeLabelCells(nodeContext, false);
+        NodeLabelCellCreator.createNodeLabelCells(nodeContext, false, 
+                graph == null ? true : graph.getProperty(CoreOptions.DIRECTION).isHorizontal());
         InsidePortLabelCellCreator.createInsidePortLabelCells(nodeContext);
         
         
@@ -207,7 +209,8 @@ public final class NodeLabelAndSizeCalculator {
     public static ElkPadding computeInsideNodeLabelPadding(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
         // Create a node context and fill it with all the inside node labels
         NodeContext nodeContext = new NodeContext(null, node);
-        NodeLabelCellCreator.createNodeLabelCells(nodeContext, true);
+        NodeLabelCellCreator.createNodeLabelCells(nodeContext, true, 
+                graph == null ? true : graph.getProperty(CoreOptions.DIRECTION).isHorizontal());
         
         GridContainerCell labelCellContainer = nodeContext.insideNodeLabelContainer;
         ElkPadding padding = new ElkPadding();
