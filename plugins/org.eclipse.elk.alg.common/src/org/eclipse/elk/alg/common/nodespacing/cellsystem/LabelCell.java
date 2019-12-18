@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2019 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -90,12 +90,25 @@ public class LabelCell extends Cell {
      *            the label location represented by this cell. This determines things like alignment.
      */
     public LabelCell(final double gap, final NodeLabelLocation nodeLabelLocation) {
+        this(gap, nodeLabelLocation, true);
+    }
+    
+    /**
+     * Constructs a new instance with the given properties.
+     * 
+     * @param gap
+     *            gap between labels.
+     * @param nodeLabelLocation
+     *            the label location represented by this cell. This determines things like alignment.
+     * @param horizontalLayoutMode 
+     *            Whether we operate in horizontal or vertical layout mode.
+     */
+    public LabelCell(final double gap, final NodeLabelLocation nodeLabelLocation, final boolean horizontalLayoutMode) {
         this.gap = gap;
-        this.horizontalLayoutMode = true;
+        this.horizontalLayoutMode = horizontalLayoutMode;
         this.horizontalAlignment = nodeLabelLocation.getHorizontalAlignment();
         this.verticalAlignment = nodeLabelLocation.getVerticalAlignment();
     }
-    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters / Setters
