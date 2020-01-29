@@ -51,6 +51,8 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     private boolean expandNodes;
     /** Padding surrounding the drawing. */
     private ElkPadding padding;
+    /** Node node spacing */
+    private double nodeNodeSpacing;
 
     /**
      * Calculating and applying layout to the model.
@@ -65,6 +67,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.CHECK_FOR_SPECIAL_CASE);
         expandNodes = layoutGraph.getProperty(RectPackingOptions.EXPAND_NODES);
         padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
+        nodeNodeSpacing = layoutGraph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
@@ -75,11 +78,11 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes);
         } else {
             AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
-            drawing = firstIt.approxBoundingBox(rectangles);
+            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
             if (!onlyFirstIteration) {
                 DrawingUtil.resetCoordinates(rectangles);
                 RowFillingAndCompaction secondIt = new RowFillingAndCompaction(dar, expandNodes);
-                drawing = secondIt.start(rectangles, drawing.getDrawingWidth());
+                drawing = secondIt.start(rectangles, drawing.getDrawingWidth(), nodeNodeSpacing);
             }
         }
 

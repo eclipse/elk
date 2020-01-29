@@ -40,7 +40,7 @@ public final class InitialPlacement {
      *            bounding box width.
      * @return returns the rows in which the rectangles were placed.
      */
-    protected static List<RectRow> place(final List<ElkNode> rectangles, final double boundingWidth) {
+    protected static List<RectRow> place(final List<ElkNode> rectangles, final double boundingWidth, final double nodeNodeSpacing) {
         List<RectRow> rows = new ArrayList<RectRow>();
         RectRow currRow = new RectRow(0);
         double currDrawingHeight = 0;
@@ -52,7 +52,7 @@ public final class InitialPlacement {
                 rows.add(currRow);
                 currRow = new RectRow(currDrawingHeight);
             }
-            createNewStackAndAddToRow(currRect, currRow);
+            createNewStackAndAddToRow(currRect, currRow, nodeNodeSpacing);
         }
         rows.add(currRow);
         return rows;
@@ -72,9 +72,9 @@ public final class InitialPlacement {
      *            The {@link ElkNode} the new {@link RectStack} is added to.
      * @return returns the newly created {@link RectStack}.
      */
-    private static RectStack createNewStackAndAddToRow(final ElkNode rect, final RectRow row) {
+    private static RectStack createNewStackAndAddToRow(final ElkNode rect, final RectRow row, final double nodeNodeSpacing) {
         rect.setLocation(row.getWidth(), row.getY());
-        RectStack newStack = new RectStack(rect, rect.getX(), rect.getY(), row);
+        RectStack newStack = new RectStack(rect, rect.getX(), rect.getY(), row, nodeNodeSpacing);
         row.assignStack(newStack);
         return newStack;
     }

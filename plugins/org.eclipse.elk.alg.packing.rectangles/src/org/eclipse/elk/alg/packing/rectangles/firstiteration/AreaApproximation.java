@@ -53,7 +53,7 @@ public class AreaApproximation {
      *            the rectangles to place.
      * @return a drawing calculated by this methods algorithm.
      */
-    public DrawingData approxBoundingBox(final List<ElkNode> rectangles) {
+    public DrawingData approxBoundingBox(final List<ElkNode> rectangles, double nodeNodeSpacing) {
         // place first box.
         ElkNode firstRect = rectangles.get(0);
         firstRect.setX(0);
@@ -70,21 +70,21 @@ public class AreaApproximation {
 
             // determine drawing metrics for different candidate positions/placement options
             DrawingData opt1 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_LAST_PLACED_RIGHT, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData opt2 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_LAST_PLACED_BELOW, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData opt3 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_WHOLE_DRAWING_RIGHT, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData opt4 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_WHOLE_DRAWING_BELOW, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData bestOpt = findBestCandidate(opt1, opt2, opt3, opt4, toPlace, lastPlaced);
 
-            toPlace.setX(bestOpt.getNextXcoordinate());
-            toPlace.setY(bestOpt.getNextYcoordinate());
+            toPlace.setX(bestOpt.getNextXcoordinate() + nodeNodeSpacing);
+            toPlace.setY(bestOpt.getNextYcoordinate() + nodeNodeSpacing);
             bestOpt.setPlacementOption(DrawingDataDescriptor.WHOLE_DRAWING);
             currentValues = bestOpt;
             lastPlaced = toPlace;
@@ -248,10 +248,10 @@ public class AreaApproximation {
      * @return an {@link DrawingData} object containing the values after the rectangle would be placed.
      */
     private DrawingData calcValuesForOpt(final DrawingDataDescriptor option, final ElkNode toPlace,
-            final ElkNode lastPlaced, final DrawingData currDrawing, final List<ElkNode> placedRects) {
+            final ElkNode lastPlaced, final DrawingData currDrawing, final List<ElkNode> placedRects, final double nodeNodeSpacing) {
 
-        double potentialXvalue = 0;
-        double potentialYvalue = 0;
+        double potentialXvalue = nodeNodeSpacing;
+        double potentialYvalue = nodeNodeSpacing;
         double currDrawingWidth = currDrawing.getDrawingWidth();
         double currDrawingHeight = currDrawing.getDrawingHeight();
         double heightToPlace = toPlace.getHeight();
@@ -260,11 +260,11 @@ public class AreaApproximation {
         double width, height;
         switch (option) {
         case CANDIDATE_POSITION_LAST_PLACED_RIGHT:
-            potentialXvalue = lastPlaced.getX() + lastPlaced.getWidth();
+            potentialXvalue = lastPlaced.getX() + lastPlaced.getWidth() + nodeNodeSpacing;
             if (lpShift) {
-                potentialYvalue = Calculations.calculateYforLPR(potentialXvalue, placedRects, lastPlaced);
+                potentialYvalue = Calculations.calculateYforLPR(potentialXvalue, placedRects, lastPlaced) + nodeNodeSpacing;
             } else {
-                potentialYvalue = lastPlaced.getY();
+                potentialYvalue = lastPlaced.getY() + nodeNodeSpacing;
             }
 
             width = Calculations.getWidthLPRorLPB(currDrawingWidth, potentialXvalue, widthToPlace);
@@ -272,11 +272,11 @@ public class AreaApproximation {
             break;
             
         case CANDIDATE_POSITION_LAST_PLACED_BELOW:
-            potentialYvalue = lastPlaced.getY() + lastPlaced.getHeight();
+            potentialYvalue = lastPlaced.getY() + lastPlaced.getHeight() + nodeNodeSpacing;
             if (lpShift) {
-                potentialXvalue = Calculations.calculateXforLPB(potentialYvalue, placedRects, lastPlaced);
+                potentialXvalue = Calculations.calculateXforLPB(potentialYvalue, placedRects, lastPlaced) + nodeNodeSpacing;
             } else {
-                potentialXvalue = lastPlaced.getX();
+                potentialXvalue = lastPlaced.getX() + nodeNodeSpacing;
             }
 
             width = Calculations.getWidthLPRorLPB(currDrawingWidth, potentialXvalue, widthToPlace);
@@ -284,7 +284,7 @@ public class AreaApproximation {
             break;
             
         case CANDIDATE_POSITION_WHOLE_DRAWING_RIGHT:
-            potentialXvalue = currDrawingWidth;
+            potentialXvalue = currDrawingWidth + nodeNodeSpacing;
             potentialYvalue = 0;
 
             width = currDrawingWidth + widthToPlace;
@@ -293,7 +293,7 @@ public class AreaApproximation {
             
         case CANDIDATE_POSITION_WHOLE_DRAWING_BELOW:
             potentialXvalue = 0;
-            potentialYvalue = currDrawingHeight;
+            potentialYvalue = currDrawingHeight + nodeNodeSpacing;
 
             width = Math.max(currDrawingWidth, widthToPlace);
             height = currDrawingHeight + heightToPlace;

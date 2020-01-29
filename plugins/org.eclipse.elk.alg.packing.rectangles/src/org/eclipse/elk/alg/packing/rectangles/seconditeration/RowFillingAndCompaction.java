@@ -69,12 +69,12 @@ public class RowFillingAndCompaction {
      *            width of the given bounding box.
      * @return Drawing data for a produced drawing.
      */
-    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth) {
-        List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth);
+    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final double nodeNodeSpacing) {
+        List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth, nodeNodeSpacing);
 
         for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
             while (this.compactRepeat || this.rowFillingRepeatI || this.rowFillingRepeatII) {
-                this.compactRepeat = Compaction.compact(rowIdx, rows, boundingBoxWidth);
+                this.compactRepeat = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
 
                 if (rowIdx < rows.size() - 1) {
                     this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth);

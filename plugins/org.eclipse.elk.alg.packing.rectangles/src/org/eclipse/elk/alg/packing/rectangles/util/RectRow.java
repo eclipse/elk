@@ -200,7 +200,7 @@ public class RectRow {
         this.children.remove(stack);
         this.width -= stack.getWidth();
 
-        double newMaxHeight = Double.NEGATIVE_INFINITY;
+        double newMaxHeight = Double.MIN_VALUE;
         for (RectStack child : this.children) {
             newMaxHeight = Math.max(newMaxHeight, child.getHeight());
         }

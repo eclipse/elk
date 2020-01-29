@@ -41,7 +41,7 @@ public final class Compaction {
      *            width of a bounding box that is not be be exceeded.
      * @return returns true, if at least one compaction was made and false otherwise.
      */
-    protected static boolean compact(final int rowIdx, final List<RectRow> rows, final double boundingWidth) {
+    protected static boolean compact(final int rowIdx, final List<RectRow> rows, final double boundingWidth, final double nodeNodeSpacing) {
         boolean somethingWasChanged = false;
         RectRow currentRow = rows.get(rowIdx);
         List<RectStack> stacksCurrentRow = currentRow.getChildren();
@@ -53,7 +53,7 @@ public final class Compaction {
 
             while (isCompactionAllowed(takingStack, yieldingStack, boundingWidth)) {
                 somethingWasChanged = true;
-                reassignRectangleAndHorizontalShifts(takingStack, yieldingStack, stacksCurrentRow, stackIdx);
+                reassignRectangleAndHorizontalShifts(takingStack, yieldingStack, stacksCurrentRow, stackIdx, nodeNodeSpacing);
             }
 
             if (yieldingStack.hasNoRectanglesAssigned()) {
@@ -86,7 +86,7 @@ public final class Compaction {
      *            index of the taking stack.
      */
     private static void reassignRectangleAndHorizontalShifts(final RectStack takingStack, final RectStack yieldingStack,
-            final List<RectStack> stacks, final int takingStackIdx) {
+            final List<RectStack> stacks, final int takingStackIdx, final double nodeNodeSpacing) {
         double takingStackPreviousWidth = takingStack.getWidth();
         ElkNode movingRect = yieldingStack.getFirstRectangle();
 
@@ -95,7 +95,7 @@ public final class Compaction {
         yieldingStack.removeChild(movingRect);
 
         if (yieldingStack.hasNoRectanglesAssigned()) {
-            horizontalShiftYieldingStackEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks);
+            horizontalShiftYieldingStackEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks, nodeNodeSpacing);
         } else {
             horizontalShiftYieldingStackNotEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks);
         }
@@ -162,10 +162,10 @@ public final class Compaction {
      *            list of all stacks in the row of the compaction.
      */
     private static void horizontalShiftYieldingStackEmpty(final ElkNode movingRect,
-            final double takingStackPreviousWidth, final int tackingStackIdx, final List<RectStack> stacks) {
+            final double takingStackPreviousWidth, final int tackingStackIdx, final List<RectStack> stacks, final double nodeNodeSpacing) {
         double distanceToShift = 0;
         if (takingStackPreviousWidth >= movingRect.getWidth()) {
-            distanceToShift = movingRect.getWidth();
+            distanceToShift = movingRect.getWidth() + nodeNodeSpacing;
         } else {
             distanceToShift = takingStackPreviousWidth;
         }

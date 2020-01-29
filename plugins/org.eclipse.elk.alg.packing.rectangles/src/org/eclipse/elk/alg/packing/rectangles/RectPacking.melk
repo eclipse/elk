@@ -32,8 +32,9 @@ algorithm rectPacking(RectPackingLayoutProvider) {
            nicely. Finally, the rectangles are expanded to fill their bounding box and eliminate empty unused spaces."
     metadataClass options.RectPackingOptions
     supports org.eclipse.elk.aspectRatio = 1.3
-    supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.expandNodes
+    supports org.eclipse.elk.padding = new ElkPadding(15)
+    supports org.eclipse.elk.spacing.nodeNode = 15
     supports strategy
     supports lastPlaceShift
     supports onlyFirstIteration
