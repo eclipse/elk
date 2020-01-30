@@ -38,9 +38,11 @@ public final class SpecialCasePlacer {
      *            desired Aspect Ratio.
      * @param expandNodes
      *            indicates whether the nodes should be expanded to fill the bounding box.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return values of the drawing (width, height, scale measure, area.
      */
-    public static DrawingData place(final List<ElkNode> rectangles, final double dar, final boolean expandNodes) {
+    public static DrawingData place(final List<ElkNode> rectangles, final double dar, final boolean expandNodes, final double nodeNodeSpacing) {
         ElkNode biggestRect = findBiggestRectangle(rectangles);
 
         List<ElkNode> beforeBiggest = new ArrayList<ElkNode>();
@@ -62,35 +64,40 @@ public final class SpecialCasePlacer {
         ElkNode widestRectBefore = findWidestRectangle(beforeBiggest);
         ElkNode widestRectAfter = findWidestRectangle(afterBiggest);
 
-        int howManyRows = (int) (biggestRect.getHeight() / widestRectBefore.getHeight());
-        int howManyColumnsBefore = (int) Math.ceil(1.0 * beforeBiggest.size() / howManyRows);
-        int howManyColumnsAfter = (int) Math.ceil(1.0 * afterBiggest.size() / howManyRows);
+        int maxRowsBefore = (int) ((biggestRect.getHeight() + nodeNodeSpacing) / (widestRectBefore.getHeight() + nodeNodeSpacing));
+        int maxRowsAfter = (int) ((biggestRect.getHeight() + nodeNodeSpacing) / (widestRectBefore.getHeight() + nodeNodeSpacing));
+        int howManyColumnsBefore = (int) Math.ceil(1.0 * beforeBiggest.size() / maxRowsBefore);
+        int howManyColumnsAfter = (int) Math.ceil(1.0 * afterBiggest.size() / maxRowsAfter);
+        // This number is correct for all rows despite the last one.
+        // The last one has rowsBefore - (beforeBiggest.size() % howManyColumnsBefore) rows
+        int rowsBefore = (int) Math.ceil(((double) beforeBiggest.size()) / howManyColumnsBefore);
+        int rowsAfter = (int) Math.ceil(((double) afterBiggest.size()) / howManyColumnsAfter);
         double currWidth = 0;
 
         // Place before.
         if (beforeBiggest.size() > 0) {
             placeRects(currWidth, beforeBiggest, widestRectBefore.getWidth(), widestRectBefore.getHeight(),
-                    howManyColumnsBefore, howManyRows);
+                    howManyColumnsBefore, rowsBefore, nodeNodeSpacing);
 
             // calculate width of rectangles placed before biggest rectangle and biggest rectangles' x coordinate.
-            currWidth = howManyColumnsBefore * widestRectBefore.getWidth();
+            currWidth = howManyColumnsBefore * (widestRectBefore.getWidth() + nodeNodeSpacing);
         }
 
         // place BiggestRect.
         biggestRect.setLocation(currWidth, 0);
-        currWidth += biggestRect.getWidth();
+        currWidth += biggestRect.getWidth() + nodeNodeSpacing;
 
         // Place after.
         if (afterBiggest.size() > 0) {
             placeRects(currWidth, afterBiggest, widestRectAfter.getWidth(), widestRectAfter.getHeight(),
-                    howManyColumnsAfter, howManyRows);
-            currWidth += howManyColumnsAfter * widestRectAfter.getWidth();
+                    howManyColumnsAfter, rowsAfter, nodeNodeSpacing);
+            currWidth += howManyColumnsAfter * (widestRectAfter.getWidth() + nodeNodeSpacing);
         }
 
         // expand nodes.
         if (expandNodes) {
-            ExpandNodesSpecialCase.expand(beforeBiggest, afterBiggest, biggestRect.getHeight(), howManyColumnsBefore,
-                    howManyColumnsAfter, widestRectBefore.getWidth(), widestRectAfter.getWidth());
+            ExpandNodesSpecialCase.expand(beforeBiggest, biggestRect.getHeight(), howManyColumnsBefore, rowsBefore, widestRectBefore.getWidth(), nodeNodeSpacing);
+            ExpandNodesSpecialCase.expand(afterBiggest, biggestRect.getHeight(), howManyColumnsAfter, rowsAfter, widestRectAfter.getWidth(), nodeNodeSpacing);
         }
 
         // prepare return object.
@@ -117,9 +124,11 @@ public final class SpecialCasePlacer {
      *            number of columns to place the rectangles in.
      * @param rows
      *            number of rows to place the rectangles in.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     private static void placeRects(final double startX, final List<ElkNode> rectList, final double width,
-            final double height, final int columns, final int rows) {
+            final double height, final int columns, final int rows, final double nodeNodeSpacing) {
         double currentX = startX;
         double currentY = 0;
         int columnCounter = 1;
@@ -129,7 +138,7 @@ public final class SpecialCasePlacer {
         for (ElkNode rect : rectList) {
             rect.setLocation(currentX, currentY);
             columnCounter++;
-            currentX += width;
+            currentX += width + nodeNodeSpacing;
             if (columnCounter > columns) {
                 columnCounter = 1;
                 rowCounter++;
@@ -137,7 +146,7 @@ public final class SpecialCasePlacer {
                     break;
                 }
                 currentX = startX;
-                currentY += height;
+                currentY += height + nodeNodeSpacing;
             }
         }
     }

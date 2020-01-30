@@ -54,6 +54,8 @@ public class RectStack {
      *            y-coordinate of the stack.
      * @param parentRow
      *            row this stack is assigned to.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     public RectStack(final ElkNode first, final double xCoord, final double yCoord, final RectRow parentRow, final double nodeNodeSpacing) {
         this.nodeNodeSpacing = nodeNodeSpacing;
@@ -89,7 +91,7 @@ public class RectStack {
      */
     public void removeChild(final ElkNode rect) {
         this.children.remove(rect);
-        adjustSizeRem();
+        adjustSizeAfterRemove();
     }
 
     /**
@@ -294,7 +296,7 @@ public class RectStack {
     /**
      * Adjusts size of stack after the removal of a rectangle. Notifies parent.
      */
-    private void adjustSizeRem() {
+    private void adjustSizeAfterRemove() {
         this.width = findMaxWidth();
         this.height = findTotalHeight();
         this.parentRow.notifyAboutNodeChange();

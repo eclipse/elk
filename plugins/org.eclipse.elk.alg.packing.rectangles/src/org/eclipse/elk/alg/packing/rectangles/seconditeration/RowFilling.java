@@ -43,19 +43,21 @@ public final class RowFilling {
      *            rows containing stacks and rectangles.
      * @param boundingWidth
      *            width of the bounding box.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return true, if an improvement was made and false otherwise.
      */
     protected static boolean fill(final RowFillStrat strategy, final int takingRowIdx, final List<RectRow> rows,
-            final double boundingWidth) {
+            final double boundingWidth, final double nodeNodeSpacing) {
         boolean somethingWasChanged = false;
 
         int yieldingRowIdx = findNextNonEmptyRow(takingRowIdx + 1, rows);
         RectRow takingRow = rows.get(takingRowIdx);
         RectRow yieldingRow = rows.get(yieldingRowIdx);
 
-        while (isRowFillingAllowed(strategy, takingRow, yieldingRow, boundingWidth)) {
+        while (isRowFillingAllowed(strategy, takingRow, yieldingRow, boundingWidth, nodeNodeSpacing)) {
             somethingWasChanged = true;
-            reassignElementAndShift(strategy, rows, takingRowIdx, yieldingRowIdx);
+            reassignElementAndShift(strategy, rows, takingRowIdx, yieldingRowIdx, nodeNodeSpacing);
 
             yieldingRowIdx = findNextNonEmptyRow(yieldingRowIdx, rows);
             yieldingRow = rows.get(yieldingRowIdx);
@@ -78,15 +80,17 @@ public final class RowFilling {
      *            the row that yields elements for the taking row.
      * @param boundingWidth
      *            width of the bounding box.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return true, if filling the taking row is allowed for the given strategy and false otherwise.
      */
     private static boolean isRowFillingAllowed(final RowFillStrat strategy, final RectRow takingRow,
-            final RectRow yieldingRow, final double boundingWidth) {
+            final RectRow yieldingRow, final double boundingWidth, final double nodeNodeSpacing) {
         switch (strategy) {
         case WHOLE_STACK:
             return isTakingWholeStackAllowed(takingRow, yieldingRow, boundingWidth);
         case SINGLE_RECT:
-            return isFillingWithRectsAllowed(takingRow, yieldingRow, boundingWidth);
+            return isFillingWithRectsAllowed(takingRow, yieldingRow, boundingWidth, nodeNodeSpacing);
         default:
             return false;
         }
@@ -103,15 +107,17 @@ public final class RowFilling {
      *            index of the taking row.
      * @param yieldingRowIdx
      *            index of the yielding row.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     private static void reassignElementAndShift(final RowFillStrat strategy, final List<RectRow> rows,
-            final int takingRowIdx, final int yieldingRowIdx) {
+            final int takingRowIdx, final int yieldingRowIdx, final double nodeNodeSpacing) {
         switch (strategy) {
         case WHOLE_STACK:
             reassignStackAndShift(rows, takingRowIdx, yieldingRowIdx);
             break;
         case SINGLE_RECT:
-            reassignRectAndShift(rows, takingRowIdx, yieldingRowIdx);
+            reassignRectAndShift(rows, takingRowIdx, yieldingRowIdx, nodeNodeSpacing);
             break;
         default:
             break;
@@ -191,9 +197,11 @@ public final class RowFilling {
      *            index of the taking row.
      * @param yieldingRowIdx
      *            index of the yielding row.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     private static void reassignRectAndShift(final List<RectRow> rows, final int takingRowIdx,
-            final int yieldingRowIdx) {
+            final int yieldingRowIdx, final double nodeNodeSpacing) {
         RectRow takingRow = rows.get(takingRowIdx);
         RectRow yieldingRow = rows.get(yieldingRowIdx);
 
@@ -206,9 +214,10 @@ public final class RowFilling {
         yieldingStack.removeChild(movingRect);
         takingStack.addChild(movingRect);
 
-        yieldingStack.decreaseChildrensY(movingRect.getHeight());
+        yieldingStack.decreaseChildrensY(movingRect.getHeight() + nodeNodeSpacing);
 
-        double verticalShift = movingRect.getHeight() + yieldingStack.getHeight() - yieldingRow.getHeight();
+        // Potentially shift rows vertically if the yielding stack defined the height of its row.
+        double verticalShift = movingRect.getHeight() + nodeNodeSpacing + yieldingStack.getHeight() - yieldingRow.getHeight();
         if (verticalShift > 0) {
             for (int rowShiftIdx = yieldingRowIdx + 1; rowShiftIdx < rows.size(); rowShiftIdx++) {
                 RectRow rowToShift = rows.get(rowShiftIdx);
@@ -216,7 +225,8 @@ public final class RowFilling {
             }
         }
 
-        double horizontalShift = movingRect.getWidth() - yieldingStack.getWidth();
+        // Potentially shift stacks horizontally if moved node (+ spacing) was wider than the whole stack it was removed from.
+        double horizontalShift = movingRect.getWidth() + nodeNodeSpacing - yieldingStack.getWidth();
         if (horizontalShift > 0) {
             List<RectStack> yieldingRowStacks = yieldingRow.getChildren();
             for (int stackIdx = 1; stackIdx < yieldingRowStacks.size(); stackIdx++) {
@@ -265,16 +275,18 @@ public final class RowFilling {
      *            row that yields the rectangle.
      * @param boundingWidth
      *            width of the bounding box.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return true, if reassigning the rectangle to the taking row is allowed, false otherwise.
      */
     private static boolean isFillingWithRectsAllowed(final RectRow takingRow, final RectRow yieldingRow,
-            final double boundingWidth) {
+            final double boundingWidth, final double nodeNodeSpacing) {
         if (yieldingRow.hasNoAssignedStacks() || yieldingRow.getFirstStack().hasNoRectanglesAssigned()) {
             return false;
         }
 
-        double potentialWidth = calculatePotentialRowWidth(takingRow, yieldingRow);
-        double potentialHeightLastStack = takingRow.getLastStackHeight() + yieldingRow.getFirstRectFirstStackHeight();
+        double potentialWidth = calculatePotentialRowWidth(takingRow, yieldingRow, nodeNodeSpacing);
+        double potentialHeightLastStack = takingRow.getLastStackHeight() + yieldingRow.getFirstRectFirstStackHeight() + nodeNodeSpacing;
 
         return potentialWidth <= boundingWidth && potentialHeightLastStack <= takingRow.getHeight();
     }
@@ -289,14 +301,16 @@ public final class RowFilling {
      *            the taking row.
      * @param yieldingRow
      *            the yielding row.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return returns the width of the taking row, if the moving rectangle is less wide than the taking row's last
      *         stack. Returns the width of the taking row plus the increase of the width of the last stack, if the
      *         moving rectangle is wider than the last stack.
      */
-    private static double calculatePotentialRowWidth(final RectRow takingRow, final RectRow yieldingRow) {
+    private static double calculatePotentialRowWidth(final RectRow takingRow, final RectRow yieldingRow, final double nodeNodeSpacing) {
         double potentialRowWidth = takingRow.getWidth();
         double widthDiffTakingAndYieldingStack =
-                yieldingRow.getFirstRectFirstStackWidth() - takingRow.getLastStackWidth();
+                yieldingRow.getFirstRectFirstStackWidth() + nodeNodeSpacing - takingRow.getLastStackWidth();
 
         if (widthDiffTakingAndYieldingStack > 0) {
             potentialRowWidth += widthDiffTakingAndYieldingStack;

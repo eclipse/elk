@@ -39,6 +39,8 @@ public final class Compaction {
      *            given {@link RectRow}s with placed rectangles.
      * @param boundingWidth
      *            width of a bounding box that is not be be exceeded.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return returns true, if at least one compaction was made and false otherwise.
      */
     protected static boolean compact(final int rowIdx, final List<RectRow> rows, final double boundingWidth, final double nodeNodeSpacing) {
@@ -51,7 +53,7 @@ public final class Compaction {
             RectStack takingStack = stacksCurrentRow.get(stackIdx);
             RectStack yieldingStack = stacksCurrentRow.get(stackIdx + 1);
 
-            while (isCompactionAllowed(takingStack, yieldingStack, boundingWidth)) {
+            while (isCompactionAllowed(takingStack, yieldingStack, boundingWidth, nodeNodeSpacing)) {
                 somethingWasChanged = true;
                 reassignRectangleAndHorizontalShifts(takingStack, yieldingStack, stacksCurrentRow, stackIdx, nodeNodeSpacing);
             }
@@ -84,6 +86,8 @@ public final class Compaction {
      *            list of empty stacks that are to be removed later.
      * @param takingStackIdx
      *            index of the taking stack.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     private static void reassignRectangleAndHorizontalShifts(final RectStack takingStack, final RectStack yieldingStack,
             final List<RectStack> stacks, final int takingStackIdx, final double nodeNodeSpacing) {
@@ -97,7 +101,7 @@ public final class Compaction {
         if (yieldingStack.hasNoRectanglesAssigned()) {
             horizontalShiftYieldingStackEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks, nodeNodeSpacing);
         } else {
-            horizontalShiftYieldingStackNotEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks);
+            horizontalShiftYieldingStackNotEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks, nodeNodeSpacing);
         }
     }
 
@@ -112,9 +116,11 @@ public final class Compaction {
      *            index of the taking stack.
      * @param stacks
      *            list of all stacks in the row of the compaction.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     private static void horizontalShiftYieldingStackNotEmpty(final ElkNode movingRect,
-            final double takingStackPreviousWidth, final int takingStackIdx, final List<RectStack> stacks) {
+            final double takingStackPreviousWidth, final int takingStackIdx, final List<RectStack> stacks, final double nodeNodeSpacing) {
         RectStack yieldingStack = stacks.get(takingStackIdx + 1);
         double distanceToShiftFollowingStacks = 0;
         double distanceToShiftYieldingStack = 0;
@@ -140,7 +146,8 @@ public final class Compaction {
         }
 
         yieldingStack.adjustXRecursively(yieldingStack.getX() + distanceToShiftYieldingStack);
-        yieldingStack.decreaseChildrensY(movingRect.getHeight());
+        // Set new y coordinates for the yielding stack (all nodes are shifted up)
+        yieldingStack.decreaseChildrensY(movingRect.getHeight() + nodeNodeSpacing);
 
         for (int stackToShiftIdx = takingStackIdx + 2; stackToShiftIdx < stacks.size(); stackToShiftIdx++) {
             RectStack stackToShift = stacks.get(stackToShiftIdx);
@@ -160,11 +167,13 @@ public final class Compaction {
      *            index of the tacking stack.
      * @param stacks
      *            list of all stacks in the row of the compaction.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
     private static void horizontalShiftYieldingStackEmpty(final ElkNode movingRect,
             final double takingStackPreviousWidth, final int tackingStackIdx, final List<RectStack> stacks, final double nodeNodeSpacing) {
         double distanceToShift = 0;
-        if (takingStackPreviousWidth >= movingRect.getWidth()) {
+        if (takingStackPreviousWidth >= movingRect.getWidth() + nodeNodeSpacing) {
             distanceToShift = movingRect.getWidth() + nodeNodeSpacing;
         } else {
             distanceToShift = takingStackPreviousWidth;
@@ -225,11 +234,13 @@ public final class Compaction {
      *            stack that might yield its first rectangle.
      * @param boundingWidth
      *            width of a bounding box that is not be be exceeded.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return true, if the stack's height added to the first rectangle's height is smaller than the parent row's
      *         height, and false otherwise. Returns false, if the yieldingStack does not contain rectangles.
      */
     private static boolean isCompactionAllowed(final RectStack takingStack, final RectStack yieldingStack,
-            final double boundingWidth) {
+            final double boundingWidth, final double nodeNodeSpacing) {
         if (yieldingStack.hasNoRectanglesAssigned()) {
             return false;
         }
@@ -240,7 +251,7 @@ public final class Compaction {
         if (takingStack.getHeight() + movingRect.getHeight() <= parent.getHeight()) {
 
             // change of widths due to rectangle reassignment.
-            double potentialWidthIncreaseTaking = calcPotIncreaseTakingStackWidth(takingStack, movingRect);
+            double potentialWidthIncreaseTaking = calcPotIncreaseTakingStackWidth(takingStack, movingRect, nodeNodeSpacing);
             double potentialWidthDecreaseYielding = calcPotDecreaseYieldingStackWidth(yieldingStack);
 
             if (parent.getWidth() + potentialWidthIncreaseTaking - potentialWidthDecreaseYielding <= boundingWidth) {
@@ -259,20 +270,24 @@ public final class Compaction {
      *            the stack the rectangle is potentially added to.
      * @param movingRect
      *            the rectangle that is potentially added to the taking stack.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return the potential new stack width minus the current stack width.
      */
-    private static double calcPotIncreaseTakingStackWidth(final RectStack takingStack, final ElkNode movingRect) {
-        double newStackWidth = Math.max(takingStack.getWidth(), movingRect.getWidth());
+    private static double calcPotIncreaseTakingStackWidth(final RectStack takingStack, final ElkNode movingRect, final double nodeNodeSpacing) {
+        double newStackWidth = Math.max(takingStack.getWidth(), movingRect.getWidth() + nodeNodeSpacing);
         return newStackWidth - takingStack.getWidth();
     }
 
     /**
      * Returns the potential decrease of width of the yielding stack, if its first rectangle is removed.
+     * The node node spacing is not relevant for this calculation, since it applied to the width of the biggest rectangle
+     * and the width of the moving rectangle.
      * 
      * @param yieldingStack
      *            the stack that gets a rectangle removed from.
      * @return if the moving rectangle was the widest rectangle, moving rectangle width minus new width of the stack and
-     *         zero otherwise. Returns the width of the moving rectangle, if the stack only containts said moving
+     *         zero otherwise. Returns the width of the moving rectangle, if the stack only contains said moving
      *         rectangle.
      */
     private static double calcPotDecreaseYieldingStackWidth(final RectStack yieldingStack) {
@@ -281,6 +296,7 @@ public final class Compaction {
             double newWidth = Double.MIN_VALUE;
             List<ElkNode> rectangles = yieldingStack.getChildren();
 
+            // Get maximum width of other rectangles in the yielding stack.
             for (int rectIdx = 1; rectIdx < yieldingStack.getNumberOfRectangles(); rectIdx++) {
                 newWidth = Math.max(newWidth, rectangles.get(rectIdx).getWidth());
             }

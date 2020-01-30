@@ -51,6 +51,8 @@ public class AreaApproximation {
      * 
      * @param rectangles
      *            the rectangles to place.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return a drawing calculated by this methods algorithm.
      */
     public DrawingData approxBoundingBox(final List<ElkNode> rectangles, double nodeNodeSpacing) {
@@ -245,6 +247,8 @@ public class AreaApproximation {
      *            current drawing containing width and height, besides others.
      * @param placedRects
      *            already placed rectangles.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return an {@link DrawingData} object containing the values after the rectangle would be placed.
      */
     private DrawingData calcValuesForOpt(final DrawingDataDescriptor option, final ElkNode toPlace,

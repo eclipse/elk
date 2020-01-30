@@ -75,7 +75,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
 
         // PLACEMENT ACCORDING TO SETTINGS
         if (checkSpecialCase && SpecialCaseFeasibility.confirm(rectangles)) {
-            drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes);
+            drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes, nodeNodeSpacing);
         } else {
             AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
             drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);

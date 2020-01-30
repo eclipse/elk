@@ -34,11 +34,14 @@ public final class RectangleExpansion {
      *            rows containing the rectangles given by {@link RectStack}s.
      * @param drawingWidth
      *            width of the drawing (given by the widest {@link RectRow}).
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
-    protected static void expand(final List<RectRow> rows, final double drawingWidth) {
+    protected static void expand(final List<RectRow> rows, final double drawingWidth, final double nodeNodeSpacing) {
         for (RectRow expandingRow : rows) {
             expandingRow.setWidth(drawingWidth);
-            expandStacks(expandingRow);
+            // Relocate stacks to be evenly distributed in the row (this includes the rects).
+            expandStacks(expandingRow, nodeNodeSpacing);
         }
     }
 
@@ -48,27 +51,34 @@ public final class RectangleExpansion {
      * 
      * @param row
      *            the {@link RectRow}, whose children are to be expanded.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
-    private static void expandStacks(final RectRow row) {
+    private static void expandStacks(final RectRow row, final double nodeNodeSpacing) {
         RectStack lastStackOfRow = row.getLastStack();
 
+        // No node spacing is required, since it is already included in the width of a stack.
         double lastStackRightBorder = lastStackOfRow.getX() + lastStackOfRow.getWidth();
-        double broadenFactor = row.getWidth() / lastStackRightBorder;
+        double widthToDistribute = row.getWidth() - lastStackRightBorder;
+        // Calculate how much each stack is moved to the right to have evenly distributed space.
+        double xShiftForStack = widthToDistribute / row.getChildren().size();
 
-        double totalShift = 0;
-
-        for (RectStack stack : row.getChildren()) {
+        for (int i = 0; i < row.getChildren().size(); i++) {
+            RectStack stack = row.getChildren().get(i);
             stack.setHeight(row.getHeight());
-
-            if (broadenFactor > 1) {
-                double oldStackWidth = stack.getWidth();
-
-                stack.setWidth(oldStackWidth * broadenFactor);
-                stack.adjustXRecursively(stack.getX() + totalShift);
-
-                totalShift += stack.getWidth() - oldStackWidth;
+            if (i > 0) {
+                stack.adjustXRecursively(stack.getX() + xShiftForStack * i);
+                RectStack previousStack = row.getChildren().get(i - 1);
+                previousStack.setWidth(stack.getX() - previousStack.getX());
             }
-            expandRectangles(stack);
+            // Width of last stack is the width of the row
+            if (i == row.getChildren().size() - 1) {
+                stack.setWidth(row.getWidth() - stack.getX());
+            }
+        }
+        // After the stack width is calculated expand nodes appropriately
+        for (RectStack stack : row.getChildren()) {
+            expandRectangles(stack, nodeNodeSpacing);
         }
     }
 
@@ -77,27 +87,30 @@ public final class RectangleExpansion {
      * 
      * @param stack
      *            the {@link RectStack}, whose children are to be expanded.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      */
-    private static void expandRectangles(final RectStack stack) {
+    private static void expandRectangles(final RectStack stack, final double nodeNodeSpacing) {
         ElkNode lastRect = stack.getLastRectangle();
 
-        double heightOfRectangles = lastRect.getY() + lastRect.getHeight() - stack.getY();
-        double raisingFactor = stack.getHeight() / heightOfRectangles;
+        // The currently used height of the stack.
+        double heightOfRectangles = lastRect.getY() + lastRect.getHeight() - stack.getY() + nodeNodeSpacing;
+        double heightToDistribute = stack.getHeight() - heightOfRectangles;
+        // Calculate how much each node is moved down to evenly distribute free space.
+        double yShiftForRects = heightToDistribute / stack.getChildren().size();
 
-        double totalShift = 0;
-
-        for (ElkNode rect : stack.getChildren()) {
-            rect.setWidth(stack.getWidth());
-
-            if (raisingFactor > 0) {
-                double oldRectHeight = rect.getHeight();
-
-                rect.setHeight(rect.getHeight() * raisingFactor);
-                rect.setY(rect.getY() + totalShift);
-
-                totalShift += rect.getHeight() - oldRectHeight;
+        for (int i = 0; i < stack.getChildren().size(); i++) {
+            ElkNode rect = stack.getChildren().get(i);
+            if (i > 0) {
+                rect.setY(rect.getY() + yShiftForRects * i);
+                ElkNode previousRect = stack.getChildren().get(i - 1);
+                previousRect.setHeight(rect.getY() - previousRect.getY() - nodeNodeSpacing);
             }
-
+            rect.setWidth(stack.getWidth() - nodeNodeSpacing);
+            // Width of last stack is the width of the row
+            if (i == stack.getChildren().size() - 1) {
+                rect.setHeight(stack.getY() + stack.getHeight() - rect.getY() - nodeNodeSpacing);
+            }
         }
     }
 }

@@ -67,6 +67,8 @@ public class RowFillingAndCompaction {
      *            given set of rectangles to be placed inside the bounding box.
      * @param boundingBoxWidth
      *            width of the given bounding box.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
     public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final double nodeNodeSpacing) {
@@ -77,8 +79,8 @@ public class RowFillingAndCompaction {
                 this.compactRepeat = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
 
                 if (rowIdx < rows.size() - 1) {
-                    this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth);
-                    this.rowFillingRepeatII = RowFilling.fill(RowFillStrat.SINGLE_RECT, rowIdx, rows, boundingBoxWidth);
+                    this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
+                    this.rowFillingRepeatII = RowFilling.fill(RowFillStrat.SINGLE_RECT, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
                 } else {
                     this.rowFillingRepeatI = false;
                     this.rowFillingRepeatII = false;
@@ -91,7 +93,7 @@ public class RowFillingAndCompaction {
 
         // expand notes if configured.
         if (this.expandNodes) {
-            RectangleExpansion.expand(rows, this.drawingWidth);
+            RectangleExpansion.expand(rows, this.drawingWidth, nodeNodeSpacing);
         }
 
         return new DrawingData(this.dar, this.drawingWidth, this.drawingHeight, DrawingDataDescriptor.WHOLE_DRAWING);

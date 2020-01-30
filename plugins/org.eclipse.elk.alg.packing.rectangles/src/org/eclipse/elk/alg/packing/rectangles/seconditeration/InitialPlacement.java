@@ -38,6 +38,8 @@ public final class InitialPlacement {
      *            rectangles to be placed.
      * @param boundingWidth
      *            bounding box width.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return returns the rows in which the rectangles were placed.
      */
     protected static List<RectRow> place(final List<ElkNode> rectangles, final double boundingWidth, final double nodeNodeSpacing) {
@@ -70,6 +72,8 @@ public final class InitialPlacement {
      *            Rectangle to add to a {@link RectStack}.
      * @param row
      *            The {@link ElkNode} the new {@link RectStack} is added to.
+     * @param nodeNodeSpacing
+     *            The spacing between two nodes.
      * @return returns the newly created {@link RectStack}.
      */
     private static RectStack createNewStackAndAddToRow(final ElkNode rect, final RectRow row, final double nodeNodeSpacing) {
