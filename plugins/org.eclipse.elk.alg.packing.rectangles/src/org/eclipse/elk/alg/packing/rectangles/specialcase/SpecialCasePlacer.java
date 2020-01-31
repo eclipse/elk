@@ -40,9 +40,12 @@ public final class SpecialCasePlacer {
      *            indicates whether the nodes should be expanded to fill the bounding box.
      * @param nodeNodeSpacing
      *            The spacing between two nodes.
+     * @param mode
+     *            Packing mode.
      * @return values of the drawing (width, height, scale measure, area.
      */
-    public static DrawingData place(final List<ElkNode> rectangles, final double dar, final boolean expandNodes, final double nodeNodeSpacing) {
+    public static DrawingData place(final List<ElkNode> rectangles, final double dar, final boolean expandNodes,
+            final double nodeNodeSpacing, final int mode) {
         ElkNode biggestRect = findBiggestRectangle(rectangles);
 
         List<ElkNode> beforeBiggest = new ArrayList<ElkNode>();
@@ -60,27 +63,39 @@ public final class SpecialCasePlacer {
                 }
             }
         }
-
-        ElkNode widestRectBefore = findWidestRectangle(beforeBiggest);
-        ElkNode widestRectAfter = findWidestRectangle(afterBiggest);
-
-        int maxRowsBefore = (int) ((biggestRect.getHeight() + nodeNodeSpacing) / (widestRectBefore.getHeight() + nodeNodeSpacing));
-        int maxRowsAfter = (int) ((biggestRect.getHeight() + nodeNodeSpacing) / (widestRectBefore.getHeight() + nodeNodeSpacing));
-        int howManyColumnsBefore = (int) Math.ceil(1.0 * beforeBiggest.size() / maxRowsBefore);
-        int howManyColumnsAfter = (int) Math.ceil(1.0 * afterBiggest.size() / maxRowsAfter);
+        ElkNode widestRectBefore = null;
+        ElkNode highestRectBefore = null;
+        ElkNode widestRectAfter = null;
+        ElkNode highestRectAfter = null;
+        int maxRowsBefore = 0;
+        int maxRowsAfter = 0;
+        int columnsBefore = 0;
+        int rowsBefore = 0;
+        int columnsAfter = 0;
+        int rowsAfter = 0;
+        if (!beforeBiggest.isEmpty()) {
+            widestRectBefore = findWidestRectangle(beforeBiggest);
+            highestRectBefore = findHighestRectangle(beforeBiggest);
+            maxRowsBefore = (int) ((biggestRect.getHeight() + nodeNodeSpacing) / (highestRectBefore.getHeight() + nodeNodeSpacing));
+            columnsBefore = (int) Math.ceil(1.0 * beforeBiggest.size() / maxRowsBefore);
+            rowsBefore = (int) Math.ceil(((double) beforeBiggest.size()) / columnsBefore);
+            
+        }
+        if (!afterBiggest.isEmpty()) {
+            widestRectAfter = findWidestRectangle(afterBiggest);
+            highestRectAfter = findHighestRectangle(afterBiggest);
+            maxRowsAfter = (int) ((biggestRect.getHeight() + nodeNodeSpacing) / (highestRectAfter.getHeight() + nodeNodeSpacing));
+            columnsAfter = (int) Math.ceil(1.0 * afterBiggest.size() / maxRowsAfter);
+            rowsAfter = (int) Math.ceil(((double) afterBiggest.size()) / columnsAfter);
+        }
         // This number is correct for all rows despite the last one.
         // The last one has rowsBefore - (beforeBiggest.size() % howManyColumnsBefore) rows
-        int rowsBefore = (int) Math.ceil(((double) beforeBiggest.size()) / howManyColumnsBefore);
-        int rowsAfter = (int) Math.ceil(((double) afterBiggest.size()) / howManyColumnsAfter);
         double currWidth = 0;
 
         // Place before.
-        if (beforeBiggest.size() > 0) {
-            placeRects(currWidth, beforeBiggest, widestRectBefore.getWidth(), widestRectBefore.getHeight(),
-                    howManyColumnsBefore, rowsBefore, nodeNodeSpacing);
-
-            // calculate width of rectangles placed before biggest rectangle and biggest rectangles' x coordinate.
-            currWidth = howManyColumnsBefore * (widestRectBefore.getWidth() + nodeNodeSpacing);
+        if (!beforeBiggest.isEmpty()) {
+            currWidth = placeRects(currWidth, beforeBiggest, widestRectBefore.getWidth(), highestRectBefore.getHeight(),
+                    columnsBefore, rowsBefore, nodeNodeSpacing, mode);
         }
 
         // place BiggestRect.
@@ -88,16 +103,31 @@ public final class SpecialCasePlacer {
         currWidth += biggestRect.getWidth() + nodeNodeSpacing;
 
         // Place after.
-        if (afterBiggest.size() > 0) {
-            placeRects(currWidth, afterBiggest, widestRectAfter.getWidth(), widestRectAfter.getHeight(),
-                    howManyColumnsAfter, rowsAfter, nodeNodeSpacing);
-            currWidth += howManyColumnsAfter * (widestRectAfter.getWidth() + nodeNodeSpacing);
+        if (!afterBiggest.isEmpty()) {
+            currWidth = placeRects(currWidth, afterBiggest, widestRectAfter.getWidth(), highestRectAfter.getHeight(),
+                columnsAfter, rowsAfter, nodeNodeSpacing, mode);
         }
 
         // expand nodes.
         if (expandNodes) {
-            ExpandNodesSpecialCase.expand(beforeBiggest, biggestRect.getHeight(), howManyColumnsBefore, rowsBefore, widestRectBefore.getWidth(), nodeNodeSpacing);
-            ExpandNodesSpecialCase.expand(afterBiggest, biggestRect.getHeight(), howManyColumnsAfter, rowsAfter, widestRectAfter.getWidth(), nodeNodeSpacing);
+            if (!beforeBiggest.isEmpty()) {
+                ExpandNodesSpecialCase.expand(beforeBiggest,
+                        biggestRect.getHeight(),
+                        biggestRect.getX(),
+                        columnsBefore,
+                        rowsBefore,
+                        nodeNodeSpacing,
+                        mode);
+            }
+            if (!afterBiggest.isEmpty()) {
+                ExpandNodesSpecialCase.expand(afterBiggest,
+                        biggestRect.getHeight(),
+                        currWidth - biggestRect.getX() - biggestRect.getWidth() - nodeNodeSpacing,
+                        columnsAfter,
+                        rowsAfter,
+                        nodeNodeSpacing,
+                        mode);
+            }
         }
 
         // prepare return object.
@@ -114,7 +144,7 @@ public final class SpecialCasePlacer {
      * 
      * @param startX
      *            x-coordinate, where the first rectangle is placed.
-     * @param rectList
+     * @param rects
      *            list of rectangles to be placed.
      * @param width
      *            width of the widest rectangle in the list. Width between columns.
@@ -126,29 +156,118 @@ public final class SpecialCasePlacer {
      *            number of rows to place the rectangles in.
      * @param nodeNodeSpacing
      *            The spacing between two nodes.
+     * @param mode
+     *            Packing mode.
+     * @return
+     *            Current width including the node node spacing      
      */
-    private static void placeRects(final double startX, final List<ElkNode> rectList, final double width,
-            final double height, final int columns, final int rows, final double nodeNodeSpacing) {
+    private static double placeRects(final double startX, final List<ElkNode> rects, final double width,
+            final double height, final int columns, final int rows, final double nodeNodeSpacing, final int mode) {
         double currentX = startX;
         double currentY = 0;
-        int columnCounter = 1;
-        int rowCounter = 1;
-
-        // place rectangles sequentially according to given rows and columns.
-        for (ElkNode rect : rectList) {
-            rect.setLocation(currentX, currentY);
-            columnCounter++;
-            currentX += width + nodeNodeSpacing;
-            if (columnCounter > columns) {
-                columnCounter = 1;
-                rowCounter++;
-                if (rowCounter > rows) {
-                    break;
+        double blockWidth = 0;
+        int index = 0;
+        
+        if (mode == 0) {
+            // Left to right, balance columns
+            for (int row = 0; row < rows; row++) {
+                int actualColumns = columns;
+                if (row == rows - 1 && columns > 1 && rects.size() % columns != 0) {
+                    actualColumns = rects.size() % columns;
+                }
+                double maxHeight = Double.MIN_VALUE;
+                for (int column = 0; column < actualColumns; column++) {
+                    ElkNode rect = rects.get(index);
+                    rect.setX(currentX);
+                    rect.setY(currentY);
+                    if (maxHeight < rect.getHeight()) {
+                        maxHeight = rect.getHeight();
+                    }
+                    currentX += rect.getWidth() + nodeNodeSpacing;
+                    if (blockWidth < currentX) {
+                        blockWidth = currentX;
+                    }
+                    index++;
                 }
                 currentX = startX;
-                currentY += height + nodeNodeSpacing;
+                currentY += maxHeight + nodeNodeSpacing;
+            }
+        } else if (mode == 1) {
+            // Left to right, balance rows
+            for (int row = 0; row < rows; row++) {
+                int actualColumns = columns;
+                if (row >= rects.size() % rows && rows > 1 && rects.size() % rows != 0) {
+                    actualColumns = columns - 1;
+                }
+                double maxHeight = Double.MIN_VALUE;
+                for (int column = 0; column < actualColumns; column++) {
+                    ElkNode rect = rects.get(index);
+                    rect.setX(currentX);
+                    rect.setY(currentY);
+                    if (maxHeight < rect.getHeight()) {
+                        maxHeight = rect.getHeight();
+                    }
+                    currentX += rect.getWidth() + nodeNodeSpacing;
+                    if (blockWidth < currentX) {
+                        blockWidth = currentX;
+                    }
+                    index++;
+                }
+                currentX = startX;
+                currentY += maxHeight + nodeNodeSpacing;
+            }
+        } else if (mode == 2) {
+            // Top to bottom, balance columns
+            for (int column = 0; column < columns; column++) {
+                double maxWidth = Double.MIN_VALUE;
+                int actualRows = rows;
+                if (column >= rects.size() % columns && columns > 1 && rects.size() % columns != 0) {
+                    actualRows = rows - 1;
+                }
+                for (int row = 0; row < actualRows && index < rects.size(); row++) {
+                    if (index < rects.size()) {
+                        ElkNode rect = rects.get(index);
+                        rect.setX(currentX);
+                        rect.setY(currentY);
+                        if (maxWidth < rect.getWidth()) {
+                            maxWidth = rect.getWidth();
+                        }
+                        currentY += rect.getHeight() + nodeNodeSpacing;
+                        index++;
+                    }
+                }
+                currentY = 0;
+                currentX += maxWidth + nodeNodeSpacing;
+                if (blockWidth < currentX) {
+                    blockWidth = currentX;
+                }
+            }
+        } else if (mode == 3) {
+            // Top to bottom, balance rows
+            for (int column = 0; column < columns; column++) {
+                int actualRows = rows;
+                if (column == columns - 1 && rows > 1 && rects.size() % rows != 0) {
+                    actualRows = rects.size() % rows;
+                }
+                double maxWidth = Double.MIN_VALUE;
+                for (int row = 0; row < actualRows; row++) {
+                    ElkNode rect = rects.get(index);
+                    rect.setX(currentX);
+                    rect.setY(currentY);
+                    if (maxWidth < rect.getWidth()) {
+                        maxWidth = rect.getWidth();
+                    }
+                    currentY += rect.getHeight() + nodeNodeSpacing;
+                    index++;
+                }
+                currentY = 0;
+                currentX += maxWidth + nodeNodeSpacing;
+                if (blockWidth < currentX) {
+                    blockWidth = currentX;
+                }
             }
         }
+        return blockWidth;
     }
 
     /**
@@ -177,5 +296,19 @@ public final class SpecialCasePlacer {
             }
         }
         return widest;
+    }
+
+    /**
+     * Finds and returns the widest rectangle of the given list.
+     */
+    private static ElkNode findHighestRectangle(final List<ElkNode> rectangles) {
+        ElkNode highest = null;
+
+        for (ElkNode rect : rectangles) {
+            if (highest == null || rect.getHeight() > highest.getHeight()) {
+                highest = rect;
+            }
+        }
+        return highest;
     }
 }

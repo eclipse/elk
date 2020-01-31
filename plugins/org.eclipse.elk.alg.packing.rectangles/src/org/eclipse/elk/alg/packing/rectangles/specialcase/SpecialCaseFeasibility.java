@@ -28,64 +28,88 @@ public final class SpecialCaseFeasibility {
     // Feasibility method.
     /**
      * Checks whether the given rectangles meet the criteria for being packed with the special case placement algorithm:
-     * One big rectangle with a set of smaller rectangles. The bigger rectangle has to have a greater width AND height
-     * than all of the smaller rectangles. The smaller rectangles share the same height but differ slightly in width.
+     * One big rectangle with a set of smaller rectangles. The bigger rectangle has to have a greater height than all of
+     * the smaller rectangles.
+     * The smaller rectangles shave a overall width and height difference as specified by the corresponding jitter.
      * 
      * @param rectangles
      *            rectangles to be packed.
+     * @param widthJitter
+     *            Jitter in small rectangle width.
+     * @param heightJitter
+     *            Jitter in small rectangle height.
      * @return true, if special case is met, false otherwise.
      */
-    public static boolean confirm(final List<ElkNode> rectangles) {
-        ElkNode aSmallerRect = null;
+    public static boolean confirm(final List<ElkNode> rectangles, double widthJitter, double heightJitter) {
         ElkNode theBiggerRect = null;
-        ElkNode widestSmallerRect = null;
-        int smallerRectangleCount = 0;
+        // 
+        double beforeMinWidth = Double.MAX_VALUE;
+        double beforeMaxWidth = Double.MIN_VALUE;
+        double beforeMinHeight = Double.MAX_VALUE;
+        double beforeMaxHeight = Double.MIN_VALUE;
+        double afterMinWidth = Double.MAX_VALUE;
+        double afterMaxWidth = Double.MIN_VALUE;
+        double afterMinHeight = Double.MAX_VALUE;
+        double afterMaxHeight = Double.MIN_VALUE;
+        boolean clearBiggestRect = true;
 
+        // Check if there exists a biggest rectangle (one with a height higher than all other rectangles).
         for (ElkNode rect : rectangles) {
-            // first iteration.
-            if (aSmallerRect == null && theBiggerRect == null) {
-                aSmallerRect = rect;
-                widestSmallerRect = rect;
-                smallerRectangleCount++;
-                continue;
-            }
-
-            // biggerRect is assigned as soon as a second height is found that is different from the first found height.
             if (theBiggerRect == null) {
-                if (rect.getHeight() > aSmallerRect.getHeight()) {
+                theBiggerRect = rect;
+            } else {
+                if (theBiggerRect.getHeight() < rect.getHeight()) {
                     theBiggerRect = rect;
-                    if (theBiggerRect.getWidth() < widestSmallerRect.getWidth()) {
-                        return false;
-                    }
-                } else if (rect.getHeight() < aSmallerRect.getHeight()) {
-                    if (smallerRectangleCount > 1) {
-                        return false;
-                    }
-
-                    theBiggerRect = aSmallerRect;
-                    aSmallerRect = rect;
-
-                    widestSmallerRect = aSmallerRect;
-                } else {
-                    if (rect.getWidth() > widestSmallerRect.getWidth()) {
-                        widestSmallerRect = rect;
-                    }
-                    smallerRectangleCount++;
+                    clearBiggestRect = true;
+                } else if (theBiggerRect.getHeight() == rect.getHeight()){
+                    clearBiggestRect = false;
                 }
-                continue;
-            }
-
-            // two different heights have been found.
-            if (rect.getHeight() != aSmallerRect.getHeight()) {
-                return false;
             }
         }
-
-        // Only same height.
-        if (theBiggerRect == null) {
+        if (!clearBiggestRect) {
             return false;
         }
+        
+        // Check difference in height and width of smaller rectangles
+        boolean beforeBigRect = true;
+        for (ElkNode rect : rectangles) {
+            if (rect.equals(theBiggerRect)) {
+                beforeBigRect = false;
+                continue;
+            } else {
+                if (beforeBigRect) {
+                    if (rect.getWidth() < beforeMinWidth) {
+                        beforeMinWidth = rect.getWidth();
+                    }
+                    if (rect.getWidth() > beforeMaxWidth) {
+                        beforeMaxWidth = rect.getWidth();
+                    }
+                    if (rect.getHeight() < beforeMinHeight) {
+                        beforeMinHeight= rect.getHeight();
+                    }
+                    if (rect.getHeight() > beforeMaxHeight) {
+                        beforeMaxHeight = rect.getHeight();
+                    }
+                } else {
+                    if (rect.getWidth() < afterMinWidth) {
+                        afterMinWidth = rect.getWidth();
+                    }
+                    if (rect.getWidth() > afterMaxWidth) {
+                        afterMaxWidth = rect.getWidth();
+                    }
+                    if (rect.getHeight() < afterMinHeight) {
+                        afterMinHeight= rect.getHeight();
+                    }
+                    if (rect.getHeight() > afterMaxHeight) {
+                        afterMaxHeight = rect.getHeight();
+                    }
+                }
+            }
+        }
 
-        return true;
+        return (beforeMaxWidth - beforeMinWidth <= widthJitter) &&
+                (beforeMaxHeight - beforeMinHeight <= heightJitter) &&
+                (afterMaxWidth - afterMinWidth <= widthJitter) &&
+                (afterMaxHeight - afterMinHeight <= heightJitter);
     }
 }

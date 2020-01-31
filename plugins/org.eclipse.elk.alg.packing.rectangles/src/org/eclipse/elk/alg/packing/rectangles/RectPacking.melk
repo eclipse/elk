@@ -22,10 +22,9 @@ bundle {
 }
 
 //ALGORITHM
-algorithm rectPacking(RectPackingLayoutProvider) {
+algorithm rectPacking (RectPackingLayoutProvider) {
     label "Rectangle Layout."
-    description 
-          "Algorithm for packing of unconnected boxes, i.e. graphs without edges. In the default settings, the algorithm 
+    description "Algorithm for packing of unconnected boxes, i.e. graphs without edges. In the default settings, the algorithm 
            checks for a case where one big rectangle is present with a lot of smaller rectangles with the same height 
            and applies a special algorithm to it. If this is not the case, the algorithm then uses to phases. One phase
            approximates an area where the rectangles can be placed and then another to place them there and align them
@@ -38,23 +37,22 @@ algorithm rectPacking(RectPackingLayoutProvider) {
     supports strategy
     supports lastPlaceShift
     supports onlyFirstIteration
-    supports checkForSpecialCase
+    supports specialCase.check
+    supports specialCase.widthJitter
+    supports specialCase.heightJitter
+    supports specialCase.mode
 }
-
 //OPTIONS
 advanced option strategy: PackingStrategy {
     label "Packing Strategy"
-    description 
-        "Strategy for approximation of the bounding box given by the first iteration. Determines whether layout is 
+    description "Strategy for approximation of the bounding box given by the first iteration. Determines whether layout is 
          sorted by scale measure, aspect ratio or area."
     targets nodes
     default = PackingStrategy.MAX_SCALE_DRIVEN
 }
-    
 advanced option lastPlaceShift: boolean {
     label "Shift when placing at last placed rectangle."
-    description
-        "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
+    description "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
          possible to shift the rectangle further to the left or right, resulting in less whitespace. True (default) 
          enables the shift and false disables it. Disabling the shift produces a greater approximated area by the first 
          iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
@@ -63,22 +61,44 @@ advanced option lastPlaceShift: boolean {
     targets nodes
     default = true
 }
-    
 programmatic option onlyFirstIteration: boolean {
     label "Only first iteration should be executed."
-    description
-       "Determines whether only the first iteration should be executed or not. If set to true, only the first iteration
+    description "Determines whether only the first iteration should be executed or not. If set to true, only the first iteration
         will be executed. When using only the first iteration, rectangles will not be resized to fill their bounding
         box and eliminate unused whitespace."
     targets nodes
-     default = false
-} 
-  
-programmatic option checkForSpecialCase: boolean {
-    label "Check for special case one big rectangle."
-    description
-        "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
-         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
-    targets nodes
     default = false
-} 
+}
+group specialCase {
+    programmatic option mode: int {
+        label "For mode for rect packing"
+        description "All modes even are the modes that try to fill the rows first. Here only the last row will have fewer items.
+            0 legacy mode: Order left to right, balance columns, expand last.
+            1: Order left to right, balance rows, equal expand to the right.
+            2: Order top to bottom, balance columns, equal expand downwards.
+            3: Order top to bottom, balance rows, equal expand downwards."
+        targets nodes
+        default = 0
+    }
+    programmatic option check: boolean {
+        label "Check for special case one big rectangle."
+        description "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
+         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
+        targets nodes
+        default = false
+    }
+    programmatic option widthJitter: double {
+        label "Check for special case one big rectangle."
+        description "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
+         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
+        targets nodes
+        default = 50
+    }
+    programmatic option heightJitter: double {
+        label "Check for special case one big rectangle."
+        description "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
+         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
+        targets nodes
+        default = 10
+    }
+}

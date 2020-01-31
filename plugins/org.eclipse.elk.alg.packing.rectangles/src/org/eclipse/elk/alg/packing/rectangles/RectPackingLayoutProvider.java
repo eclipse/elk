@@ -64,18 +64,21 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         packingStrat = layoutGraph.getProperty(RectPackingOptions.STRATEGY);
         lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
         onlyFirstIteration = layoutGraph.getProperty(RectPackingOptions.ONLY_FIRST_ITERATION);
-        checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.CHECK_FOR_SPECIAL_CASE);
+        checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_CHECK);
         expandNodes = layoutGraph.getProperty(RectPackingOptions.EXPAND_NODES);
         padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
         nodeNodeSpacing = layoutGraph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
+        double widthJitter = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_WIDTH_JITTER);
+        double heightJitter = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_HEIGHT_JITTER);
+        int mode = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_MODE);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
         DrawingData drawing;
 
         // PLACEMENT ACCORDING TO SETTINGS
-        if (checkSpecialCase && SpecialCaseFeasibility.confirm(rectangles)) {
-            drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes, nodeNodeSpacing);
+        if (checkSpecialCase && SpecialCaseFeasibility.confirm(rectangles, widthJitter, heightJitter)) {
+            drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes, nodeNodeSpacing, mode);
         } else {
             AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
             drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
