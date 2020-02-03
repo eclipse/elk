@@ -73,10 +73,10 @@ group specialCase {
     programmatic option mode: int {
         label "For mode for rect packing"
         description "All modes even are the modes that try to fill the rows first. Here only the last row will have fewer items.
-            0 legacy mode: Order left to right, balance columns, expand last.
-            1: Order left to right, balance rows, equal expand to the right.
-            2: Order top to bottom, balance columns, equal expand downwards.
-            3: Order top to bottom, balance rows, equal expand downwards."
+            0: Order left to right, balance columns.
+            1: Order left to right, balance rows.
+            2: Order top to bottom, balance columns.
+            3: Order top to bottom, balance rows."
         targets nodes
         default = 0
     }
