@@ -26,7 +26,7 @@ public class ScaleMeasureFilter implements BestCandidateFilter {
     @Override
     public List<DrawingData> filterList(final List<DrawingData> candidates, final double dar) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
-        double maxScale = Double.NEGATIVE_INFINITY;
+        double maxScale = Double.MIN_VALUE;
         for (DrawingData opt : candidates) {
             maxScale = Math.max(maxScale, opt.getScaleMeasure());
         }

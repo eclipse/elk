@@ -105,7 +105,7 @@ public class RowFillingAndCompaction {
      */
     private void calculateDimensions(final List<RectRow> rows) {
         // new calculation of drawings dimensions.
-        double maxWidth = Double.NEGATIVE_INFINITY;
+        double maxWidth = Double.MIN_VALUE;
         double newHeight = 0;
         for (RectRow row : rows) {
             maxWidth = Math.max(maxWidth, row.getWidth());

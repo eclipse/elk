@@ -278,7 +278,7 @@ public final class Compaction {
     private static double calcPotDecreaseYieldingStackWidth(final RectStack yieldingStack) {
         double movingRectWidth = yieldingStack.getFirstRectangle().getWidth();
         if (yieldingStack.getNumberOfRectangles() > 1) {
-            double newWidth = Double.NEGATIVE_INFINITY;
+            double newWidth = Double.MIN_VALUE;
             List<ElkNode> rectangles = yieldingStack.getChildren();
 
             for (int rectIdx = 1; rectIdx < yieldingStack.getNumberOfRectangles(); rectIdx++) {

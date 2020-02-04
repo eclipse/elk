@@ -53,7 +53,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     private ElkPadding padding;
 
     /**
-     * Calculating and applaying layout to the model.
+     * Calculating and applying layout to the model.
      */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
