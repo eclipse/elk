@@ -69,13 +69,13 @@ public final class Calculations {
      * @return y-coordinate after the shift of the rectangle to be placed right of lastPlaced
      */
     protected static double calculateYforLPR(final double xCoordRectToPlace, final List<ElkNode> placedRects,
-            final ElkNode lastPlaced) {
+            final ElkNode lastPlaced, final double nodeNodeSpacing) {
         ElkNode closestUpperNeighbor = null;
         double closestNeighborBottomBorder = 0;
         // find neighbors that lay between the upper and lower border of the rectangle to be placed.
         for (ElkNode placedRect : placedRects) {
             double placedRectBottomBorder = placedRect.getY() + placedRect.getHeight();
-            if (verticalOrderConstraint(placedRect, xCoordRectToPlace)) {
+            if (verticalOrderConstraint(placedRect, xCoordRectToPlace, nodeNodeSpacing)) {
                 // is closest neighbor?
                 if (closestUpperNeighbor == null) {
                     closestUpperNeighbor = placedRect;
@@ -91,7 +91,7 @@ public final class Calculations {
             return 0;
         } else {
             // else, choose closest neighbors bottom border
-            return closestNeighborBottomBorder;
+            return closestNeighborBottomBorder + nodeNodeSpacing;
         }
     }
 
@@ -107,13 +107,13 @@ public final class Calculations {
      * @return x-coordinate after shift of the rectangle to be placed below lastPlaced.
      */
     protected static double calculateXforLPB(final double yCoordRectToPlace, final List<ElkNode> placedRects,
-            final ElkNode lastPlaced) {
+            final ElkNode lastPlaced, final double nodeNodeSpacing) {
         ElkNode closestLeftNeighbour = null;
         double closestNeighborRightBorder = 0;
         // find neighbors that lay in between the height of the rectangle to be placed.
         for (ElkNode placedRect : placedRects) {
             double placedRectRightBorder = placedRect.getX() + placedRect.getWidth();
-            if (horizontalOrderConstraint(placedRect, yCoordRectToPlace)) {
+            if (horizontalOrderConstraint(placedRect, yCoordRectToPlace, nodeNodeSpacing)) {
                 // is closest neighbor?
                 if (closestLeftNeighbour == null) {
                     closestLeftNeighbour = placedRect;
@@ -129,7 +129,7 @@ public final class Calculations {
             return 0;
         } else {
             // else, choose closest neighbors right border
-            return closestNeighborRightBorder;
+            return closestNeighborRightBorder + nodeNodeSpacing;
         }
     }
 
@@ -191,8 +191,8 @@ public final class Calculations {
      *            x-value of the rectangle to be placed.
      * @return true, if the placedRect produces a constraint. False otherwise.
      */
-    private static boolean verticalOrderConstraint(final ElkNode placedRect, final double xCoordRectToPlace) {
-        return xCoordRectToPlace < placedRect.getX() + placedRect.getWidth();
+    private static boolean verticalOrderConstraint(final ElkNode placedRect, final double xCoordRectToPlace, final double nodeNodeSpacing) {
+        return xCoordRectToPlace < placedRect.getX() + placedRect.getWidth() + nodeNodeSpacing;
     }
 
     /**
@@ -205,7 +205,7 @@ public final class Calculations {
      *            y-value of the rectangle to be placed.
      * @return True, if the placedRect produces a constraint. False otherwise.
      */
-    private static boolean horizontalOrderConstraint(final ElkNode placedRect, final double yCoordRectToPlace) {
-        return yCoordRectToPlace < placedRect.getY() + placedRect.getHeight();
+    private static boolean horizontalOrderConstraint(final ElkNode placedRect, final double yCoordRectToPlace, final double nodeNodeSpacing) {
+        return yCoordRectToPlace < placedRect.getY() + placedRect.getHeight() + nodeNodeSpacing;
     }
 }

@@ -34,7 +34,7 @@ algorithm rectPacking (RectPackingLayoutProvider) {
     supports org.eclipse.elk.expandNodes
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
-    supports strategy
+    supports packingStrategy
     supports lastPlaceShift
     supports onlyFirstIteration
     supports specialCase.check
@@ -43,7 +43,7 @@ algorithm rectPacking (RectPackingLayoutProvider) {
     supports specialCase.mode
 }
 //OPTIONS
-advanced option strategy: PackingStrategy {
+advanced option packingStrategy: PackingStrategy {
     label "Packing Strategy"
     description "Strategy for approximation of the bounding box given by the first iteration. Determines whether layout is 
          sorted by scale measure, aspect ratio or area."

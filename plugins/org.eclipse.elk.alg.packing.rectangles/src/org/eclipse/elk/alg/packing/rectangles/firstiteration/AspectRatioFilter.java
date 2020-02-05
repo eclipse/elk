@@ -26,7 +26,7 @@ public class AspectRatioFilter implements BestCandidateFilter {
     @Override
     public List<DrawingData> filterList(final List<DrawingData> candidates, final double dar) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
-        double smallestDeviation = Double.POSITIVE_INFINITY;
+        double smallestDeviation = Double.MAX_VALUE;
         for (DrawingData opt : candidates) {
             smallestDeviation = Math.min(smallestDeviation, Math.abs(opt.getAspectRatio() - dar));
         }

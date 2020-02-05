@@ -61,7 +61,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Rectangle Packing", 1);
         dar = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
-        packingStrat = layoutGraph.getProperty(RectPackingOptions.STRATEGY);
+        packingStrat = layoutGraph.getProperty(RectPackingOptions.PACKING_STRATEGY);
         lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
         onlyFirstIteration = layoutGraph.getProperty(RectPackingOptions.ONLY_FIRST_ITERATION);
         checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_CHECK);
