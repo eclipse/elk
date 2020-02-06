@@ -74,16 +74,4 @@ public final class PortContext {
     }
     
     
-    /////////////////////////////////////////////////////////////////////////////////
-    // Utility Methods
-    
-    /**
-     * Checks whether the port represented by this context has connections to the inside. It has connections to the
-     * inside if one of its edges leads to or comes from a descendant if the port's node, or if the node has inside
-     * self loops enabled and 
-     * @return
-     */
-    public boolean hasConnectionsToTheInside() {
-        return port.getOutgoingEdges().iterator().hasNext() || port.getIncomingEdges().iterator().hasNext();
-    }
 }
