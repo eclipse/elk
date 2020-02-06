@@ -186,7 +186,9 @@ pipeline {
       // Deploys the previously built website
       steps {
         dir ('elk/build/org.eclipse.elk.repository') {
-          sh "./publish-website.sh"
+          sshagent(['git.eclipse.org-bot-ssh']) {
+            sh "./publish-website.sh"
+          }
         }
       }
     }
