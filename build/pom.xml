@@ -22,7 +22,7 @@
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <targetJdk>1.8</targetJdk>
-    <tycho-version>1.4.0</tycho-version>
+    <tycho-version>1.6.0</tycho-version>
     <xtext-version>2.16.0</xtext-version>
     <elk-version>${project.version}</elk-version>
 
@@ -376,7 +376,7 @@
     <pluginRepository>
       <id>central</id>
       <name>Maven Plugin Repository</name>
-      <url>http://central.maven.org/maven2</url>
+      <url>https://repo.maven.apache.org/maven2</url>
       <layout>default</layout>
       <snapshots>
         <enabled>false</enabled>
