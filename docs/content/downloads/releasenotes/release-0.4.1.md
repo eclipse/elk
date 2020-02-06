@@ -7,11 +7,11 @@ menu:
 ---
 
 * [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.4.1)
-* [Documentation](http://download.eclipse.org/elk/updates/releases/0.4.1/elk-0.4.1-docs.zip)
-* [Update site](http://download.eclipse.org/elk/updates/releases/0.4.1/)
-* [Zipped update site](http://download.eclipse.org/elk/updates/releases/0.4.1/elk-0.4.1.zip) (for offline use)
+* [Documentation](https://download.eclipse.org/elk/updates/releases/0.4.1/elk-0.4.1-docs.zip)
+* [Update site](https://download.eclipse.org/elk/updates/releases/0.4.1/)
+* [Zipped update site](https://download.eclipse.org/elk/updates/releases/0.4.1/elk-0.4.1.zip) (for offline use)
 * [Maven central](https://repo.maven.apache.org/maven2/org/eclipse/elk/) (for building pure Java projects that use ELK)
-* [Meta data language compiler](http://download.eclipse.org/elk/maven/releases/0.4.1) (for building layout algorithms with Maven)
+* [Meta data language compiler](https://download.eclipse.org/elk/maven/releases/0.4.1) (for building layout algorithms with Maven)
 
 
 
