@@ -61,8 +61,10 @@ algorithm layered(LayeredLayoutProvider) {
     // layer-based priorities
     supports org.eclipse.elk.priority = 0
 	   documentation 
-	       "Used by the 'simple row graph placer' to decide which connected components to place first. 
-            A component's priority is the sum of the node priorities."
+	       "Used by the 'simple row graph placer' to decide which connected components to place first.
+            A component's priority is the sum of the node priorities,
+            and components with higher priorities will be placed
+            before components with lower priorities."
     supports priority.direction
     supports priority.shortness
         documentation "Currently only supported by the network simplex layerer."
