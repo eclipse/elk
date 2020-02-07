@@ -117,7 +117,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
             boolean moveAllowed = true;
             Layer sndFirstLayer = layers.get(1);
             for (LNode node : firstLayer) {
-                if (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.NONE) {
+                if (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) != LayerConstraint.NONE) {
                     moveAllowed = false;
                     break;
                 }
@@ -147,7 +147,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
             boolean moveAllowed = true;
             Layer sndLastLayer = layers.get(layers.size() - 2);
             for (LNode node : lastLayer) {
-                if (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.NONE) {
+                if (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) != LayerConstraint.NONE) {
                     moveAllowed = false;
                     break;
                 }
