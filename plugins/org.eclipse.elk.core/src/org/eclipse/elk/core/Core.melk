@@ -99,8 +99,11 @@ algorithm box (BoxLayoutProvider) {
     supports padding = new ElkPadding(15)
     supports spacing.nodeNode = 15
     supports priority = 0
-    documentation "The box layouter sorts the boxes based on their size. The priority value takes precedence in this 
-            sorting."
+	   documentation 
+	       "Priorities set on nodes determine the order in which they are placed:
+            boxes with a higher priority will end up before boxes with a lower priority.
+            Boxes with equal priorities are sorted from smaller to bigger
+            unless the layout algorithm is set to interactive mode."
     supports expandNodes
     supports nodeSize.constraints
     supports nodeSize.options

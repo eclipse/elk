@@ -33,6 +33,12 @@ algorithm force(ForceLayoutProvider) {
     features multi_edges, edge_labels
     preview images/force_layout.png
     supports org.eclipse.elk.priority = 1
+	   documentation 
+	       "Priorities set on nodes determine the order in which connected components are placed:
+            components with a higher sum of node priorities will end up
+            before components with a lower sum.
+            Priorities set on edges usually directly influence the attractive force of a connection,
+            with higher priorities corresponding to greater attractive forces."
     supports org.eclipse.elk.spacing.nodeNode = 80
     supports org.eclipse.elk.spacing.edgeLabel = 5
     supports org.eclipse.elk.aspectRatio = 1.6f
