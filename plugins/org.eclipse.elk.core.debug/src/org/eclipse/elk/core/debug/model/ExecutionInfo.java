@@ -10,6 +10,7 @@
 package org.eclipse.elk.core.debug.model;
 
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,8 @@ public final class ExecutionInfo {
 
     /** The name of this execution. */
     private String name;
+    /** When this info object was created. */
+    private Instant creationTime;
     /** Our parent execution, if any. */
     private ExecutionInfo parent;
     /** Unmodifiable list of child executions. */
@@ -68,7 +71,7 @@ public final class ExecutionInfo {
      * Private constructor.
      */
     private ExecutionInfo() {
-
+        creationTime = Instant.now();
     }
 
     /**
@@ -166,6 +169,13 @@ public final class ExecutionInfo {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the instant when this object was created.
+     */
+    public Instant getCreationTime() {
+        return creationTime;
     }
 
     /**
