@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.HorizontalLabelAlignment;
@@ -27,6 +28,7 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 
 /**
  * Knows how to place port labels.
@@ -355,10 +357,15 @@ public final class PortLabelPlacementCalculator {
             portLabelCellRect.width = portLabelCell.getMinimumWidth();
             portLabelCellRect.height = portLabelCell.getMinimumHeight();
             
+            Iterator<LabelAdapter<?>> labels = portContext.port.getLabels().iterator();
+            
             // Calculate the position of the port's label space
             switch (portSide) {
             case NORTH:
-                if (portWithSpecialNeeds) {
+                if (labels.hasNext() && NodeLabelAndSizeUtilities.mayHaveFirstOutsideLabelNextToPort(portContext)) {
+                    portLabelCellRect.x = (portSize.x - /* portLabelCellRect.width */ labels.next().getSize().x) / 2;
+                    portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
+                } else if (portWithSpecialNeeds) {
                     portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacing;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 } else {
@@ -370,7 +377,10 @@ public final class PortLabelPlacementCalculator {
                 break;
                 
             case SOUTH:
-                if (portWithSpecialNeeds) {
+                if (labels.hasNext() && NodeLabelAndSizeUtilities.mayHaveFirstOutsideLabelNextToPort(portContext)) {
+                    portLabelCellRect.x = (portSize.x - /* portLabelCellRect.width */ labels.next().getSize().x) / 2;
+                    portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
+                } else if (portWithSpecialNeeds) {
                     portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacing;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 } else {
@@ -383,7 +393,10 @@ public final class PortLabelPlacementCalculator {
                 
             case EAST:
                 portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacing;
-                if (portWithSpecialNeeds) {
+                if (labels.hasNext() && NodeLabelAndSizeUtilities.mayHaveFirstOutsideLabelNextToPort(portContext)) {
+                    portLabelCellRect.y = (portSize.y - /* portLabelCellRect.height */ labels.next().getSize().y) / 2;
+                    portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
+                } else if (portWithSpecialNeeds) {
                     portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacing;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 } else {
@@ -396,7 +409,10 @@ public final class PortLabelPlacementCalculator {
                 
             case WEST:
                 portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacing;
-                if (portWithSpecialNeeds) {
+                if (labels.hasNext() && NodeLabelAndSizeUtilities.mayHaveFirstOutsideLabelNextToPort(portContext)) {
+                    portLabelCellRect.y = (portSize.y - /* portLabelCellRect.height */ labels.next().getSize().y) / 2;
+                    portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
+                } else if (portWithSpecialNeeds) {
                     portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacing;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 } else {

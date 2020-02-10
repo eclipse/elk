@@ -218,4 +218,8 @@ public final class NodeLabelAndSizeUtilities {
         }
     }
     
+    public static boolean mayHaveFirstOutsideLabelNextToPort(final PortContext portContext) {
+        return !portContext.hasExternalConnections()
+            && portContext.parentNodeContext.node.getProperty(CoreOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE);
+    }
 }

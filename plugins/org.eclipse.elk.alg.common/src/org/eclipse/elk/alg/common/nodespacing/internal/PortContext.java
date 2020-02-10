@@ -74,4 +74,7 @@ public final class PortContext {
     }
     
     
+    public boolean hasExternalConnections() {
+        return port.getIncomingEdges().iterator().hasNext() || port.getOutgoingEdges().iterator().hasNext();
+    }
 }
