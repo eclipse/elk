@@ -127,4 +127,6 @@ Since ELK graphs are based on EMF, you can simply obtain an instance of the `Elk
 
     1. The long hierarchical edge that connects `n0` to `n4` is contained in the node that represents the whole graph (the root node), since that is the first common ancestor of `n0` and `n4`.
 
+    The self loop that connects `n6` to itself might be considered an exception to this rule. It is not contained in `n6`, but in `n2`, since it runs through the simple graph represented by `n2`. This is true even if the self loop is routed through the insides of `n6`, which layout algorithms may or may not support.
+
 * **Convenience Methods:** There are a number of convenience methods, for example to iterate over all of a node's incoming or outgoing edges, to find the node that represents the simple graph an element is part of, and more.
