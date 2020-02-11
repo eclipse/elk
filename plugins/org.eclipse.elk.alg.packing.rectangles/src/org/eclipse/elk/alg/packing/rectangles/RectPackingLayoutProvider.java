@@ -45,8 +45,6 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     private boolean lastPlaceShift;
     /** Only first iteration. */
     private boolean onlyFirstIteration;
-    /** Check for special case. */
-    private boolean checkSpecialCase;
     /** Expand nodes to fill the bounding box. */
     private boolean expandNodes;
     /** Padding surrounding the drawing. */
@@ -64,13 +62,9 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         packingStrat = layoutGraph.getProperty(RectPackingOptions.PACKING_STRATEGY);
         lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
         onlyFirstIteration = layoutGraph.getProperty(RectPackingOptions.ONLY_FIRST_ITERATION);
-        checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_CHECK);
         expandNodes = layoutGraph.getProperty(RectPackingOptions.EXPAND_NODES);
         padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
         nodeNodeSpacing = layoutGraph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
-        double widthJitter = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_WIDTH_JITTER);
-        double heightJitter = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_HEIGHT_JITTER);
-        int mode = layoutGraph.getProperty(RectPackingOptions.SPECIAL_CASE_MODE);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);

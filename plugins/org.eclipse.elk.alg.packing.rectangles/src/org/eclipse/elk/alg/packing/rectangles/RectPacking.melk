@@ -37,10 +37,6 @@ algorithm rectPacking (RectPackingLayoutProvider) {
     supports packingStrategy
     supports lastPlaceShift
     supports onlyFirstIteration
-    supports specialCase.check
-    supports specialCase.widthJitter
-    supports specialCase.heightJitter
-    supports specialCase.mode
 }
 //OPTIONS
 advanced option packingStrategy: PackingStrategy {
@@ -68,37 +64,4 @@ programmatic option onlyFirstIteration: boolean {
         box and eliminate unused whitespace."
     targets nodes
     default = false
-}
-group specialCase {
-    programmatic option mode: int {
-        label "For mode for rect packing"
-        description "All modes even are the modes that try to fill the rows first. Here only the last row will have fewer items.
-            0: Order left to right, balance columns.
-            1: Order left to right, balance rows.
-            2: Order top to bottom, balance columns.
-            3: Order top to bottom, balance rows."
-        targets nodes
-        default = 0
-    }
-    programmatic option check: boolean {
-        label "Check for special case one big rectangle."
-        description "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
-         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
-        targets nodes
-        default = false
-    }
-    programmatic option widthJitter: double {
-        label "Check for special case one big rectangle."
-        description "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
-         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
-        targets nodes
-        default = 50
-    }
-    programmatic option heightJitter: double {
-        label "Check for special case one big rectangle."
-        description "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
-         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
-        targets nodes
-        default = 10
-    }
 }
