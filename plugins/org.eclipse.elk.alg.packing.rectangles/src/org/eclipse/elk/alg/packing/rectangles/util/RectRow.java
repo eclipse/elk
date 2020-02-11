@@ -29,7 +29,7 @@ public class RectRow {
     /** Y-coordinate of this row. */
     private double y;
     /** This row's stacks. */
-    private final List<RectStack> children = new ArrayList<RectStack>();
+    private final List<Block> children = new ArrayList<Block>();
 
     //////////////////////////////////////////////////////////////////
     // Constructors.
@@ -56,7 +56,7 @@ public class RectRow {
         double totalStackWidth = 0;
         double newMaxHeight = Double.NEGATIVE_INFINITY;
 
-        for (RectStack child : this.children) {
+        for (Block child : this.children) {
             totalStackWidth += child.getWidth();
             newMaxHeight = Math.max(newMaxHeight, child.getHeight());
         }
@@ -71,13 +71,13 @@ public class RectRow {
      * @param verticalDecrease
      *            amount by which this row's children's y-coordinates should be decreased.
      */
-    public void decreaseYRecursively(final double verticalDecrease) {
-        this.y -= verticalDecrease;
-        for (RectStack stack : this.children) {
-            stack.setY(stack.getY() - verticalDecrease);
-            stack.decreaseChildrensY(verticalDecrease);
-        }
-    }
+//    public void decreaseYRecursively(final double verticalDecrease) {
+//        this.y -= verticalDecrease;
+//        for (Block child : this.children) {
+//            child.setY(child.getY() - verticalDecrease);
+//            child.decreaseChildrensY(verticalDecrease);
+//        }
+//    }
 
     /**
      * Increases the y-coordinates of this row and its children (stacks and their respective rectangles).
@@ -85,13 +85,13 @@ public class RectRow {
      * @param verticalIncrease
      *            amount by which this row's children's y-coordinates should be increased.
      */
-    public void increaseYRecursively(final double verticalIncrease) {
-        this.y += verticalIncrease;
-        for (RectStack stack : this.children) {
-            stack.setY(stack.getY() + verticalIncrease);
-            stack.increaseChildrensY(verticalIncrease);
-        }
-    }
+//    public void increaseYRecursively(final double verticalIncrease) {
+//        this.y += verticalIncrease;
+//        for (Block stack : this.children) {
+//            stack.setY(stack.getY() + verticalIncrease);
+//            stack.increaseChildrensY(verticalIncrease);
+//        }
+//    }
 
     /**
      * Decreases the x-coordinates of all children (stacks and their respective rectangles) by the given amount.
@@ -99,16 +99,16 @@ public class RectRow {
      * @param horizontalDecrease
      *            amount by which this row's children's x-coordinates should be decreased.
      */
-    public void decreaseXRecursively(final double horizontalDecrease) {
-        for (RectStack stack : this.children) {
-            stack.adjustXRecursively(stack.getX() - horizontalDecrease);
-        }
-    }
+//    public void decreaseXRecursively(final double horizontalDecrease) {
+//        for (Block stack : this.children) {
+//            stack.adjustXRecursively(stack.getX() - horizontalDecrease);
+//        }
+//    }
 
     /**
      * Gets the first stack of this row.
      */
-    public RectStack getFirstStack() {
+    public Block getFirstBlock() {
         return this.children.get(0);
     }
 
@@ -116,7 +116,7 @@ public class RectRow {
      * Returns the width of the first stack of this row.
      */
     public double getFirstStackWidth() {
-        return this.getFirstStack().getWidth();
+        return this.getFirstBlock().getWidth();
     }
 
     /**
@@ -134,30 +134,30 @@ public class RectRow {
     }
 
     /**
-     * Gets the last stack of this row.
+     * Gets the last block of this row.
      */
-    public RectStack getLastStack() {
+    public Block getLastBlock() {
         return this.children.get(this.children.size() - 1);
     }
 
     /**
-     * Gets the width of the last stack of this row.
+     * Gets the width of the last block of this row.
      */
-    public double getLastStackWidth() {
-        return this.getLastStack().getWidth();
+    public double getLastBlockWidth() {
+        return this.getLastBlock().getWidth();
     }
 
     /**
      * Gets the height of the last stack of this row.
      */
-    public double getLastStackHeight() {
-        return this.getLastStack().getHeight();
+    public double getLastBlockHeight() {
+        return this.getLastBlock().getHeight();
     }
 
     /**
      * Amount of stacks assigned to this row.
      */
-    public int getNumberOfAssignedStacks() {
+    public int getNumberOfAssignedBlocks() {
         return this.children.size();
     }
 
@@ -165,14 +165,14 @@ public class RectRow {
      * Returns true, if row has stacks assigned to it, and false otherwise.
      */
     public boolean hasAssignedStacks() {
-        return this.getNumberOfAssignedStacks() > 0;
+        return this.getNumberOfAssignedBlocks() > 0;
     }
 
     /**
      * Returns true, if row has no stacks assigned to it, and false otherwise.
      */
-    public boolean hasNoAssignedStacks() {
-        return this.getNumberOfAssignedStacks() == 0;
+    public boolean hasNoAssignedBlocks() {
+        return this.getNumberOfAssignedBlocks() == 0;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -183,25 +183,25 @@ public class RectRow {
      * @param stack
      *            stack to add.
      */
-    public void assignStack(final RectStack stack) {
-        this.children.add(stack);
+    public void addBlock(final Block block) {
+        this.children.add(block);
 
-        this.height = Math.max(this.height, stack.getHeight());
-        this.width += stack.getWidth();
+        this.height = Math.max(this.height, block.getHeight());
+        this.width += block.getWidth();
     }
 
     /**
      * Removes specified stack from this row. Adjusts width and height.
-     * 
+     * TODO this is not correct
      * @param stack
      *            stack to remove.
      */
-    public void removeStack(final RectStack stack) {
-        this.children.remove(stack);
-        this.width -= stack.getWidth();
+    public void removeBlock(final Block block) {
+        this.children.remove(block);
+        this.width -= block.getWidth();
 
         double newMaxHeight = Double.MIN_VALUE;
-        for (RectStack child : this.children) {
+        for (Block child : this.children) {
             newMaxHeight = Math.max(newMaxHeight, child.getHeight());
         }
         this.height = newMaxHeight;
@@ -272,7 +272,7 @@ public class RectRow {
     /**
      * Gets stacks assigned to this row.
      */
-    public List<RectStack> getChildren() {
+    public List<Block> getChildren() {
         return children;
     }
 }

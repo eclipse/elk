@@ -74,27 +74,31 @@ public class RowFillingAndCompaction {
     public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final double nodeNodeSpacing) {
         List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth, nodeNodeSpacing);
 
+        // Compaction steps
+        
         for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
-            while (this.compactRepeat || this.rowFillingRepeatI || this.rowFillingRepeatII) {
+            int runs = 0;
+            while (this.compactRepeat && runs < 1000) {
                 this.compactRepeat = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-
-                if (rowIdx < rows.size() - 1) {
-                    this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-                    this.rowFillingRepeatII = RowFilling.fill(RowFillStrat.SINGLE_RECT, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-                } else {
-                    this.rowFillingRepeatI = false;
-                    this.rowFillingRepeatII = false;
-                }
+                System.out.println("Compact is " + compactRepeat + " in run " + runs);
+                runs++;
+//                if (rowIdx < rows.size() - 1) {
+//                    this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
+//                    this.rowFillingRepeatII = RowFilling.fill(RowFillStrat.SINGLE_RECT, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
+//                } else {
+//                    this.rowFillingRepeatI = false;
+//                    this.rowFillingRepeatII = false;
+//                }
             }
-            resetImprovementBooleans();
+//            resetImprovementBooleans();
         }
-        deleteEmptyRows(rows);
+////        deleteEmptyRows(rows);
         calculateDimensions(rows);
-
-        // expand notes if configured.
-        if (this.expandNodes) {
-            RectangleExpansion.expand(rows, this.drawingWidth, nodeNodeSpacing);
-        }
+//
+//        // expand notes if configured.
+////        if (this.expandNodes) {
+////            RectangleExpansion.expand(rows, this.drawingWidth, nodeNodeSpacing);
+////        }
 
         return new DrawingData(this.dar, this.drawingWidth, this.drawingHeight, DrawingDataDescriptor.WHOLE_DRAWING);
     }
@@ -133,7 +137,7 @@ public class RowFillingAndCompaction {
     private static void deleteEmptyRows(final List<RectRow> rows) {
         ListIterator<RectRow> iter = rows.listIterator();
         while (iter.hasNext()) {
-            if (iter.next().hasNoAssignedStacks()) {
+            if (iter.next().hasNoAssignedBlocks()) {
                 iter.remove();
             }
         }

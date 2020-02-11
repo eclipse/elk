@@ -77,16 +77,12 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         DrawingData drawing;
 
         // PLACEMENT ACCORDING TO SETTINGS
-        if (checkSpecialCase && SpecialCaseFeasibility.confirm(rectangles, widthJitter, heightJitter)) {
-            drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes, nodeNodeSpacing, mode);
-        } else {
-            AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
-            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
-            if (!onlyFirstIteration) {
-                DrawingUtil.resetCoordinates(rectangles);
-                RowFillingAndCompaction secondIt = new RowFillingAndCompaction(dar, expandNodes);
-                drawing = secondIt.start(rectangles, drawing.getDrawingWidth(), nodeNodeSpacing);
-            }
+        AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
+        drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
+        if (!onlyFirstIteration) {
+            DrawingUtil.resetCoordinates(rectangles);
+            RowFillingAndCompaction secondIt = new RowFillingAndCompaction(dar, expandNodes);
+            drawing = secondIt.start(rectangles, drawing.getDrawingWidth(), nodeNodeSpacing);
         }
 
         // FINAL TOUCH

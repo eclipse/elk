@@ -149,7 +149,7 @@ public final class RowFilling {
 
         double takingRowPreviousWidth = takingRow.getWidth();
         double takingRowPreviousHeight = takingRow.getHeight();
-        RectStack movingStack = yieldingRow.getFirstStack();
+        RectStack movingStack = yieldingRow.getFirstBlock();
 
         takingRow.assignStack(movingStack);
         movingStack.setParentRow(takingRow);
@@ -205,7 +205,7 @@ public final class RowFilling {
         RectRow takingRow = rows.get(takingRowIdx);
         RectRow yieldingRow = rows.get(yieldingRowIdx);
 
-        RectStack yieldingStack = yieldingRow.getFirstStack();
+        RectStack yieldingStack = yieldingRow.getFirstBlock();
         RectStack takingStack = takingRow.getLastStack();
         ElkNode movingRect = yieldingStack.getFirstRectangle();
 
@@ -281,7 +281,7 @@ public final class RowFilling {
      */
     private static boolean isFillingWithRectsAllowed(final RectRow takingRow, final RectRow yieldingRow,
             final double boundingWidth, final double nodeNodeSpacing) {
-        if (yieldingRow.hasNoAssignedStacks() || yieldingRow.getFirstStack().hasNoRectanglesAssigned()) {
+        if (yieldingRow.hasNoAssignedStacks() || yieldingRow.getFirstBlock().hasNoRectanglesAssigned()) {
             return false;
         }
 

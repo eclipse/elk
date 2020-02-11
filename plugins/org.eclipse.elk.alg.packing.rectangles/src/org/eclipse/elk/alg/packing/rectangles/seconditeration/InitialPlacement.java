@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.alg.packing.rectangles.util.Block;
 import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
 import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
@@ -44,42 +45,63 @@ public final class InitialPlacement {
      */
     protected static List<RectRow> place(final List<ElkNode> rectangles, final double boundingWidth, final double nodeNodeSpacing) {
         List<RectRow> rows = new ArrayList<RectRow>();
-        RectRow currRow = new RectRow(0);
-        double currDrawingHeight = 0;
+        RectRow row = new RectRow(0);
+        double drawingHeight = 0;
+        row.addBlock(new Block(0, 0, row, nodeNodeSpacing));
 
-        for (ElkNode currRect : rectangles) {
-            double potentialRowWidth = currRow.getWidth() + currRect.getWidth();
+        for (ElkNode rect : rectangles) {
+            double potentialRowWidth = row.getWidth() + rect.getWidth();
             if (potentialRowWidth > boundingWidth) {
-                currDrawingHeight += currRow.getHeight();
-                rows.add(currRow);
-                currRow = new RectRow(currDrawingHeight);
+                Block block = row.getLastBlock();
+                // Check whether the block can have a new row
+                if (placeRectInBlock(row, block, rect, boundingWidth, nodeNodeSpacing)) {
+                    continue;
+                }
+                // Block can not have a new row, so a new row has to be added
+                drawingHeight += row.getHeight();
+                rows.add(row);
+                row = new RectRow(drawingHeight);
+                row.addBlock(new Block(0, row.getY(), row, nodeNodeSpacing));
             }
-            createNewStackAndAddToRow(currRect, currRow, nodeNodeSpacing);
+            
+            // Check whether current rectangle can be added to the last block
+            Block block = row.getLastBlock();
+            if (block.getChildren().isEmpty() || isSimilarHeight(block, rect)) {
+                block.addChild(rect);
+            } else {
+                Block newBlock = new Block(block.getX() + block.getWidth(), row.getY(), row, nodeNodeSpacing);
+                row.addBlock(newBlock);
+                newBlock.addChild(rect);
+            }
         }
-        rows.add(currRow);
+        rows.add(row);
         return rows;
     }
-
-    //////////////////////////////////////////////////////////////////
-    // Helping methods.
-
-    /**
-     * Method that creates a new {@link RectStack}, adds the given {@link ElkNode} to the {@link RectStack}, and adds
-     * the created {@link RectStack} to the given {@link RectRow}. The new {@link RectStack} and given {@link ElkNode}
-     * will be at the end of the {@link RectRow}.
-     * 
-     * @param rect
-     *            Rectangle to add to a {@link RectStack}.
-     * @param row
-     *            The {@link ElkNode} the new {@link RectStack} is added to.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
-     * @return returns the newly created {@link RectStack}.
-     */
-    private static RectStack createNewStackAndAddToRow(final ElkNode rect, final RectRow row, final double nodeNodeSpacing) {
-        rect.setLocation(row.getWidth(), row.getY());
-        RectStack newStack = new RectStack(rect, rect.getX(), rect.getY(), row, nodeNodeSpacing);
-        row.assignStack(newStack);
-        return newStack;
+    
+    public static boolean placeRectInBlock(final RectRow row, final Block block, final ElkNode rect,
+            final double boundingWidth, final double nodeNodeSpacing) {
+        if (isSimilarHeight(block, rect)) {
+            if (rect.getWidth() + nodeNodeSpacing <= boundingWidth - block.getRowX() &&
+                    (block.getRowY() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
+                // Case it fits in a row in the same block
+                block.addChild(rect);
+                return true;
+            } else if (rect.getWidth() + nodeNodeSpacing <= boundingWidth - block.getX() &&
+                    (block.getHeight() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
+                // Case a new row in the block can be opened
+                block.addChildInNewRow(rect);
+                return true;
+            }
+        }
+        return false;
+        
+    }
+    
+    public static boolean isSimilarHeight(Block block, ElkNode rect) {
+        if (block.getAverageHeight() * 0.6 >= block.getSmallestRectHeight() || block.getMinHeight() * 0.6 >= block.getAverageHeight()) {
+            return rect.getHeight() >= block.getSmallestRectHeight() && rect.getHeight() <= block.getMinHeight();
+        } else {
+            return block.getAverageHeight() * 0.6 <= rect.getHeight() && block.getAverageHeight() >= rect.getHeight() * 0.6;
+        }
     }
 }
