@@ -70,7 +70,7 @@ public final class ElkGraphAdapters {
      * @return an {@link ElkNodeAdapter} for the passed node.
      */
     public static ElkNodeAdapter adaptSingleNode(final ElkNode node) {
-        return new ElkNodeAdapter(null, node);
+        return new ElkNodeAdapter(node.getParent() == null ? null : adapt(node.getParent()), node);
     }
 
     /**
