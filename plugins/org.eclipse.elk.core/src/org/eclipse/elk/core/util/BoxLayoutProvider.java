@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,71 +49,69 @@ import com.google.common.collect.Lists;
  * <p>
  * MIGRATE The box layout provider does not support hyperedges yet.
  * </p>
- * 
- * @author msp
  */
 public class BoxLayoutProvider extends AbstractLayoutProvider {
-    
-    /**
-     * Configures the packing mode used by the {@link BoxLayoutProvider}.
-     * If {@value #SIMPLE} is not required, {@link #GROUP_DEC} could improve the packing and decrease the area. 
-     * {@value #GROUP_MIXED} and {@link #GROUP_INC} may, in very specific scenarios, work better.
-     */
-    public enum PackingMode {
-        
-        /** In order to use either of {@link BoxLayouterOptions#PRIORITY} 
-         * {@link BoxLayouterOptions#INTERACTIVE}, this mode must be used.*/
-        SIMPLE,
-        
-        /** Tries to group boxes iterating the boxes in decreasing area. */
-        GROUP_DEC,
-
-        /**
-         * Iterating in increasing area, tries to be smart by grouping a subset of small nodes such that their combined
-         * area is close to half of the area of a larger node.
-         */
-        GROUP_MIXED,
-        
-        /** Tries to group boxes iterating the boxes in increasing area. */
-        GROUP_INC,       
-    }
     
     /** default value for aspect ratio. */
     public static final double DEF_ASPECT_RATIO = 1.3;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Box layout", 2);
         
-        // set option for minimal spacing
         float objSpacing = layoutNode.getProperty(BoxLayouterOptions.SPACING_NODE_NODE).floatValue();
-        // set option for border spacing
         ElkPadding padding = layoutNode.getProperty(BoxLayouterOptions.PADDING);
-        
-        // set expand nodes option
         boolean expandNodes = layoutNode.getProperty(BoxLayouterOptions.EXPAND_NODES);
-        
-        // set interactive option
         boolean interactive = layoutNode.getProperty(BoxLayouterOptions.INTERACTIVE);
 
-        PackingMode mode = layoutNode.getProperty(BoxLayouterOptions.BOX_PACKING_MODE);
-        switch (mode) {
+        switch (layoutNode.getProperty(BoxLayouterOptions.BOX_PACKING_MODE)) {
         case SIMPLE:
-            // sort boxes according to priority and position or size
-            List<ElkNode> sortedBoxes = sort(layoutNode, interactive);
-            // place boxes on the plane
-            placeBoxes(sortedBoxes, layoutNode, objSpacing, padding, expandNodes);
+            placeBoxes(layoutNode, objSpacing, padding, expandNodes, interactive);
             break;
 
-        default: // any of the groups
-            // the method takes care of sorting the boxes itself
+        default:
+            // any of the groups
             placeBoxesGrouping(layoutNode, objSpacing, padding, expandNodes);
         }
 
         progressMonitor.done();
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Simple Mode
+
+    /**
+     * Place the boxes in the given parent node. The children are first sorted appropriately. Furthermore, adjust the
+     * parent size to fit the bounding box.
+     * 
+     * @param parentNode parent node
+     * @param objSpacing minimal spacing between elements
+     * @param borderSpacing spacing to the border
+     * @param expandNodes if true, the nodes are expanded to fill their parent
+     * @param interactive whether position should be considered instead of size
+     */
+    private void placeBoxes(final ElkNode parentNode, final double objSpacing, final ElkPadding padding,
+            final boolean expandNodes, final boolean interactive) {
+        
+        List<ElkNode> sortedBoxes = sort(parentNode, interactive);
+
+        // Work on a copy of the minimum size to avoid changing the property's value
+        KVector minSize = new KVector(parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM));
+        minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
+        minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
+        
+        Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
+        if (aspectRatio == null || aspectRatio <= 0) {
+            aspectRatio = DEF_ASPECT_RATIO;
+        }
+
+        // do place the boxes
+        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, padding, minSize.x, minSize.y,
+                expandNodes, aspectRatio);
+
+        // adjust parent size
+        ElkUtil.resizeNode(parentNode, parentSize.x, parentSize.y, false, true);
     }
 
     /**
@@ -124,7 +123,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * @return sorted list of children
      */
     private List<ElkNode> sort(final ElkNode parentNode, final boolean interactive) {
-        List<ElkNode> sortedBoxes = new LinkedList<ElkNode>(parentNode.getChildren());
+        List<ElkNode> sortedBoxes = new ArrayList<>(parentNode.getChildren());
         
         Collections.sort(sortedBoxes, new Comparator<ElkNode>() {
             public int compare(final ElkNode child1, final ElkNode child2) {
@@ -166,37 +165,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Place the boxes of the given sorted list according to their order in the list.
-     * Furthermore, adjust the parent size to fit the bounding box.
-     * 
-     * @param sortedBoxes sorted list of boxes
-     * @param parentNode parent node
-     * @param objSpacing minimal spacing between elements
-     * @param borderSpacing spacing to the border
-     * @param expandNodes if true, the nodes are expanded to fill their parent
-     */
-    private void placeBoxes(final List<ElkNode> sortedBoxes, final ElkNode parentNode,
-            final double objSpacing, final ElkPadding padding, final boolean expandNodes) {
-
-        // Work on a copy of the minimum size to avoid changing the property's value
-        KVector minSize = new KVector(parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM));
-        minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
-        minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
-        
-        Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
-        if (aspectRatio == null || aspectRatio <= 0) {
-            aspectRatio = DEF_ASPECT_RATIO;
-        }
-
-        // do place the boxes
-        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, padding, minSize.x, minSize.y,
-                expandNodes, aspectRatio);
-
-        // adjust parent size
-        ElkUtil.resizeNode(parentNode, parentSize.x, parentSize.y, false, true);
-    }
-
-    /**
-     * Place the boxes of the given sorted list according to their order in the list.
      * 
      * @param sortedBoxes sorted list of boxes
      * @param minSpacing minimal spacing between elements
@@ -231,7 +199,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
         // calculate the required row width w to achieve the desired aspect ratio,
         //  i.e.:  w*h=area s.t. w/h=dar  ->  w=sqrt(area * dar) 
-        maxRowWidth = (float) Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + padding.getLeft();
+        maxRowWidth = Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + padding.getLeft();
 
         // place nodes iteratively into rows
         double xpos = padding.getLeft();
@@ -309,10 +277,10 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         double stddev = Math.sqrt(variance / (boxes.size() - 1));
         return stddev;
     }
-
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
-    //  Now the grouping methods
-    // /////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Grouping Modes
     
     /**
      * Place the boxes of the given sorted list according to their order in the list.
@@ -337,7 +305,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         }
 
         // wrap boxes in groups
-        List<Group> groups = Lists.newLinkedList();
+        List<Group> groups = Lists.newArrayList();
         for (ElkNode node : parentNode.getChildren()) {
             Group g = new Group(node);
             groups.add(g);
@@ -673,24 +641,51 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         return toBePlaced;
     }
     
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Classes and Enumerations
+    
+    /**
+     * Configures the packing mode used by the {@link BoxLayoutProvider}.
+     * If {@value #SIMPLE} is not required, {@link #GROUP_DEC} could improve the packing and decrease the area. 
+     * {@value #GROUP_MIXED} and {@link #GROUP_INC} may, in very specific scenarios, work better.
+     */
+    public enum PackingMode {
+        
+        /** In order to use either of {@link BoxLayouterOptions#PRIORITY} 
+         * {@link BoxLayouterOptions#INTERACTIVE}, this mode must be used.*/
+        SIMPLE,
+        
+        /** Tries to group boxes iterating the boxes in decreasing area. */
+        GROUP_DEC,
+
+        /**
+         * Iterating in increasing area, tries to be smart by grouping a subset of small nodes such that their combined
+         * area is close to half of the area of a larger node.
+         */
+        GROUP_MIXED,
+        
+        /** Tries to group boxes iterating the boxes in increasing area. */
+        GROUP_INC,       
+    }
+    
     /**
      * Internal representation of a group. A group either wraps a single node, or holds a collection of groups.
      * In essence it delegates position/dimension changes to the inner-most groups (wrapping nodes).
      */
-    private class Group {
+    private static class Group {
         
-        // SUPPRESS CHECKSTYLE NEXT 13 VisibilityModifier
         /** The node represented by this group, may be {@code null}. */
-        ElkNode node;
+        private ElkNode node;
         /** The set of groups wrapped in this group, may only be used if {@code node} is {@code null}. */
-        List<Group> groups; 
+        private List<Group> groups; 
         /** If this group represents other groups, {@code size} represents the bounding rectangle. */
-        KVector size;
+        private KVector size;
 
         /** Stores the bottom-most nodes of this group, used if {@link CoreOptions#EXPAND_NODES} is active .*/
-        List<Group> bottom;
+        private List<Group> bottom;
         /** Stores the right-most nodes of this group, used if {@link CoreOptions#EXPAND_NODES} is active .*/
-        List<Group> right;
+        private List<Group> right;
         
         Group(final ElkNode node) {
             this.node = node;
@@ -712,14 +707,14 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             if (node != null) {
                 return node.getWidth();
             }
-            return (float) size.x;
+            return size.x;
         }
         
         public double getHeight() {
             if (node != null) {
                 return node.getHeight();
             }
-            return (float) size.y;
+            return size.y;
         }
 
         /**
@@ -791,9 +786,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             if (node != null) {
