@@ -10,12 +10,11 @@
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
 import java.util.List;
-import java.util.ListIterator;
 
+import org.eclipse.elk.alg.packing.rectangles.util.Block;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingDataDescriptor;
 import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
-import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -69,12 +68,17 @@ public class RowFillingAndCompaction {
         if (compaction) {
             for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
                 int runs = 0;
+                if (rowIdx != 0) {
+                    RectRow previousRow = rows.get(rowIdx - 1);
+                    rows.get(rowIdx).setY(previousRow.getY() + previousRow.getHeight());
+                }
                 boolean somethingChanged = true;
                 while (somethingChanged && runs < 1000) {
                     somethingChanged = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
                     System.out.println("Compact is " + somethingChanged + " in run " + runs);
                     runs++;
                 }
+                adjustHeight(rows.get(rowIdx));
             }
         }
         calculateDimensions(rows);
@@ -85,6 +89,17 @@ public class RowFillingAndCompaction {
 ////        }
 
         return new DrawingData(this.dar, this.drawingWidth, this.drawingHeight, DrawingDataDescriptor.WHOLE_DRAWING);
+    }
+
+    /**
+     * @param rectRow
+     */
+    private void adjustHeight(RectRow rectRow) {
+        double maxHeight = 0;
+        for (Block block : rectRow.getChildren()) {
+            maxHeight = Math.max(maxHeight, block.getHeight());
+        }
+        rectRow.setHeight(maxHeight);
     }
 
     //////////////////////////////////////////////////////////////////

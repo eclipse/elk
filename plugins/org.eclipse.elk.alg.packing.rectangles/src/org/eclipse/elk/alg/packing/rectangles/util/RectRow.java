@@ -266,6 +266,10 @@ public class RectRow {
      *            new y-coordinate of this row.
      */
     public void setY(final double yCoord) {
+        double yChange = yCoord - this.y;
+        for (Block block : children) {
+            block.setLocation(block.getX(), block.getY() + yChange);
+        }
         this.y = yCoord;
     }
 

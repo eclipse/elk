@@ -372,7 +372,7 @@ public class Block {
     
     private boolean placeRectsIn(double width, double height, boolean placeRects) {
         ElkRectangle bounds = placeRectsIn(width, placeRects);
-        return bounds.width < width && bounds.height < height;
+        return bounds.width <= width && bounds.height <= height;
     }
     
     /**

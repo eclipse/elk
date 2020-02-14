@@ -259,7 +259,11 @@ public final class Compaction {
             double boundingWidth, int nextRowIndex) {
         boolean somethingWasChanged = false;
         double currentBlockMinWidth = block.getWidthForTargetHeight(row.getY() + row.getHeight() - block.getY());
-        double nextBlockHeight = nextBlock.getHeightForTargetWidth(boundingWidth - (block.getY() + currentBlockMinWidth));
+        double targetWidthOfNextBlock = boundingWidth - (block.getX() + currentBlockMinWidth);
+        if (targetWidthOfNextBlock < nextBlock.getMinWidth()) {
+            return false;
+        }
+        double nextBlockHeight = nextBlock.getHeightForTargetWidth(targetWidthOfNextBlock);
         if (nextBlockHeight <= row.getHeight()) {
             block.placeRectsIn(currentBlockMinWidth);
             block.setFixed(true);

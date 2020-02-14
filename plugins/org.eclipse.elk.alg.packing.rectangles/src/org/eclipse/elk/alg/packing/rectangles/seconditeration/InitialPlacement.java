@@ -78,11 +78,21 @@ public final class InitialPlacement {
         return rows;
     }
     
+    /**
+     * Check whether a rectangle has a similar height as the other rectangles in the block and add it too it depending on
+     * the available space
+     * @param row The row
+     * @param block The block
+     * @param rect The rectangle
+     * @param boundingWidth The bounding width of the row
+     * @param nodeNodeSpacing The spacing between two nodes
+     * @return true, if the rectangle was successfully added.
+     */
     public static boolean placeRectInBlock(final RectRow row, final Block block, final ElkNode rect,
             final double boundingWidth, final double nodeNodeSpacing) {
         if (isSimilarHeight(block, rect, nodeNodeSpacing)) {
             if (rect.getWidth() + nodeNodeSpacing <= boundingWidth - block.getLastRowNewX() &&
-                    (block.getLastRowY() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
+                    (block.getLastRowY() - row.getY() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
                 // Case it fits in a row in the same block
                 block.addChild(rect);
                 return true;
