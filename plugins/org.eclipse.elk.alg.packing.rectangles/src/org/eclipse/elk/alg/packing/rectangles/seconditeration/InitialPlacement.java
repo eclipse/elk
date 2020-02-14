@@ -66,7 +66,7 @@ public final class InitialPlacement {
             
             // Check whether current rectangle can be added to the last block
             Block block = row.getLastBlock();
-            if (block.getChildren().isEmpty() || isSimilarHeight(block, rect)) {
+            if (block.getChildren().isEmpty() || isSimilarHeight(block, rect, nodeNodeSpacing)) {
                 block.addChild(rect);
             } else {
                 Block newBlock = new Block(block.getX() + block.getWidth(), row.getY(), row, nodeNodeSpacing);
@@ -80,13 +80,13 @@ public final class InitialPlacement {
     
     public static boolean placeRectInBlock(final RectRow row, final Block block, final ElkNode rect,
             final double boundingWidth, final double nodeNodeSpacing) {
-        if (isSimilarHeight(block, rect)) {
-            if (rect.getWidth() + nodeNodeSpacing <= boundingWidth - block.getRowX() &&
-                    (block.getRowY() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
+        if (isSimilarHeight(block, rect, nodeNodeSpacing)) {
+            if (rect.getWidth() + nodeNodeSpacing <= boundingWidth - block.getLastRowNewX() &&
+                    (block.getLastRowY() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
                 // Case it fits in a row in the same block
                 block.addChild(rect);
                 return true;
-            } else if (rect.getWidth() + nodeNodeSpacing <= boundingWidth - block.getX() &&
+            } else if (rect.getWidth() <= boundingWidth - block.getX() &&
                     (block.getHeight() + rect.getHeight() + nodeNodeSpacing <= row.getHeight() || row.getChildren().size() == 1)) {
                 // Case a new row in the block can be opened
                 block.addChildInNewRow(rect);
@@ -97,11 +97,18 @@ public final class InitialPlacement {
         
     }
     
-    public static boolean isSimilarHeight(Block block, ElkNode rect) {
-        if (block.getAverageHeight() * 0.6 >= block.getSmallestRectHeight() || block.getMinHeight() * 0.6 >= block.getAverageHeight()) {
-            return rect.getHeight() >= block.getSmallestRectHeight() && rect.getHeight() <= block.getMinHeight();
+    /**
+     * Checks whether a rectangle has a similar height as the other rectangles in a block.
+     * @param block The block.
+     * @param rect The rectangle.
+     * @return true if the height of the rectangle is similar to the rectangles in the block
+     */
+    public static boolean isSimilarHeight(Block block, ElkNode rect, double nodeNodeSpacing) {
+        if (rect.getHeight() + nodeNodeSpacing >= block.getSmallestRectHeight() && rect.getHeight() + nodeNodeSpacing <= block.getMinHeight()) {
+            return true;
         } else {
-            return block.getAverageHeight() * 0.6 <= rect.getHeight() && block.getAverageHeight() >= rect.getHeight() * 0.6;
+            return block.getAverageHeight() * 0.5 <= rect.getHeight() + nodeNodeSpacing &&
+                    block.getAverageHeight() * 1.5 >= rect.getHeight() + nodeNodeSpacing;
         }
     }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.eclipse.elk.alg.packing.rectangles.util.Block;
 import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
-import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -49,350 +48,233 @@ public final class Compaction {
         int nextRowIndex = rowIdx + 1;
         RectRow row = rows.get(rowIdx);
         List<Block> blocks = row.getChildren();
-        double rowPreviousHeight = row.getHeight();
-        double currentX = 0;
-        double currentY = row.getY();
+        
+        // Check for each block whether:
+        // The next (or part of the next) block can be put on top of it,
+        // the next block cannot be put on top of it, but the current block can be drawn higher,
+        // or part of the next block can be added to the current block.
         for (int blockId = 0; blockId < row.getNumberOfAssignedBlocks(); blockId++) {
             Block block = blocks.get(blockId);
             if (block.isFixed()) {
-                currentX += block.getWidth();
-                currentY = row.getY();
                 continue;
             }
             if (block.getChildren().isEmpty()) {
+                System.out.println("Deleted empty block, this should not happen");
                 row.removeBlock(block);
+                blockId--;
                 somethingWasChanged = true;
                 continue;
             }
-            if ((blockId == 0 && block.getX() >= 0) || somethingWasChanged || !block.isPositionFixed()) {
-                block.setLocation(currentX, currentY);
+            
+            // Move the block to its new position if something before it was changed and it is moveable.
+            if (!block.isPositionFixed()) {
+                double currentX = 0;
+                if (blockId > 0) {
+                    Block previousBlock = row.getChildren().get(blockId - 1);
+                    currentX = previousBlock.getX() + previousBlock.getWidth();
+                }
+                block.setLocation(currentX, row.getY());
+                block.setPositionFixed(true);
             }
+            
             // Optimization 1: Does the next block fit on top of me?
             // This includes removing element from the next block and putting them in a new block.
             // A block can also be taken from the next row.
             Block nextBlock = null;
+            nextBlock = getNextBlock(rows, row, blockId, nextRowIndex);
             boolean wasFromNextRow = false;
-            if (blockId < row.getNumberOfAssignedBlocks() - 1) {
-                nextBlock = row.getChildren().get(blockId + 1);
-            } else if (nextRowIndex < rows.size() - 1 && !rows.get(nextRowIndex).getChildren().isEmpty()) {
-                
-                nextBlock = rows.get(nextRowIndex).getChildren().get(0);
-                wasFromNextRow = true;
+            if (nextBlock != null) {
+                wasFromNextRow = !nextBlock.getParentRow().equals(row);
             }
+            
             if (nextBlock != null) {
                 // Decide whether the block can be merged with the previous block
 
-                // Try to get as much (or one) rect(s) from the next block to fit in there.
+                // Try to move as many rects as possible from the next block in this block.
+                // First flatten the current block.
                 if (!nextBlock.getChildren().isEmpty()) {
-                    ElkNode rect = nextBlock.getFirstRectangle();
-                    // Check whether this rectangle can fit in the current block.
-                    while (InitialPlacement.placeRectInBlock(row, block, rect, boundingWidth, nodeNodeSpacing)) {
-                        somethingWasChanged = true;
-                        nextBlock.removeChild(rect);
-                        if (nextBlock.getChildren().isEmpty()) {
-                            break;
-                        }
-                        rect = nextBlock.getFirstRectangle();
-                    }                    
+                    useRowWidth(block, boundingWidth);
+                    // Absorb all rectangles that fit in the current block form the next block if they fit the row.
+                    somethingWasChanged |= absorbBlocks(row, block, nextBlock, boundingWidth, nodeNodeSpacing);
+                                       
+                } else {
+                    System.out.println("The next block is empty? Why?");
+                    // Delete empty nextBlock
+                    row.removeBlock(nextBlock);
+                    break;
                 }
-                // Check whether whole block can be added
+                // Check whether whole next block or part of the whole next block can be added to this row.
+                // This involves flattening the current block if possible to maintain the left to right reading direction.
+                // if the current block is too high to fit the next block on top of it, try placing it next to it.
+                // FIXME If the after next block is very high this might be a bag idea.
                 
-                // Check whether it can be added on top of the last block.
-                
-                if (nextBlock.getChildren().isEmpty()) {
+                // From the previous step the next block and the next row might be empty.
+                // Delete all empty blocks and rows.
+                while (nextBlock.getChildren().isEmpty()) {
                     rows.get(nextRowIndex).removeBlock(nextBlock);
-                    while (rows.get(nextRowIndex).getChildren().isEmpty()) {
+                    while (rows.size() > nextRowIndex && rows.get(nextRowIndex).getChildren().isEmpty()) {
                         rows.remove(rows.get(nextRowIndex));
+                        System.out.println("Remvoed rows");
                         // TODO maybe adjust y of other rows
                     }
-                    nextBlock = rows.get(nextRowIndex).getFirstBlock();
-                    
-                    double targetHeight = nextBlock.getHeightForTargetWidth(block.getWidth());
-                    if (block.getY() + block.getHeight() + targetHeight <= row.getHeight()) {
-                        block.setFixed(true);
-                        nextBlock.setPositionFixed(true);
-                        nextBlock.setX(currentX);
-                        nextBlock.setY(block.getY() + block.getHeight());
-                        nextBlock.placeRectsIn(block.getWidth());
-                        nextBlock.setWidth(block.getWidth());
-                        nextBlock.setHeight(targetHeight);
+                    if (rows.size() > nextRowIndex) {
+                        System.out.println("New next block");
+                        nextBlock = rows.get(nextRowIndex).getFirstBlock();
+                    } else {
+                        nextBlock = null;
+                        break;
+                    }
+                }
+                if (nextBlock == null) {
+                    continue;
+                }
+                // Get height of block if it uses the 
+                // Try to use the whole remaining width of the row and try to put the block on top of it.
+                // If it does not work (because the block is too high) check the minimum height of the block and check whether
+                // it can fit at all.
+                // If it could compact the width of the current block and try to fit as much as possible in there
+
+                // Try to fit next block on top of the current block.
+                if (placeBelow(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex)) {
+                    somethingWasChanged = true;
+                    continue;
+                }
+                
+                if (wasFromNextRow) {
+                    // Try to place the next block next to the current one.
+                    // Draw the current block as slim as possible.
+                    if (placeBeside(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex)) {
                         somethingWasChanged = true;
-                        if (wasFromNextRow) {
-                            row.addBlock(nextBlock);
-                            // TODO removeBlock should handle specific things
-                            rows.get(nextRowIndex).removeBlock(nextBlock);
-                        }
                         continue;
                     }
                 }
-                // TODO overthink this
+                
+                // Case only parts of the next block where added, but no full next block could be added.
                 if (somethingWasChanged) {
-                    currentX += block.getWidth();
                     continue;
                 }
+            } else {
+                System.out.println("There is not new block");
             }
             
             // Optimization 2: Let blocks use the row width if they can
-            if (block.getHeight() < row.getHeight()) {
-                double targetWidth = block.getWidthForTargetHeight(row.getHeight());
-                if (block.getWidth() > targetWidth) {
-                    block.placeRectsIn(targetWidth);
-                    block.setWidth(targetWidth);
-                    block.setHeight(row.getHeight());
-                    currentX += targetWidth;
-                    somethingWasChanged = true;
-                    block.setFixed(true);
-                    continue;
-                }
+            
+            if (useRowHeight(row, block)) {
+                block.setFixed(true);
+                somethingWasChanged = true;
+                continue;
             }
-            // Nothing was changed, update currentX/currentY
-            currentX += block.getWidth();
-            currentY = row.getY();
         }
-//        verticalShift(rowPreviousHeight, rows, rowIdx);
 
         return somethingWasChanged;
     }
-
-    //////////////////////////////////////////////////////////////////
-    // Helping methods.
-
+    
     /**
-     * Reassigns a the first rectangle of the yielding stack according to the compaction algorithm and takes care of all
-     * shifts.
-     * 
-     * @param takingStack
-     *            new stack of the rectangle.
-     * @param yieldingStack
-     *            current stack of the rectangle.
-     * @param stacks
-     *            stacks in the row of the yielding stack.
-     * @param stacksToRemove
-     *            list of empty stacks that are to be removed later.
-     * @param takingStackIdx
-     *            index of the taking stack.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
+     * Returns the next block if any.
+     * @return The next block
      */
-    private static void reassignRectangleAndHorizontalShifts(final RectStack takingStack, final RectStack yieldingStack,
-            final List<RectStack> stacks, final int takingStackIdx, final double nodeNodeSpacing) {
-        double takingStackPreviousWidth = takingStack.getWidth();
-        ElkNode movingRect = yieldingStack.getFirstRectangle();
-
-        movingRect.setLocation(takingStack.getX(), takingStack.getY() + takingStack.getHeight());
-        takingStack.addChild(movingRect);
-        yieldingStack.removeChild(movingRect);
-
-        if (yieldingStack.hasNoRectanglesAssigned()) {
-            horizontalShiftYieldingStackEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks, nodeNodeSpacing);
-        } else {
-            horizontalShiftYieldingStackNotEmpty(movingRect, takingStackPreviousWidth, takingStackIdx, stacks, nodeNodeSpacing);
+    private static Block getNextBlock(List<RectRow> rows, RectRow row, int blockId, int nextRowIndex) {
+        Block nextBlock = null;
+        if (blockId < row.getNumberOfAssignedBlocks() - 1) {
+            // Get block from this row.
+            nextBlock = row.getChildren().get(blockId + 1);
+        } else if (nextRowIndex < rows.size() && !rows.get(nextRowIndex).getChildren().isEmpty()) {
+            // Get block from next row.
+            nextBlock = rows.get(nextRowIndex).getChildren().get(0);
         }
+        return nextBlock;
     }
 
     /**
-     * Shifts the {@link RectStack}s by the calculated amounts. Yielding and followings stacks are affected differently.
-     * 
-     * @param movingRect
-     *            the rectangle that was assigned to a new stack.
-     * @param takingStackPreviousWidth
-     *            the width of the taking stack before the addition of the moving rectangle.
-     * @param takingStackIdx
-     *            index of the taking stack.
-     * @param stacks
-     *            list of all stacks in the row of the compaction.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
+     * Check whether the width of the block can be reduced by using the whole height, since the preceding block does not exist 
+     * or is too big to be put on top of it.
+     * @param row The row the block is in
+     * @param block The block to be slimed.
+     * @return If changes to the block were made.
      */
-    private static void horizontalShiftYieldingStackNotEmpty(final ElkNode movingRect,
-            final double takingStackPreviousWidth, final int takingStackIdx, final List<RectStack> stacks, final double nodeNodeSpacing) {
-        RectStack yieldingStack = stacks.get(takingStackIdx + 1);
-        double distanceToShiftFollowingStacks = 0;
-        double distanceToShiftYieldingStack = 0;
-
-        boolean movingRectWiderThanYieldingStack = movingRect.getWidth() > yieldingStack.getWidth();
-        boolean movingRectWiderThanTakingStack = movingRect.getWidth() > takingStackPreviousWidth;
-
-        // calculation of distances to shift according to different cases.
-        if (movingRectWiderThanYieldingStack && movingRectWiderThanTakingStack) {
-
-            distanceToShiftFollowingStacks = (yieldingStack.getWidth() - movingRect.getWidth())
-                    + (movingRect.getWidth() - takingStackPreviousWidth);
-            distanceToShiftYieldingStack = movingRect.getWidth() - takingStackPreviousWidth;
-
-        } else if (!movingRectWiderThanYieldingStack && movingRectWiderThanTakingStack) {
-
-            distanceToShiftYieldingStack = movingRect.getWidth() - takingStackPreviousWidth;
-            distanceToShiftFollowingStacks = distanceToShiftYieldingStack;
-
-        } else if (movingRectWiderThanYieldingStack && !movingRectWiderThanTakingStack) {
-
-            distanceToShiftFollowingStacks = yieldingStack.getWidth() - movingRect.getWidth();
-        }
-
-        yieldingStack.adjustXRecursively(yieldingStack.getX() + distanceToShiftYieldingStack);
-        // Set new y coordinates for the yielding stack (all nodes are shifted up)
-        yieldingStack.decreaseChildrensY(movingRect.getHeight() + nodeNodeSpacing);
-
-        for (int stackToShiftIdx = takingStackIdx + 2; stackToShiftIdx < stacks.size(); stackToShiftIdx++) {
-            RectStack stackToShift = stacks.get(stackToShiftIdx);
-            stackToShift.adjustXRecursively(stackToShift.getX() + distanceToShiftFollowingStacks);
-        }
-    }
-
-    /**
-     * Shifts all following {@link RectStack}s by the calculated amount. This method is called if the yielding
-     * {@link RectStack} does not contain any more elements after the compaction.
-     * 
-     * @param movingRect
-     *            the rectangle that was assigned to a new stack.
-     * @param takingStackPreviousWidth
-     *            the width of the taking stack before the compaction.
-     * @param tackingStackIdx
-     *            index of the tacking stack.
-     * @param stacks
-     *            list of all stacks in the row of the compaction.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
-     */
-    private static void horizontalShiftYieldingStackEmpty(final ElkNode movingRect,
-            final double takingStackPreviousWidth, final int tackingStackIdx, final List<RectStack> stacks, final double nodeNodeSpacing) {
-        double distanceToShift = 0;
-        if (takingStackPreviousWidth >= movingRect.getWidth() + nodeNodeSpacing) {
-            distanceToShift = movingRect.getWidth() + nodeNodeSpacing;
-        } else {
-            distanceToShift = takingStackPreviousWidth;
-        }
-
-        for (int stackToShiftIdx = tackingStackIdx + 2; stackToShiftIdx < stacks.size(); stackToShiftIdx++) {
-            RectStack stackToShift = stacks.get(stackToShiftIdx);
-            stackToShift.adjustXRecursively(stackToShift.getX() - distanceToShift);
-        }
-    }
-
-    /**
-     * Executes the vertical shift of following {@link RectRow}s caused by the change of height of the current
-     * {@link RectRow}.
-     * 
-     * @param rowPreviousHeight
-     *            height of the row before a compaction was made.
-     * @param rows
-     *            contains the rows the shifts are made to.
-     * @param compactingRowIdx
-     *            index of the row the compaction was made in.
-     */
-//    private static void verticalShift(final double rowPreviousHeight, final List<RectRow> rows,
-//            final int compactingRowIdx) {
-//        RectRow compactingRow = rows.get(compactingRowIdx);
-//
-//        double verticalShift = rowPreviousHeight - compactingRow.getHeight();
-//        if (verticalShift != 0) {
-//            for (int rowsToShiftIdx = compactingRowIdx + 1; rowsToShiftIdx < rows.size(); rowsToShiftIdx++) {
-//                rows.get(rowsToShiftIdx).decreaseYRecursively(verticalShift);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Removes empty {@link RectStack}s from the given {@link RectRow}.
-//     * 
-//     * @param row
-//     *            the row the stacks are removed from.
-//     */
-//    private static void removeEmptyStacksFromRow(final RectRow row) {
-//        List<RectStack> stacks = row.getChildren();
-//        for (RectStack stack : stacks) {
-//            if (stack.hasNoRectanglesAssigned()) {
-//                row.removeStack(stack);
-//            }
-//        }
-//    }
-
-    /**
-     * Checks whether a compaction that adds the first rectangle of the yielding {@link RectStack} to the taking stack
-     * exceeds the stack's parent {@link RectRow}'s height. Also checks whether the compaction surpasses the given
-     * bounding width.
-     * 
-     * @param takingStack
-     *            stack the rectangle is added to.
-     * @param yieldingStack
-     *            stack that might yield its first rectangle.
-     * @param boundingWidth
-     *            width of a bounding box that is not be be exceeded.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
-     * @return true, if the stack's height added to the first rectangle's height is smaller than the parent row's
-     *         height, and false otherwise. Returns false, if the yieldingStack does not contain rectangles.
-     */
-    private static boolean isCompactionAllowed(final RectStack takingStack, final RectStack yieldingStack,
-            final double boundingWidth, final double nodeNodeSpacing) {
-        if (yieldingStack.hasNoRectanglesAssigned()) {
-            return false;
-        }
-
-        RectRow parent = takingStack.getParentRow();
-        ElkNode movingRect = yieldingStack.getFirstRectangle();
-
-        if (takingStack.getHeight() + movingRect.getHeight() <= parent.getHeight()) {
-
-            // change of widths due to rectangle reassignment.
-            double potentialWidthIncreaseTaking = calcPotIncreaseTakingStackWidth(takingStack, movingRect, nodeNodeSpacing);
-            double potentialWidthDecreaseYielding = calcPotDecreaseYieldingStackWidth(yieldingStack);
-
-            if (parent.getWidth() + potentialWidthIncreaseTaking - potentialWidthDecreaseYielding <= boundingWidth) {
-                return true;
+    public static boolean useRowHeight(RectRow row, Block block) {
+        boolean somethingWasChanged = false;
+        double previousWidth = block.getWidth();
+        if (block.getHeight() < row.getHeight()) {
+            double targetWidth = block.getWidthForTargetHeight(row.getHeight());
+            if (block.getWidth() > targetWidth) {
+                block.placeRectsIn(targetWidth);
+                somethingWasChanged = previousWidth != block.getWidth();
             }
         }
-
-        return false;
+        return somethingWasChanged;
     }
-
-    /**
-     * Calculates the potential increase of width of the taking {@link RectStack}, if the given rectangle is added to
-     * the stack.
-     * 
-     * @param takingStack
-     *            the stack the rectangle is potentially added to.
-     * @param movingRect
-     *            the rectangle that is potentially added to the taking stack.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
-     * @return the potential new stack width minus the current stack width.
-     */
-    private static double calcPotIncreaseTakingStackWidth(final RectStack takingStack, final ElkNode movingRect, final double nodeNodeSpacing) {
-        double newStackWidth = Math.max(takingStack.getWidth(), movingRect.getWidth() + nodeNodeSpacing);
-        return newStackWidth - takingStack.getWidth();
+    
+    public static void useRowWidth(Block block, double boundingWidth) {
+        block.placeRectsIn(boundingWidth - block.getX());
     }
-
-    /**
-     * Returns the potential decrease of width of the yielding stack, if its first rectangle is removed.
-     * The node node spacing is not relevant for this calculation, since it applied to the width of the biggest rectangle
-     * and the width of the moving rectangle.
-     * 
-     * @param yieldingStack
-     *            the stack that gets a rectangle removed from.
-     * @return if the moving rectangle was the widest rectangle, moving rectangle width minus new width of the stack and
-     *         zero otherwise. Returns the width of the moving rectangle, if the stack only contains said moving
-     *         rectangle.
-     */
-    private static double calcPotDecreaseYieldingStackWidth(final RectStack yieldingStack) {
-        double movingRectWidth = yieldingStack.getFirstRectangle().getWidth();
-        if (yieldingStack.getNumberOfRectangles() > 1) {
-            double newWidth = Double.MIN_VALUE;
-            List<ElkNode> rectangles = yieldingStack.getChildren();
-
-            // Get maximum width of other rectangles in the yielding stack.
-            for (int rectIdx = 1; rectIdx < yieldingStack.getNumberOfRectangles(); rectIdx++) {
-                newWidth = Math.max(newWidth, rectangles.get(rectIdx).getWidth());
+    
+    public static boolean absorbBlocks(RectRow row, Block block, Block nextBlock, double boundingWidth, double nodeNodeSpacing) {
+        boolean somethingWasChanged = false;
+        ElkNode rect = nextBlock.getFirstRectangle();
+        while (InitialPlacement.placeRectInBlock(row, block, rect, boundingWidth, nodeNodeSpacing)) {
+            // The rect was added to this block.
+            somethingWasChanged = true;
+            nextBlock.removeChild(rect);
+            if (nextBlock.getChildren().isEmpty()) {
+                break;
             }
-
-            if (movingRectWidth > newWidth) {
-                return movingRectWidth - newWidth;
-            } else {
-                return 0;
-            }
-        } else {
-            return movingRectWidth;
+            rect = nextBlock.getFirstRectangle();
         }
+        if (nextBlock.getChildren().isEmpty()) {
+            nextBlock.getParentRow().removeBlock(nextBlock);
+        }
+        return somethingWasChanged;
+    }
+    
+    public static boolean placeBelow(List<RectRow> rows, RectRow row, Block block, Block nextBlock, boolean wasFromNextRow,
+            double boundingWidth, int nextRowIndex) {
+        boolean somethingWasChanged = false;
+        double currentBlockMinHeight = block.getHeightForTargetWidth(boundingWidth - block.getX());                
+        double nextBlockMinHeight = nextBlock.getHeightForTargetWidth(boundingWidth - block.getX());
+        
+        if (currentBlockMinHeight + nextBlockMinHeight <= row.getHeight()) {
+            block.placeRectsIn(boundingWidth - block.getX());
+            block.setFixed(true);
+            nextBlock.placeRectsIn(boundingWidth - block.getX());
+            nextBlock.setLocation(block.getX(), block.getY() + block.getHeight());
+            nextBlock.setPositionFixed(true);
+            somethingWasChanged = true;
+            if (wasFromNextRow) {
+                row.addBlock(nextBlock);
+                nextBlock.setParentRow(row);
+                if (rows.size() > nextRowIndex) {
+                    rows.get(nextRowIndex).removeBlock(nextBlock);
+                    if (rows.get(nextRowIndex).getChildren().isEmpty()) {
+                        System.out.println("Removed row");
+                        rows.remove(nextRowIndex);
+                    }
+                }
+            }
+        }
+        return somethingWasChanged;
+    }
+    
+    public static boolean placeBeside(List<RectRow> rows, RectRow row, Block block, Block nextBlock, boolean wasFromNextRow,
+            double boundingWidth, int nextRowIndex) {
+        boolean somethingWasChanged = false;
+        double currentBlockMinWidth = block.getWidthForTargetHeight(row.getY() + row.getHeight() - block.getY());
+        double nextBlockHeight = nextBlock.getHeightForTargetWidth(boundingWidth - (block.getY() + currentBlockMinWidth));
+        if (nextBlockHeight <= row.getHeight()) {
+            block.placeRectsIn(currentBlockMinWidth);
+            block.setFixed(true);
+            nextBlock.placeRectsIn(boundingWidth - (block.getY() + currentBlockMinWidth));
+            nextBlock.setLocation(block.getX() + block.getWidth(), row.getY());
+            row.addBlock(nextBlock);
+            if (rows.size() > nextRowIndex) {
+                rows.get(nextRowIndex).removeBlock(nextBlock);
+                if (rows.get(nextRowIndex).getChildren().isEmpty()) {
+                    System.out.println("Removed 2row");
+                    rows.remove(nextRowIndex);
+                }
+            }
+            somethingWasChanged = true;
+        }
+        return somethingWasChanged;
     }
 }

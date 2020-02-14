@@ -23,6 +23,10 @@ public class BlockRow {
     /**
      * y coordinate of the row.
      */
+    private double x;
+    /**
+     * y coordinate of the row.
+     */
     private double y;
     /**
      * Width of the row + nodeNodeSpacing
@@ -33,11 +37,6 @@ public class BlockRow {
      * Corresponds to the height of the biggest node + nodeNodeSpacing
      */
     private double height = 0;
-    /**
-     * Maximum width of the row.
-     * No new rectangle can be added if the maximum width is exceeded.
-     */
-    private double maxWidth;
     /**
      * Spacing between two nodes.
      */
@@ -50,9 +49,9 @@ public class BlockRow {
      * @param maxWidth maximum width, same as the block.
      * @param nodeNodeSpacing Spacing between two rectangles.
      */
-    public BlockRow(double y, double maxWidth, double nodeNodeSpacing) {
+    public BlockRow(double x, double y, double nodeNodeSpacing) {
+        this.x = x;
         this.y = y;
-        this.maxWidth = maxWidth;
         this.nodeNodeSpacing = nodeNodeSpacing;
     }
     
@@ -71,36 +70,12 @@ public class BlockRow {
      * @return true if the rectangle fits in this row.
      */
     public boolean addRectangle(ElkNode rect) {
-        if (!canAddRectangle(rect)) {
-            return false;
-        }
-        rect.setX(width);
+        this.rects.add(rect);
+        rect.setX(x + width);
         rect.setY(y);
         this.height = Math.max(this.height, rect.getHeight() + nodeNodeSpacing);
         this.width += rect.getWidth() + nodeNodeSpacing;
         return true;
-    }
-    
-    /**
-     * Checks whether the given rectangle fits in this row
-     * @param rect The rectangle.
-     * @return true, if the rectangle fits in the row without exceeding the maximum width.
-     */
-    public boolean canAddRectangle(ElkNode rect) {
-        return this.width + nodeNodeSpacing + rect.getWidth() <= maxWidth;
-    }
-    
-    /**
-     * Checks whether the given rectangle fits in this row
-     * @param rect The rectangle.
-     * @return true, if the rectangle fits in the row without exceeding the maximum width.
-     */
-    public boolean canAddRectangles(List<ElkNode> rects) {
-        double widthToAdd = rects.size() * nodeNodeSpacing;
-        for (ElkNode rect : rects) {
-            widthToAdd += rect.getWidth();
-        }
-        return this.width + widthToAdd <= maxWidth;
     }
     
     /**
@@ -124,7 +99,7 @@ public class BlockRow {
         double width = 0;
         double height = 0;
         for (ElkNode rect : rects) {
-            rect.setX(width);
+            rect.setX(x + width);
             rect.setY(this.y);
             width += rect.getWidth() + nodeNodeSpacing;
             height = Math.max(height, rect.getHeight() + nodeNodeSpacing);
@@ -162,23 +137,23 @@ public class BlockRow {
     }
 
     /**
-     * @return the maxWidth
-     */
-    public double getMaxWidth() {
-        return maxWidth;
-    }
-
-    /**
-     * @param maxWidth the maxWidth to set
-     */
-    public void setMaxWidth(double maxWidth) {
-        this.maxWidth = maxWidth;
-    }
-
-    /**
      * @return the nodes
      */
     public List<ElkNode> getNodes() {
         return rects;
+    }
+
+    /**
+     * @return the x
+     */
+    public double getX() {
+        return x;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX(double x) {
+        this.x = x;
     }
 }

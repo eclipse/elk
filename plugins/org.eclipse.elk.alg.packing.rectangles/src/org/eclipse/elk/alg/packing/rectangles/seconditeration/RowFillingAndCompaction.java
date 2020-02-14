@@ -29,12 +29,6 @@ public class RowFillingAndCompaction {
     private double drawingWidth;
     /** Current drawing height. */
     private double drawingHeight;
-    /** Indicates that something was optimized while compacting. */
-    private boolean compactRepeat;
-    /** Indicates that something was optimized while row filling. */
-    private boolean rowFillingRepeatI;
-    /** Indicates that something was optimized while row filling. */
-    private boolean rowFillingRepeatII;
     /** Desired aspect ratio. */
     private double dar;
     /** Indicates whether to expand the nodes in the end. */
@@ -53,9 +47,6 @@ public class RowFillingAndCompaction {
     public RowFillingAndCompaction(final double desiredAr, final boolean expandNodes) {
         this.dar = desiredAr;
         this.expandNodes = expandNodes;
-        this.compactRepeat = true;
-        this.rowFillingRepeatI = true;
-        this.rowFillingRepeatII = true;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -71,28 +62,21 @@ public class RowFillingAndCompaction {
      *            The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
-    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final double nodeNodeSpacing) {
+    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final boolean compaction, final double nodeNodeSpacing) {
         List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth, nodeNodeSpacing);
 
         // Compaction steps
-        
-        for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
-            int runs = 0;
-            while (this.compactRepeat && runs < 1000) {
-                this.compactRepeat = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-                System.out.println("Compact is " + compactRepeat + " in run " + runs);
-                runs++;
-//                if (rowIdx < rows.size() - 1) {
-//                    this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-//                    this.rowFillingRepeatII = RowFilling.fill(RowFillStrat.SINGLE_RECT, rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-//                } else {
-//                    this.rowFillingRepeatI = false;
-//                    this.rowFillingRepeatII = false;
-//                }
+        if (compaction) {
+            for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
+                int runs = 0;
+                boolean somethingChanged = true;
+                while (somethingChanged && runs < 1000) {
+                    somethingChanged = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
+                    System.out.println("Compact is " + somethingChanged + " in run " + runs);
+                    runs++;
+                }
             }
-//            resetImprovementBooleans();
         }
-////        deleteEmptyRows(rows);
         calculateDimensions(rows);
 //
 //        // expand notes if configured.
@@ -120,27 +104,6 @@ public class RowFillingAndCompaction {
 
         this.drawingHeight = newHeight;
         this.drawingWidth = maxWidth;
-    }
-
-    /**
-     * Sets the fields indicating whether improvements have been made to false.
-     */
-    private void resetImprovementBooleans() {
-        this.compactRepeat = true;
-        this.rowFillingRepeatI = true;
-        this.rowFillingRepeatII = true;
-    }
-
-    /**
-     * Removes every empty {@link RectStack} from the given {@link RectRow}s.
-     */
-    private static void deleteEmptyRows(final List<RectRow> rows) {
-        ListIterator<RectRow> iter = rows.listIterator();
-        while (iter.hasNext()) {
-            if (iter.next().hasNoAssignedBlocks()) {
-                iter.remove();
-            }
-        }
     }
 
     //////////////////////////////////////////////////////////////////

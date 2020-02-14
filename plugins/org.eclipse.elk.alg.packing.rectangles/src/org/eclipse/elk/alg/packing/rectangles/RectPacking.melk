@@ -37,6 +37,7 @@ algorithm rectPacking (RectPackingLayoutProvider) {
     supports packingStrategy
     supports lastPlaceShift
     supports onlyFirstIteration
+    supports rowCompaction
 }
 //OPTIONS
 advanced option packingStrategy: PackingStrategy {
@@ -64,4 +65,10 @@ programmatic option onlyFirstIteration: boolean {
         box and eliminate unused whitespace."
     targets nodes
     default = false
+}
+advanced option rowCompaction: boolean {
+    label "Compact rows and columns"
+    description "Enables compaction. Compacts blocks if they do not use the full height of the row"
+    targets nodes
+    default = true
 }

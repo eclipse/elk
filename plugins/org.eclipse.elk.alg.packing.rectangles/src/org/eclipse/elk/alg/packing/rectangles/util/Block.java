@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 sdo and others.
+ * Copyright (c) 2020 Kiel University.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,7 @@
 package org.eclipse.elk.alg.packing.rectangles.util;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.elk.core.math.ElkRectangle;
@@ -22,42 +23,33 @@ import org.eclipse.elk.graph.ElkNode;
  * Depending on the width and height these rectangles can be layouted.
  * For a given height/width one can calculate the corresponding minimum height/width (if possible).
  * 
- * @author sdo
- *
  */
 public class Block {
     //////////////////////////////////////////////////////////////////
     // Fields
+    private double smallestRectWidth = Double.POSITIVE_INFINITY;
     /** Minimal width + spacing. All rectangles are in one column. */
     private double minWidth;
-    /** Maximum width + spacing. All rectangles are in one row. */
-    private double maxWidth;
     /** Current width + spacing. This is corresponds to the maxWidth if no other value is set by the algorithm. */
     private double width;
-    /** Maximum width in the last row + spacing. */
-    private double widthInRow;
     /** Minimal height + spacing. All rectangles are in one row. */
     private double minHeight;
     /** Smallest rect height + spacing */
-    private double smallestRectHeight = Double.MAX_VALUE;
+    private double smallestRectHeight = Double.POSITIVE_INFINITY;
     /** Average block height */
     private double averageHeight;
     /** Maximum height + spacing. All rectangles are in one column. */
     private double maxHeight;
     /** Current height + spacing. This is corresponds to the minHeight if no other value is set by the algorithm. */
     private double height;
-    /** Maximum in the last row height + spacing. */
-    private double maxHeightInRow;
     /** Rectangles contained in this block. */
     private final List<ElkNode> children = new ArrayList<ElkNode>();
+    /** The rectangles in children assigned to rows. */
+    private final List<BlockRow> rows = new ArrayList<BlockRow>();
     /** X coordinate of this block. */
     private double x;
     /** Y coordinate of this block. */
     private double y;
-    /** X coordinate of the current row of this block. */
-    private double rowX;
-    /** Y coordinate of the current row of this block. */
-    private double rowY;
     /** The row this block is assigned to. */
     private RectRow parentRow;
     /** Spacing between two nodes */
@@ -90,8 +82,6 @@ public class Block {
         this.parentRow = parentRow;
         this.x = xCoord;
         this.y = yCoord;
-        this.rowX = x;
-        this.rowY = y;
 
         this.width = 0;
         this.height = 0;
@@ -107,21 +97,19 @@ public class Block {
      *            rectangle that is added to this stack.
      */
     public void addChild(final ElkNode rect) {
+        if (rows.isEmpty()) {
+            rows.add(new BlockRow(this.x, this.y, nodeNodeSpacing));
+        }
         this.children.add(rect);
-        rect.setX(rowX);
-        this.rowX += rect.getWidth() + nodeNodeSpacing;
-        rect.setY(rowY);
+        this.rows.get(rows.size() - 1).addRectangle(rect);
         adjustSizeAdd(rect);
     }
     
     public void addChildInNewRow(final ElkNode rect) {
         this.children.add(rect);
-        rect.setX(x);
-        this.rowX = x + rect.getWidth() + nodeNodeSpacing;
-        this.rowY += maxHeightInRow;
-        rect.setY(rowY);
-        this.maxHeightInRow = 0;
-        this.widthInRow = 0;
+        BlockRow lastRow = getLastRow();
+        rows.add(new BlockRow(this.x, lastRow.getY() + lastRow.getHeight(), nodeNodeSpacing));
+        getLastRow().addRectangle(rect);
         adjustSizeAdd(rect);
         
     }
@@ -135,6 +123,15 @@ public class Block {
      */
     public void removeChild(final ElkNode rect) {
         this.children.remove(rect);
+        for (BlockRow row : rows) {
+            if (row.getNodes().contains(rect)) {
+                row.removeRectangle(rect, true);
+                if (row.getNodes().isEmpty()) {
+                    rows.remove(row);
+                }
+                break;
+            }
+        }
         adjustSizeAfterRemove();
     }
 
@@ -162,8 +159,10 @@ public class Block {
      */
     public void setLocation(final double xCoord, final double yCoord) {
         adjustChildrensXandY(xCoord - this.x, yCoord - this.y);
-        this.rowX += xCoord - this.x;
-        this.rowY += yCoord - this.y;
+        for (BlockRow row : rows) {
+            row.setX(row.getX() + xCoord - this.x);
+            row.setY(row.getY() + yCoord - this.y);
+        }
         this.x = xCoord;
         this.y = yCoord;
     }
@@ -219,30 +218,10 @@ public class Block {
     }
 
     /**
-     * Sets this stack's x-coordinate.
-     * 
-     * @param xCoordinate
-     *            new x-coordinate.
-     */
-    public void setX(final double xCoordinate) {
-        this.x = xCoordinate;
-    }
-
-    /**
      * Gets this stack's y/coordinate.
      */
     public double getY() {
         return y;
-    }
-
-    /**
-     * Sets this stack's y-coordinate.
-     * 
-     * @param yCoordinate
-     *            new y-coordinate.
-     */
-    public void setY(final double yCoordinate) {
-        this.y = yCoordinate;
     }
 
     /**
@@ -267,13 +246,6 @@ public class Block {
      */
     public double getMinWidth() {
         return minWidth;
-    }
-
-    /**
-     * @return the maxWidth
-     */
-    public double getMaxWidth() {
-        return maxWidth;
     }
 
     /**
@@ -304,22 +276,25 @@ public class Block {
     }
 
     /**
-     * Adjusts size of stack after the addition of a rectangle. Notifies parent.
+     * Adjusts size of block after the addition of a rectangle. Notifies parent.
      * 
      * @param rect
      *            the rectangle that was assigned to this stack.
      */
     private void adjustSizeAdd(final ElkNode rect) {
-        this.widthInRow += rect.getWidth() + nodeNodeSpacing;
-        this.maxWidth = Math.max(maxWidth, widthInRow);
+        double widthOflastRow = getLastRow().getWidth();
+        this.smallestRectWidth = Math.min(smallestRectWidth, rect.getWidth() + nodeNodeSpacing);
+        this.width = Math.max(width, widthOflastRow);
         this.minWidth = Math.max(minWidth, rect.getWidth() + nodeNodeSpacing);
-        this.width = maxWidth;
-
+        
         this.smallestRectHeight = Math.min(smallestRectHeight, rect.getHeight() + nodeNodeSpacing);
-        this.maxHeightInRow = Math.max(maxHeightInRow, rect.getHeight() + nodeNodeSpacing);
         this.maxHeight += rect.getHeight() + nodeNodeSpacing;
         this.minHeight = Math.max(minHeight, rect.getHeight() + nodeNodeSpacing);
-        this.height = maxHeightInRow + rowY - y;
+        double totalHeight = 0;
+        for (BlockRow row : rows) {
+            totalHeight += row.getHeight();
+        }
+        this.height = totalHeight;
         this.averageHeight = maxHeight / this.children.size();
         this.parentRow.notifyAboutNodeChange();
     }
@@ -330,14 +305,19 @@ public class Block {
      * @return width of the rectangle block with specified height
      */
     public double getWidthForTargetHeight(double height) {
+        // Check whether the block would just fit if all rectangles are drawn below each other.
         if (this.maxHeight <= height) {
             return this.minWidth;
         }
-        if (placeRectsIn(this.minWidth, height)) {
+        // Check if the minimal width of the block is enough. This can be the case if some rows have more than one rectangle.
+        if (placeRectsIn(this.minWidth, height, false)) {
             return this.minWidth;
         }
+        
+        // Try out multiples of the widest rectangle as width.
+        // TODO check break criterium, the width might not be the maximum width possible.
         int columns = 2;
-        while (!placeRectsIn(columns * this.minWidth, height) && columns * this.minWidth < this.width) {
+        while (!placeRectsIn(columns * this.minWidth, height, false) && columns * this.minWidth < this.width) {
             columns++;
         }
         return columns * this.minWidth;
@@ -350,30 +330,43 @@ public class Block {
     
     private ElkRectangle placeRectsIn(double width, boolean placeRects) {
         double currentX = 0;
-        double currentY = 0;
+        double currentY = this.y;
         double currentWidth = 0;
         double currentHeight = 0;
         double maxHeightInRow = 0;
         double widthInRow = 0;
+        int row = 0;
+        if (placeRects) {
+            rows.clear();
+            rows.add(new BlockRow(this.x, this.y, nodeNodeSpacing));
+        }
         for (ElkNode rect : children) {
             if (currentX + rect.getWidth() + nodeNodeSpacing > width) {
                 currentX = 0;
-                currentY += maxHeightInRow + nodeNodeSpacing;
+                currentY += maxHeightInRow;
                 currentWidth = Math.max(currentWidth, widthInRow);
                 currentHeight += maxHeightInRow;
                 maxHeightInRow = 0;
                 widthInRow = 0;
+                if (placeRects) {
+                    row++;
+                    rows.add(new BlockRow(this.x, currentY, nodeNodeSpacing));
+                }
             }
             widthInRow += rect.getWidth() + nodeNodeSpacing;
-            maxHeightInRow = Math.max(maxHeightInRow, rect.getHeight());
+            maxHeightInRow = Math.max(maxHeightInRow, rect.getHeight() + nodeNodeSpacing);
             if (placeRects) {
-                rect.setX(currentX + x);
-                rect.setY(currentY + y);
+                rows.get(row).addRectangle(rect);
             }
             currentX += rect.getWidth() + nodeNodeSpacing;
         }
         currentWidth = Math.max(currentWidth, widthInRow);
         currentHeight += maxHeightInRow;
+        if (placeRects) {
+            this.width = currentWidth;
+            this.height = currentHeight;
+            this.parentRow.notifyAboutNodeChange();
+        }
         return new ElkRectangle(x, y, currentWidth, currentHeight);
     }
     
@@ -399,53 +392,38 @@ public class Block {
      * Adjusts size of stack after the removal of a rectangle. Notifies parent.
      */
     private void adjustSizeAfterRemove() {
-        // TODO this is not correct and everything is missing here.
-        this.width = findMaxWidth();
-        this.height = findTotalHeight();
+        // Calculate new width and height
+        double newWidth = 0;
+        double newHeight = 0;
+        List<BlockRow> rowsToDelete = new LinkedList<>();
+        for (BlockRow row : this.rows) {
+            if (row.getNodes().isEmpty()) {
+                rowsToDelete.add(row);
+            } else {
+                newWidth = Math.max(newWidth, row.getWidth());
+                newHeight += row.getHeight();
+            }
+        }
+        rows.removeAll(rowsToDelete);
+        this.height = newHeight;
+        this.width = newWidth;
+        
+        // Calculate new smallest/biggest rectangle.
+        this.minWidth = 0;
+        this.minHeight = 0;
+        this.maxHeight = 0;
+        this.smallestRectHeight = Double.POSITIVE_INFINITY;
+        this.smallestRectWidth = Double.POSITIVE_INFINITY;
+        for (ElkNode rect : children) {
+            this.smallestRectWidth = Math.min(smallestRectWidth, rect.getWidth() + nodeNodeSpacing);
+            this.minWidth = Math.max(minWidth, rect.getWidth() + nodeNodeSpacing);
+            this.minHeight = Math.max(minHeight, rect.getHeight() + nodeNodeSpacing);
+            this.smallestRectHeight = Math.min(smallestRectHeight, rect.getHeight() + nodeNodeSpacing);
+            this.maxHeight += rect.getHeight() + nodeNodeSpacing;
+        }
+        this.averageHeight = maxHeight / this.children.size();
+        
         this.parentRow.notifyAboutNodeChange();
-    }
-
-    /**
-     * Finds maximum width of this object's children.
-     */
-    private double findMaxWidth() {
-        double maxStackWidth = Double.MIN_VALUE;
-        for (ElkNode element : this.children) {
-            maxStackWidth = Math.max(maxStackWidth, element.getWidth() + nodeNodeSpacing);
-        }
-        return maxStackWidth;
-    }
-
-    /**
-     * Finds total height of this object's children.
-     */
-    private double findTotalHeight() {
-        double totalHeight = 0;
-        for (ElkNode element : this.children) {
-            totalHeight += element.getHeight() + nodeNodeSpacing;
-        }
-        return totalHeight;
-    }
-
-    /**
-     * @return the rowY
-     */
-    public double getRowY() {
-        return rowY;
-    }
-
-    /**
-     * @return the widthInRow
-     */
-    public double getWidthInRow() {
-        return widthInRow;
-    }
-
-    /**
-     * @return the rowX
-     */
-    public double getRowX() {
-        return rowX;
     }
 
     /**
@@ -488,5 +466,32 @@ public class Block {
      */
     public void setPositionFixed(boolean positionFixed) {
         this.positionFixed = positionFixed;
+    }
+
+    /**
+     * @return the rows
+     */
+    public List<BlockRow> getRows() {
+        return rows;
+    }
+
+    /**
+     * @return The x position at which the next rect would be added to the last row.
+     */
+    public double getLastRowNewX() {
+        BlockRow lastRow = getLastRow();
+        return lastRow.getX() + lastRow.getWidth();
+    }
+
+    /**
+     * @return The y position at which the rectangles of the last row are placed.
+     */
+    public double getLastRowY() {
+        BlockRow lastRow = getLastRow();
+        return lastRow.getY();
+    }
+    
+    public BlockRow getLastRow() {
+        return this.rows.get(rows.size() - 1);
     }
 }
