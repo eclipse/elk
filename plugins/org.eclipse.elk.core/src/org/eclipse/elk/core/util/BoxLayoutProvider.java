@@ -97,9 +97,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         List<ElkNode> sortedBoxes = sort(parentNode, interactive);
 
         // Work on a copy of the minimum size to avoid changing the property's value
-        KVector minSize = new KVector(parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM));
-        minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
-        minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
+        KVector minSize = ElkUtil.effectiveMinSizeConstraintFor(parentNode);
         
         Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
