@@ -49,12 +49,21 @@ public class RecursiveGraphLayoutEngineTest {
         assertTrue(graph.root.getHeight() > 0);
     }
     
-    @Test(expected = UnsupportedConfigurationException.class)
+    @Test//(expected = UnsupportedConfigurationException.class)
     public void testUnknownAlgorithm() {
         Graph graph = new Graph();
         graph.root.setProperty(CoreOptions.ALGORITHM, "foo.Bar");
         RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-        engine.layout(graph.root, new BasicProgressMonitor());
+        
+        // We expect the layout call to throw an exception
+        try {
+            engine.layout(graph.root, new BasicProgressMonitor());
+        } catch (UnsupportedConfigurationException e) {
+            return;
+        }
+        
+        // If we reach this line, something has failed
+        fail("Layout algorithm foo.Bar resolved to " + graph.root.getProperty(CoreOptions.RESOLVED_ALGORITHM));
     }
     
     private class Graph {
