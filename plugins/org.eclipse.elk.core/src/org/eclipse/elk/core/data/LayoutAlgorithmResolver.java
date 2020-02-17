@@ -30,28 +30,66 @@ public class LayoutAlgorithmResolver implements IGraphElementVisitor {
     }
     
     /**
-     * Resolve the layout algorithm to apply to the content of the given node.
+     * Resolve the layout algorithm to apply to the content of the given node. If no algorithm is configured for the
+     * given node but should be, we try to resolve the {@link #getDefaultLayoutAlgorithmID() default algorithm}. If the
+     * algorithm configured for the node does not exist, an exception is thrown instead.
+     * 
+     * @param node
+     *            the node to resolve the layout algorithm for.
+     * @throws UnsupportedConfigurationException
+     *             if a non-existent layout algorithm was configured for the node.
      */
     protected void resolveAlgorithm(final ElkNode node) {
         String algorithmId = node.getProperty(CoreOptions.ALGORITHM);
-        LayoutAlgorithmData data = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
-                algorithmId, getDefaultLayoutAlgorithmID());
-        if (data != null) {
-            // Assign the algorithm meta data to this node
-            node.setProperty(CoreOptions.RESOLVED_ALGORITHM, data);
-        } else if (mustResolve(node)) {
-            // We must resolve the algorithm for this node, but failed to do so
-            if (algorithmId == null || algorithmId.isEmpty()) {
-                StringBuilder message = new StringBuilder("No layout algorithm has been specified for ");
-                ElkUtil.printElementPath(node, message);
-                throw new UnsupportedConfigurationException(message.toString());
-            } else {
-                StringBuilder message = new StringBuilder("Layout algorithm '");
-                message.append(algorithmId);
-                message.append("' not found for ");
-                ElkUtil.printElementPath(node, message);
-                throw new UnsupportedConfigurationException(message.toString());
-            }
+        
+        // Stage 1: Try to resolve the intended algorithm
+        if (resolveAndSetAlgorithm(algorithmId, node)) {
+            return;
+        }
+        
+        // Stage 2: If we must resolve a layout algorithm, try to fall back on the default if none was specified
+        if (mustResolve(node)) {
+             if (algorithmId == null || algorithmId.trim().isEmpty()) {
+                 // No algorithm was specified, load the default one
+                 String defaultAlgorithmId = getDefaultLayoutAlgorithmID();
+                 
+                 if (!resolveAndSetAlgorithm(getDefaultLayoutAlgorithmID(), node)) {
+                     StringBuilder message = new StringBuilder("Unable to load default layout algorithm ")
+                             .append(defaultAlgorithmId)
+                             .append(" for unconfigured node ");
+                     ElkUtil.printElementPath(node, message);
+                     throw new UnsupportedConfigurationException(message.toString());
+                 }
+             
+             } else {
+                 // An algorithm was specified, but not found. Fail!
+                 StringBuilder message = new StringBuilder("Layout algorithm '")
+                         .append(algorithmId)
+                         .append("' not found for ");
+                 ElkUtil.printElementPath(node, message);
+                 throw new UnsupportedConfigurationException(message.toString());
+             }
+        }
+    }
+    
+    /**
+     * Tries to resolve the layout algorithm with the given ID. If one is found, the node's
+     * {@link CoreOptions#RESOLVED_ALGORITHM} is set accordingly.
+     * 
+     * @param algorithmId
+     *            the algorithm to resolve.
+     * @param node
+     *            the node to resolve it for.
+     * @return {@code true} if the algorithm was resolved and stored.
+     */
+    protected boolean resolveAndSetAlgorithm(final String algorithmId, final ElkNode node) {
+        LayoutAlgorithmData algorithmData = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffix(algorithmId);
+        
+        if (algorithmData != null) {
+            node.setProperty(CoreOptions.RESOLVED_ALGORITHM, algorithmData);
+            return true;
+        } else {
+            return false;
         }
     }
 

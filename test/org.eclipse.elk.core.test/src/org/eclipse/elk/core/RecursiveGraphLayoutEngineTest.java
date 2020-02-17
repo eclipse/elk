@@ -11,6 +11,7 @@ package org.eclipse.elk.core;
 
 import static org.junit.Assert.*;
 
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
@@ -19,6 +20,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -26,16 +28,9 @@ import org.junit.Test;
  */
 public class RecursiveGraphLayoutEngineTest {
     
-    @Test
-    public void testResolvedGraph() {
-        Graph graph = new Graph();
-        LayoutAlgorithmData algorithmData = LayoutMetaDataService.getInstance().getAlgorithmData("org.eclipse.elk.box");
-        graph.root.setProperty(CoreOptions.RESOLVED_ALGORITHM, algorithmData);
-        RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-        engine.layout(graph.root, new BasicProgressMonitor());
-        
-        assertTrue(graph.root.getWidth() > 0);
-        assertTrue(graph.root.getHeight() > 0);
+    @BeforeClass
+    public static void initPlainJavaLayout() {
+        PlainJavaInitialization.initializePlainJavaLayout();
     }
     
     @Test
@@ -49,21 +44,33 @@ public class RecursiveGraphLayoutEngineTest {
         assertTrue(graph.root.getHeight() > 0);
     }
     
-    @Test//(expected = UnsupportedConfigurationException.class)
-    public void testUnknownAlgorithm() {
+    @Test
+    public void testResolvedGraph() {
+        Graph graph = new Graph();
+        LayoutAlgorithmData algorithmData = LayoutMetaDataService.getInstance().getAlgorithmData("org.eclipse.elk.box");
+        graph.root.setProperty(CoreOptions.RESOLVED_ALGORITHM, algorithmData);
+        RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+        engine.layout(graph.root, new BasicProgressMonitor());
+        
+        assertTrue(graph.root.getWidth() > 0);
+        assertTrue(graph.root.getHeight() > 0);
+    }
+    
+    @Test(expected = UnsupportedConfigurationException.class)
+    public void testUnknownAlgorithmId() {
         Graph graph = new Graph();
         graph.root.setProperty(CoreOptions.ALGORITHM, "foo.Bar");
         RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+        engine.layout(graph.root, new BasicProgressMonitor());
+    }
+    
+    @Test
+    public void testEmptyAlgorithmId() {
+        Graph graph = new Graph();
+        RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+        engine.layout(graph.root, new BasicProgressMonitor());
         
-        // We expect the layout call to throw an exception
-        try {
-            engine.layout(graph.root, new BasicProgressMonitor());
-        } catch (UnsupportedConfigurationException e) {
-            return;
-        }
-        
-        // If we reach this line, something has failed
-        fail("Layout algorithm foo.Bar resolved to " + graph.root.getProperty(CoreOptions.RESOLVED_ALGORITHM));
+        assertEquals("org.eclipse.elk.layered", graph.root.getProperty(CoreOptions.RESOLVED_ALGORITHM).getId());
     }
     
     private class Graph {
