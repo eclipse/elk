@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.packing.rectangles.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.elk.graph.ElkNode;
@@ -30,6 +31,8 @@ public class RectRow {
     private double y;
     /** This row's stacks. */
     private final List<Block> children = new ArrayList<Block>();
+    
+    private final List<BlockStack> stacks = new ArrayList<BlockStack>();
 
     //////////////////////////////////////////////////////////////////
     // Constructors.
@@ -64,46 +67,35 @@ public class RectRow {
         this.width = totalStackWidth;
         this.height = newMaxHeight;
     }
+    
+    public void expand(double width, double additionalHeight) {
+        double additionalWidth = width - this.width;
+        double additionalWidthPerStack = additionalWidth / stacks.size();
+        int index = 0;
+        for (BlockStack stack : stacks) {
+            double additionalHeightForStack = this.getHeight() - stack.getHeight() + additionalHeight;
+            stack.setLocation(stack.getX() + index * additionalWidthPerStack, stack.getY());
+            stack.expand(additionalWidthPerStack, additionalHeightForStack);
+            index++;
+        }
+    }
 
     /**
-     * Decreases the y-coordinates of this row and its children (stacks and their respective rectangles).
-     * 
-     * @param verticalDecrease
-     *            amount by which this row's children's y-coordinates should be decreased.
+     * Puts blocks with the same x coordinate in stacks for better expansion calculation.
      */
-//    public void decreaseYRecursively(final double verticalDecrease) {
-//        this.y -= verticalDecrease;
-//        for (Block child : this.children) {
-//            child.setY(child.getY() - verticalDecrease);
-//            child.decreaseChildrensY(verticalDecrease);
-//        }
-//    }
-
-    /**
-     * Increases the y-coordinates of this row and its children (stacks and their respective rectangles).
-     * 
-     * @param verticalIncrease
-     *            amount by which this row's children's y-coordinates should be increased.
-     */
-//    public void increaseYRecursively(final double verticalIncrease) {
-//        this.y += verticalIncrease;
-//        for (Block stack : this.children) {
-//            stack.setY(stack.getY() + verticalIncrease);
-//            stack.increaseChildrensY(verticalIncrease);
-//        }
-//    }
-
-    /**
-     * Decreases the x-coordinates of all children (stacks and their respective rectangles) by the given amount.
-     * 
-     * @param horizontalDecrease
-     *            amount by which this row's children's x-coordinates should be decreased.
-     */
-//    public void decreaseXRecursively(final double horizontalDecrease) {
-//        for (Block stack : this.children) {
-//            stack.adjustXRecursively(stack.getX() - horizontalDecrease);
-//        }
-//    }
+    public void calculateBlockStacks() {
+        double currentX = -1;
+        for (Block block : children) {
+            if (block.getX() != currentX) {
+                stacks.add(new BlockStack(block.getX(), this.y));
+                stacks.get(stacks.size() - 1).addBlock(block);
+                currentX = block.getX();
+            } else {
+                stacks.get(stacks.size() - 1).addBlock(block);
+            }
+        }
+        
+    }
 
     /**
      * Gets the first stack of this row.
@@ -278,5 +270,12 @@ public class RectRow {
      */
     public List<Block> getChildren() {
         return children;
+    }
+
+    /**
+     * @return the stacks
+     */
+    public List<BlockStack> getStacks() {
+        return stacks;
     }
 }

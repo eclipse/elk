@@ -48,6 +48,7 @@ public final class Compaction {
         int nextRowIndex = rowIdx + 1;
         RectRow row = rows.get(rowIdx);
         List<Block> blocks = row.getChildren();
+        double currentX = 0;
         
         // Check for each block whether:
         // The next (or part of the next) block can be put on top of it,
@@ -56,10 +57,11 @@ public final class Compaction {
         for (int blockId = 0; blockId < row.getNumberOfAssignedBlocks(); blockId++) {
             Block block = blocks.get(blockId);
             if (block.isFixed()) {
+                currentX = Math.max(currentX, block.getX() + block.getWidth());
                 continue;
             }
             if (block.getChildren().isEmpty()) {
-                System.out.println("Deleted empty block, this should not happen");
+                System.err.println("There should not be an empty block. Empty blocks are directly removed.");
                 row.removeBlock(block);
                 blockId--;
                 somethingWasChanged = true;
@@ -68,12 +70,12 @@ public final class Compaction {
             
             // Move the block to its new position if something before it was changed and it is moveable.
             if (!block.isPositionFixed()) {
-                double currentX = 0;
+                double newX = 0;
                 if (blockId > 0) {
                     Block previousBlock = row.getChildren().get(blockId - 1);
-                    currentX = previousBlock.getX() + previousBlock.getWidth();
+                    newX = previousBlock.getX() + previousBlock.getWidth();
                 }
-                block.setLocation(currentX, row.getY());
+                block.setLocation(newX, row.getY());
                 block.setPositionFixed(true);
             }
             
@@ -98,7 +100,6 @@ public final class Compaction {
                     somethingWasChanged |= absorbBlocks(row, block, nextBlock, boundingWidth, nodeNodeSpacing);
                                        
                 } else {
-                    System.out.println("The next block is empty? Why?");
                     // Delete empty nextBlock
                     row.removeBlock(nextBlock);
                     break;
@@ -114,11 +115,8 @@ public final class Compaction {
                     rows.get(nextRowIndex).removeBlock(nextBlock);
                     while (rows.size() > nextRowIndex && rows.get(nextRowIndex).getChildren().isEmpty()) {
                         rows.remove(rows.get(nextRowIndex));
-                        System.out.println("Remvoed rows");
-                        // TODO maybe adjust y of other rows
                     }
                     if (rows.size() > nextRowIndex) {
-                        System.out.println("New next block");
                         nextBlock = rows.get(nextRowIndex).getFirstBlock();
                     } else {
                         nextBlock = null;
@@ -153,8 +151,6 @@ public final class Compaction {
                 if (somethingWasChanged) {
                     continue;
                 }
-            } else {
-                System.out.println("There is not new block");
             }
             
             // Optimization 2: Let blocks use the row width if they can
@@ -246,7 +242,6 @@ public final class Compaction {
                 if (rows.size() > nextRowIndex) {
                     rows.get(nextRowIndex).removeBlock(nextBlock);
                     if (rows.get(nextRowIndex).getChildren().isEmpty()) {
-                        System.out.println("Removed row");
                         rows.remove(nextRowIndex);
                     }
                 }
@@ -273,7 +268,6 @@ public final class Compaction {
             if (rows.size() > nextRowIndex) {
                 rows.get(nextRowIndex).removeBlock(nextBlock);
                 if (rows.get(nextRowIndex).getChildren().isEmpty()) {
-                    System.out.println("Removed 2row");
                     rows.remove(nextRowIndex);
                 }
             }

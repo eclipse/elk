@@ -66,6 +66,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
         nodeNodeSpacing = layoutGraph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
         boolean compaction = layoutGraph.getProperty(RectPackingOptions.ROW_COMPACTION);
+        boolean exandToAspectRatio = layoutGraph.getProperty(RectPackingOptions.EXPAND_TO_ASPECT_RATIO);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
@@ -77,7 +78,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         if (!onlyFirstIteration) {
             DrawingUtil.resetCoordinates(rectangles);
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(dar, expandNodes);
-            drawing = secondIt.start(rectangles, drawing.getDrawingWidth(), compaction, nodeNodeSpacing);
+            drawing = secondIt.start(rectangles, drawing.getDrawingWidth(), compaction, exandToAspectRatio, nodeNodeSpacing);
         }
 
         // FINAL TOUCH

@@ -61,45 +61,61 @@ public class RowFillingAndCompaction {
      *            The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
-    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final boolean compaction, final double nodeNodeSpacing) {
+    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth, final boolean compaction,
+            final boolean expandToAspectRatio, final double nodeNodeSpacing) {
         List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth, nodeNodeSpacing);
 
         // Compaction steps
         if (compaction) {
             for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
+                RectRow currentRow = rows.get(rowIdx);
                 int runs = 0;
                 if (rowIdx != 0) {
                     RectRow previousRow = rows.get(rowIdx - 1);
-                    rows.get(rowIdx).setY(previousRow.getY() + previousRow.getHeight());
+                    currentRow.setY(previousRow.getY() + previousRow.getHeight());
                 }
                 boolean somethingChanged = true;
                 while (somethingChanged && runs < 1000) {
                     somethingChanged = Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
-                    System.out.println("Compact is " + somethingChanged + " in run " + runs);
                     runs++;
                 }
-                adjustHeight(rows.get(rowIdx));
+                adjustWidthAndHeight(currentRow);
             }
         }
-        calculateDimensions(rows);
-//
-//        // expand notes if configured.
-////        if (this.expandNodes) {
-////            RectangleExpansion.expand(rows, this.drawingWidth, nodeNodeSpacing);
-////        }
+        calculateDimensions(rows, nodeNodeSpacing);
+        double totalWidth = this.drawingWidth;
+        double additionalHeight = 0;
+        if (expandNodes && expandToAspectRatio) {
+            double aspectRatio = this.drawingWidth / this.drawingHeight;
+            if (aspectRatio < this.dar) {
+                totalWidth = this.drawingHeight * this.dar;
+            } else {
+                additionalHeight = (this.drawingWidth / this.dar) - this.drawingHeight;
+            }
+        }
+        
+        if (this.expandNodes) {
+            for (RectRow row : rows) {
+                row.calculateBlockStacks();
+            }
+            RectangleExpansion.expand(rows, totalWidth, additionalHeight, nodeNodeSpacing);
+        }
 
-        return new DrawingData(this.dar, this.drawingWidth, this.drawingHeight, DrawingDataDescriptor.WHOLE_DRAWING);
+        return new DrawingData(this.dar, totalWidth, this.drawingHeight + additionalHeight, DrawingDataDescriptor.WHOLE_DRAWING);
     }
 
     /**
      * @param rectRow
      */
-    private void adjustHeight(RectRow rectRow) {
+    private void adjustWidthAndHeight(RectRow rectRow) {
         double maxHeight = 0;
+        double maxWidth = 0;
         for (Block block : rectRow.getChildren()) {
             maxHeight = Math.max(maxHeight, block.getHeight());
+            maxWidth = Math.max(maxWidth, block.getX() + block.getWidth());
         }
         rectRow.setHeight(maxHeight);
+        rectRow.setWidth(maxWidth);
     }
 
     //////////////////////////////////////////////////////////////////
@@ -108,7 +124,7 @@ public class RowFillingAndCompaction {
     /**
      * Calculates the maximum width and height for the given list of {@link RectRow}s.
      */
-    private void calculateDimensions(final List<RectRow> rows) {
+    private void calculateDimensions(final List<RectRow> rows, final double nodeNodeSpacing) {
         // new calculation of drawings dimensions.
         double maxWidth = Double.MIN_VALUE;
         double newHeight = 0;
@@ -117,8 +133,8 @@ public class RowFillingAndCompaction {
             newHeight += row.getHeight();
         }
 
-        this.drawingHeight = newHeight;
-        this.drawingWidth = maxWidth;
+        this.drawingHeight = newHeight - nodeNodeSpacing;
+        this.drawingWidth = maxWidth - nodeNodeSpacing;
     }
 
     //////////////////////////////////////////////////////////////////

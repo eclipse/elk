@@ -427,6 +427,22 @@ public class Block {
     }
 
     /**
+     * @param additionalWidthPerBlock
+     * @param additionalHeightForBlock
+     */
+    public void expand(double additionalWidthPerBlock, double additionalHeightForBlock) {
+        double widthForRow = this.width + additionalWidthPerBlock;
+        this.width += additionalWidthPerBlock;
+        this.height += additionalHeightForBlock;
+        double additionalHeightForRow = additionalHeightForBlock / this.rows.size();
+        int index = 0;
+        for (BlockRow row : rows) {
+            row.expand(widthForRow, additionalHeightForRow, index);
+            index++;
+        }
+    }
+
+    /**
      * @return the smallestRectHeight
      */
     public double getSmallestRectHeight() {

@@ -109,6 +109,24 @@ public class BlockRow {
     }
 
     /**
+     * @param widthForRow
+     * @param additionalHeightForRow
+     */
+    public void expand(double widthForRow, double additionalHeightForRow, int index) {
+        double additionalWidthForRect = (widthForRow - this.width) / this.rects.size();
+        int i = 0;
+        this.height += additionalHeightForRow;
+        this.width = widthForRow;
+        for (ElkNode rect : rects) {
+            rect.setX(rect.getX() + i * additionalWidthForRect);
+            rect.setY(rect.getY() + index * additionalHeightForRow);
+            rect.setWidth(rect.getWidth() + additionalWidthForRect);
+            rect.setHeight(this.height - nodeNodeSpacing);
+            i++;
+        }
+    }
+
+    /**
      * @return the y
      */
     public double getY() {
