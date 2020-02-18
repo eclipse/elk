@@ -26,7 +26,7 @@ public class ScaleMeasureFilter implements BestCandidateFilter {
     @Override
     public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
-        double maxScale = Double.MIN_VALUE;
+        double maxScale = Double.NEGATIVE_INFINITY;
         for (DrawingData opt : candidates) {
             maxScale = Math.max(maxScale, opt.getScaleMeasure());
         }
