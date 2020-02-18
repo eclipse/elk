@@ -24,7 +24,7 @@ import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
 public class AreaFilter implements BestCandidateFilter {
 
     @Override
-    public List<DrawingData> filterList(final List<DrawingData> candidates, final double dar) {
+    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
         double minArea = Double.POSITIVE_INFINITY;
         for (DrawingData opt : candidates) {

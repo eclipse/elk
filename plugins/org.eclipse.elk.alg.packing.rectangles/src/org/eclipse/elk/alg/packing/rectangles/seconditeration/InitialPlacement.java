@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.elk.alg.packing.rectangles.util.Block;
 import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
-import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -30,17 +29,14 @@ public final class InitialPlacement {
     }
 
     //////////////////////////////////////////////////////////////////
-    // Main method.
+    // Static methods.
     /**
      * Simply places the rectangles as {@link RectRow}s onto the drawing area, bounded by the calculated bounding box
      * width.
      * 
-     * @param rectangles
-     *            rectangles to be placed.
-     * @param boundingWidth
-     *            bounding box width.
-     * @param nodeNodeSpacing
-     *            The spacing between two nodes.
+     * @param rectangles The rectangles to be placed.
+     * @param boundingWidthThe width of the bounding box.
+     * @param nodeNodeSpacing The spacing between two nodes.
      * @return returns the rows in which the rectangles were placed.
      */
     protected static List<RectRow> place(final List<ElkNode> rectangles, final double boundingWidth, final double nodeNodeSpacing) {
@@ -80,12 +76,12 @@ public final class InitialPlacement {
     
     /**
      * Check whether a rectangle has a similar height as the other rectangles in the block and add it too it depending on
-     * the available space
-     * @param row The row
-     * @param block The block
-     * @param rect The rectangle
-     * @param boundingWidth The bounding width of the row
-     * @param nodeNodeSpacing The spacing between two nodes
+     * the available space.
+     * @param row The row.
+     * @param block The block.
+     * @param rect The rectangle.
+     * @param boundingWidth The bounding width of the row.
+     * @param nodeNodeSpacing The spacing between two nodes.
      * @return true, if the rectangle was successfully added.
      */
     public static boolean placeRectInBlock(final RectRow row, final Block block, final ElkNode rect,
@@ -111,9 +107,10 @@ public final class InitialPlacement {
      * Checks whether a rectangle has a similar height as the other rectangles in a block.
      * @param block The block.
      * @param rect The rectangle.
-     * @return true if the height of the rectangle is similar to the rectangles in the block
+     * @param nodeNodeSpacing The spacing between two nodes.
+     * @return true if the height of the rectangle is similar to the rectangles in the block.
      */
-    public static boolean isSimilarHeight(Block block, ElkNode rect, double nodeNodeSpacing) {
+    public static boolean isSimilarHeight(final Block block, final ElkNode rect, final double nodeNodeSpacing) {
         if (rect.getHeight() + nodeNodeSpacing >= block.getSmallestRectHeight() && rect.getHeight() + nodeNodeSpacing <= block.getMinHeight()) {
             return true;
         } else {

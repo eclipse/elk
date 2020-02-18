@@ -10,8 +10,8 @@
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
 import java.util.List;
+
 import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
-import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**

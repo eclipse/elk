@@ -75,8 +75,9 @@ programmatic option rowCompaction: boolean {
 }
 advanced option expandToAspectRatio: boolean {
     label "Expand nodes to fit aspect ratio."
-    description "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds."
+    description "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
+            The option is only useful if the used strategy is ASPECT_RATIO_DRIVEN."
     targets nodes
     default = false
-    requires org.eclipse.elk.expandNodes == true
+    requires org.eclipse.elk.expandNodes
 }

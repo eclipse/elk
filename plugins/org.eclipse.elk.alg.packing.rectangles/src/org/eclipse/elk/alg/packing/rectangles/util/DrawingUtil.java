@@ -25,12 +25,9 @@ public final class DrawingUtil {
     /**
      * Computes the altered scale measure for a given height and width according to the desired aspect ratio.
      * 
-     * @param width
-     *            given width.
-     * @param height
-     *            given height.
-     * @param dar
-     *            desired aspect ratio.
+     * @param width The given width.
+     * @param height The given height.
+     * @param dar The desired aspect ratio.
      * @return altered scale measure calculated the given parameters.
      */
     public static double computeScaleMeasure(final double width, final double height, final double dar) {

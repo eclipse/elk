@@ -19,13 +19,15 @@ import org.eclipse.elk.graph.ElkNode;
  *
  */
 public class BlockRow {
+    //////////////////////////////////////////////////////////////////
+    // Fields.
     
     /**
-     * y coordinate of the row.
+     * y-coordinate of the row.
      */
     private double x;
     /**
-     * y coordinate of the row.
+     * y-coordinate of the row.
      */
     private double y;
     /**
@@ -41,35 +43,35 @@ public class BlockRow {
      * Spacing between two nodes.
      */
     private final double nodeNodeSpacing;
+    /**
+     * Rectangles assinged to the row.
+     */
     private List<ElkNode> rects = new ArrayList<>();
+
+    //////////////////////////////////////////////////////////////////
+    // Constructors.
     
     /**
      * Create a new BlockRow.
-     * @param y y coordinate of the row
-     * @param maxWidth maximum width, same as the block.
+     * @param y The y-coordinate of the row.
+     * @param x The x-coordinate of the row.
      * @param nodeNodeSpacing Spacing between two rectangles.
      */
-    public BlockRow(double x, double y, double nodeNodeSpacing) {
+    public BlockRow(final double x, final double y, final double nodeNodeSpacing) {
         this.x = x;
         this.y = y;
         this.nodeNodeSpacing = nodeNodeSpacing;
     }
-    
-    /**
-     * Removes all rectangles from the row and resets width and height.
-     */
-    public void clear() {
-        width = 0;
-        height = 0;
-        rects = new ArrayList<>();
-    }
+
+    //////////////////////////////////////////////////////////////////
+    // Public methods.
 
     /**
      * Adds a rectangle to the row.
      * @param rect The rectangle
      * @return true if the rectangle fits in this row.
      */
-    public boolean addRectangle(ElkNode rect) {
+    public boolean addRectangle(final ElkNode rect) {
         this.rects.add(rect);
         rect.setX(x + width);
         rect.setY(y);
@@ -85,7 +87,7 @@ public class BlockRow {
      * @param update If enabled the x and y coordinate of the containing rectangles
      *  and the width and height of the row are updated.
      */
-    public void removeRectangle(ElkNode rect, boolean update) {
+    public void removeRectangle(final ElkNode rect, final boolean update) {
         rects.remove(rect);
         if (update) {
             updateRow();
@@ -109,10 +111,12 @@ public class BlockRow {
     }
 
     /**
-     * @param widthForRow
-     * @param additionalHeightForRow
+     * Expands the row to the given width and by the given additional height.
+     * @param widthForRow The desired width for this row.
+     * @param additionalHeightForRow The additional height for this row.
+     * @param index Index of the row.
      */
-    public void expand(double widthForRow, double additionalHeightForRow, int index) {
+    public void expand(final double widthForRow, final double additionalHeightForRow, final int index) {
         double additionalWidthForRect = (widthForRow - this.width) / this.rects.size();
         int i = 0;
         this.height += additionalHeightForRow;
@@ -125,6 +129,9 @@ public class BlockRow {
             i++;
         }
     }
+    
+    //////////////////////////////////////////////////////////////////
+    // Getters and setters.
 
     /**
      * @return the y
