@@ -12,8 +12,8 @@ All downloads are provided under the terms and conditions of the [Eclipse Founda
 
 ## Nightly Builds
 
-* [Documentation](http://build.eclipse.org/modeling/elk/updates/nightly/elk-nightly-docs.zip)
-* [Update site](http://build.eclipse.org/modeling/elk/updates/nightly)
-* [Zipped update site](http://build.eclipse.org/modeling/elk/updates/nightly/elk-nightly.zip) (for offline use)
+* [Documentation](https://build.eclipse.org/modeling/elk/updates/nightly/elk-nightly-docs.zip)
+* [Update site](https://build.eclipse.org/modeling/elk/updates/nightly)
+* [Zipped update site](https://build.eclipse.org/modeling/elk/updates/nightly/elk-nightly.zip) (for offline use)
 * [Maven central](https://oss.sonatype.org/content/repositories/snapshots/org/eclipse/elk/) (for building pure Java projects that use ELK)
-* [Meta data language compiler](http://build.eclipse.org/modeling/elk/maven/meta/nightly) (for building layout algorithms with Maven)
+* [Meta data language compiler](https://build.eclipse.org/modeling/elk/maven/meta/nightly) (for building layout algorithms with Maven)

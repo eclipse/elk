@@ -28,10 +28,11 @@ cd website
 
 # If nothing has changed, abort
 git add -A
-if git diff --staged --exit-code
-then
+if ! git diff --cached --exit-code; then
   echo "Changes have been detected, publishing to repository."
 
+  git config --global user.email "elk-bot@eclipse.org"
+  git config --global user.name "ELK Bot"
   git commit -m "Nightly website build job"
   git log --graph --abbrev-commit --date=relative -n 5
   git push origin master

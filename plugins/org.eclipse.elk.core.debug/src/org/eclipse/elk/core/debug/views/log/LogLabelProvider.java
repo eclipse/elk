@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.views.log;
 
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
@@ -57,7 +59,16 @@ public class LogLabelProvider extends LabelProvider implements IStyledLabelProvi
     @Override
     public StyledString getStyledText(Object element) {
         if (element instanceof ExecutionInfo) {
-            return new StyledString(((ExecutionInfo) element).getName());
+            ExecutionInfo execution = (ExecutionInfo) element;
+            StyledString text = new StyledString(execution.getName());
+            
+            if (execution.getParent() == null) {
+                // Add the creation time for top-level elements
+                text.append(" (" + DateTimeFormatter.ISO_INSTANT.format(execution.getCreationTime()) + ")",
+                        StyledString.COUNTER_STYLER);
+            }
+            
+            return text;
         } else {
             return null;
         }

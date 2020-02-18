@@ -36,6 +36,10 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.spacing.nodeNode = 20
     supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.priority = 1
+	   documentation 
+	       "Priorities set on nodes determine the order in which connected components are placed:
+            components with a higher sum of node priorities will end up
+            before components with a lower sum."
     supports org.eclipse.elk.separateConnectedComponents = true 
     supports org.eclipse.elk.debugMode
     supports weighting

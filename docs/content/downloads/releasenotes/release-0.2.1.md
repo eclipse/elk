@@ -7,9 +7,9 @@ menu:
 ---
 
 * [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.2.1)
-* [Update site](http://download.eclipse.org/elk/updates/releases/0.2.1/)
-* [Zipped update site](http://download.eclipse.org/elk/updates/releases/0.2.1/elk-0.2.1.zip) (for offline use)
-* [Maven Repository](http://download.eclipse.org/elk/maven/releases/0.2.1) (for meta data language compiler)
+* [Update site](https://download.eclipse.org/elk/updates/releases/0.2.1/)
+* [Zipped update site](https://download.eclipse.org/elk/updates/releases/0.2.1/elk-0.2.1.zip) (for offline use)
+* [Maven Repository](https://download.eclipse.org/elk/maven/releases/0.2.1) (for meta data language compiler)
 
 
 ## Details

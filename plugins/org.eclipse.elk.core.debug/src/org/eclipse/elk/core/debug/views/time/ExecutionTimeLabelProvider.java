@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.views.time;
 
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
@@ -60,7 +62,15 @@ final class ExecutionTimeLabelProvider extends LabelProvider implements IStyledL
             
             switch (displayMode) {
             case NAME:
-                return new StyledString(execution.getName());
+                StyledString text = new StyledString(execution.getName());
+                
+                if (execution.getParent() == null) {
+                    // Add the creation time for top-level elements
+                    text.append(" (" + DateTimeFormatter.ISO_INSTANT.format(execution.getCreationTime()) + ")",
+                            StyledString.COUNTER_STYLER);
+                }
+                
+                return text;
                 
             case TIME_TOTAL:
                 if (execution.isExecutionTimeMeasured()) {
