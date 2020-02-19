@@ -45,7 +45,7 @@ public class BlockRow {
      */
     private final double nodeNodeSpacing;
     /**
-     * Rectangles assinged to the row.
+     * Rectangles assigned to the row.
      */
     private List<ElkNode> rects = new ArrayList<>();
 
