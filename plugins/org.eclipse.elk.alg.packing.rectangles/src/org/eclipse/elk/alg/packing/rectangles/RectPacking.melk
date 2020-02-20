@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -22,38 +22,38 @@ bundle {
 }
 
 //ALGORITHM
-algorithm rectPacking(RectPackingLayoutProvider) {
+algorithm rectPacking (RectPackingLayoutProvider) {
     label "Rectangle Layout."
-    description 
-          "Algorithm for packing of unconnected boxes, i.e. graphs without edges. In the default settings, the algorithm 
-           checks for a case where one big rectangle is present with a lot of smaller rectangles with the same height 
-           and applies a special algorithm to it. If this is not the case, the algorithm then uses to phases. One phase
-           approximates an area where the rectangles can be placed and then another to place them there and align them
-           nicely. Finally, the rectangles are expanded to fill their bounding box and eliminate empty unused spaces."
+    description "Algorithm for packing of unconnected boxes, i.e. graphs without edges. The given order of the boxes
+        is always preserved and the main reading direction of the boxes is left to right. The algorithm is divided into
+        two phases. One phase approximates the width in which the rectangles can be placed. The next phase places the rectangles
+        in rows using the previously calculated width as bounding width and bundles rectangles with a similar height in blocks.
+        A compaction step reduces the size of the drawing.
+        Finally, the rectangles are expanded to fill their bounding box and eliminate empty unused spaces."
+    documentation "@rectpacking.md"
     metadataClass options.RectPackingOptions
     supports org.eclipse.elk.aspectRatio = 1.3
-    supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.expandNodes
-    supports strategy
+    supports org.eclipse.elk.padding = new ElkPadding(15)
+    supports org.eclipse.elk.spacing.nodeNode = 15
+    supports packingStrategy
     supports lastPlaceShift
     supports onlyFirstIteration
-    supports checkForSpecialCase
+    supports rowCompaction
+    supports expandToAspectRatio
 }
-
 //OPTIONS
-advanced option strategy: PackingStrategy {
+advanced option packingStrategy: PackingStrategy {
     label "Packing Strategy"
-    description 
-        "Strategy for approximation of the bounding box given by the first iteration. Determines whether layout is 
-         sorted by scale measure, aspect ratio or area."
+    description "Strategy for approximation of the bounding box given by the first iteration. Determines whether layout is 
+         sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
+    documentation "@packingstrategy.md"
     targets nodes
     default = PackingStrategy.MAX_SCALE_DRIVEN
 }
-    
-advanced option lastPlaceShift: boolean {
-    label "Shift when placing at last placed rectangle."
-    description
-        "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
+programmatic option lastPlaceShift: boolean {
+    label "Shift Last Placed."
+    description "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
          possible to shift the rectangle further to the left or right, resulting in less whitespace. True (default) 
          enables the shift and false disables it. Disabling the shift produces a greater approximated area by the first 
          iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
@@ -62,22 +62,28 @@ advanced option lastPlaceShift: boolean {
     targets nodes
     default = true
 }
-    
 programmatic option onlyFirstIteration: boolean {
-    label "Only first iteration should be executed."
-    description
-       "Determines whether only the first iteration should be executed or not. If set to true, only the first iteration
-        will be executed. When using only the first iteration, rectangles will not be resized to fill their bounding
-        box and eliminate unused whitespace."
-    targets nodes
-     default = false
-} 
-  
-programmatic option checkForSpecialCase: boolean {
-    label "Check for special case one big rectangle."
-    description
-        "Determines whether the algorithm should check for the case that one big rectangle is present with a lot of 
-         smaller rectangles of the same size. If the check is true, a special algorithm for this case is used."
+    label "Only Area Approximation"
+    description "If enabled only the width approximation step is executed and the nodes are placed accordingly.
+        The nodes are layouted according to the packingStrategy.
+        If set to true not expansion of nodes is taking place."
     targets nodes
     default = false
-} 
+}
+programmatic option rowCompaction: boolean {
+    label "Compact Rows"
+    description "Enables compaction. Compacts blocks if they do not use the full height of the row.
+        This option allows to have a smaller drawing.
+        If this option is disabled all nodes are placed next to each other in rows."
+    targets nodes
+    default = true
+}
+advanced option expandToAspectRatio: boolean {
+    label "Fit Aspect Ratio"
+    description "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
+            The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
+            in unreasonable ndoe expansion."
+    targets nodes
+    default = false
+    requires org.eclipse.elk.expandNodes
+}

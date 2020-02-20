@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -14,8 +14,6 @@ import java.util.List;
 import org.eclipse.elk.alg.packing.rectangles.firstiteration.AreaApproximation;
 import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions;
 import org.eclipse.elk.alg.packing.rectangles.seconditeration.RowFillingAndCompaction;
-import org.eclipse.elk.alg.packing.rectangles.specialcase.SpecialCaseFeasibility;
-import org.eclipse.elk.alg.packing.rectangles.specialcase.SpecialCasePlacer;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingUtil;
 import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
@@ -37,54 +35,49 @@ import org.eclipse.elk.graph.ElkNode;
  * </p>
  */
 public class RectPackingLayoutProvider extends AbstractLayoutProvider {
-    /** Desired aspect ratio. */
-    private double dar;
-    /** Packing Strategy. */
-    private PackingStrategy packingStrat;
-    /** Shift when placing behind or below the last placed rectangle. */
-    private boolean lastPlaceShift;
-    /** Only first iteration. */
-    private boolean onlyFirstIteration;
-    /** Check for special case. */
-    private boolean checkSpecialCase;
-    /** Expand nodes to fill the bounding box. */
-    private boolean expandNodes;
-    /** Padding surrounding the drawing. */
-    private ElkPadding padding;
-
     /**
      * Calculating and applying layout to the model.
      */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Rectangle Packing", 1);
-        dar = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
-        packingStrat = layoutGraph.getProperty(RectPackingOptions.STRATEGY);
-        lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
-        onlyFirstIteration = layoutGraph.getProperty(RectPackingOptions.ONLY_FIRST_ITERATION);
-        checkSpecialCase = layoutGraph.getProperty(RectPackingOptions.CHECK_FOR_SPECIAL_CASE);
-        expandNodes = layoutGraph.getProperty(RectPackingOptions.EXPAND_NODES);
-        padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
+        // The desired aspect ratio.
+        double aspectRatio = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
+        // The strategy for the initial width approximation.
+        PackingStrategy strategy = layoutGraph.getProperty(RectPackingOptions.PACKING_STRATEGY);
+        // Option for better width approximation.
+        boolean lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
+        // Option to only do the initial width approximation.
+        boolean onlyFirstIteration = layoutGraph.getProperty(RectPackingOptions.ONLY_FIRST_ITERATION);
+        // Option whether the nodes should be expanded to fill the bounding rectangle.
+        boolean expandNodes = layoutGraph.getProperty(RectPackingOptions.EXPAND_NODES);
+        // The padding surrounding the drawing.
+        ElkPadding padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
+        //  The spacing between two nodes.
+        double nodeNodeSpacing = layoutGraph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
+        // Whether the nodes are compacted after the initial placement.
+        boolean compaction = layoutGraph.getProperty(RectPackingOptions.ROW_COMPACTION);
+        // Whether the nodes should be expanded to fit the aspect ratio during node expansion.
+        // Only effective if nodes are expanded.
+        boolean expandToAspectRatio = layoutGraph.getProperty(RectPackingOptions.EXPAND_TO_ASPECT_RATIO);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
         DrawingData drawing;
 
-        // PLACEMENT ACCORDING TO SETTINGS
-        if (checkSpecialCase && SpecialCaseFeasibility.confirm(rectangles)) {
-            drawing = SpecialCasePlacer.place(rectangles, dar, expandNodes);
-        } else {
-            AreaApproximation firstIt = new AreaApproximation(dar, packingStrat, lastPlaceShift);
-            drawing = firstIt.approxBoundingBox(rectangles);
-            if (!onlyFirstIteration) {
-                DrawingUtil.resetCoordinates(rectangles);
-                RowFillingAndCompaction secondIt = new RowFillingAndCompaction(dar, expandNodes);
-                drawing = secondIt.start(rectangles, drawing.getDrawingWidth());
-            }
+        // Initial width approximation.
+        AreaApproximation firstIt = new AreaApproximation(aspectRatio, strategy, lastPlaceShift);
+        drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
+        
+        // Placement according to approximated width.
+        if (!onlyFirstIteration) {
+            DrawingUtil.resetCoordinates(rectangles);
+            RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
+            drawing = secondIt.start(rectangles, drawing.getDrawingWidth());
         }
 
-        // FINAL TOUCH
-        applyPadding(rectangles);
+        // Final touch.
+        applyPadding(rectangles, padding);
         layoutGraph.setDimensions(drawing.getDrawingWidth() + padding.getHorizontal(),
                 drawing.getDrawingHeight() + padding.getVertical());
 
@@ -97,7 +90,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
      * @param rectangles
      *            list of rectangles that have been placed.
      */
-    private void applyPadding(final List<ElkNode> rectangles) {
+    private static void applyPadding(final List<ElkNode> rectangles, ElkPadding padding) {
         for (ElkNode rect : rectangles) {
             rect.setLocation(rect.getX() + padding.getLeft(), rect.getY() + padding.getTop());
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -22,64 +22,68 @@ import org.eclipse.elk.graph.ElkNode;
  * Class that handles the first iteration of the algorithm, producing an approximated bounding box for the packing.
  */
 public class AreaApproximation {
+    //////////////////////////////////////////////////////////////////
+    // Fields.
     /** Desired aspect ratio. */
-    private double dar;
+    private double aspectRatio;
     /** Packing Strategy. */
-    private PackingStrategy packingStrat;
+    private PackingStrategy strategy;
     /** Shift when placing behind or below the last placed rectangle. */
     private boolean lpShift;
 
+    //////////////////////////////////////////////////////////////////
+    // Constructors.
     /**
      * Constructs an object that the first iteration can be executed on.
      * 
-     * @param desiredAr
-     *            desired aspect ratio.
-     * @param packStrat
-     *            given packing strategy.
-     * @param lpShifting
-     *            indicating whether a shift should happen after placing near the last placed node.
+     * @param aspectRatio The desired aspect ratio.
+     * @param strategy The given packing strategy.
+     * @param lpShift Whether a shift should happen after placing near the last placed node.
      */
-    public AreaApproximation(final double desiredAr, final PackingStrategy packStrat, final boolean lpShifting) {
-        this.dar = desiredAr;
-        this.packingStrat = packStrat;
-        this.lpShift = lpShifting;
+    public AreaApproximation(final double aspectRatio, final PackingStrategy strategy, final boolean lpShift) {
+        this.aspectRatio = aspectRatio;
+        this.strategy = strategy;
+        this.lpShift = lpShift;
     }
 
+
+    //////////////////////////////////////////////////////////////////
+    // Public methods.
     /**
      * Calculates a drawing for the given rectangles according options set in the object creation of
      * {@link AreaApproximation}. This method also sets the coordinates for the rectangles.
      * 
-     * @param rectangles
-     *            the rectangles to place.
-     * @return a drawing calculated by this methods algorithm.
+     * @param rectangles The rectangles to place.
+     * @param nodeNodeSpacing The spacing between two nodes.
+     * @return A drawing calculated by this methods algorithm.
      */
-    public DrawingData approxBoundingBox(final List<ElkNode> rectangles) {
-        // place first box.
+    public DrawingData approxBoundingBox(final List<ElkNode> rectangles, double nodeNodeSpacing) {
+        // Place first box.
         ElkNode firstRect = rectangles.get(0);
         firstRect.setX(0);
         firstRect.setY(0);
         List<ElkNode> placedRects = new ArrayList<>();
         placedRects.add(firstRect);
         ElkNode lastPlaced = firstRect;
-        DrawingData currentValues = new DrawingData(this.dar, firstRect.getWidth(), firstRect.getHeight(),
+        DrawingData currentValues = new DrawingData(this.aspectRatio, firstRect.getWidth(), firstRect.getHeight(),
                 DrawingDataDescriptor.WHOLE_DRAWING);
 
-        // place the other boxes.
+        // Place the other boxes.
         for (int rectangleIdx = 1; rectangleIdx < rectangles.size(); rectangleIdx++) {
             ElkNode toPlace = rectangles.get(rectangleIdx);
 
-            // determine drawing metrics for different candidate positions/placement options
+            // Determine drawing metrics for different candidate positions/placement options
             DrawingData opt1 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_LAST_PLACED_RIGHT, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData opt2 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_LAST_PLACED_BELOW, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData opt3 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_WHOLE_DRAWING_RIGHT, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData opt4 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_WHOLE_DRAWING_BELOW, toPlace,
-                    lastPlaced, currentValues, placedRects);
+                    lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
             DrawingData bestOpt = findBestCandidate(opt1, opt2, opt3, opt4, toPlace, lastPlaced);
 
@@ -94,32 +98,27 @@ public class AreaApproximation {
         return currentValues;
     }
 
-    // HELPING METHODS
+    //////////////////////////////////////////////////////////////////
+    // Helper methods.
 
     /**
      * Determines according to the selected packing strategy, which option out of the given ones is the best.
      * 
-     * @param opt1
-     *            option lastPlaced right.
-     * @param opt2
-     *            option lastPlaced bottom.
-     * @param opt3
-     *            option complete drawing right.
-     * @param opt4
-     *            option complete drawing below.
-     * @param toPlace
-     *            rectangle to be placed on drawing area.
-     * @param lastPlaced
-     *            rectangle that was placed last on the drawing area.
-     * @return returns the best option out of the given ones or null, if there is no best option found.
+     * @param opt1 The option lastPlaced right.
+     * @param opt2 The option lastPlaced bottom.
+     * @param opt3 The option complete drawing right.
+     * @param opt4 The option complete drawing below.
+     * @param toPlace The rectangle to be placed on drawing area.
+     * @param lastPlaced The rectangle that was placed last on the drawing area.
+     * @return Returns the best option out of the given ones or null, if there is no best option found.
      */
     private DrawingData findBestCandidate(final DrawingData opt1, final DrawingData opt2, final DrawingData opt3,
             final DrawingData opt4, final ElkNode toPlace, final ElkNode lastPlaced) {
         List<DrawingData> candidates = Lists.newArrayList(opt1, opt2, opt3, opt4);
         List<BestCandidateFilter> filters = null;
 
-        switch (packingStrat) {
-        // sets the order of the filters according to the given strategy.
+        switch (strategy) {
+        // Sets the order of the filters according to the given strategy.
         case MAX_SCALE_DRIVEN:
             filters = Lists.newArrayList(new ScaleMeasureFilter(), new AreaFilter(), new AspectRatioFilter());
             break;
@@ -132,14 +131,14 @@ public class AreaApproximation {
         default:
         }
 
-        // filter the candidates according to the order of the filters using the strategy pattern.
+        // Filter the candidates according to the order of the filters using the strategy pattern.
         for (BestCandidateFilter filter : filters) {
             if (candidates.size() > 1) {
-                candidates = filter.filterList(candidates, dar);
+                candidates = filter.filterList(candidates, aspectRatio);
             }
         }
 
-        // only one candidate remains.
+        // Only one candidate remains.
         if (candidates.size() == 1) {
             return candidates.get(candidates.size() - 1);
         }
@@ -154,15 +153,11 @@ public class AreaApproximation {
      * Checks the two options and their possible combinations after being sorted out be the packing strategies.
      * Determines the best option depending on the options given.
      * 
-     * @param drawing1
-     *            a drawing to compare.
-     * @param drawing2
-     *            a drawing to compare.
-     * @param lastPlaced
-     *            the rectangle that was last placed before the two drawings were calculated.
-     * @param toPlace
-     *            the rectangle that was newly placed in the two drawings.
-     * @return the better drawing out of the two.
+     * @param drawing1 A drawing to compare.
+     * @param drawing2 A drawing to compare.
+     * @param lastPlaced The rectangle that was last placed before the two drawings were calculated.
+     * @param toPlace The rectangle that was newly placed in the two drawings.
+     * @return The better drawing out of the two.
      */
     private DrawingData checkSpecialCases(final DrawingData drawing1, final DrawingData drawing2,
             final ElkNode lastPlaced, final ElkNode toPlace) {
@@ -235,75 +230,71 @@ public class AreaApproximation {
     /**
      * Calculates drawing data for the given parameters including x and y coordinate for the rectangle toPlace.
      * 
-     * @param option
-     *            the placement option the values are calculated for.
-     * @param toPlace
-     *            the rectangle to be placed.
-     * @param lastPlaced
-     *            the rectangle that was placed last.
-     * @param currDrawing
-     *            current drawing containing width and height, besides others.
-     * @param placedRects
-     *            already placed rectangles.
-     * @return an {@link DrawingData} object containing the values after the rectangle would be placed.
+     * @param option The placement option the values are calculated for.
+     * @param toPlace The rectangle to be placed.
+     * @param lastPlaced The rectangle that was placed last.
+     * @param drawing The current drawing containing width and height, besides others.
+     * @param placedRects The already placed rectangles.
+     * @param nodeNodeSpacing The spacing between two nodes.
+     * @return An {@link DrawingData} object containing the values after the rectangle would be placed.
      */
     private DrawingData calcValuesForOpt(final DrawingDataDescriptor option, final ElkNode toPlace,
-            final ElkNode lastPlaced, final DrawingData currDrawing, final List<ElkNode> placedRects) {
+            final ElkNode lastPlaced, final DrawingData drawing, final List<ElkNode> placedRects, final double nodeNodeSpacing) {
 
-        double potentialXvalue = 0;
-        double potentialYvalue = 0;
-        double currDrawingWidth = currDrawing.getDrawingWidth();
-        double currDrawingHeight = currDrawing.getDrawingHeight();
+        double x = 0;
+        double y = 0;
+        double drawingWidth = drawing.getDrawingWidth();
+        double drawingHeight = drawing.getDrawingHeight();
         double heightToPlace = toPlace.getHeight();
         double widthToPlace = toPlace.getWidth();
 
         double width, height;
         switch (option) {
         case CANDIDATE_POSITION_LAST_PLACED_RIGHT:
-            potentialXvalue = lastPlaced.getX() + lastPlaced.getWidth();
+            x = lastPlaced.getX() + lastPlaced.getWidth() + nodeNodeSpacing;
             if (lpShift) {
-                potentialYvalue = Calculations.calculateYforLPR(potentialXvalue, placedRects, lastPlaced);
+                y = Calculations.calculateYforLPR(x, placedRects, lastPlaced, nodeNodeSpacing);
             } else {
-                potentialYvalue = lastPlaced.getY();
+                y = lastPlaced.getY();
             }
 
-            width = Calculations.getWidthLPRorLPB(currDrawingWidth, potentialXvalue, widthToPlace);
-            height = Calculations.getHeightLPRorLPB(currDrawingHeight, potentialYvalue, heightToPlace);
+            width = Calculations.getWidthLPRorLPB(drawingWidth, x, widthToPlace);
+            height = Calculations.getHeightLPRorLPB(drawingHeight, y, heightToPlace);
             break;
             
         case CANDIDATE_POSITION_LAST_PLACED_BELOW:
-            potentialYvalue = lastPlaced.getY() + lastPlaced.getHeight();
+            y = lastPlaced.getY() + lastPlaced.getHeight() + nodeNodeSpacing;
             if (lpShift) {
-                potentialXvalue = Calculations.calculateXforLPB(potentialYvalue, placedRects, lastPlaced);
+                x = Calculations.calculateXforLPB(y, placedRects, lastPlaced, nodeNodeSpacing);
             } else {
-                potentialXvalue = lastPlaced.getX();
+                x = lastPlaced.getX();
             }
 
-            width = Calculations.getWidthLPRorLPB(currDrawingWidth, potentialXvalue, widthToPlace);
-            height = Calculations.getHeightLPRorLPB(currDrawingHeight, potentialYvalue, heightToPlace);
+            width = Calculations.getWidthLPRorLPB(drawingWidth, x, widthToPlace);
+            height = Calculations.getHeightLPRorLPB(drawingHeight, y, heightToPlace);
             break;
             
         case CANDIDATE_POSITION_WHOLE_DRAWING_RIGHT:
-            potentialXvalue = currDrawingWidth;
-            potentialYvalue = 0;
+            x = drawingWidth + nodeNodeSpacing;
+            y = 0;
 
-            width = currDrawingWidth + widthToPlace;
-            height = Math.max(currDrawingHeight, heightToPlace);
+            width = drawingWidth + nodeNodeSpacing + widthToPlace;
+            height = Math.max(drawingHeight, heightToPlace);
             break;
             
         case CANDIDATE_POSITION_WHOLE_DRAWING_BELOW:
-            potentialXvalue = 0;
-            potentialYvalue = currDrawingHeight;
+            x = 0;
+            y = drawingHeight + nodeNodeSpacing;
 
-            width = Math.max(currDrawingWidth, widthToPlace);
-            height = currDrawingHeight + heightToPlace;
+            width = Math.max(drawingWidth, widthToPlace);
+            height = drawingHeight + nodeNodeSpacing + heightToPlace;
             break;
         default:
             throw new IllegalArgumentException("IllegalPlacementOption.");
         }
 
         // LPR and LPB have more values to be set in newDrawing.
-        DrawingData newDrawing = new DrawingData(dar, width, height, option, potentialXvalue, potentialYvalue);
+        DrawingData newDrawing = new DrawingData(aspectRatio, width, height, option, x, y);
         return newDrawing;
     }
 }

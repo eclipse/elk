@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -22,11 +22,9 @@ public interface BestCandidateFilter {
     /**
      * Filters the given list of {@link DrawingData} objects and returns it.
      * 
-     * @param candidates
-     *            list to be filtered.
-     * @param dar
-     *            desired aspect ratio.
-     * @return a list that is filtered by whatever the implementation filtered for.
+     * @param candidates The list to be filtered.
+     * @param aspectRatio The desired aspect ratio.
+     * @return A list that is filtered by whatever the implementation filtered for.
      */
-    List<DrawingData> filterList(List<DrawingData> candidates, double dar);
+    List<DrawingData> filterList(List<DrawingData> candidates, double aspectRatio);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -25,12 +25,9 @@ public final class DrawingUtil {
     /**
      * Computes the altered scale measure for a given height and width according to the desired aspect ratio.
      * 
-     * @param width
-     *            given width.
-     * @param height
-     *            given height.
-     * @param dar
-     *            desired aspect ratio.
+     * @param width The given width.
+     * @param height The given height.
+     * @param dar The desired aspect ratio.
      * @return altered scale measure calculated the given parameters.
      */
     public static double computeScaleMeasure(final double width, final double height, final double dar) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,12 +10,12 @@
 package org.eclipse.elk.alg.packing.rectangles.seconditeration;
 
 import java.util.List;
-import java.util.ListIterator;
 
+import org.eclipse.elk.alg.packing.rectangles.util.Block;
+import org.eclipse.elk.alg.packing.rectangles.util.BlockStack;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingDataDescriptor;
 import org.eclipse.elk.alg.packing.rectangles.util.RectRow;
-import org.eclipse.elk.alg.packing.rectangles.util.RectStack;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -24,128 +24,128 @@ import org.eclipse.elk.graph.ElkNode;
  */
 public class RowFillingAndCompaction {
     //////////////////////////////////////////////////////////////////
-    // Fields
+    // Fields.
     /** Current drawing width. */
     private double drawingWidth;
     /** Current drawing height. */
     private double drawingHeight;
-    /** Indicates that something was optimized while compacting. */
-    private boolean compactRepeat;
-    /** Indicates that something was optimized while row filling. */
-    private boolean rowFillingRepeatI;
-    /** Indicates that something was optimized while row filling. */
-    private boolean rowFillingRepeatII;
     /** Desired aspect ratio. */
-    private double dar;
+    private double aspectRatio;
     /** Indicates whether to expand the nodes in the end. */
     private boolean expandNodes;
+    /** Indicates whether the drawing should be expanded to fit the aspect ratio. */
+    private boolean expandToAspectRatio;
+    /** Indicates whether the rows of the drawing should be compacted. */
+    private boolean compaction;
+    /** Spacing between two nodes. */
+    private double nodeNodeSpacing;
 
     //////////////////////////////////////////////////////////////////
-    // Constructor
+    // Constructors.
     /**
      * Creates an {@link RowFillingAndCompaction} object to execute the second iteration on.
      * 
-     * @param desiredAr
-     *            desired aspect ratio.
-     * @param expandNodes
-     *            indicates whether to expand the nodes in the end.
+     * @param aspectRatio The desired aspect ratio.
+     * @param expandNodes Whether to expand the nodes in the end.
      */
-    public RowFillingAndCompaction(final double desiredAr, final boolean expandNodes) {
-        this.dar = desiredAr;
+    public RowFillingAndCompaction(final double aspectRatio, final boolean expandNodes, final boolean expandToAspectRatio,
+            final boolean compaction, final double nodeNodeSpacing) {
+        this.aspectRatio = aspectRatio;
         this.expandNodes = expandNodes;
-        this.compactRepeat = true;
-        this.rowFillingRepeatI = true;
-        this.rowFillingRepeatII = true;
+        this.expandToAspectRatio = expandToAspectRatio;
+        this.compaction = compaction;
+        this.nodeNodeSpacing = nodeNodeSpacing;
     }
 
     //////////////////////////////////////////////////////////////////
     // Starting method.
     /**
      * Placement of the rectangles given by {@link ElkNode} inside the given bounding box.
-     * 
-     * @param rectangles
-     *            given set of rectangles to be placed inside the bounding box.
-     * @param boundingBoxWidth
-     *            width of the given bounding box.
+     * @param rectangles The set of rectangles to be placed inside the bounding box.
+     * @param boundingBoxWidth The width of the bounding box.
+     * @param nodeNodeSpacing The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
     public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth) {
-        List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth);
+        // Initial placement for rectangles in blocks in each row.
+        List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth, nodeNodeSpacing);
 
-        for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
-            while (this.compactRepeat || this.rowFillingRepeatI || this.rowFillingRepeatII) {
-                this.compactRepeat = Compaction.compact(rowIdx, rows, boundingBoxWidth);
-
-                if (rowIdx < rows.size() - 1) {
-                    this.rowFillingRepeatI = RowFilling.fill(RowFillStrat.WHOLE_STACK, rowIdx, rows, boundingBoxWidth);
-                    this.rowFillingRepeatII = RowFilling.fill(RowFillStrat.SINGLE_RECT, rowIdx, rows, boundingBoxWidth);
-                } else {
-                    this.rowFillingRepeatI = false;
-                    this.rowFillingRepeatII = false;
+        // Compaction of blocks.
+        if (compaction) {
+            for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
+                RectRow currentRow = rows.get(rowIdx);
+                if (rowIdx != 0) {
+                    RectRow previousRow = rows.get(rowIdx - 1);
+                    currentRow.setY(previousRow.getY() + previousRow.getHeight());
+                }
+                Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
+                adjustWidthAndHeight(currentRow);
+            }
+        } else {
+            // Put every block in its own block stack.
+            for (RectRow row : rows) {
+                for (Block block : row.getChildren()) {
+                    BlockStack stack = new BlockStack(block.getX(), block.getY());
+                    stack.addBlock(block);
+                    row.getStacks().add(stack);
                 }
             }
-            resetImprovementBooleans();
         }
-        deleteEmptyRows(rows);
+         
         calculateDimensions(rows);
-
-        // expand notes if configured.
+        
+        double totalWidth = this.drawingWidth;
+        double additionalHeight = 0;
+        if (expandNodes && expandToAspectRatio) {
+            double aspectRatio = this.drawingWidth / this.drawingHeight;
+            if (aspectRatio < this.aspectRatio) {
+                totalWidth = this.drawingHeight * this.aspectRatio;
+            } else {
+                additionalHeight = (this.drawingWidth / this.aspectRatio) - this.drawingHeight;
+            }
+        }
+        
         if (this.expandNodes) {
-            RectangleExpansion.expand(rows, this.drawingWidth);
+            RectangleExpansion.expand(rows, totalWidth + nodeNodeSpacing, additionalHeight, nodeNodeSpacing);
         }
 
-        return new DrawingData(this.dar, this.drawingWidth, this.drawingHeight, DrawingDataDescriptor.WHOLE_DRAWING);
+        return new DrawingData(this.aspectRatio, totalWidth, this.drawingHeight + additionalHeight, DrawingDataDescriptor.WHOLE_DRAWING);
     }
 
     //////////////////////////////////////////////////////////////////
-    // Helping method.
+    // Helper method.
+
+    /**
+     * Recalculates the width and height of the row.
+     * @param row The row.
+     */
+    private void adjustWidthAndHeight(final RectRow row) {
+        double maxHeight = 0;
+        double maxWidth = 0;
+        for (BlockStack stack : row.getStacks()) {
+            stack.updateDimension();
+            maxHeight = Math.max(maxHeight, stack.getHeight());
+            maxWidth += stack.getWidth();
+        }
+        row.setHeight(maxHeight);
+        row.setWidth(maxWidth);
+    }
 
     /**
      * Calculates the maximum width and height for the given list of {@link RectRow}s.
+     * Since the node node spacing is included in the width of a row, it has to be subtracted.
+     * @param rows The rows.
+     * @param nodeNodeSpacing The spacing between two nodes.
      */
     private void calculateDimensions(final List<RectRow> rows) {
-        // new calculation of drawings dimensions.
-        double maxWidth = Double.MIN_VALUE;
+        double maxWidth = 0;
         double newHeight = 0;
         for (RectRow row : rows) {
             maxWidth = Math.max(maxWidth, row.getWidth());
             newHeight += row.getHeight();
         }
 
-        this.drawingHeight = newHeight;
-        this.drawingWidth = maxWidth;
-    }
-
-    /**
-     * Sets the fields indicating whether improvements have been made to false.
-     */
-    private void resetImprovementBooleans() {
-        this.compactRepeat = true;
-        this.rowFillingRepeatI = true;
-        this.rowFillingRepeatII = true;
-    }
-
-    /**
-     * Removes every empty {@link RectStack} from the given {@link RectRow}s.
-     */
-    private static void deleteEmptyRows(final List<RectRow> rows) {
-        ListIterator<RectRow> iter = rows.listIterator();
-        while (iter.hasNext()) {
-            if (iter.next().hasNoAssignedStacks()) {
-                iter.remove();
-            }
-        }
-    }
-
-    //////////////////////////////////////////////////////////////////
-    // Helping enumerate.
-    /**
-     * Enumerate to identify a row-filling strategy.
-     */
-    protected enum RowFillStrat {
-        /** Fill row with whole stacks. */
-        WHOLE_STACK,
-        /** Fill row with single rectangles. */
-        SINGLE_RECT;
+        this.drawingHeight = newHeight - nodeNodeSpacing;
+        this.drawingWidth = maxWidth - nodeNodeSpacing;
     }
 }
