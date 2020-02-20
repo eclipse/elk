@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -212,6 +212,12 @@ final class GraphConfigurator {
         // If the graph has a label manager, so add label management additions
         if (lgraph.getProperty(LabelManagementOptions.LABEL_MANAGER) != null) {
             configuration.addAll(LABEL_MANAGEMENT_ADDITIONS);
+        }
+        
+        // If the graph should be laid out interactively, add the layers and positions to the nodes.
+        if(lgraph.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)) {
+            configuration.addAfter(LayeredPhases.P5_EDGE_ROUTING, 
+                    IntermediateProcessorStrategy.CONSTRAINTS_POSTPROCESSOR);
         }
 
         // graph transformations for unusual layout directions

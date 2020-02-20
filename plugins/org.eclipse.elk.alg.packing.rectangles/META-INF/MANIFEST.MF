@@ -8,6 +8,7 @@ Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.graph,
  org.eclipse.elk.core,
- com.google.guava
+ com.google.guava,
+ org.eclipse.xtext.xbase.lib;bundle-version="2.10.0"
 Export-Package: org.eclipse.elk.alg.packing.rectangles,
  org.eclipse.elk.alg.packing.rectangles.options

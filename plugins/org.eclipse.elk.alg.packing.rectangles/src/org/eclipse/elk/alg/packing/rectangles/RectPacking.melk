@@ -41,7 +41,12 @@ algorithm rectPacking (RectPackingLayoutProvider) {
     supports onlyFirstIteration
     supports rowCompaction
     supports expandToAspectRatio
+    supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.interactiveLayout
+    supports desiredPosition
+    supports currentPosition
 }
+
 //OPTIONS
 advanced option packingStrategy: PackingStrategy {
     label "Packing Strategy"
@@ -51,6 +56,7 @@ advanced option packingStrategy: PackingStrategy {
     targets nodes
     default = PackingStrategy.MAX_SCALE_DRIVEN
 }
+
 programmatic option lastPlaceShift: boolean {
     label "Shift Last Placed."
     description "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
@@ -62,6 +68,26 @@ programmatic option lastPlaceShift: boolean {
     targets nodes
     default = true
 }
+
+output option currentPosition: int {
+    label "Current position of a node in the order of nodes"
+    description "The rectangles are ordered. Normally according to their definition the the model.
+                 This option specifies the current position of a node."
+    default = -1
+    lowerBound = -1
+    targets nodes
+}
+
+advanced option desiredPosition: int {
+    label "Desired index of node"
+    description "The rectangles are ordered. Normally according to their definition the the model.
+                 This option allows to specify a desired position that has preference over the
+                 original position."
+    default = -1
+    lowerBound = -1
+    targets nodes
+}
+
 programmatic option onlyFirstIteration: boolean {
     label "Only Area Approximation"
     description "If enabled only the width approximation step is executed and the nodes are placed accordingly.
@@ -70,6 +96,7 @@ programmatic option onlyFirstIteration: boolean {
     targets nodes
     default = false
 }
+
 programmatic option rowCompaction: boolean {
     label "Compact Rows"
     description "Enables compaction. Compacts blocks if they do not use the full height of the row.
@@ -78,6 +105,7 @@ programmatic option rowCompaction: boolean {
     targets nodes
     default = true
 }
+
 advanced option expandToAspectRatio: boolean {
     label "Fit Aspect Ratio"
     description "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.

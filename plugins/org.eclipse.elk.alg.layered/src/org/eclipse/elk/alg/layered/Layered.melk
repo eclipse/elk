@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 Kiel University and others.
+ * Copyright (c) 2015, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -23,12 +23,12 @@ import org.eclipse.elk.core.util.ExclusiveBounds
  * Declarations for the ELK Layered layout algorithm.
  */
 bundle {
-    metadataClass options.LayeredMetaDataProvider  
+    metadataClass options.LayeredMetaDataProvider
     idPrefix org.eclipse.elk.layered  
 } 
 
 algorithm layered(LayeredLayoutProvider) {
-	label "ELK Layered" 
+	label "ELK Layered"
 	description
 		"Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
 		possible into one direction by placing nodes into subsequent layers. This implementation
@@ -77,7 +77,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports wrapping.cutting.cuts
     supports wrapping.cutting.msd.freedom
     supports wrapping.validify.strategy
-    supports wrapping.validify.forbiddenIndices 
+    supports wrapping.validify.forbiddenIndices
     supports wrapping.multiEdge.improveCuts
     supports wrapping.multiEdge.distancePenalty
     supports wrapping.multiEdge.improveWrappedEdges
@@ -87,52 +87,52 @@ algorithm layered(LayeredLayoutProvider) {
     // splines
     supports edgeRouting.splines.mode
     supports edgeRouting.splines.sloppy.layerSpacingFactor
-	// other options
-	supports org.eclipse.elk.padding = new ElkPadding(12)
-	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
-	supports org.eclipse.elk.port.borderOffset = 0
-	supports org.eclipse.elk.randomSeed = 1
-	supports org.eclipse.elk.aspectRatio = 1.6f
-	supports org.eclipse.elk.noLayout
-	supports org.eclipse.elk.portConstraints
-	supports org.eclipse.elk.port.side
-	supports org.eclipse.elk.debugMode
-	supports org.eclipse.elk.alignment
-	supports org.eclipse.elk.hierarchyHandling
-	supports org.eclipse.elk.separateConnectedComponents = true
-	supports org.eclipse.elk.insideSelfLoops.activate
-	supports org.eclipse.elk.insideSelfLoops.yo
-	supports org.eclipse.elk.nodeSize.constraints
-	supports org.eclipse.elk.nodeSize.options
-	supports org.eclipse.elk.direction = Direction.UNDEFINED
-	supports org.eclipse.elk.nodeLabels.placement
-	supports org.eclipse.elk.nodeLabels.padding
-	supports org.eclipse.elk.portLabels.placement
+    // other options
+    supports org.eclipse.elk.padding = new ElkPadding(12)
+    supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+    supports org.eclipse.elk.port.borderOffset = 0
+    supports org.eclipse.elk.randomSeed = 1
+    supports org.eclipse.elk.aspectRatio = 1.6f
+    supports org.eclipse.elk.noLayout
+    supports org.eclipse.elk.portConstraints
+    supports org.eclipse.elk.port.side
+    supports org.eclipse.elk.debugMode
+    supports org.eclipse.elk.alignment
+    supports org.eclipse.elk.hierarchyHandling
+    supports org.eclipse.elk.separateConnectedComponents = true
+    supports org.eclipse.elk.insideSelfLoops.activate
+    supports org.eclipse.elk.insideSelfLoops.yo
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.direction = Direction.UNDEFINED
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.nodeLabels.padding
+    supports org.eclipse.elk.portLabels.placement
     supports org.eclipse.elk.portLabels.nextToPortIfPossible
-	supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
-	supports org.eclipse.elk.portAlignment.north
-	supports org.eclipse.elk.portAlignment.south
-	supports org.eclipse.elk.portAlignment.west
-	supports org.eclipse.elk.portAlignment.east
-	supports unnecessaryBendpoints
-	supports org.eclipse.elk.alg.layered.layering.strategy
-	supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
-	supports thoroughness
-	supports org.eclipse.elk.alg.layered.layering.layerConstraint
-	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
-	supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
-	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
-	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
-	supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
-	supports mergeEdges
-	supports mergeHierarchyEdges
-	supports interactiveReferencePoint
-	supports org.eclipse.elk.alg.layered.nodePlacement.strategy
-	supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
-	supports feedbackEdges
-	supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
-	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
-	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
+    supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
+    supports org.eclipse.elk.portAlignment.north
+    supports org.eclipse.elk.portAlignment.south
+    supports org.eclipse.elk.portAlignment.west
+    supports org.eclipse.elk.portAlignment.east
+    supports unnecessaryBendpoints
+    supports org.eclipse.elk.alg.layered.layering.strategy
+    supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
+    supports thoroughness
+    supports org.eclipse.elk.alg.layered.layering.layerConstraint
+    supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
+    supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+    supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
+    supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
+    supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
+    supports mergeEdges
+    supports mergeHierarchyEdges
+    supports interactiveReferencePoint
+    supports org.eclipse.elk.alg.layered.nodePlacement.strategy
+    supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
+    supports feedbackEdges
+    supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
+    supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
+    supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
     supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
 	supports contentAlignment
 	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
@@ -160,7 +160,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports northOrSouthPort
     supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
     supports edgeLabels.sideSelection
-	supports edgeLabels.centerLabelPlacementStrategy
+    supports edgeLabels.centerLabelPlacementStrategy
     supports org.eclipse.elk.margins
     supports layering.coffmanGraham.layerBound
     supports nodePlacement.favorStraightEdges
@@ -168,6 +168,11 @@ algorithm layered(LayeredLayoutProvider) {
     supports directionCongruency
     supports portSortingStrategy
     supports edgeRouting.polyline.slopedEdgeZoneWidth
+    supports layering.layerChoiceConstraint
+    supports crossingMinimization.positionChoiceConstraint
+    supports org.eclipse.elk.interactiveLayout
+    supports layering.layerID
+    supports crossingMinimization.positionID
 }
 
 
@@ -219,8 +224,27 @@ group layering {
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers
     }
-    
-    
+
+    advanced option layerChoiceConstraint: int {
+        label "Layer Choice Constraint"
+        description "Allows to set a constraint regarding the layer placement of a node. 
+                     Assumed the drawing has n layers and i < n.
+                     If set to i, it expresses that the node should be placed in i-th layer.
+                     Should i>=n be true then the node is placed in the last layer of the drawing.
+                    "
+        default = -1
+        lowerBound = -1
+        targets nodes
+    }
+
+    output option layerID: int {
+        label "Layer ID"
+        description "Layer identifier that was calculated by Elk Layered for a node"
+        default = -1
+        lowerBound = -1
+        targets nodes
+    }
+
     group minWidth {
         
         advanced option upperBoundOnWidth: int {
@@ -298,14 +322,14 @@ group crossingMinimization {
         default = CrossingMinimizationStrategy.LAYER_SWEEP
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.crossMin
-    } 
+    }
     
     advanced option hierarchicalSweepiness: double {
         label "Hierarchical Sweepiness"
-        description "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."  
+        description "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."
         default = 0.1
         targets parents
-        requires org.eclipse.elk.hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN 
+        requires org.eclipse.elk.hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN
     }
     
     group greedySwitch {
@@ -315,11 +339,11 @@ group crossingMinimization {
             description 
                 "By default it is decided automatically if the greedy switch is activated or not. 
                  The decision is based on whether the size of the input graph (without dummy nodes) 
-                 is smaller than the value of this option. A '0' enforces the activation."    
+                 is smaller than the value of this option. A '0' enforces the activation."
             default = 40
             targets parents
             lowerBound = 0
-        } 
+        }
         
         advanced option type: GreedySwitchType {
             label "Greedy Switch Crossing Minimization"
@@ -329,7 +353,7 @@ group crossingMinimization {
             default = GreedySwitchType.TWO_SIDED
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
-        }        
+        }
     }
     
     advanced option semiInteractive: boolean {
@@ -342,7 +366,26 @@ group crossingMinimization {
 		targets parents
 		requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
     }
-    
+
+    advanced option positionChoiceConstraint: int {
+        label "Position Choice Constraint"
+        description "Allows to set a constraint regarding the position placement of a node in a layer. 
+                     Assumed the layer in which the node placed includes n other nodes and i < n.
+                     If set to i, it expresses that the node should be placed at the i-th position.
+                     Should i>=n be true then the node is placed at the last position in the layer.
+                    "
+        default = -1
+        lowerBound = -1
+        targets nodes
+    }
+
+    output option positionID: int {
+        label "Position ID"
+        description "Position within a layer that was determined by ELK Layered for a node."
+        default = -1
+        lowerBound = -1
+        targets nodes
+    }
 }
 
 
@@ -354,7 +397,7 @@ group nodePlacement {
     option strategy: NodePlacementStrategy {
         label "Node Placement Strategy"
         description "Strategy for node placement."
-        default = NodePlacementStrategy.BRANDES_KOEPF 
+        default = NodePlacementStrategy.BRANDES_KOEPF
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.nodePlace
     }
@@ -367,7 +410,7 @@ group nodePlacement {
              For an orthogonal style it is set to true, for all other styles to false."
         // no default, see description
         targets parents
-        requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX 
+        requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX
         requires strategy == NodePlacementStrategy.BRANDES_KOEPF
     }
     
@@ -435,7 +478,7 @@ group nodePlacement {
                 description "Default value of the 'nodeFlexibility' option for the children of a hierarchical node."
                 default = NodeFlexibility.NONE
                 targets parents   
-                requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX     
+                requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX
             }
         }
     }
@@ -703,8 +746,8 @@ group wrapping {
             targets parents
             requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
             requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
-        } 
-      
+        }
+
         advanced option cuts: List<Integer> {
             label "Manually Specified Cuts"
             description "Allows the user to specify her own cuts for a certain graph."
@@ -720,7 +763,7 @@ group wrapping {
                      should be split into. The freedom specifies how much the strategy may deviate from this guess.
                      E.g. if an initial number of 3 is computed, a freedom of 1 allows 2, 3, and 4 cuts."
                 default = 1
-                lowerBound = 0     
+                lowerBound = 0
                 targets parents
                 requires wrapping.cutting.strategy == CuttingStrategy.MSD
             }
@@ -734,7 +777,7 @@ group wrapping {
             description 
                 "When wrapping graphs, one can specify indices that are not allowed as split points.  
                  The validification strategy makes sure every computed split point is allowed."
-            default = ValidifyStrategy.GREEDY 
+            default = ValidifyStrategy.GREEDY
             targets parents
             requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
             requires wrapping.strategy == WrappingStrategy.MULTI_EDGE

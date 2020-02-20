@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -132,7 +132,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     BIG_NODES_POSTPROCESSOR,
 
     // After Phase 5
-
+    
+    /** Adds the layer and positions that were computed to the nodes. */
+    CONSTRAINTS_POSTPROCESSOR,
     /** Reinserts and places comment boxes that have been removed before. */
     COMMENT_POSTPROCESSOR,
     /** Moves hypernodes horizontally for better placement. */
@@ -328,6 +330,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case SELF_LOOP_POSTPROCESSOR:
             return new SelfLoopPostProcessor();
+        
+        case CONSTRAINTS_POSTPROCESSOR:
+            return new ConstraintsPostprocessor();
             
         case SELF_LOOP_ROUTER:
             return new SelfLoopRouter();
