@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.packing.rectangles.util;
 /**
  * Specifies the strategy employed to pack rectangles sequentially during {@link AreaApproximation}.
  */
-public enum PackingStrategy {
+public enum OptimizationGoal {
     /** Aspect ratio-driven packing heuristic. */
     ASPECT_RATIO_DRIVEN,
     /** Max scale-driven packing heuristic. */

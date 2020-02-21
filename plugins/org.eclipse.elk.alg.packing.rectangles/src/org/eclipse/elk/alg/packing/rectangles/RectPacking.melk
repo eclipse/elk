@@ -12,8 +12,8 @@ package org.eclipse.elk.alg.packing.rectangles
 /* Metadata file for rectangle packing algorithms. Enables support for options and specifies auto-generated files.
  */
 import org.eclipse.elk.alg.packing.rectangles.RectPackingLayoutProvider
-import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.alg.packing.rectangles.util.OptimizationGoal
 
 //BUNDLE
 bundle {
@@ -36,7 +36,7 @@ algorithm rectPacking (RectPackingLayoutProvider) {
     supports org.eclipse.elk.expandNodes
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
-    supports packingStrategy
+    supports optimizationGoal
     supports lastPlaceShift
     supports onlyFirstIteration
     supports rowCompaction
@@ -48,13 +48,13 @@ algorithm rectPacking (RectPackingLayoutProvider) {
 }
 
 //OPTIONS
-advanced option packingStrategy: PackingStrategy {
-    label "Packing Strategy"
-    description "Strategy for approximation of the bounding box given by the first iteration. Determines whether layout is 
+advanced option optimizationGoal: OptimizationGoal {
+    label "Optimization Goal"
+    description "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
          sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
     documentation "@packingstrategy.md"
     targets nodes
-    default = PackingStrategy.MAX_SCALE_DRIVEN
+    default = OptimizationGoal.MAX_SCALE_DRIVEN
 }
 
 programmatic option lastPlaceShift: boolean {

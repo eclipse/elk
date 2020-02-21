@@ -16,7 +16,7 @@ import org.eclipse.elk.alg.packing.rectangles.options.RectPackingOptions;
 import org.eclipse.elk.alg.packing.rectangles.seconditeration.RowFillingAndCompaction;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingUtil;
-import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
+import org.eclipse.elk.alg.packing.rectangles.util.OptimizationGoal;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -47,7 +47,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // The desired aspect ratio.
         double aspectRatio = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
         // The strategy for the initial width approximation.
-        PackingStrategy strategy = layoutGraph.getProperty(RectPackingOptions.PACKING_STRATEGY);
+        OptimizationGoal goal = layoutGraph.getProperty(RectPackingOptions.OPTIMIZATION_GOAL);
         // Option for better width approximation.
         boolean lastPlaceShift = layoutGraph.getProperty(RectPackingOptions.LAST_PLACE_SHIFT);
         // Option to only do the initial width approximation.
@@ -102,7 +102,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         }
         
         // Initial width approximation.
-        AreaApproximation firstIt = new AreaApproximation(aspectRatio, strategy, lastPlaceShift);
+        AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
         drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
         
         // Placement according to approximated width.
