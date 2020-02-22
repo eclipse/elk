@@ -68,10 +68,10 @@ public final class PortContext {
         // they are to be placed inside or outside
         switch (parentNodeContext.portLabelsPlacement) {
         case INSIDE:
-            if (parentNodeContext.treatAsCompoundNode && parentNodeContext.portLabelsNextToPort) {
-                // Compound node more is active _and_ the presence of connections to the inside actually makes
-                // a difference
-                labelsNextToPort = !port.hasCompoundConnections();
+            if (parentNodeContext.treatAsCompoundNode) {
+                // There might be connections to the inside. That means that we may want to place port labels next to
+                // their port, if possible
+                labelsNextToPort = parentNodeContext.portLabelsNextToPort && !port.hasCompoundConnections();
                 
             } else {
                 labelsNextToPort = true;
