@@ -23,7 +23,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
       Update site for the Eclipse Layout Kernel, version 0.5.0.
     </description>
     ```
-1. Remove the `DeployWebsite` stage from the release build's `Jenkinsfile`.
+1. Remove the `DeployWebsite` stage from the release build's `Jenkinsfile` and update the build variables at the top of the `Jenkinsfile`.
 1. Update the _ReleaseNightly_ build and run it.
 1. Update the version numbers on `master`.
 
