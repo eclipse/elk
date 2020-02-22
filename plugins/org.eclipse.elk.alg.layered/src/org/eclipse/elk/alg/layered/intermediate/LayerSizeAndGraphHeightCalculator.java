@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -40,16 +40,15 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Layer size calculation", 1);
         
         // Remember the lowest and the highest y coordinates
         double minY = Double.POSITIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;
-
+        
+        boolean foundNodes = false;
         for (Layer layer : layeredGraph) {
             // Retrieve and reset layer size (just to be sure...)
             KVector layerSize = layer.getSize();
@@ -60,6 +59,8 @@ public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor
             if (layer.getNodes().isEmpty()) {
                 continue;
             }
+            
+            foundNodes = true;
             
             // Calculate the layer's width
             for (LNode node : layer) {
@@ -92,6 +93,13 @@ public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor
             maxY = Math.max(maxY, bottom);
         }
         
+        // If we didn't find any nodes in the graph, be sure to set the values properly. This can happen if a connected
+        // component only contains external ports.
+        if (!foundNodes) {
+            minY = 0;
+            maxY = 0;
+        }
+
         // Set the graph's height
         layeredGraph.getSize().y = maxY - minY;
         layeredGraph.getOffset().y -= minY;
