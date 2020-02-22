@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
+import java.util.Collection;
 import java.util.EnumSet;
 
 import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
@@ -199,22 +200,24 @@ public final class NodeLabelAndSizeUtilities {
     }
     
     /**
-     * Checks whether compound node mode should be active for the given part. Depending on the configuration, the user
-     * may want us to only offset port labels if their port actually has a connection to the inside. That's basically
-     * what this method is all about.
+     * Outside ports usually have their labels placed below or to the right. The first port, however, may have its label
+     * placed on the other side. This is true if several conditions apply:
+     * <ul>
+     *   <li>The port actually wants its label to be placed next to it.</li>
+     *   <li>There are only two ports or space-efficient port label placement is turned on.</li>
+     * </ul>
      */
-    public static boolean effectiveCompoundNodeMode(final PortContext portContext) {
-        if (!portContext.parentNodeContext.treatAsCompoundNode) {
-            // Compound node mode was already off, so spare us the hassle
-            return false;
+    public static boolean isFirstOutsidePortLabelPlacedDifferently(final NodeContext nodeContext,
+            final PortSide portSide) {
+        
+        Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
+        if (portContexts.size() >= 2) {
+            PortContext firstPort = portContexts.iterator().next();
             
-        } else if (portContext.parentNodeContext.node.getProperty(CoreOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE)) {
-            // Compound node more is active _and_ the presence of connections to the inside actually makes a difference
-            return portContext.port.hasCompoundConnections();
-            
+            return !firstPort.labelsNextToPort && (portContexts.size() == 2
+                    || nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS));
         } else {
-            // Compound node mode is active, but we treat all ports as if they had connections to the inside
-            return true;
+            return false;
         }
     }
     
