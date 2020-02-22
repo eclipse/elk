@@ -69,11 +69,13 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
         if (layeredGraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             PortLabelPlacement portLabelPlacement = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
             boolean placeNextToPort = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE);
+            boolean treatAsGroup = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_TREAT_AS_GROUP);
             
             for (Layer layer : layeredGraph.getLayers()) {
                 layer.getNodes().stream()
                         .filter(node -> node.getType() == NodeType.EXTERNAL_PORT)
-                        .forEach(dummy -> placeExternalPortDummyLabels(dummy, portLabelPlacement, placeNextToPort));
+                        .forEach(dummy -> placeExternalPortDummyLabels(
+                                dummy, portLabelPlacement, placeNextToPort, treatAsGroup));
             }
         }
         
@@ -85,7 +87,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
      * will reserve enough space for the labels to be placed once label and node placement is called on the graph.
      */
     private void placeExternalPortDummyLabels(final LNode dummy, final PortLabelPlacement graphPortLabelPlacement,
-            final boolean placeNextToPortIfPossible) {
+            final boolean placeNextToPortIfPossible, final boolean treatAsGroup) {
         
         double labelPortSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT);
         double labelLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
@@ -118,7 +120,10 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 
             case EAST:
                 if (labelNextToPort(dummyPort, placeNextToPortIfPossible)) {
-                    portLabelBox.y = (dummySize.y - portLabelBox.height) / 2 - dummyPortPos.y;
+                    double labelHeight = treatAsGroup
+                            ? portLabelBox.height
+                            : dummyPort.getLabels().get(0).getSize().y;
+                    portLabelBox.y = (dummySize.y - labelHeight) / 2 - dummyPortPos.y;
                 } else {
                     portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
                 }
@@ -127,7 +132,10 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 
             case WEST:
                 if (labelNextToPort(dummyPort, placeNextToPortIfPossible)) {
-                    portLabelBox.y = (dummySize.y - portLabelBox.height) / 2 - dummyPortPos.y;
+                    double labelHeight = treatAsGroup
+                            ? portLabelBox.height
+                            : dummyPort.getLabels().get(0).getSize().y;
+                    portLabelBox.y = (dummySize.y - labelHeight) / 2 - dummyPortPos.y;
                 } else {
                     portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
                 }
@@ -143,6 +151,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 
             case EAST:
             case WEST:
+                // TODO Fix this
+                // We would have to respect the next-to-port option here as well, but for that we would have to find
+                // out if the port has any connections to the outside.
                 portLabelBox.y = dummyPortPos.y + labelPortSpacing;
                 break;
             }
