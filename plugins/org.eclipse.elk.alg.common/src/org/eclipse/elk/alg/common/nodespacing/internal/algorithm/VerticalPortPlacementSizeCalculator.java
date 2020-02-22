@@ -295,9 +295,20 @@ public final class VerticalPortPlacementSizeCalculator {
                     // The label is placed next to the port
                     double portHeight = portContext.port.getSize().y;
                     if (labelHeight > portHeight) {
-                        double overhang = (labelHeight - portHeight) / 2;
-                        portContext.portMargin.top = overhang;
-                        portContext.portMargin.bottom = overhang;
+                        if (nodeContext.portLabelsTreatAsGroup || portContext.portLabelCell.getLabels().size() == 1) {
+                            // We are to center all of the labels
+                            double overhang = (labelHeight - portHeight) / 2;
+                            portContext.portMargin.top = overhang;
+                            portContext.portMargin.bottom = overhang;
+                            
+                        } else {
+                            // Simulate centering the first port label
+                            double firstLabelHeight = portContext.portLabelCell.getLabels().get(0).getSize().y;
+                            double firstLabelOverhang = (firstLabelHeight - portHeight) / 2;
+                            
+                            portContext.portMargin.top = Math.max(0, firstLabelOverhang);
+                            portContext.portMargin.bottom = labelHeight - firstLabelOverhang - portHeight;
+                        }
                     }
                     
                 } else {

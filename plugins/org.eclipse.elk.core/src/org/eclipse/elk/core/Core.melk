@@ -612,6 +612,15 @@ group portLabels {
         default = false
         targets nodes
     }
+    option treatAsGroup: boolean {
+        label "Treat Port Labels as Group"
+        description "If this option is true (default), the labels of a port will be treated as a group when
+           it comes to centering them next to their port. If this option is false, only the first label will
+           be centered next to the port, with the others being placed below. This only applies to labels of
+           eastern and western ports and will have no effect if labels are not placed next to their port."
+        default = true
+        targets nodes
+    }
 }
 programmatic option scaleFactor: double {
     label "Scale Factor"
