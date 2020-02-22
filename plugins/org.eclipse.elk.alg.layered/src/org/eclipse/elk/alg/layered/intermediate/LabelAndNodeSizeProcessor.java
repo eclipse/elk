@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -51,19 +51,16 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * </dl>
  * 
  * @see LabelSideSelector
- * @author cds
  */
 public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph> {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Node and Port Label Placement and Node Sizing", 1);
         
         NodeDimensionCalculation.calculateLabelAndNodeSizes(LGraphAdapters.adapt(
                 layeredGraph,
-                false,
+                true,
                 true,
                 node -> node.getType() == NodeType.NORMAL || node.getType() == NodeType.BIG_NODE));
         
