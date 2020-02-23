@@ -13,14 +13,14 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.conn.graphiti</artifactId>
   <name>ELK Layout Connector for Graphiti</name>
-  <version>0.6.0</version>
+  <version>0.6.1</version>
   <packaging>eclipse-plugin</packaging>
 
   <build>

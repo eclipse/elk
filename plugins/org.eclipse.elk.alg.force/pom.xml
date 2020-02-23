@@ -13,14 +13,14 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.force</artifactId>
   <name>ELK Force Layout Algorithm</name>
-  <version>0.6.0</version>
+  <version>0.6.1</version>
   <description>Layout algorithm based on the force approach.</description>
   <packaging>eclipse-plugin</packaging>
 

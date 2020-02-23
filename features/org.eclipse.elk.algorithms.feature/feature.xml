@@ -11,7 +11,7 @@
 <feature
       id="org.eclipse.elk.algorithms.feature"
       label="Eclipse Layout Kernel (Incubation) - Layout Algorithms"
-      version="0.6.0"
+      version="0.6.1"
       provider-name="Eclipse Layout Kernel"
       plugin="org.eclipse.elk.core">
 

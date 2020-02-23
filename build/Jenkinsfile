@@ -24,34 +24,34 @@ pipeline {
     string(
       name: 'BRANCH',
       description: 'The repository branch to checkout.',
-      defaultValue: 'releases/0.6.0'
+      defaultValue: 'releases/0.6.1'
     )
 
     // For the version number
     string(
       name: 'VERSION',
       description: 'The build version number. Used to generate download file names.',
-      defaultValue: '0.6.0'
+      defaultValue: '0.6.1'
     )
 
     // Regarding the meta-data compiler...
     string(
       name: 'META_REPOSITORY_URL',
       description: 'URL of the repository the meta data compiler will be published at.',
-      defaultValue: 'http://build.eclipse.org/modeling/elk/maven/meta/0.6.0'
+      defaultValue: 'http://build.eclipse.org/modeling/elk/maven/meta/0.6.1'
     )
 
     string(
       name: 'META_PUBLISH_URL',
       description: 'Path to the repository the meta data compiler will be published at.',
-      defaultValue: 'file:///shared/modeling/elk/maven/meta/0.6.0/'
+      defaultValue: 'file:///shared/modeling/elk/maven/meta/0.6.1/'
     )
 
     // Regarding ELK proper...
     string(
       name: 'ELK_TARGET_DIR',
       description: 'Path to the directory the build will copy all downloadable artifacts to.',
-      defaultValue: '/shared/modeling/elk/updates/0.6.0/'
+      defaultValue: '/shared/modeling/elk/updates/0.6.1/'
     )
   }
 
