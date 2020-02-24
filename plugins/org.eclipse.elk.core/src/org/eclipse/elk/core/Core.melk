@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -226,6 +226,12 @@ advanced option interactive: boolean {
         What this means exactly depends on how the specific algorithm interprets this option.
         Usually in the interactive mode algorithms try to modify the current layout as little as
         possible."
+    default = false
+    targets parents
+}
+advanced option interactiveLayout: boolean {
+    label "interactive Layout"
+    description "Whether the graph should be changeable interactively and by setting constraints"
     default = false
     targets parents
 }
