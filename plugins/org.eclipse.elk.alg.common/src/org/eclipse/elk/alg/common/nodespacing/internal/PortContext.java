@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -33,6 +33,8 @@ public final class PortContext {
     public final PortAdapter<?> port;
     /** The port's position, to be modified by the algorithm and possibly applied later. */
     public final KVector portPosition;
+    /** Whether the port's labels need to be placed next to the port. */
+    public final boolean labelsNextToPort;
 
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +47,7 @@ public final class PortContext {
     public ElkMargin portMargin = new ElkMargin();
     /** The cell we place our port labels in. */
     public LabelCell portLabelCell;
+    
     
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +63,35 @@ public final class PortContext {
         this.parentNodeContext = parentNodeContext;
         this.port = port;
         this.portPosition = new KVector(port.getPosition());
+        
+        // Whether labels are supposed to be placed next to their port is determined differently depending on whether
+        // they are to be placed inside or outside
+        switch (parentNodeContext.portLabelsPlacement) {
+        case INSIDE:
+            if (parentNodeContext.treatAsCompoundNode) {
+                // There might be connections to the inside. That means that we may want to place port labels next to
+                // their port, if possible
+                labelsNextToPort = parentNodeContext.portLabelsNextToPort && !port.hasCompoundConnections();
+                
+            } else {
+                labelsNextToPort = true;
+            }
+            break;
+            
+        case OUTSIDE:
+            if (parentNodeContext.portLabelsNextToPort) {
+                // We can place a label next to an outside port if that port doesn't have incident edges
+                labelsNextToPort =
+                        !(port.getIncomingEdges().iterator().hasNext() || port.getOutgoingEdges().iterator().hasNext());
+            } else {
+                // We are not to place labels next to the port anyway
+                labelsNextToPort = false;
+            }
+            break;
+            
+        default:
+            labelsNextToPort = false;
+        }
     }
     
     
@@ -72,6 +104,5 @@ public final class PortContext {
     public void applyPortPosition() {
         port.setPosition(portPosition);
     }
-    
     
 }
