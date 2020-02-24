@@ -19,13 +19,17 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 1. Open `build/org.eclipse.elk.repository/category.xml` and update its description like this:
     
     ```xml
-    <description name="Eclipse Layout Kernel (Release 0.5.0)" url="http://build.eclipse.org/modeling/elk/updates/releases/0.5.0">
-      Update site for the Eclipse Layout Kernel, version 0.5.0.
+    <description name="Eclipse Layout Kernel (Release VERSION_NUMBER)" url="http://build.eclipse.org/modeling/elk/updates/releases/VERSION_NUMBER">
+      Update site for the Eclipse Layout Kernel, version VERSION_NUMBER.
     </description>
     ```
 1. Remove the `DeployWebsite` stage from the release build's `Jenkinsfile` and update the build variables at the top of the `Jenkinsfile`.
-1. Update the _ReleaseNightly_ build and run it.
-1. Update the version numbers on `master`.
+1. Update the _ReleaseNightly_ build with the same default values for the build variables and run it.
+1. Update the version numbers on `master`. Tycho can help:
+
+    ```
+    mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=NEW_VERSION_NUMBER
+    ```
 
 
 ## Releasing to Maven Central
@@ -41,7 +45,7 @@ This is a summary of the information on [this page](https://central.sonatype.org
 
 ## Releasing to Update Site
 
-1. Run the _PromoteUpdateSite_ build with proper parameter values.
+1. Run the _PromoteUpdateSite_ build with proper parameter values and run it.
 
 
 ## The Website
