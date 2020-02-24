@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -42,7 +42,7 @@ public class DrawingData {
     private double nextYcoordinate;
 
     //////////////////////////////////////////////////////////////////
-    // CONSTRUCTORS
+    // Constructors.
     /**
      * Creates a new object saving parameters of a drawing.
      * 
@@ -88,7 +88,7 @@ public class DrawingData {
     }
 
     //////////////////////////////////////////////////////////////////
-    // OTHER METHODS
+    // Helper methods.
 
     /**
      * Calculates the area, aspect ratio, and scale measure. Sets the respective fields accordingly.
@@ -102,7 +102,7 @@ public class DrawingData {
     }
 
     //////////////////////////////////////////////////////////////////
-    // GETTERS AND SETTERS
+    // Getters and setters.
 
     /**
      * Gets the drawing width.

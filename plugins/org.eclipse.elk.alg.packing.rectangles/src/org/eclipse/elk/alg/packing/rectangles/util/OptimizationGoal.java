@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.packing.rectangles.util;
 /**
  * Specifies the strategy employed to pack rectangles sequentially during {@link AreaApproximation}.
  */
-public enum PackingStrategy {
+public enum OptimizationGoal {
     /** Aspect ratio-driven packing heuristic. */
     ASPECT_RATIO_DRIVEN,
     /** Max scale-driven packing heuristic. */
