@@ -228,10 +228,9 @@ group layering {
     advanced option layerChoiceConstraint: int {
         label "Layer Choice Constraint"
         description "Allows to set a constraint regarding the layer placement of a node. 
-                     Assumed the drawing has n layers and i < n.
+                     Let i be the value of teh constraint. Assumed the drawing has n layers and i < n.
                      If set to i, it expresses that the node should be placed in i-th layer.
-                     Should i>=n be true then the node is placed in the last layer of the drawing.
-                    "
+                     Should i>=n be true then the node is placed in the last layer of the drawing."
         default = -1
         lowerBound = -1
         targets nodes
@@ -239,7 +238,7 @@ group layering {
 
     output option layerID: int {
         label "Layer ID"
-        description "Layer identifier that was calculated by Elk Layered for a node"
+        description "Layer identifier that was calculated by ELK Layered for a node"
         default = -1
         lowerBound = -1
         targets nodes

@@ -207,6 +207,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             
         case COMMENT_PREPROCESSOR:
             return new CommentPreprocessor();
+            
+        case CONSTRAINTS_POSTPROCESSOR:
+            return new ConstraintsPostprocessor();
 
         case DIRECTION_POSTPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.TO_INTERNAL_LTR);
@@ -330,9 +333,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case SELF_LOOP_POSTPROCESSOR:
             return new SelfLoopPostProcessor();
-        
-        case CONSTRAINTS_POSTPROCESSOR:
-            return new ConstraintsPostprocessor();
             
         case SELF_LOOP_ROUTER:
             return new SelfLoopRouter();

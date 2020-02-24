@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import org.eclipse.elk.alg.layered.DebugUtil;
 import org.eclipse.elk.alg.layered.JsonDebugUtil;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -17,26 +18,20 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.LoggedGraph;
 
 /**
- * Adds to each LNode the layerID and positionID that has been computed by ELKLayered.
- * 
- * @author cos, jet
+ * Adds to each LNode the layerID and positionID that has been computed by ELK Layered.
  */
 public final class ConstraintsPostprocessor implements ILayoutProcessor<LGraph> {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.elk.core.alg.ILayoutProcessor#process(java.lang.Object,
-     * org.eclipse.elk.core.util.IElkProgressMonitor)
-     */
     @Override
-    public void process(LGraph graph, IElkProgressMonitor progressMonitor) {
+    public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Constraints Postprocessor", 1);
-        progressMonitor.log("Constraints Postprocessor started");
-        progressMonitor.log(JsonDebugUtil.createDebugGraph(graph));
+        if (progressMonitor.isLoggingEnabled()) {
+            DebugUtil.logDebugGraph(progressMonitor, graph, 0, "ConstraintPostProcessor");
+        }
         // Uses for each loops since they should be more efficient because LinkedLists are accessed.
         // It still creates counter variables so that no getter calls on layer and node are needed.
         int layerIndex = 0;
@@ -54,8 +49,9 @@ public final class ConstraintsPostprocessor implements ILayoutProcessor<LGraph> 
 
             layerIndex++;
         }
-        progressMonitor.log("Constraints Posprocessor should have set all ids");
-        progressMonitor.log(JsonDebugUtil.createDebugGraph(graph));
+        if (progressMonitor.isLoggingEnabled()) {
+            DebugUtil.logDebugGraph(progressMonitor, graph, 0, "ConstraintPostProcessor");
+        }
         progressMonitor.done();
 
     }
