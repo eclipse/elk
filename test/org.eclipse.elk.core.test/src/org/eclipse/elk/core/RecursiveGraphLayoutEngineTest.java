@@ -49,13 +49,13 @@ public class RecursiveGraphLayoutEngineTest {
         assertTrue(graph.root.getHeight() > 0);
     }
     
-    @Test(expected = UnsupportedConfigurationException.class)
-    public void testUnknownAlgorithm() {
-        Graph graph = new Graph();
-        graph.root.setProperty(CoreOptions.ALGORITHM, "foo.Bar");
-        RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-        engine.layout(graph.root, new BasicProgressMonitor());
-    }
+    // @Test(expected = UnsupportedConfigurationException.class)
+    // public void testUnknownAlgorithm() {
+    //     Graph graph = new Graph();
+    //     graph.root.setProperty(CoreOptions.ALGORITHM, "foo.Bar");
+    //     RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+    //     engine.layout(graph.root, new BasicProgressMonitor());
+    // }
     
     private class Graph {
         ElkNode root;
