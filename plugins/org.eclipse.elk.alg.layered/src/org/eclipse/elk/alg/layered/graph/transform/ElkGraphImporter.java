@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 Kiel University and others.
+ * Copyright (c) 2015, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -613,6 +613,7 @@ class ElkGraphImporter {
         
         // The dummy only has one port
         LPort dummyPort = dummy.getPorts().get(0);
+        dummyPort.setConnectedToExternalNodes(isConnectedToExternalNodes(elkport));
         dummy.setProperty(LayeredOptions.PORT_LABELS_PLACEMENT, PortLabelPlacement.OUTSIDE);
         
         // If the compound node wants to have its port labels placed on the inside, we need to leave
@@ -712,6 +713,31 @@ class ElkGraphImporter {
         }
         
         return outputPortVote - inputPortVote;
+    }
+    
+    /**
+     * Checks whether the given (external) port has connections to the outside (that is, to non-descendants).
+     */
+    private boolean isConnectedToExternalNodes(final ElkPort elkport) {
+        ElkNode parent = elkport.getParent();
+        
+        for (ElkEdge outEdge : elkport.getOutgoingEdges()) {
+            ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(outEdge.getTargets().get(0));
+            
+            if (!ElkGraphUtil.isDescendant(targetNode, parent)) {
+                return true;
+            }
+        }
+        
+        for (ElkEdge inEdge : elkport.getIncomingEdges()) {
+            ElkNode sourceNode = ElkGraphUtil.connectableShapeToNode(inEdge.getSources().get(0));
+            
+            if (!ElkGraphUtil.isDescendant(sourceNode, parent)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
 

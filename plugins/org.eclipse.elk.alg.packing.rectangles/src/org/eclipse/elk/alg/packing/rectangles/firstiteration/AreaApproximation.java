@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingData;
 import org.eclipse.elk.alg.packing.rectangles.util.DrawingDataDescriptor;
-import org.eclipse.elk.alg.packing.rectangles.util.PackingStrategy;
+import org.eclipse.elk.alg.packing.rectangles.util.OptimizationGoal;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -26,8 +26,8 @@ public class AreaApproximation {
     // Fields.
     /** Desired aspect ratio. */
     private double aspectRatio;
-    /** Packing Strategy. */
-    private PackingStrategy strategy;
+    /** Optimization goal. */
+    private OptimizationGoal goal;
     /** Shift when placing behind or below the last placed rectangle. */
     private boolean lpShift;
 
@@ -37,12 +37,12 @@ public class AreaApproximation {
      * Constructs an object that the first iteration can be executed on.
      * 
      * @param aspectRatio The desired aspect ratio.
-     * @param strategy The given packing strategy.
+     * @param goal The optimization goal.
      * @param lpShift Whether a shift should happen after placing near the last placed node.
      */
-    public AreaApproximation(final double aspectRatio, final PackingStrategy strategy, final boolean lpShift) {
+    public AreaApproximation(final double aspectRatio, final OptimizationGoal goal, final boolean lpShift) {
         this.aspectRatio = aspectRatio;
-        this.strategy = strategy;
+        this.goal = goal;
         this.lpShift = lpShift;
     }
 
@@ -102,7 +102,7 @@ public class AreaApproximation {
     // Helper methods.
 
     /**
-     * Determines according to the selected packing strategy, which option out of the given ones is the best.
+     * Determines according to the selected optimization goal, which option out of the given ones is the best.
      * 
      * @param opt1 The option lastPlaced right.
      * @param opt2 The option lastPlaced bottom.
@@ -117,8 +117,8 @@ public class AreaApproximation {
         List<DrawingData> candidates = Lists.newArrayList(opt1, opt2, opt3, opt4);
         List<BestCandidateFilter> filters = null;
 
-        switch (strategy) {
-        // Sets the order of the filters according to the given strategy.
+        switch (goal) {
+        // Sets the order of the filters according to the given goal.
         case MAX_SCALE_DRIVEN:
             filters = Lists.newArrayList(new ScaleMeasureFilter(), new AreaFilter(), new AspectRatioFilter());
             break;

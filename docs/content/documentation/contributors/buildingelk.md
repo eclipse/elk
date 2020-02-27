@@ -22,11 +22,15 @@ Execute Maven using the following command line (note that the command line is sp
 mvn
     --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly
     --define elk.metadata.documentation.outputPath=/ELK_FOLDER/docs
+    -Dmaven.repo.local=./mvnrepo
     clean
     package
 ```
 
-The meta repository URL above works if you haven't touched the meta data compiler and are trying to build the current master branch. If you have made changes to the meta data compiler, the URL should be the same that you used when compiling the compiler (see below). If you're trying to build a release, use the meta data compiler URL noted on the release's downloads page.
+A few notes:
+
+* The build needs the metadata compiler to be available. You can either compile it yourself and point this build to where it ended up (see below), or use the metadata compiler we provide for the release you're trying to compile (see download pages).
+* The `maven.repo.local` property is not required, but can be helpful to keep builds self-contained. Once built, the `-o` option is helpful to keep Maven from accessing online repositories.
 
 
 ## Running Unit Tests
@@ -39,6 +43,7 @@ mvn
     --define elk.metadata.documentation.outputPath=/ELK_FOLDER/docs
     --define tests.paths.elk-repo=/ELK_FOLDER
     --define tests.paths.models-repo=/ELK_MODELS_FOLDER
+    -Dmaven.repo.local=./mvnrepo
     clean
     integration-test
 ```
@@ -55,6 +60,7 @@ mvn
     -P elk-meta
     --define elkMeta.repositoryUrl=file:///home/user/elkmetarepository
     --define elkMeta.publishUrl=file:///home/user/elkmetarepository
+    -Dmaven.repo.local=./mvnrepo
     clean
     deploy
 ```
