@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.graph;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.intermediate.LabelAndNodeSizeProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -37,46 +38,17 @@ public final class LPort extends LShape {
     private static final long serialVersionUID = -3406558719744943360L;
     
     /** a predicate that checks for output ports, that is ports with outgoing edges. */
-    public static final Predicate<LPort> OUTPUT_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return !port.outgoingEdges.isEmpty();
-        }
-    };
-
+    public static final Predicate<LPort> OUTPUT_PREDICATE = (port) -> !port.outgoingEdges.isEmpty();
     /** a predicate that checks for input ports, that is ports with incoming edges. */
-    public static final Predicate<LPort> INPUT_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return !port.incomingEdges.isEmpty();
-        }
-    };
-    
+    public static final Predicate<LPort> INPUT_PREDICATE = (port) -> !port.incomingEdges.isEmpty();
     /** a predicate that checks for north-side ports. */
-    public static final Predicate<LPort> NORTH_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.NORTH;
-        }
-    };
-    
+    public static final Predicate<LPort> NORTH_PREDICATE = (port) -> port.side == PortSide.NORTH;
     /** a predicate that checks for east-side ports. */
-    public static final Predicate<LPort> EAST_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.EAST;
-        }
-    };
-    
+    public static final Predicate<LPort> EAST_PREDICATE = (port) -> port.side == PortSide.EAST;
     /** a predicate that checks for south-side ports. */
-    public static final Predicate<LPort> SOUTH_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.SOUTH;
-        }
-    };
-    
+    public static final Predicate<LPort> SOUTH_PREDICATE = (port) -> port.side == PortSide.SOUTH;
     /** a predicate that checks for west-side ports. */
-    public static final Predicate<LPort> WEST_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.WEST;
-        }
-    };
+    public static final Predicate<LPort> WEST_PREDICATE = (port) -> port.side == PortSide.WEST;
     
     /** the owning node. */
     private LNode owner;
@@ -97,6 +69,12 @@ public final class LPort extends LShape {
     private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
     /** All connected edges in a combined iterable. */
     private Iterable<LEdge> connectedEdges = new CombineIter<LEdge>(incomingEdges, outgoingEdges);
+    
+    /**
+     * Whether the original port has edges that connect it to nodes outside of this subgraph. This influences the amount
+     * of space we will have to reserve for labels in the {@link LabelAndNodeSizeProcessor}.
+     */
+    private boolean connectedToExternalNodes = true;
     
     /**
      * Returns the node that owns this port.
@@ -291,6 +269,20 @@ public final class LPort extends LShape {
      */
     public Iterable<LEdge> getConnectedEdges() {
         return connectedEdges;
+    }
+    
+    /**
+     * Returns whether the original port has connections to nodes outside of this subgraph.
+     */
+    public boolean isConnectedToExternalNodes() {
+        return connectedToExternalNodes;
+    }
+    
+    /**
+     * Returns whether the original port has connections to nodes outside of this subgraph.
+     */
+    public void setConnectedToExternalNodes(final boolean conn) {
+        connectedToExternalNodes = conn;
     }
 
     /**

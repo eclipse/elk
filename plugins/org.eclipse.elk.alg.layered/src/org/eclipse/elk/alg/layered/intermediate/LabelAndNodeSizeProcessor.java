@@ -119,7 +119,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 break;
                 
             case EAST:
-                if (labelNextToPort(dummyPort, placeNextToPortIfPossible)) {
+                if (labelNextToPort(dummyPort, true, placeNextToPortIfPossible)) {
                     double labelHeight = treatAsGroup
                             ? portLabelBox.height
                             : dummyPort.getLabels().get(0).getSize().y;
@@ -131,7 +131,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 break;
                 
             case WEST:
-                if (labelNextToPort(dummyPort, placeNextToPortIfPossible)) {
+                if (labelNextToPort(dummyPort, true, placeNextToPortIfPossible)) {
                     double labelHeight = treatAsGroup
                             ? portLabelBox.height
                             : dummyPort.getLabels().get(0).getSize().y;
@@ -151,10 +151,14 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 
             case EAST:
             case WEST:
-                // TODO Fix this
-                // We would have to respect the next-to-port option here as well, but for that we would have to find
-                // out if the port has any connections to the outside.
-                portLabelBox.y = dummyPortPos.y + labelPortSpacing;
+                if (labelNextToPort(dummyPort, false, placeNextToPortIfPossible)) {
+                    double labelHeight = treatAsGroup
+                            ? portLabelBox.height
+                            : dummyPort.getLabels().get(0).getSize().y;
+                    portLabelBox.y = (dummySize.y - labelHeight) / 2 - dummyPortPos.y;
+                } else {
+                    portLabelBox.y = dummyPortPos.y + labelPortSpacing;
+                }
                 break;
             }
         }
@@ -198,10 +202,19 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
      * case if the user requested port labels to be placed next to the port, if possible, and if the port has no
      * connections.
      */
-    private boolean labelNextToPort(final LPort dummyPort, final boolean placeNextToPortIfPossible) {
-        return placeNextToPortIfPossible
-                && dummyPort.getIncomingEdges().isEmpty()
-                && dummyPort.getOutgoingEdges().isEmpty();
+    private boolean labelNextToPort(final LPort dummyPort, final boolean insideLabels,
+            final boolean placeNextToPortIfPossible) {
+        
+        if (!placeNextToPortIfPossible) {
+            return false;
+        } else {
+            if (insideLabels) {
+                return dummyPort.getIncomingEdges().isEmpty()
+                        && dummyPort.getOutgoingEdges().isEmpty();
+            } else {
+                return !dummyPort.isConnectedToExternalNodes();
+            }
+        }
     }
     
 }
