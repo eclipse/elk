@@ -873,11 +873,6 @@ class ElkGraphImporter {
                 lport.getLabels().add(transformLabel(elklabel));
             }
         }
-
-        // Check if we need to add anything to the graph properties
-        if (elkport.getIncomingEdges().size() + elkport.getOutgoingEdges().size() > 1) {
-            graphProperties.add(GraphProperties.HYPEREDGES);
-        }
         
         switch (layoutDirection) {
         case LEFT:
@@ -1015,6 +1010,13 @@ class ElkGraphImporter {
         // Finally set the source and target of the edge
         ledge.setSource(sourceLPort);
         ledge.setTarget(targetLPort);
+        
+        // If the ports have multiple incoming or outgoing edges, the HYPEREDGE property needs to be set
+        if (sourceLPort.getIncomingEdges().size() > 1 || sourceLPort.getOutgoingEdges().size() > 1
+                || targetLPort.getIncomingEdges().size() > 1 || targetLPort.getOutgoingEdges().size() > 1) {
+            
+            graphProperties.add(GraphProperties.HYPEREDGES);
+        }
 
         // Transform the edge's labels
         for (ElkLabel elklabel : elkedge.getLabels()) {
