@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.packing.rectangles.util.DrawingUtil;
 import org.eclipse.elk.alg.packing.rectangles.util.OptimizationGoal;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.BasicEList;
@@ -44,6 +45,10 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Rectangle Packing", 1);
+
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "Input");
+        }
         // The desired aspect ratio.
         double aspectRatio = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
         // The strategy for the initial width approximation.
@@ -104,19 +109,26 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // Initial width approximation.
         AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
         drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
-        
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "After approximation");
+        }
         // Placement according to approximated width.
         if (!onlyFirstIteration) {
             DrawingUtil.resetCoordinates(rectangles);
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
             drawing = secondIt.start(rectangles, drawing.getDrawingWidth());
         }
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "After compaction");
+        }
 
         // Final touch.
         applyPadding(rectangles, padding);
-        layoutGraph.setDimensions(drawing.getDrawingWidth() + padding.getHorizontal(),
-                drawing.getDrawingHeight() + padding.getVertical());
-
+        ElkUtil.resizeNode(layoutGraph, drawing.getDrawingWidth() + padding.getHorizontal(),
+                drawing.getDrawingHeight() + padding.getVertical(), false, true);
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "Output");
+        }
         progressMonitor.done();
     }
 
