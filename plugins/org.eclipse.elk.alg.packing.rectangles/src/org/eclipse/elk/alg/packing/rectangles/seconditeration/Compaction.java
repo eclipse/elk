@@ -336,16 +336,13 @@ public final class Compaction {
         
         // Check height of next block.
         double nextBlockHeight = nextBlock.getHeightForTargetWidth(targetWidthOfNextBlock);
-        if (rows.get(nextRowIndex).getChildren().size() == 1 ||
-                nextBlockHeight <= row.getHeight()) {
+        if (rows.get(nextRowIndex).getChildren().size() == 1 || nextBlockHeight <= row.getHeight()) {
             if (rows.get(nextRowIndex).getChildren().size() == 1) {
                 block.setHeight(nextBlockHeight);
-                
                 block.placeRectsIn(block.getWidthForTargetHeight(nextBlockHeight));
             } else {
                 block.getStack().placeRectsIn(currentBlockMinWidth);
                 block.setFixed(true);
-                
             }
             
             // Place next block in remaining width.
