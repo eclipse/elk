@@ -29,9 +29,11 @@ public final class ConstraintsPostprocessor implements ILayoutProcessor<LGraph> 
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Constraints Postprocessor", 1);
+        // elkjs-exclude-start
         if (progressMonitor.isLoggingEnabled()) {
             DebugUtil.logDebugGraph(progressMonitor, graph, 0, "ConstraintPostProcessor");
         }
+        // elkjs-exclude-end
         // Uses for each loops since they should be more efficient because LinkedLists are accessed.
         // It still creates counter variables so that no getter calls on layer and node are needed.
         int layerIndex = 0;
@@ -49,9 +51,11 @@ public final class ConstraintsPostprocessor implements ILayoutProcessor<LGraph> 
 
             layerIndex++;
         }
+        // elkjs-exclude-start
         if (progressMonitor.isLoggingEnabled()) {
             DebugUtil.logDebugGraph(progressMonitor, graph, 0, "ConstraintPostProcessor");
         }
+        // elkjs-exclude-end
         progressMonitor.done();
 
     }
