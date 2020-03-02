@@ -21,17 +21,36 @@
   <artifactId>org.eclipse.elk.core.service</artifactId>
   <name>ELK Layout Service Layer</name>
   <version>0.7.0-SNAPSHOT</version>
+  <description>ELK Service integrates layout computations into Eclipse-based IDEs (async execution, progress reporting, etc.).</description>
   <packaging>eclipse-plugin</packaging>
 
-  <build>
-    <plugins>
-      <!-- Don't publish this bundle to Maven repositories. -->
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.elk</groupId>
+      <artifactId>org.eclipse.elk.core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.core.runtime</artifactId>
+      <version>3.13.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.platform</groupId>
+      <artifactId>org.eclipse.ui.workbench</artifactId>
+      <version>3.110.0</version>
+      <!-- transitively pulls 'org.eclipse.jface'
+             defining e.g. 'org.eclipse.jface.preference.IPreferenceStore' -->
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.edit</artifactId>
+      <version>2.12.0</version>
+    </dependency>
+  </dependencies>
 </project>
