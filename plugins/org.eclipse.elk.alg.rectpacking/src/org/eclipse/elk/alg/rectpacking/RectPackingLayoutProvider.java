@@ -13,14 +13,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.firstiteration.AreaApproximation;
+import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.seconditeration.RowFillingAndCompaction;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingUtil;
 import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -104,6 +105,11 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
                 index++;
             }
         }
+        // Get minimum size of parent.
+        KVector minSize = ElkUtil.effectiveMinSizeConstraintFor(layoutGraph);
+        // Remove padding to get the space the algorithm can use.
+        minSize.x -= padding.getHorizontal();
+        minSize.y -= padding.getVertical();
         
         // Initial width approximation.
         AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
@@ -115,7 +121,10 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         if (!onlyFirstIteration) {
             DrawingUtil.resetCoordinates(rectangles);
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
-            drawing = secondIt.start(rectangles, drawing.getDrawingWidth());
+            // Modify the initial approximation if necessary.
+            minSize.x = Math.max(minSize.x, drawing.getDrawingWidth());
+            
+            drawing = secondIt.start(rectangles, minSize);
         }
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(layoutGraph, "After compaction");
