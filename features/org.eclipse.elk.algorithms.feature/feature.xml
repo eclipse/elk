@@ -68,7 +68,7 @@ SPDX-License-Identifier: EPL-2.0
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.elk.alg.packing.rectangles"
+         id="org.eclipse.elk.alg.rectpacking"
          download-size="0"
          install-size="0"
          version="0.0.0"
