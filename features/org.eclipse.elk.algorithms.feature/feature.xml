@@ -36,7 +36,7 @@ SPDX-License-Identifier: EPL-2.0
    </license>
 
    <requires>
-      <import feature="org.eclipse.elk.feature" version="0.6.0"/>
+      <import feature="org.eclipse.elk.feature" version="0.6.1"/>
    </requires>
 
    <plugin
@@ -68,7 +68,7 @@ SPDX-License-Identifier: EPL-2.0
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.elk.alg.packing.rectangles"
+         id="org.eclipse.elk.alg.rectpacking"
          download-size="0"
          install-size="0"
          version="0.0.0"
