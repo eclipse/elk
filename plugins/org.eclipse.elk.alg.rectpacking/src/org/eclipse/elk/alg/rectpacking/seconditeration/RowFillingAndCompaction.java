@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.rectpacking.util.BlockStack;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -62,13 +63,13 @@ public class RowFillingAndCompaction {
     /**
      * Placement of the rectangles given by {@link ElkNode} inside the given bounding box.
      * @param rectangles The set of rectangles to be placed inside the bounding box.
-     * @param boundingBoxWidth The width of the bounding box.
+     * @param minParentSize The minimal size of the parent.
      * @param nodeNodeSpacing The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
-    public DrawingData start(final List<ElkNode> rectangles, final double boundingBoxWidth) {
+    public DrawingData start(final List<ElkNode> rectangles, final KVector minParentSize) {
         // Initial placement for rectangles in blocks in each row.
-        List<RectRow> rows = InitialPlacement.place(rectangles, boundingBoxWidth, nodeNodeSpacing);
+        List<RectRow> rows = InitialPlacement.place(rectangles, minParentSize.x, nodeNodeSpacing);
 
         // Compaction of blocks.
         if (compaction) {
@@ -78,7 +79,7 @@ public class RowFillingAndCompaction {
                     RectRow previousRow = rows.get(rowIdx - 1);
                     currentRow.setY(previousRow.getY() + previousRow.getHeight());
                 }
-                Compaction.compact(rowIdx, rows, boundingBoxWidth, nodeNodeSpacing);
+                Compaction.compact(rowIdx, rows, minParentSize.x, nodeNodeSpacing);
                 adjustWidthAndHeight(currentRow);
             }
         } else {
@@ -94,14 +95,15 @@ public class RowFillingAndCompaction {
          
         calculateDimensions(rows);
         
-        double totalWidth = this.drawingWidth;
-        double additionalHeight = 0;
+        double totalWidth = Math.max(this.drawingWidth, minParentSize.x);
+        double minHeight = Math.max(this.drawingHeight, minParentSize.y);
+        double additionalHeight = minHeight - this.drawingHeight;
         if (expandNodes && expandToAspectRatio) {
-            double aspectRatio = this.drawingWidth / this.drawingHeight;
+            double aspectRatio = totalWidth / minHeight;
             if (aspectRatio < this.aspectRatio) {
-                totalWidth = this.drawingHeight * this.aspectRatio;
+                totalWidth = minHeight * this.aspectRatio;
             } else {
-                additionalHeight = (this.drawingWidth / this.aspectRatio) - this.drawingHeight;
+                additionalHeight += (totalWidth / this.aspectRatio) - minHeight;
             }
         }
         

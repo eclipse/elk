@@ -57,7 +57,7 @@ public class AreaApproximation {
      * @param nodeNodeSpacing The spacing between two nodes.
      * @return A drawing calculated by this methods algorithm.
      */
-    public DrawingData approxBoundingBox(final List<ElkNode> rectangles, double nodeNodeSpacing) {
+    public DrawingData approxBoundingBox(final List<ElkNode> rectangles, final double nodeNodeSpacing) {
         // Place first box.
         ElkNode firstRect = rectangles.get(0);
         firstRect.setX(0);
