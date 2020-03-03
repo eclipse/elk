@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>3.0.0</version>
+      <version>3.0</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
@@ -44,7 +44,15 @@
       <groupId>org.eclipse.platform</groupId>
       <artifactId>org.eclipse.ui.workbench</artifactId>
       <version>3.110.0</version>
-      <!-- transitively pulls 'org.eclipse.jface'
+      <exclusions>
+        <!-- exclude org.eclipse.swt here, as that in turn depends on "org.eclipse.platform:org.eclipse.swt.${osgi.platform}";
+               that construction is prone to result in build troubles. -->
+        <exclusion>
+          <groupId>org.eclipse.platform</groupId>
+          <artifactId>org.eclipse.swt</artifactId>
+        </exclusion>
+      </exclusions>
+      <!-- transitively pulls 'org.eclipse.jface', too,
              defining e.g. 'org.eclipse.jface.preference.IPreferenceStore' -->
     </dependency>
     <dependency>
