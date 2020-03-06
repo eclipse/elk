@@ -317,7 +317,7 @@
             rootFolder="${git.clone.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="2019-06">
+            name="Fixed Target">
           <repository
               url="http://download.eclipse.org/releases/2019-12"/>
           <repository
