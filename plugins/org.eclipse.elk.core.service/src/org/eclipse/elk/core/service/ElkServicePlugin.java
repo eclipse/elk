@@ -15,12 +15,15 @@ import java.util.concurrent.Executors;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
@@ -32,7 +35,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author msp
  */
-public final class ElkServicePlugin extends AbstractUIPlugin {
+public final class ElkServicePlugin extends Plugin {
 
     /** The plug-in ID. */
     public static final String PLUGIN_ID = "org.eclipse.elk.core.service";
@@ -48,6 +51,9 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
     public static ElkServicePlugin getInstance() {
         return plugin;
     }
+    
+    /** The local preference store. */
+    private IPreferenceStore preferenceStore;
     
     /** The executor service used to perform layout operations. */
     private ExecutorService executorService;
@@ -78,8 +84,23 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
             executorService = null;
         }
         
+        preferenceStore = null;
         plugin = null;
         super.stop(context);
+    }
+    
+    /**
+     * Return the preference store associated with this plug-in.
+     * 
+     * Implementation is inspired by {@link org.eclipse.ui.plugin.AbstractUIPlugin#getPreferenceStore()}.
+     */
+    public IPreferenceStore getPreferenceStore() {
+        // Create the preference store lazily.
+        if (preferenceStore == null) {
+            preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
+
+        }
+        return preferenceStore;
     }
     
     /**
