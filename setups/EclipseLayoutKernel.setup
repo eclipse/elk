@@ -270,7 +270,7 @@
         xsi:type="setup.targlets:TargletTask">
       <targlet
           name="${scope.project.label}"
-          activeRepositoryList="${eclipse.target.platform}">
+          activeRepositoryList="FixedTarget">
         <annotation
             source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator">
           <detail
@@ -317,7 +317,7 @@
             rootFolder="${git.clone.location}"
             locateNestedProjects="true"/>
         <repositoryList
-            name="Fixed Target">
+            name="FixedTarget">
           <repository
               url="http://download.eclipse.org/releases/2019-12"/>
           <repository
