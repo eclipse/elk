@@ -6,17 +6,17 @@ menu:
     weight: 50
 ---
 
-There are lots of ways to get support. The following is a list you should probably work through from the top until your problem is solved.
+There are a number of ways to get support. The following is a list you should probably work through from the top until your problem is solved.
 
 
 ## Documentation
 
-The Documentation section has lots of information which may already provide answers to your problems.
+The [Documentation]({{< relref "documentation/_index.md" >}}) section has lots of information which may already provide answers to your problems.
 
 
 ## Forum and Chat
 
-We have [a forum](http://eclipse.org/forums/eclipse.elk) available for you to ask questions, as well as [a Gitter chat](https://gitter.im/eclipse/elk).
+We have [a Gitter chat](https://gitter.im/eclipse/elk) available for you to ask questions. Questions can also be asked by filing an issue over at [GitHub](https://github.com/eclipse/elk/issues).
 
 
 ## Reporting Bugs

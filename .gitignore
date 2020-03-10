@@ -4,7 +4,7 @@ bin/
 .checkstyle
 .svn/
 target/
-build/mvnrep/
+build/mvnrepo/
 xtend-gen/
 *.pdf
 *_trace
@@ -16,4 +16,5 @@ docs/content/reference/options/
 docs/content/reference/groups/
 docs/static/img_gen/
 docs/public
-*.prefs
+org.eclipse.core.resources.prefs
+org.eclipse.m2e.core.prefs

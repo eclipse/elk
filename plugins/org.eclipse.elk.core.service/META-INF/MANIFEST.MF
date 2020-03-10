@@ -8,13 +8,15 @@ Bundle-Vendor: Eclipse Modeling Project
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
  com.google.inject;bundle-version="3.0.0";visibility:=reexport,
  org.eclipse.core.runtime,
- org.eclipse.ui;bundle-version="3.5.0";resolution:=optional,
+ org.eclipse.jface,
+ org.eclipse.ui.workbench;bundle-version="3.105.0",
  org.eclipse.emf.edit;bundle-version="2.5.0",
  org.eclipse.elk.graph,
  org.eclipse.elk.core;visibility:=reexport
 Eclipse-RegisterBuddy: org.eclipse.elk.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.core.service,
+ org.eclipse.elk.core.service.internal;x-internal:=true,
  org.eclipse.elk.core.service.util
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.elk.core.service.ElkServicePlugin

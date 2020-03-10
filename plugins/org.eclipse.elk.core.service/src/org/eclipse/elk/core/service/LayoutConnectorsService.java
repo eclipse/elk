@@ -87,7 +87,8 @@ public class LayoutConnectorsService {
      * Load all registered extensions for the layout connectors extension point.
      */
     public LayoutConnectorsService() {
-        loadLayoutSetupExtensions();
+        if (Platform.isRunning())
+            loadLayoutSetupExtensions();
     }
 
     /**
