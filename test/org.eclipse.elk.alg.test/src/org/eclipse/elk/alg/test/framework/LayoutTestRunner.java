@@ -18,7 +18,9 @@ import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.alg.test.framework.algorithm.TestAlgorithm;
 import org.eclipse.elk.alg.test.framework.annotations.OnlyOnRootNode;
 import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
+import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessors;
 import org.eclipse.elk.alg.test.framework.annotations.TestBeforeProcessor;
+import org.eclipse.elk.alg.test.framework.annotations.TestBeforeProcessors;
 import org.eclipse.elk.alg.test.framework.config.ConfiguratorTestConfiguration;
 import org.eclipse.elk.alg.test.framework.config.MethodTestConfiguration;
 import org.eclipse.elk.alg.test.framework.config.TestConfiguration;
@@ -219,53 +221,58 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
      */
     private void initializeWhiteboxTests(final List<Throwable> errors) {
         Set<FrameworkMethod> encounteredTestMethods = new HashSet<>();
-
+        
         // Tests that want to be executed before a given layout processor
-        for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestBeforeProcessor.class)) {
-            TestUtil.ensurePublic(test, errors);
-            TestUtil.ensureParameters(test, errors, Object.class);
-            TestUtil.ensureNotAnnotatedWith(test, errors, Test.class, TestAfterProcessor.class, BeforeClass.class,
-                    Before.class, After.class, AfterClass.class);
+        for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestBeforeProcessors.class)) {
+            initializeWhiteboxTest(errors, test, encounteredTestMethods);
 
-            // Check if the test only wants to be run on the root node
-            if (test.getAnnotation(OnlyOnRootNode.class) != null) {
-                whiteboxOnlyOnRoot.add(test);
-            }
-
-            // There may be multiple annotations
+            // There are multiple annotations
             for (TestBeforeProcessor annotation : test.getMethod().getAnnotationsByType(TestBeforeProcessor.class)) {
                 whiteboxBeforeTests.put(annotation.value(), test);
             }
-
-            // Add to our list of whitebox tests if it isn't already there
-            if (encounteredTestMethods.add(test)) {
-                whiteboxTests.add(test);
-            }
+        }
+        
+        for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestBeforeProcessor.class)) {
+            initializeWhiteboxTest(errors, test, encounteredTestMethods);
+            whiteboxBeforeTests.put(test.getMethod().getAnnotationsByType(TestBeforeProcessor.class)[0].value(), test);
         }
 
         // Tests that want to be executed after a given layout processor
-        for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestAfterProcessor.class)) {
-            TestUtil.ensurePublic(test, errors);
-            TestUtil.ensureParameters(test, errors, Object.class);
-            TestUtil.ensureNotAnnotatedWith(test, errors, Test.class, TestBeforeProcessor.class, BeforeClass.class,
-                    Before.class, After.class, AfterClass.class);
+        for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestAfterProcessors.class)) {
+            initializeWhiteboxTest(errors, test, encounteredTestMethods);
 
-            // Check if the test only wants to be run on the root node
-            if (test.getAnnotation(OnlyOnRootNode.class) != null) {
-                whiteboxOnlyOnRoot.add(test);
-            }
-
-            // There may be multiple annotations
+            // There are multiple annotations
             for (TestAfterProcessor annotation : test.getMethod().getAnnotationsByType(TestAfterProcessor.class)) {
                 whiteboxAfterTests.put(annotation.value(), test);
             }
-
-            // Add to our list of whitebox tests if it isn't already there
-            if (encounteredTestMethods.add(test)) {
-                whiteboxTests.add(test);
-            }
         }
+        
+        for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestAfterProcessor.class)) {
+            initializeWhiteboxTest(errors, test, encounteredTestMethods);
+            whiteboxBeforeTests.put(test.getMethod().getAnnotationsByType(TestAfterProcessor.class)[0].value(), test);
+        }
+    }
 
+    /**
+     * Performs some general initializations for whitebox tests.
+     */
+    private void initializeWhiteboxTest(final List<Throwable> errors, final FrameworkMethod testMethod,
+            final Set<FrameworkMethod> encounteredTestMethods) {
+        
+        TestUtil.ensurePublic(testMethod, errors);
+        TestUtil.ensureParameters(testMethod, errors, Object.class);
+        TestUtil.ensureNotAnnotatedWith(testMethod, errors, Test.class, TestAfterProcessor.class, BeforeClass.class,
+                Before.class, After.class, AfterClass.class);
+
+        // Check if the test only wants to be run on the root node
+        if (testMethod.getAnnotation(OnlyOnRootNode.class) != null) {
+            whiteboxOnlyOnRoot.add(testMethod);
+        }
+        
+        // Add to our list of whitebox tests if it isn't already there
+        if (encounteredTestMethods.add(testMethod)) {
+            whiteboxTests.add(testMethod);
+        }
     }
 
     /**

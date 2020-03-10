@@ -31,6 +31,7 @@ import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
+import org.eclipse.elk.alg.test.framework.io.FileExtensionFilter;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.graph.ElkNode;
@@ -51,18 +52,19 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
 
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
-        return Lists.newArrayList(new ModelResourcePath("realworld/**/"));
+        return Lists.newArrayList(
+                new ModelResourcePath("realworld/ptolemy/flattened/**/").withFilter(new FileExtensionFilter("elkt")));
     }
     
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
-
+    
     @ConfiguratorProvider
     public LayoutConfigurator depthFirstConfigurator() {
         return configuratorFor(CycleBreakingStrategy.DEPTH_FIRST);
     }
-
+    
     @ConfiguratorProvider
     public LayoutConfigurator greedyConfigurator() {
         return configuratorFor(CycleBreakingStrategy.GREEDY);
@@ -73,7 +75,7 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
         config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, strategy);
         return config;
     }
-
+    
     @Configurator
     public void interactiveConfigurator(final ElkNode elkGraph) {
         // This is a bit more involved. We not only have to set the proper cycle breaking strategy, but we also
@@ -93,7 +95,7 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
             if (node.getX() == 0) {
                 node.setX(rand.nextInt(INTERACTIVE_MAX_POS));
             }
-
+    
             if (node.getY() == 0) {
                 node.setY(rand.nextInt(INTERACTIVE_MAX_POS));
             }
@@ -108,20 +110,8 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     private int nextDFSNumber = 1;
     
     @TestAfterProcessor(DepthFirstCycleBreaker.class)
-    public void testDF(final Object graph) {
-        testIsAcyclic(graph);
-    }
-    
     @TestAfterProcessor(GreedyCycleBreaker.class)
-    public void testGreedy(final Object graph) {
-        testIsAcyclic(graph);
-    }
-    
     @TestAfterProcessor(InteractiveCycleBreaker.class)
-    public void testInteractive(final Object graph) {
-        testIsAcyclic(graph);
-    }
-    
     public void testIsAcyclic(final Object graph) {
         LGraph lGraph = (LGraph) graph;
         
