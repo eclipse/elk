@@ -4,7 +4,7 @@ bin/
 .checkstyle
 .svn/
 target/
-build/mvnrep/
+build/mvnrepo/
 xtend-gen/
 *.pdf
 *_trace
