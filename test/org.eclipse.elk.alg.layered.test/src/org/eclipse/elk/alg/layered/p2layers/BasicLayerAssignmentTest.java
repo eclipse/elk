@@ -21,7 +21,6 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.LayeringStrategy;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
@@ -43,7 +42,7 @@ import com.google.common.collect.Lists;
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
 @DefaultConfiguration()
-public class BasicLayerAssignmentTest extends TestGraphCreator {
+public class BasicLayerAssignmentTest {
 
     private static final int INTERACTIVE_RANDOM_SEED = 0;
     private static final int INTERACTIVE_MAX_POS = 10_000;
@@ -172,16 +171,6 @@ public class BasicLayerAssignmentTest extends TestGraphCreator {
                 }
             }
         }
-    }
-    
-    @TestAfterProcessor(CoffmanGrahamLayerer.class)
-    @TestAfterProcessor(InteractiveLayerer.class)
-    @TestAfterProcessor(LongestPathLayerer.class)
-    @TestAfterProcessor(MinWidthLayerer.class)
-    @TestAfterProcessor(NetworkSimplexLayerer.class)
-    @TestAfterProcessor(StretchWidthLayerer.class)
-    public void testAllElkNodesExist(final Object graph) {
-        LGraph lGraph = (LGraph) graph;
     }
     
 }
