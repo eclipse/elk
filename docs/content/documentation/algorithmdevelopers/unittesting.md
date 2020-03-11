@@ -181,13 +181,13 @@ Many graphs in our models repository refrain from specifying explicit sizes and 
 ```java
 @RunWith(LayoutTestRunner.class)
 @Algorithm(MyTestClassOptions.ALGORITHM_ID)
-@DefaultConfiguration(nodes = true, ports = false, edges = false)
+@DefaultConfiguration(nodes = true, ports = true, edges = true, edgeLabels = false)
 public class MyAlgorithmTest {
 
 }
 ```
 
-The defaults are applied on top of all graph configurations. In more detail, this is what they do:
+The defaults are applied after any configuration methods. In more detail, this is what they do:
 
 * Nodes
     * Supply a default size if size constraints are fixed and no size has been set.
@@ -198,6 +198,10 @@ The defaults are applied on top of all graph configurations. In more detail, thi
     * Add a label if non exists.
 * Edges
     * Set edge label placement to `CENTER` if it has not been set.
+* Edge Labels
+    * Add a label to each edge if non exists.
+
+The options default to the values shown in the code fragment.
 
 
 ## Black Box Tests

@@ -20,6 +20,7 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.swt.SWT;
 import org.junit.runners.model.TestClass;
 
@@ -31,13 +32,15 @@ import com.google.common.base.Strings;
  * {@link #toString()}.
  */
 public class TestConfiguration {
-
+    
     /** Whether to apply default configurations to nodes. */
     private boolean useDefaultNodeConfig = false;
     /** Whether to apply default configurations to ports. */
     private boolean useDefaultPortConfig = false;
     /** Whether to apply default configurations to edges. */
     private boolean useDefaultEdgeConfig = false;
+    /** Whether to add random labels to edges. */
+    private boolean addRandomEdgeLabels = false;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Creation
@@ -54,6 +57,7 @@ public class TestConfiguration {
             useDefaultNodeConfig = dfltConfig.nodes();
             useDefaultPortConfig = dfltConfig.ports();
             useDefaultEdgeConfig = dfltConfig.edges();
+            addRandomEdgeLabels = dfltConfig.edgeLabels();
         }
     }
 
@@ -102,13 +106,13 @@ public class TestConfiguration {
      * Applies defaults to the given graph, if enabled.
      */
     private void applyDefaultConfiguration(final ElkNode graph) {
-        if (useDefaultNodeConfig || useDefaultPortConfig || useDefaultEdgeConfig) {
+        if (useDefaultNodeConfig || useDefaultPortConfig || useDefaultEdgeConfig || addRandomEdgeLabels) {
             for (ElkNode elkNode : graph.getChildren()) {
                 if (useDefaultNodeConfig) {
                     ElkUtil.configureWithDefaultValues(elkNode);
                 }
 
-                if (useDefaultPortConfig || useDefaultEdgeConfig) {
+                if (useDefaultPortConfig || useDefaultEdgeConfig || addRandomEdgeLabels) {
                     for (ElkPort elkPort : elkNode.getPorts()) {
                         if (useDefaultPortConfig) {
                             ElkUtil.configureWithDefaultValues(elkPort);
@@ -119,12 +123,28 @@ public class TestConfiguration {
                                 ElkUtil.configureWithDefaultValues(elkEdge);
                             }
                         }
+                        
+                        if (addRandomEdgeLabels) {
+                            for (ElkEdge elkEdge : elkPort.getOutgoingEdges()) {
+                                if (elkEdge.getLabels().isEmpty()) {
+                                    ElkGraphUtil.createLabel(elkEdge.getIdentifier(), elkEdge);
+                                }
+                            }
+                        }
                     }
                 }
 
                 if (useDefaultEdgeConfig) {
                     for (ElkEdge elkEdge : elkNode.getOutgoingEdges()) {
                         ElkUtil.configureWithDefaultValues(elkEdge);
+                    }
+                }
+                
+                if (addRandomEdgeLabels) {
+                    for (ElkEdge elkEdge : elkNode.getOutgoingEdges()) {
+                        if (elkEdge.getLabels().isEmpty()) {
+                            ElkGraphUtil.createLabel(elkEdge.getIdentifier(), elkEdge);
+                        }
                     }
                 }
 

@@ -28,5 +28,7 @@ public @interface DefaultConfiguration {
     boolean nodes() default true;
     /** Whether ports should be configured with default values. */
     boolean ports() default true;
+    /** Whether random edge labels should be added to the graph. */
+    boolean edgeLabels() default false;
     
 }
