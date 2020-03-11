@@ -249,7 +249,7 @@ public class LayoutTestRunner extends ParentRunner<ExperimentRunner> {
         
         for (FrameworkMethod test : getTestClass().getAnnotatedMethods(TestAfterProcessor.class)) {
             initializeWhiteboxTest(errors, test, encounteredTestMethods);
-            whiteboxBeforeTests.put(test.getMethod().getAnnotationsByType(TestAfterProcessor.class)[0].value(), test);
+            whiteboxAfterTests.put(test.getMethod().getAnnotationsByType(TestAfterProcessor.class)[0].value(), test);
         }
     }
 
