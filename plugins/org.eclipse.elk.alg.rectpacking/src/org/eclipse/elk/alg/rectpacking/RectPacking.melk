@@ -22,7 +22,7 @@ bundle {
 }
 
 //ALGORITHM
-algorithm rectPacking (RectPackingLayoutProvider) {
+algorithm rectpacking (RectPackingLayoutProvider) {
     label "Rectangle Packing"
     description "Algorithm for packing of unconnected boxes, i.e. graphs without edges. The given order of the boxes
         is always preserved and the main reading direction of the boxes is left to right. The algorithm is divided into
