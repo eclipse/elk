@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -36,14 +36,10 @@ import com.google.common.collect.Lists;
  *   <dt>Postcondition:</dt><dd>all nodes have been assigned a layer such that
  *     edges connect only nodes from layers with increasing indices</dd>
  * </dl>
- *
- * @author msp
  */
 public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
@@ -59,9 +55,7 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
         private List<LNode> nodes = Lists.newArrayList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive node layering", 1);
 
@@ -129,8 +123,11 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
         }
         
         // remove empty layers, which can happen when the layering has to be corrected
-        while (layers.get(0).getNodes().isEmpty()) {
-            layers.remove(0);
+        ListIterator<Layer> layerIterator = layers.listIterator();
+        while (layerIterator.hasNext()) {
+            if (layerIterator.next().getNodes().isEmpty()) {
+                layerIterator.remove();
+            }
         }
         
         // clear the list of nodes that have no layer, since now they all have one
