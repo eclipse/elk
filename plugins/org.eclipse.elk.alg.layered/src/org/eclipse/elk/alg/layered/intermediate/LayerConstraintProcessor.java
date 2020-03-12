@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -46,7 +47,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * </dl>
  * 
  * @see EdgeAndLayerConstraintEdgeReverser
- * @author cds
  */
 public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> {
 
@@ -172,8 +172,13 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
             }
         }
         
-        if (layers.size() == 1 && layers.get(0).getNodes().isEmpty()) {
-            layers.remove(0);
+        // All the movement can cause layers to be empty. Instead of going to great lengths trying to prevent that in
+        // the (already complicated) code above, we simply iterate over all layers and remove the emtpy ones
+        ListIterator<Layer> layerIter = layers.listIterator();
+        while (layerIter.hasNext()) {
+            if (layerIter.next().getNodes().isEmpty()) {
+                layerIter.remove();
+            }
         }
         
         // Add non-empty new first and last (label) layers
