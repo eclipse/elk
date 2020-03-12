@@ -68,7 +68,7 @@ public final class MethodTestConfiguration extends TestConfiguration {
 
     @Override
     public String toString() {
-        return super.toString() + " configMethod[" + configuratorMethod.getName() + "]";
+        return super.toString() + " configMethod(" + configuratorMethod.getName() + ")";
     }
 
 }

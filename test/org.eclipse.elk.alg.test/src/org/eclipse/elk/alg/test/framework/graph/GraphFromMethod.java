@@ -71,7 +71,7 @@ public final class GraphFromMethod extends TestGraph {
 
     @Override
     public String toString() {
-        return "graphMethod[" + method.getName() + "]";
+        return "graphMethod(" + method.getName() + ")";
     }
 
 }

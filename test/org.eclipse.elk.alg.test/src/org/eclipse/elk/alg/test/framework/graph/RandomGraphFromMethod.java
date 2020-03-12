@@ -92,7 +92,7 @@ public final class RandomGraphFromMethod extends TestGraph {
 
     @Override
     public String toString() {
-        return "randomGraphMethod[" + configuratorMethod.getName() + "]";
+        return "randomGraphMethod(" + configuratorMethod.getName() + ")";
     }
 
 }

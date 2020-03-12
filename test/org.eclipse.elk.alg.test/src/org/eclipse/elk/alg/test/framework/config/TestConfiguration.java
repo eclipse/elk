@@ -208,8 +208,12 @@ public class TestConfiguration {
         if (useDefaultEdgeConfig) {
             joiner.add("edges");
         }
+        
+        if (addRandomEdgeLabels) {
+            joiner.add("edgeLabels");
+        }
 
-        return "defaults[" + joiner.toString() + "]";
+        return "defaults(" + joiner.toString() + ")";
     }
 
 }

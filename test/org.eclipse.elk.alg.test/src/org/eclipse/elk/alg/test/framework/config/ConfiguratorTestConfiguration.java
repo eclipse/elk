@@ -85,7 +85,7 @@ public final class ConfiguratorTestConfiguration extends TestConfiguration {
 
     @Override
     public String toString() {
-        return super.toString() + " layoutConfigurator[" + configuratorMethod.getName() + "]";
+        return super.toString() + " layoutConfigurator(" + configuratorMethod.getName() + ")";
     }
 
 }

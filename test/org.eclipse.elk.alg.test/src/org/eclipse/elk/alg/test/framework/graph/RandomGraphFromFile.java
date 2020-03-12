@@ -140,7 +140,7 @@ public final class RandomGraphFromFile extends TestGraph {
 
     @Override
     public String toString() {
-        return "randomGraphFile[" + resourcePath.getFile().getPath() + "]";
+        return "randomGraphFile(" + resourcePath.getFile().getPath() + ")";
     }
 
 }

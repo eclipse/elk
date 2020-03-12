@@ -114,7 +114,7 @@ public final class GraphFromFile extends TestGraph {
 
     @Override
     public String toString() {
-        return "graphFile[" + resourcePath.getFile().getPath() + "]";
+        return "graphFile(" + resourcePath.getFile().getPath() + ")";
     }
 
 }
