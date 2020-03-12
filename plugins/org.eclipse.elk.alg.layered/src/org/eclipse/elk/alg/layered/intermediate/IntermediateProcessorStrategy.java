@@ -47,8 +47,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     
     // Before Phase 2
 
-    /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
-    BIG_NODES_PREPROCESSOR,
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
     /** Takes care of self loop preprocessing. */
@@ -66,8 +64,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
-    /** Process layered big nodes, such that they are not interrupted by long edge nodes. */
-    BIG_NODES_INTERMEDIATEPROCESSOR,
     /** Adds successor constraints between regular nodes before crossing minimization. */
     SEMI_INTERACTIVE_CROSSMIN_PROCESSOR,
     /** Inserts breaking points which are used to 'wrap' the graph after crossing minimization. */
@@ -97,8 +93,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     SINGLE_EDGE_GRAPH_WRAPPER,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
-    /** Alternative big nodes handling, splitting nodes _after_ crossing minimization. */
-    BIG_NODES_SPLITTER,
     /** Manages edge end labels, node labels, and port labels. */
     END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR,
     /** Sets the positions of ports and labels, and sets the node sizes. */
@@ -128,8 +122,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
     /** Fix coordinates of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_POSITION_PROCESSOR,
-    /** Merges dummy nodes originating from big nodes. */
-    BIG_NODES_POSTPROCESSOR,
 
     // After Phase 5
     
@@ -175,18 +167,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     public ILayoutProcessor<LGraph> create() {
         switch (this) {
 
-        case BIG_NODES_INTERMEDIATEPROCESSOR:
-            return new BigNodesIntermediateProcessor();
-
-        case BIG_NODES_POSTPROCESSOR:
-            return new BigNodesPostProcessor();
-
-        case BIG_NODES_PREPROCESSOR:
-            return new BigNodesPreProcessor();
-
-        case BIG_NODES_SPLITTER:
-            return new BigNodesSplitter();
-            
         case BREAKING_POINT_INSERTER:
             return new BreakingPointInserter();
             

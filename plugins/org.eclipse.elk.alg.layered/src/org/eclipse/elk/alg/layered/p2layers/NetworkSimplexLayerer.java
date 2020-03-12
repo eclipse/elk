@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -26,7 +26,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -50,8 +49,6 @@ import com.google.common.collect.Maps;
  * <dd>all nodes have been assigned a layer such that edges connect only nodes from layers with
  * increasing indices</dd>
  * </dl>
- * 
- * @author pdo
  */
 public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
 
@@ -61,20 +58,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
             .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
                     IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
             .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
-
-    /** additional processor dependencies for handling big nodes. */
-    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE =
-            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-                    .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR)
-                    .addBefore(LayeredPhases.P3_NODE_ORDERING,
-                            IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR)
-                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
-
-    /** additional processor dependencies for handling big nodes after cross min. */
-    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BIG_NODES_PROCESSING_ADDITIONS_CAREFUL =
-            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-                    .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.BIG_NODES_SPLITTER)
-                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
 
 
     // ================================== Attributes ==============================================
@@ -95,33 +78,13 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
      * has to be filled with {@code false} each time, before a DFS-based method is invoked.
      */
     private boolean[] nodeVisited;
-
-    /** User-configured strategy to handle wide nodes. */
-    private WideNodesStrategy wideNodesStrategy = WideNodesStrategy.OFF;
     
     
     // =============================== Initialization Methods =====================================
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
-        // Basic strategy
-        LayoutProcessorConfiguration<LayeredPhases, LGraph> strategy =
-                LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSING_CONFIGURATION);
-
-        // Additional dependencies
-        if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) == WideNodesStrategy.AGGRESSIVE) {
-            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
-            wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;
-            
-        } else if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
-                        == WideNodesStrategy.CAREFUL) {
-            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
-            wideNodesStrategy = WideNodesStrategy.CAREFUL;
-        }
-
-        return strategy;
+        return BASELINE_PROCESSING_CONFIGURATION;
     }
 
     /**
@@ -297,7 +260,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
             // execute the network simplex algorithm on the (sub-)graph
             NetworkSimplex.forGraph(graph).withIterationLimit(iterLimit)
                     .withPreviousLayering(previousLayeringNodeCounts)
-                    .withBalancing(wideNodesStrategy == WideNodesStrategy.OFF)
+                    .withBalancing(true)
                     .execute(monitor.subTask(1));
 
             // the layers are store in the NNode's layer field.

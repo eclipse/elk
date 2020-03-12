@@ -131,7 +131,6 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.nodePlacement.strategy
     supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
     supports feedbackEdges
-    supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
     supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
     supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
     supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
@@ -216,14 +215,6 @@ group layering {
         default = LayerConstraint.NONE
         targets nodes
         legacyIds de.cau.cs.kieler.klay.layered.layerConstraint
-    }
-
-    advanced option wideNodesOnMultipleLayers: WideNodesStrategy {
-        label "Wide Nodes on Multiple Layers"
-        description "Strategy to distribute wide nodes over multiple layers."
-        default = WideNodesStrategy.OFF
-        targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers
     }
 
     advanced option layerChoiceConstraint: int {

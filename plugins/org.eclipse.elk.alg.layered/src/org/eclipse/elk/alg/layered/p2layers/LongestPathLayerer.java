@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -18,8 +18,6 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -33,8 +31,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Postcondition:</dt><dd>all nodes have been assigned a layer such that
  *     edges connect only nodes from layers with increasing indices</dd>
  * </dl>
- *
- * @author msp
  */
 public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
     
@@ -45,48 +41,17 @@ public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGr
                     IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
             .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     
-    /** additional processor dependencies for handling big nodes. */
-    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE =
-            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-                    .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR)
-                    .addBefore(LayeredPhases.P3_NODE_ORDERING,
-                            IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR)
-                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
-
-    /** additional processor dependencies for handling big nodes after cross min. */
-    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BIG_NODES_PROCESSING_ADDITIONS_CAREFUL =
-            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-                    .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.BIG_NODES_SPLITTER)
-                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
-
     /** the layered graph to which layers are added. */
     private LGraph layeredGraph;
     /** map of nodes to their height in the layering. */
     private int[] nodeHeights;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
-        // Basic strategy
-        LayoutProcessorConfiguration<LayeredPhases, LGraph> strategy =
-                LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSING_CONFIGURATION);
-
-        // Additional dependencies
-        if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) == WideNodesStrategy.AGGRESSIVE) {
-            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
-            
-        } else if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
-                        == WideNodesStrategy.CAREFUL) {
-            strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
-        }
-        
-        return strategy;
+        return BASELINE_PROCESSING_CONFIGURATION;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph thelayeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Longest path layering", 1);
         
