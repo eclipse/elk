@@ -37,7 +37,6 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 
 /**
@@ -316,30 +315,6 @@ public final class InternalProperties {
      * cycle breaker has detected cycles and reverted edges.
      */
     public static final IProperty<Boolean> CYCLIC = new Property<Boolean>("cyclic", false);
-
-    /**
-     * Determines the original size of a big node.
-     */
-    public static final IProperty<Float> BIG_NODE_ORIGINAL_SIZE = new Property<Float>(
-            "bigNodeOriginalSize", 0f);
-
-    /**
-     * Specifies if the corresponding node is the first node in a big node chain.
-     */
-    public static final IProperty<Boolean> BIG_NODE_INITIAL = new Property<Boolean>(
-            "bigNodeInitial", false);
-
-    /**
-     * Original labels of a big node.
-     */
-    public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
-            "org.eclipse.elk.alg.layered.bigNodeLabels", new ArrayList<LLabel>());
-
-    /**
-     * A post processing function that is called during big nodes post processing.
-     */
-    public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
-            new Property<Function<Void, Void>>("org.eclipse.elk.alg.layered.postProcess", null);
 
     /**
      * Map of original hierarchy crossing edges to a set of dummy edges by which the original edge

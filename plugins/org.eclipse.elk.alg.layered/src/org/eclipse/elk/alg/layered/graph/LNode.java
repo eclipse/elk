@@ -46,8 +46,6 @@ public final class LNode extends LShape {
         NORTH_SOUTH_PORT,
         /** a dummy node to represent a mid-label on an edge. */
         LABEL,
-        /** a dummy node originating from a node spanning multiple layers. */
-        BIG_NODE,
         /** a dummy node representing a breaking point used to 'wrap' graphs. */
         BREAKING_POINT;
         
@@ -59,7 +57,6 @@ public final class LNode extends LShape {
          */
         public String getColor() {
             switch (this) {
-            case BIG_NODE: return "#cccccc";
             case EXTERNAL_PORT: return "#cc99cc";
             case LONG_EDGE: return "#eaed00";
             case NORTH_SOUTH_PORT: return "#0034de";

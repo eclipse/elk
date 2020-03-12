@@ -502,7 +502,6 @@ public final class CrossingsCounter {
             switch (current.getType()) {
             // what we consider normal
             case NORMAL:
-            case BIG_NODE:
                 // index the northern ports west-to-east
                 for (LPort p : getNorthSouthPortsWithIncidentEdges(current, PortSide.NORTH)) {
                     portPositions[p.id] = index++;

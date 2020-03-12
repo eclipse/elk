@@ -62,7 +62,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 layeredGraph,
                 true,
                 true,
-                node -> node.getType() == NodeType.NORMAL || node.getType() == NodeType.BIG_NODE));
+                node -> node.getType() == NodeType.NORMAL));
         
         // If the graph has external ports, we need to treat labels of external port dummies a bit differently,
         // which is the reason why we haven't handed them to the label and node size processing code
