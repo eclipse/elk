@@ -271,6 +271,11 @@ public interface GraphAdapters {
          * @return the side of the label.
          */
         LabelSide getSide();
+        
+        /**
+         * @return the label's text.
+         */
+        String getText();
     }
 
     /**
