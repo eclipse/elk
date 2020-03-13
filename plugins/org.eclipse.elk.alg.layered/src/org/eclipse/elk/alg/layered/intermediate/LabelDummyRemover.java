@@ -47,7 +47,6 @@ import com.google.common.collect.Lists;
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link LabelSorter}</dd>
  *     <dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
  * </dl>
  * 

@@ -144,13 +144,13 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are a
       * result of the layering. */
     HORIZONTAL_COMPACTOR,
-    /** Sorts multiple labels to reflect the order of source or target nodes. */
-    LABEL_SORTER,
     /** Removes dummy nodes which were introduced for center labels. */
     LABEL_DUMMY_REMOVER,
     /** Processor that calculates final control points for splines as intended by the 
      * {@link org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter SplineEdgeRouter}. */
     FINAL_SPLINE_BENDPOINTS_CALCULATOR,
+    /** Sorts multiple labels to reflect the order of source or target nodes. */
+    LABEL_SORTER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Assign correct coordinates to end labels. */
