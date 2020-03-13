@@ -39,7 +39,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link LabelSorter}</dd>
+ *     <dd>{@link EndLabelSorter}</dd>
  * </dl>
  */
 public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {

@@ -30,11 +30,14 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 
 /**
- * TODO Document.
+ * Sorts end labels according to the order of nodes their respective edges come from or head to. This is to prevent
+ * seemingly random label orders in diagrams that employ end labels and have multiple edges going into or leaving the
+ * same port.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>There are no long edge dummies left.</dd>
+ *     <dd>There are no label dummies left.</dd>
  *     <dd>There are no north / south port dummies left.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>End labels at each port are sorted according to order of source / target nodes.</dd>
@@ -46,11 +49,11 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
  *     <dd>{@link NorthSouthPortPostprocessor}</dd>
  * </dl>
  */
-public final class LabelSorter implements ILayoutProcessor<LGraph> {
+public final class EndLabelSorter implements ILayoutProcessor<LGraph> {
     
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Sort labels", 1);
+        monitor.begin("Sort end labels", 1);
         
         layeredGraph.getLayers().stream()
             .flatMap(layer -> layer.getNodes().stream())
