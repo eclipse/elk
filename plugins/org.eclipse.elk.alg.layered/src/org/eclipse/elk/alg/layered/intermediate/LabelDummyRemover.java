@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Kiel University and others.
+ * Copyright (c) 2012, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -47,8 +47,11 @@ import com.google.common.collect.Lists;
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LabelSorter}</dd>
  *     <dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
  * </dl>
+ * 
+ * @see LabelDummyInserter
  */
 public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
 

@@ -144,6 +144,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are a
       * result of the layering. */
     HORIZONTAL_COMPACTOR,
+    /** Sorts multiple labels to reflect the order of source or target nodes. */
+    LABEL_SORTER,
     /** Removes dummy nodes which were introduced for center labels. */
     LABEL_DUMMY_REMOVER,
     /** Processor that calculates final control points for splines as intended by the 
@@ -265,6 +267,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+        
+        case LABEL_SORTER:
+            return new LabelSorter();
 
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();

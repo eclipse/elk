@@ -55,7 +55,8 @@ final class GraphConfigurator {
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.INNERMOST_NODE_MARGIN_CALCULATOR)
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
             .addBefore(LayeredPhases.P5_EDGE_ROUTING,
-                    IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
+                    IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LABEL_SORTER);
     
     /** intermediate processors for label management. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> LABEL_MANAGEMENT_ADDITIONS =

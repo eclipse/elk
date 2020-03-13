@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Kiel University and others.
+ * Copyright (c) 2012, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -38,7 +38,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>none</dd>
+ *     <dd>{@link LabelSorter}</dd>
  * </dl>
  */
 public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {
