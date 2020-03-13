@@ -113,11 +113,15 @@ public final class LabelSorter implements ILayoutProcessor<LGraph> {
      * Called once we find the first instance of labels that have to be sorted. This method initializes everything 
      */
     private void initialize(final LGraph lGraph) {
-        // Give nodes ascending IDs
-        int nextNodeID = 0;
+        // Give nodes and ports ascending IDs
+        int nextElementID = 0;
         for (Layer layer : lGraph) {
             for (LNode node : layer) {
-                node.id = nextNodeID++;
+                node.id = nextElementID++;
+                
+                for (LPort port : node.getPorts()) {
+                    port.id = nextElementID++;
+                }
             }
         }
     }
@@ -189,15 +193,28 @@ public final class LabelSorter implements ILayoutProcessor<LGraph> {
 
         @Override
         public int compare(final LabelGroup group1, final LabelGroup group2) {
-            // TODO Take port IDs into account as well
-            int sourceDiff = Integer.compare(
-                    group1.edge.getSource().getNode().id,
-                    group2.edge.getSource().getNode().id);
-            if (sourceDiff != 0) {
-                return sourceDiff;
+            // If they are not connected to the same source port, use the difference as a basis for the comparison
+            int sourcePortDiff = Integer.compare(
+                    group1.edge.getSource().id,
+                    group2.edge.getSource().id);
+            if (sourcePortDiff != 0) {
+                return sourcePortDiff;
             }
             
-            return Integer.compare(group1.edge.getTarget().getNode().id, group2.edge.getTarget().getNode().id);
+            // They are connected to the same source port. Sort by target node, if that makes a difference.
+            int targetNodeDiff = Integer.compare(
+                    group1.edge.getTarget().getNode().id,
+                    group2.edge.getTarget().getNode().id);
+            if (targetNodeDiff != 0) {
+                return targetNodeDiff;
+            }
+            
+            // They are connected to the same source port and to the same target node. Compare target ports, but
+            // backwards. Since western ports are ordered from bottom to top, not sorting backwards would yield the
+            // opposite of our desires.
+            return Integer.compare(
+                    group2.edge.getTarget().id,
+                    group1.edge.getTarget().id);
         }
         
     };
