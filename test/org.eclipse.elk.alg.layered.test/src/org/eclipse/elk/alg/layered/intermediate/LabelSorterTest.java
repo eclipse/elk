@@ -70,7 +70,7 @@ public class LabelSorterTest {
         case NORMAL:
             // Build a list of label strings that we can check
             if (node.hasProperty(InternalProperties.END_LABELS)) {
-                for (LabelCell labelCell : node.getProperty(InternalProperties.END_LABELS)) {
+                for (LabelCell labelCell : node.getProperty(InternalProperties.END_LABELS).values()) {
                     List<String> labelStrings = labelCell.getLabels().stream()
                             .map(label -> label.getText())
                             .collect(Collectors.toList());

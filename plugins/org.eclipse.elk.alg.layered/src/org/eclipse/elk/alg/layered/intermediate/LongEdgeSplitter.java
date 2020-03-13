@@ -233,6 +233,10 @@ public final class LongEdgeSplitter implements ILayoutProcessor<LGraph> {
             if (labelPlacement == EdgeLabelPlacement.HEAD) {
                 labelIterator.remove();
                 newEdge.getLabels().add(label);
+                
+                if (!label.hasProperty(InternalProperties.END_LABEL_EDGE)) {
+                    label.setProperty(InternalProperties.END_LABEL_EDGE, oldEdge);
+                }
             }
         }
     }

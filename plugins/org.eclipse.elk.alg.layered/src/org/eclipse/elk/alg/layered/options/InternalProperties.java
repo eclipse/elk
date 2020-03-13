@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.options;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -112,7 +113,12 @@ public final class InternalProperties {
      * If any edge incident to a node has end labels, those are stored in one label cell per port by the end label
      * processors.
      */
-    public static final IProperty<List<LabelCell>> END_LABELS = new Property<>("endLabels");
+    public static final IProperty<Map<LPort, LabelCell>> END_LABELS = new Property<>("endLabels");
+    
+    /**
+     * The edge an end label belongs to.
+     */
+    public static final IProperty<LEdge> END_LABEL_EDGE = new Property<>("endLabel.origin");
 
     /**
      * The side (of an edge) a label is placed on.
