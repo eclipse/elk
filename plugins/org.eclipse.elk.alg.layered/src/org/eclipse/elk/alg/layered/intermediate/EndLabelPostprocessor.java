@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Kiel University and others.
+ * Copyright (c) 2012, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,12 +9,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.util.List;
+import java.util.Map;
 
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkRectangle;
@@ -38,7 +39,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>none</dd>
+ *     <dd>{@link EndLabelSorter}</dd>
  * </dl>
  */
 public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {
@@ -60,12 +61,12 @@ public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {
         assert node.hasProperty(InternalProperties.END_LABELS);
         
         // The node should have a non-empty list of label cells, or something went TERRIBLY WRONG!!!
-        List<LabelCell> endLabelCells = node.getProperty(InternalProperties.END_LABELS);
+        Map<LPort, LabelCell> endLabelCells = node.getProperty(InternalProperties.END_LABELS);
         assert !endLabelCells.isEmpty();
         
         KVector nodePos = node.getPosition();
         
-        for (LabelCell labelCell : endLabelCells) {
+        for (LabelCell labelCell : endLabelCells.values()) {
             ElkRectangle labelCellRect = labelCell.getCellRectangle();
             labelCellRect.move(nodePos);
             

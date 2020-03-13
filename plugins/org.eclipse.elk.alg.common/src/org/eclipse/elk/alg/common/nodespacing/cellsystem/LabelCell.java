@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.common.nodespacing.cellsystem;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -146,31 +145,25 @@ public class LabelCell extends Cell {
     }
 
     /**
-     * Returns the list of labels in this cell. The list cannot be modified. To add labels, call
-     * {@link #addLabel(LabelAdapter)}.
+     * Returns the list of labels in this cell. The list should not be modified, except to reorder the labels. To
+     * add labels to the cell, call {@link #addLabel(LabelAdapter)} instead.
      * 
      * @return unmodifiable list of labels.
      */
     public List<LabelAdapter<?>> getLabels() {
-        return Collections.unmodifiableList(labels);
+        return labels;
     }
     
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Cell
     
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.util.nodespacing.internal.cells.Cell#getMinimumWidth()
-     */
     @Override
     public double getMinimumWidth() {
         ElkPadding padding = getPadding();
         return minimumContentAreaSize.x + padding.left + padding.right;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.util.nodespacing.internal.cells.Cell#getMinimumHeight()
-     */
     @Override
     public double getMinimumHeight() {
         ElkPadding padding = getPadding();
