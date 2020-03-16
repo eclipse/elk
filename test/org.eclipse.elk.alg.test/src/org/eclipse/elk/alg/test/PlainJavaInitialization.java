@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Kiel University and others.
+ * Copyright (c) 2018, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,15 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test;
 
-import org.eclipse.elk.alg.disco.options.DisCoMetaDataProvider;
-import org.eclipse.elk.alg.force.options.ForceMetaDataProvider;
-import org.eclipse.elk.alg.force.options.StressMetaDataProvider;
-import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
-import org.eclipse.elk.alg.mrtree.options.MrTreeMetaDataProvider;
-import org.eclipse.elk.alg.radial.options.RadialMetaDataProvider;
-import org.eclipse.elk.alg.rectpacking.options.RectPackingMetaDataProvider;
-import org.eclipse.elk.alg.spore.options.SporeMetaDataProvider;
-import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.debug.grandom.GRandomStandaloneSetup;
 import org.eclipse.elk.core.util.persistence.ElkGraphResourceFactory;
@@ -31,23 +22,6 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 public final class PlainJavaInitialization {
     
-    /** The list of meta data providers we need to register. */
-    private static ILayoutMetaDataProvider[] metaDataProviders;
-    
-    static {
-        metaDataProviders = new ILayoutMetaDataProvider[] {
-            new DisCoMetaDataProvider(),
-            new ForceMetaDataProvider(),
-            new LayeredMetaDataProvider(),
-            new MrTreeMetaDataProvider(),
-            new RadialMetaDataProvider(),
-            new RectPackingMetaDataProvider(),
-            new SporeMetaDataProvider(),
-            new StressMetaDataProvider()
-        };
-    }
-    
-    
     /**
      * Prevent instantiation.
      */
@@ -59,16 +33,16 @@ public final class PlainJavaInitialization {
      * Setup everything to work outside of Eclipse.
      */
     public static void initializePlainJavaLayout() {
+        // Ensure that the meta data service loads all meta data providers as soon as possible (not doing this worked
+        // for at least one test class, so this might not even be necessary)
+        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
+        
         // Set up GRandom for loading .elkr files and ELK Graph Text for loading .elkg and .elkt files
         GRandomStandaloneSetup.doSetup();
         
         ElkGraphStandaloneSetup.doSetup();
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("elkg", new ElkGraphResourceFactory());
         ElkGraphPackage.eINSTANCE.eClass();
-
-        // Register our meta data providers
-        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
-        service.registerLayoutMetaDataProviders(metaDataProviders);
     }
 
 }
