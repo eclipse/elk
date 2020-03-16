@@ -41,7 +41,7 @@ import com.google.common.collect.Lists;
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
 @DefaultConfiguration()
-public class LabelSorterTest {
+public class EndLabelSorterTest {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
@@ -56,7 +56,7 @@ public class LabelSorterTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tests
 
-    @TestAfterProcessor(LabelSorter.class)
+    @TestAfterProcessor(EndLabelSorter.class)
     public void testCorrectOrder(final Object graph) {
         LGraph lGraph = (LGraph) graph;
         
