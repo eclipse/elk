@@ -13,21 +13,7 @@ While layout algorithms [can be called directly]({{< relref "documentation/toold
 
 1. Most importantly, as graphs get more complex there are more and more details to be aware of when executing layout. This is especially true for compound graphs: graphs with nodes that contain further graphs themselves.
 
-The best way to invoke automatic layout is through a fully-fledged implementation of `IGraphLayoutEngine`. ELK provides a convenient implementation: the `RecursiveGraphLayoutEngine`. But before we can explain that, we need to provide a big of background regarding the `LayoutMetaDataService`.
-
-
-## The Layout Meta Data Service
-
-To know about which layout algorithms and layout options are available, ELK keeps a central registry of layout meta data: the `LayoutMetaDataService`. The recursive graph layout engine looks at which layout algorithm should layout a given part of the layout graph and uses the meta data service to obtain an instance of that algorithm.
-
-When running in an Eclipse context, the meta data service is magically populated. In a plain Java application, you will have to populate the service yourself. Layout meta data are provided by `ILayoutMetaDataProvider`s. What you need to do is to obtain an instance of each relevant meta data provider and register it with the meta data service.
-
-One such meta data provider is always automatically registered: `CoreOptions`. This will give you access to our most basic layout algorithms: _Fixed Layout_, _Box Layout_, and _Random Layout_ (at the time of writing). To use more layout algorithms, you will have to find the algorithm's implementation of `ILayoutMetaDataProvider` and register that. For example, using _ELK Layered_ requires the following registration:
-
-```java
-LayoutMetaDataService service = LayoutMetaDataService.getInstance();
-service.registerLayoutMetaDataProviders(new LayeredMetaDataProvider());
-```
+The best way to invoke automatic layout is through a fully-fledged implementation of `IGraphLayoutEngine`. ELK provides a convenient implementation: the `RecursiveGraphLayoutEngine`.
 
 
 ## Using the Recursive Graph Layout Engines
