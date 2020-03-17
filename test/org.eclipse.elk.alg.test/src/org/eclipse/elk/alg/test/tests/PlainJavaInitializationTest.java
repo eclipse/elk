@@ -23,7 +23,10 @@ import org.eclipse.elk.alg.spore.options.SporeOverlapRemovalOptions;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.GraphProvider;
+import org.eclipse.elk.core.options.BoxLayouterOptions;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.FixedLayouterOptions;
+import org.eclipse.elk.core.options.RandomLayouterOptions;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.Test;
@@ -34,16 +37,19 @@ import org.junit.runner.RunWith;
  * one of the tests here will fail.
  */
 @RunWith(LayoutTestRunner.class)
+@Algorithm(BoxLayouterOptions.ALGORITHM_ID)
 @Algorithm(DisCoOptions.ALGORITHM_ID)
+@Algorithm(FixedLayouterOptions.ALGORITHM_ID)
 @Algorithm(ForceOptions.ALGORITHM_ID)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
 @Algorithm(MrTreeOptions.ALGORITHM_ID)
 @Algorithm(RadialOptions.ALGORITHM_ID)
+@Algorithm(RandomLayouterOptions.ALGORITHM_ID)
 @Algorithm(RectPackingOptions.ALGORITHM_ID)
 @Algorithm(SporeCompactionOptions.ALGORITHM_ID)
 @Algorithm(SporeOverlapRemovalOptions.ALGORITHM_ID)
 @Algorithm(StressOptions.ALGORITHM_ID)
-public class ProperAlgorithmRegistrationTest {
+public class PlainJavaInitializationTest {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
