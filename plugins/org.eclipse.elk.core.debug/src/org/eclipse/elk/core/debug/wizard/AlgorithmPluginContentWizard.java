@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
+ * Copyright (c) 2019, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.elk.core.debug.wizard.templates.LayoutProviderTemplate;
 import org.eclipse.elk.core.debug.wizard.templates.MelkTemplate;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.ui.IFieldData;
@@ -121,10 +119,8 @@ public class AlgorithmPluginContentWizard extends Wizard implements IPluginConte
         createLayoutProvider(project, monitor);
         
         createMelkFile(project, monitor);
+        createServiceFile(project, monitor);
         addXtextNature(project, monitor);
-        
-        // Register the layout algorithm with ELK (change if the way that's done changes in the future)
-        addExtension(model);
         
         return true;
     }
@@ -165,6 +161,28 @@ public class AlgorithmPluginContentWizard extends Wizard implements IPluginConte
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Add layout provider extension to plug-in to register algorithm with ELK.
+     */
+    private void createServiceFile(IProject project, IProgressMonitor monitor) {
+        String fileContent = id + "." + algorithmName + "MetadataProvider";
+        
+        // Create necessary folders
+        try {
+            IFolder srcMetaInf = project.getFolder("/src/META-INF");
+            srcMetaInf.create(true, true, monitor);
+            
+            IFolder srcMetaInfServices = project.getFolder("/src/META-INF/services");
+            srcMetaInfServices.create(true, true, monitor);
+            
+            IFile serviceFile = project.getFile(
+                    "/src/META-INF/services/org.eclipse.elk.core.data.ILayoutMetaDataProvider");
+            serviceFile.create(new ByteArrayInputStream(fileContent.getBytes()), false, monitor);
+        } catch (CoreException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Adds the Xtext nature to the project to ensure that MELK files are compiled.
@@ -180,23 +198,6 @@ public class AlgorithmPluginContentWizard extends Wizard implements IPluginConte
 
             description.setNatureIds(newNatures);
             project.setDescription(description, monitor);
-        } catch (CoreException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Add layout provider extension to plug-in to register algorithm with ELK.
-     */
-    private void addExtension(IPluginModelBase model) {
-        try {
-            IPluginExtension extension = model.getExtensions().getModel().getFactory().createExtension();
-            extension.setPoint("org.eclipse.elk.core.layoutProviders");
-            IPluginElement provider = model.getPluginFactory().createElement(extension);
-            provider.setName("provider");
-            provider.setAttribute("class", id + "." + algorithmName + "MetadataProvider");
-            extension.add(provider);
-            model.getExtensions().add(extension);
         } catch (CoreException e) {
             e.printStackTrace();
         }
