@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
+ * Copyright (c) 2019, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -19,9 +19,9 @@ import org.eclipse.elk.alg.test.framework.io.AbsoluteResourcePath;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.FileExtensionFilter;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
+import org.eclipse.elk.core.debug.grandom.gRandom.Configuration;
 import org.eclipse.elk.core.debug.grandom.gRandom.RandGraph;
 import org.eclipse.elk.core.debug.grandom.generators.RandomGraphGenerator;
-import org.eclipse.elk.core.debug.grandom.ui.GRandomGraphMaker;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -121,8 +121,10 @@ public final class RandomGraphFromFile extends TestGraph {
                 // Create random graphs
                 RandGraph rand = (RandGraph) resource.getContents().get(0);
 
-                GRandomGraphMaker graphMaker = new GRandomGraphMaker(rand);
-                graphs.addAll(graphMaker.loadGraph());
+                RandomGraphGenerator graphGenerator = new RandomGraphGenerator(null);
+                for (Configuration config : rand.getConfigs()) {
+                    graphs.addAll(graphGenerator.generate(config));
+                }
             }
         }
 
