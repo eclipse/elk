@@ -31,7 +31,7 @@ public final class DrawingUtil {
      * @return altered scale measure calculated the given parameters.
      */
     public static double computeScaleMeasure(final double width, final double height, final double dar) {
-        return Math.min(1d / width, (1d / dar) / height);
+        return Math.min(dar / width, 1d / height);
     }
 
     /**
