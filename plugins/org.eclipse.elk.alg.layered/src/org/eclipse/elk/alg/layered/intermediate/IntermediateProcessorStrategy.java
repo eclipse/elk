@@ -149,6 +149,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     /** Processor that calculates final control points for splines as intended by the 
      * {@link org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter SplineEdgeRouter}. */
     FINAL_SPLINE_BENDPOINTS_CALCULATOR,
+    /** Sorts multiple end labels to reflect the order of source or target nodes. */
+    END_LABEL_SORTER,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Assign correct coordinates to end labels. */
@@ -265,6 +267,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+        
+        case END_LABEL_SORTER:
+            return new EndLabelSorter();
 
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();

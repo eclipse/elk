@@ -35,13 +35,6 @@
      </command>
   </extension>
  <extension
-       point="org.eclipse.elk.core.layoutProviders">
-    <provider
-          class="org.eclipse.elk.conn.gmf.layouter.GmfMetaDataProvider">
-    </provider>
-    
- </extension>
- <extension
        point="org.eclipse.gmf.runtime.diagram.ui.layoutProviders">
     <layoutProvider
           class="org.eclipse.elk.conn.gmf.ElkLayoutProvider">

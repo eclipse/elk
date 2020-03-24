@@ -555,6 +555,12 @@ public final class LGraphAdapters {
         public LabelSide getSide() {
             return element.getProperty(LabelSide.LABEL_SIDE);
         }
+        
+        @Override
+        public String getText() {
+            return element.getText();
+        }
+        
     }
 
     /**

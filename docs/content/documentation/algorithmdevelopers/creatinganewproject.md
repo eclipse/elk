@@ -43,8 +43,10 @@ The wizard creates the following things for your:
 
 * A `MANIFEST.MF` file with the necessary dependencies to the Eclipse Layout Kernel so you can use our data structures.
 
-* A `plugin.xml` file which registers your new layout algorithm with ELK so it can be used.
+* A file called `ILayoutMetaDataProvider` which registeres your new layout algorithm with ELK so it can be used.
 
 * A `.melk` file which describes your layout algorithm and the options it supports (see [this page]({{< relref "documentation/algorithmdevelopers/metadatalanguage.md" >}}) for more information).
 
 * A sample implementation with a simple basic layout provider. Studying this implementation will teach you a lot about how to develop layout algorithms with ELK (see [this page]({{< relref "documentation/algorithmdevelopers/algorithmimplementation.md" >}}) for more information).
+
+Somewhat strangely, perhaps, the `ILayoutMetaDataProvider` file is located in `/src/META-INF/services` instead of `/META-INF/services`. There is a reason for that. When we start a project in Eclipse, the non-Java content of its source folders is copied into a `bin` folder, which is then put on the class path. Since `/META-INF` is not part of a source folder, putting the service file there would mean that the service is not available when started from Eclipse. If you happen to despise this solution, simply define a separate top-level folder, configure it as a source folder, and move `/src/META-INF` there. Whatever you do, however, you will always end up with two `META-INF` folders in your project.

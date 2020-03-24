@@ -250,8 +250,8 @@ For a layout algorithm to support white box tests, its `AbstractLayoutProvider` 
 
 From Eclipse, tests can be run as plain Java JUnit tests (not plug-in tests). Three environment or system variables have to be set for the test framework to work:
 
-* `ELK_REPO`: Absolute path to the directory where the main ELK repository is checked out.
-* `MODELS_REPO`: Absolute path to the directory where the `elk-models` repository is checked out.
+* `ELK_REPO`: Absolute path to the directory where the main ELK repository is checked out. With our default Oomph setup, the value `${workspace_loc:org.eclipse.elk.core}/../..` always works.
+* `MODELS_REPO`: Absolute path to the directory where the `elk-models` repository is checked out. With our default Oomph setup, the value `${workspace_loc:org.eclipse.elk.core}/../../../elk-models` always works.
 
 ### As Part of Automatic Builds
 

@@ -26,12 +26,5 @@
             class="org.eclipse.elk.alg.graphviz.layouter.preferences.GraphvizLayouterPreferenceInitializer">
       </initializer>
    </extension>
-   <extension
-         point="org.eclipse.elk.core.layoutProviders">
-      <provider
-            class="org.eclipse.elk.alg.graphviz.layouter.GraphvizMetaDataProvider">
-      </provider>
-      
-   </extension>
 
 </plugin>

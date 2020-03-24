@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 Kiel University and others.
+ * Copyright (c) 2008, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.TreeSet;
 
 import org.eclipse.elk.core.math.ElkMargin;
@@ -34,8 +35,6 @@ import com.google.common.collect.Sets;
 /**
  * Singleton class for access to the ELK layout meta data. This class is used globally to retrieve meta data for
  * automatic layout through ELK, which is given through the {@code layoutProviders} extension point.
- *
- * @author msp
  */
 public final class LayoutMetaDataService {
 
@@ -55,10 +54,13 @@ public final class LayoutMetaDataService {
         if (instance == null) {
             instance = new LayoutMetaDataService();
 
-            // We always load our core options
-            instance.registerLayoutMetaDataProviders(new CoreOptions());
+            // Invoke service loading to register all meta data providers automatically (this does not work if we're
+            // running on Equinox since this will only find services in the realm of this class's class loader)
+            for (ILayoutMetaDataProvider provider : ServiceLoader.load(ILayoutMetaDataProvider.class)) {
+                instance.registerLayoutMetaDataProviders(provider);
+            }
 
-            // Try to make the ELK service plug-in load the extension point data
+            // Try to make the ELK service plug-in load our services
             // elkjs-exclude-start
             try {
                 Class.forName("org.eclipse.elk.core.service.ElkServicePlugin");
