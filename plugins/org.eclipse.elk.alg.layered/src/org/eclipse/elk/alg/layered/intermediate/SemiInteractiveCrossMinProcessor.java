@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,7 +9,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import java.util.Optional;
+
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -43,18 +46,17 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public class SemiInteractiveCrossMinProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Semi-Interactive Crossing Minimization Processor", 1);
 
+        boolean addedConstraints = false;
+        
         for (Layer l : layeredGraph) {
             // #1 extract relevant nodes
             // #2 sort them with ascending y coordinate
             // #3 introduce pair-wise in-layer constraints
-            l.getNodes().stream()
+            Optional<LNode> reduced = l.getNodes().stream()
                 .filter(n -> n.getType() == NodeType.NORMAL)
                 .filter(n -> n.getAllProperties().containsKey(LayeredOptions.POSITION))
                 .sorted((n1, n2) -> {
@@ -66,6 +68,12 @@ public class SemiInteractiveCrossMinProcessor implements ILayoutProcessor<LGraph
                     prev.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(cur);
                     return cur;
                 });
+            addedConstraints |= reduced.isPresent();
+        }
+        
+        // If we added in-layer successor constraints, make subsequent phases aware
+        if (addedConstraints) {
+            layeredGraph.setProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS_BETWEEN_NON_DUMMIES, true);
         }
 
         progressMonitor.done();

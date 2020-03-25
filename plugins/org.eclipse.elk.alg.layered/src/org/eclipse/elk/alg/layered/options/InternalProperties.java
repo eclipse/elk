@@ -199,6 +199,13 @@ public final class InternalProperties {
      */
     public static final IProperty<List<LNode>> IN_LAYER_SUCCESSOR_CONSTRAINTS =
             new Property<List<LNode>>("inLayerSuccessorConstraint", new ArrayList<LNode>());
+    
+    /**
+     * Set to {@code true} if there are in-layer successor constraints between regular nodes. If that
+     * is the case, constraint resolvers may have to know.
+     */
+    public static final IProperty<Boolean> IN_LAYER_SUCCESSOR_CONSTRAINTS_BETWEEN_NON_DUMMIES =
+            new Property<Boolean>("inLayerSuccessorConstraintBetweenNonDummies", false);
 
     /**
      * A property set on ports indicating a dummy node created for that port. This is not set for

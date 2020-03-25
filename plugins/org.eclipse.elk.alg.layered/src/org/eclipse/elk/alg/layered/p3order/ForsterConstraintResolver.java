@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -38,6 +39,8 @@ import com.google.common.collect.Multimap;
  */
 public class ForsterConstraintResolver implements IInitializable {
 
+    /** Whether there are successor constraints between non-dummies. */
+    private boolean constraintsBetweenNonDummies;
     /** the layout units for handling dummy nodes for north / south ports. */
     private Multimap<LNode, LNode> layoutUnits;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
@@ -55,6 +58,10 @@ public class ForsterConstraintResolver implements IInitializable {
      *            the current node order
      */
     public ForsterConstraintResolver(final LNode[][] currentNodeOrder) {
+        assert currentNodeOrder.length > 0 && currentNodeOrder[0].length > 0;
+        
+        constraintsBetweenNonDummies = currentNodeOrder[0][0].getGraph().getProperty(
+                InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS_BETWEEN_NON_DUMMIES);
         barycenterStates = new BarycenterState[currentNodeOrder.length][];
         constraintGroups = new ConstraintGroup[currentNodeOrder.length][];
         layoutUnits = LinkedHashMultimap.create();
@@ -65,15 +72,35 @@ public class ForsterConstraintResolver implements IInitializable {
         barycenterStates[l] = new BarycenterState[nodeOrder[l].length];
         constraintGroups[l] = new ConstraintGroup[nodeOrder[l].length];
     }
-
+    
     @Override
     public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
-        LNode node = nodeOrder[l][n];
-        barycenterStates[l][n] = new BarycenterState(node);
-        constraintGroups[l][n] = new ConstraintGroup(node);
-        LNode layoutUnit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-        if (layoutUnit != null) {
-            layoutUnits.put(layoutUnit, node);
+        initAtNodeLevel(nodeOrder[l][n], true);
+    }
+    
+    /**
+     * Inits data structures for the given node.
+     * 
+     * @param node
+     *            the node for which to initialize the data structures.
+     * @param fullInit
+     *            if {@code true}, this will also initialize barycenter states and layout units. This only needs to be
+     *            done once, when the resolver is first initialized. The layout units remain stable, and the barycenter
+     *            states are updated while the resolver is running.
+     */
+    private void initAtNodeLevel(final LNode node, final boolean fullInit) {
+        int layerIndex = node.getLayer().id;
+        int nodeIndex = node.id;
+        
+        constraintGroups[layerIndex][nodeIndex] = new ConstraintGroup(node);
+        
+        if (fullInit) {
+            barycenterStates[layerIndex][nodeIndex] = new BarycenterState(node);
+            
+            LNode layoutUnit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+            if (layoutUnit != null) {
+                layoutUnits.put(layoutUnit, node);
+            }
         }
     }
 
@@ -97,13 +124,26 @@ public class ForsterConstraintResolver implements IInitializable {
      *            list of nodes to handle constraints for.
      */
     public void processConstraints(final List<LNode> nodes) {
-        List<ConstraintGroup> groups = Lists.newArrayList();
+        // If there are successor constraints between regular (or normal) nodes, we have to apply a two-stage process:
+        // in stage 1, we resolve constraints between the normal nodes. In stage 2, we ensure that all of their north /
+        // south port dummies are in order and that no layout units overlap. For the latter to work properly, we need
+        // the order of normal nodes to be fixed, hence the first stage.
+        if (constraintsBetweenNonDummies) {
+            processConstraints(nodes, true);
+            nodes.stream().forEach(node -> initAtNodeLevel(node, false));
+        }
+        
+        processConstraints(nodes, false);
+    }
+    
+    private void processConstraints(final List<LNode> nodes, final boolean onlyBetweenNormalNodes) {
+        List<ConstraintGroup> groups = new ArrayList<>(nodes.size());
         for (LNode node : nodes) {
             groups.add(constraintGroups[node.getLayer().id][node.id]);
         }
 
         // Build the constraints graph
-        buildConstraintsGraph(groups);
+        buildConstraintsGraph(groups, onlyBetweenNormalNodes);
 
         // Find violated vertices
         Pair<ConstraintGroup, ConstraintGroup> violatedConstraint = null;
@@ -128,7 +168,7 @@ public class ForsterConstraintResolver implements IInitializable {
      * @param groups
      *            the array of single-node vertices sorted by their barycenter values.
      */
-    private void buildConstraintsGraph(final List<ConstraintGroup> groups) {
+    private void buildConstraintsGraph(final List<ConstraintGroup> groups, final boolean onlyBetweenNormalNodes) {
         // Reset the constraint fields
         for (ConstraintGroup group : groups) {
             group.resetOutgoingConstraints();
@@ -138,18 +178,26 @@ public class ForsterConstraintResolver implements IInitializable {
         // Iterate through the vertices, adding the necessary constraints
         LNode lastNonDummyNode = null;
         for (ConstraintGroup group : groups) {
-
             // at this stage all groups should consist of a single node
             LNode node = group.getNode();
+            
+            // We may want to skip this
+            if (onlyBetweenNormalNodes && node.getType() != NodeType.NORMAL) {
+                continue;
+            }
 
             // Add the constraints given by the vertex's node
             for (LNode successor : node.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS)) {
-                group.getOutgoingConstraints().add(groupOf(successor));
-                groupOf(successor).incomingConstraintsCount++;
+                if (!onlyBetweenNormalNodes || successor.getType() == NodeType.NORMAL) {
+                    group.getOutgoingConstraints().add(groupOf(successor));
+                    groupOf(successor).incomingConstraintsCount++;
+                }
             }
 
-            // Check if we're processing a a normal, none-dummy node
-            if (node.getType() == NodeType.NORMAL) {
+            // Check if we're processing a a normal, none-dummy node. If this is the case, we may want to insert
+            // additional constraints between the previous normal node's layout unit and the current node's layout
+            // unit to be sure they won't mix. This requires that the normal nodes won't change order, however.
+            if (!onlyBetweenNormalNodes && node.getType() == NodeType.NORMAL) {
                 // If we already processed another normal, non-dummy node, we need to add
                 // constraints from all of that other node's layout unit's vertices to this
                 // node's layout unit's vertices
