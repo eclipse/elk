@@ -54,6 +54,9 @@ public final class LayoutMetaDataService {
         if (instance == null) {
             instance = new LayoutMetaDataService();
 
+            // Non of the following is available in GWT
+            // elkjs-exclude-start
+            
             // Invoke service loading to register all meta data providers automatically (this does not work if we're
             // running on Equinox since this will only find services in the realm of this class's class loader)
             for (ILayoutMetaDataProvider provider : ServiceLoader.load(ILayoutMetaDataProvider.class)) {
@@ -61,7 +64,6 @@ public final class LayoutMetaDataService {
             }
 
             // Try to make the ELK service plug-in load our services
-            // elkjs-exclude-start
             try {
                 Class.forName("org.eclipse.elk.core.service.ElkServicePlugin");
             } catch (Exception e) {
