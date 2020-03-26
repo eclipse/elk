@@ -17,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.TreeSet;
 
 import org.eclipse.elk.core.math.ElkMargin;
@@ -59,7 +58,7 @@ public final class LayoutMetaDataService {
             
             // Invoke service loading to register all meta data providers automatically (this does not work if we're
             // running on Equinox since this will only find services in the realm of this class's class loader)
-            for (ILayoutMetaDataProvider provider : ServiceLoader.load(ILayoutMetaDataProvider.class)) {
+            for (ILayoutMetaDataProvider provider : java.util.ServiceLoader.load(ILayoutMetaDataProvider.class)) {
                 instance.registerLayoutMetaDataProviders(provider);
             }
 
