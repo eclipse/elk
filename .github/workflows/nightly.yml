@@ -2,7 +2,7 @@ name: ELK Nightly CI
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 8 * * *'
 
 jobs:
   build:
@@ -16,4 +16,4 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       working-directory: build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/ELK_FOLDER/docs -Dmaven.repo.local=./mvnrepo clean package
+      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/tmp/docs -Dmaven.repo.local=./mvnrepo clean package
