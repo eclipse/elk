@@ -2,18 +2,31 @@ name: ELK Nightly CI
 
 on:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '36 22 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 8, 9, 12 ]
   
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+      with:
+        path: elk
+    - uses: actions/checkout@v2
+      with:
+        repository: eclipse/elk-models
+        path: elk-models
+    - name: Set up Java version
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.java-version }}
     - name: Build with Maven
-      working-directory: build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/tmp/docs -Dmaven.repo.local=./mvnrepo clean package
+      working-directory: $GITHUB_WORKSPACE/elk/build/
+      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=$GITHUB_WORKSPACE/elk/docs -Dmaven.repo.local=./mvnrepo clean package
+    - name: Run tests
+      working-directory: $GITHUB_WORKSPACE/elk/build/
+      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=$GITHUB_WORKSPACE/elk/docs -Dmaven.repo.local=./mvnrepo --define tests.paths.elk-repo=$GITHUB_WORKSPACE/elk --define tests.paths.models-repo=$GITHUB_WORKSPACE/elk-models clean integration-test
+
