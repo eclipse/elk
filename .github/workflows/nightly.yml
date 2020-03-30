@@ -2,7 +2,7 @@ name: ELK Nightly CI
 
 on:
   schedule:
-    - cron: '37 20 * * *'
+    - cron: '0 21 * * *'
 
 jobs:
   build:
