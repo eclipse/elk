@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.ContentAlignment;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
@@ -600,6 +601,40 @@ public final class ElkUtil {
 
         // Translate target point
         section.setEndLocation(section.getEndX() + xoffset, section.getEndY() + yoffset);
+    }
+    
+    /**
+     * Translates the contents of the given node based on the content alignment property without resizing the node itself.
+     * 
+     * @param parent The parent node.
+     * @param newSize The new size.
+     * @param oldSize The old size.
+     */
+    public static void translate(final ElkNode parent, final KVector newSize, final KVector oldSize) {
+        Set<ContentAlignment> contentAlignment =
+                parent.getProperty(CoreOptions.CONTENT_ALIGNMENT);
+        double xTranslate = 0;
+        double yTranslate = 0;
+        
+        // Horizontal alignment
+        if (newSize.x > oldSize.x) {
+            if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
+                xTranslate = (newSize.x - oldSize.x) / 2f;
+            } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
+                xTranslate = newSize.x - oldSize.x;
+            }
+        }
+
+        // Vertical alignment
+        if (newSize.y > oldSize.y) {
+            if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
+                yTranslate = (newSize.y - oldSize.y) / 2f;
+            } else if (contentAlignment.contains(ContentAlignment.V_BOTTOM)) {
+                yTranslate = newSize.y - oldSize.y;
+            }
+        }
+
+        translate(parent, xTranslate, yTranslate);
     }
 
 

@@ -168,6 +168,13 @@ programmatic option bendPoints: KVectorChain {
     targets edges
     legacyIds de.cau.cs.kieler.bendPoints
 }
+advanced option contentAlignment: EnumSet<ContentAlignment> {
+    label "Content Alignment"
+    description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+    default = EnumSet.of(ContentAlignment.H_CENTER, ContentAlignment.V_TOP)
+    targets parents
+    legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
+}
 advanced option debugMode: boolean {
     label "Debug Mode"
     description "Whether additional debug information shall be generated."

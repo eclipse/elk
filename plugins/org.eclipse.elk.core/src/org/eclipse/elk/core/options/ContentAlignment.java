@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.options;
+package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
 
