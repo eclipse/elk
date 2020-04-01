@@ -22,18 +22,25 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeTestG
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test for extracted and modified AllCrossingsCounter.
  *
  */
-@SuppressWarnings("restriction")
 public class AllCrossingsCounterTest extends TestGraphCreator {
 
     // CHECKSTYLEOFF Javadoc
     // CHECKSTYLEOFF MagicNumber
+    
+    @Before
+    public void initPlainJavaLayout() {
+        // Necessary as this is a plain junit test for which the LayoutMetaDataService is not initialized automatically
+        PlainJavaInitialization.initializePlainJavaLayout();
+    }
 
     @Test
     public void countOneCrossing() {
