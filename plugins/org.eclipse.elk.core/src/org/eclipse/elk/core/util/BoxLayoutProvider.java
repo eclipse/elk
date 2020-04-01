@@ -13,16 +13,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.BoxLayouterOptions;
+import org.eclipse.elk.core.options.ContentAlignment;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -52,6 +55,9 @@ import com.google.common.collect.Lists;
  */
 public class BoxLayoutProvider extends AbstractLayoutProvider {
     
+    public static final Set<ContentAlignment> DEFAULT_ALIGNMENT =
+            EnumSet.of(ContentAlignment.H_CENTER, ContentAlignment.V_TOP);
+    
     /** default value for aspect ratio. */
     public static final double DEF_ASPECT_RATIO = 1.3;
 
@@ -64,6 +70,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         boolean expandNodes = layoutNode.getProperty(BoxLayouterOptions.EXPAND_NODES);
         boolean interactive = layoutNode.getProperty(BoxLayouterOptions.INTERACTIVE);
 
+        // Set custom default for content alignment.
+        
         switch (layoutNode.getProperty(BoxLayouterOptions.BOX_PACKING_MODE)) {
         case SIMPLE:
             placeBoxes(layoutNode, objSpacing, padding, expandNodes, interactive);
@@ -260,7 +268,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                     double oldWidth = box.getWidth();
                     box.setWidth(newWidth);
                     // Content alignment
-                    ElkUtil.translate(box, new KVector(newWidth, newHeight), new KVector(oldWidth, oldHeight));
+                    ElkUtil.translate(box, new KVector(newWidth, newHeight), new KVector(oldWidth, oldHeight),
+                            DEFAULT_ALIGNMENT);
                 }
                 xpos += box.getWidth() + minSpacing;
             }
