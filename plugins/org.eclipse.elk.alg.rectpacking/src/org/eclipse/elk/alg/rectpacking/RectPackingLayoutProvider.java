@@ -11,9 +11,7 @@ package org.eclipse.elk.alg.rectpacking;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.elk.alg.rectpacking.firstiteration.AreaApproximation;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
@@ -24,7 +22,6 @@ import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.ContentAlignment;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -42,9 +39,6 @@ import org.eclipse.elk.graph.ElkNode;
  * </p>
  */
 public class RectPackingLayoutProvider extends AbstractLayoutProvider {
-    
-    public static final Set<ContentAlignment> DEFAULT_ALIGNMENT =
-            EnumSet.of(ContentAlignment.H_CENTER, ContentAlignment.V_TOP);
     /**
      * Calculating and applying layout to the model.
      */

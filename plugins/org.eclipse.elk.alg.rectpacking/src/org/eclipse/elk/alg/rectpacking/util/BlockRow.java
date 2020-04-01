@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.rectpacking.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkNode;
@@ -135,8 +134,7 @@ public class BlockRow {
             i++;
             double newWidth = rect.getWidth();
             double newHeight = rect.getHeight();
-            ElkUtil.translate(rect, new KVector(newWidth, newHeight), new KVector(oldWidth, oldHeight),
-                    RectPackingLayoutProvider.DEFAULT_ALIGNMENT);
+            ElkUtil.translate(rect, new KVector(newWidth, newHeight), new KVector(oldWidth, oldHeight));
         }
     }
     
