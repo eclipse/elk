@@ -25,6 +25,10 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.eclipse.xtend</groupId>
+        <artifactId>xtend-maven-plugin</artifactId>
+      </plugin>
       <!-- Don't publish this artifact to Maven repositories. -->
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
