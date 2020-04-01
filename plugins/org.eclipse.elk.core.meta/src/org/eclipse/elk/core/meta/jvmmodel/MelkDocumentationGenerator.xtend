@@ -586,7 +586,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                 val newFileName = fileNamePrefix + "_" + path.substring(path.lastIndexOf('/') + 1)
                 projectDocumentationSourceFolder.resolve(path).toString.copyImageToOutputPath(newFileName)
                 // replace the URL with the new path
-                res += "{{< image src=\"" + newFileName + "\" alt=\"Preview Image\" gen=\"1\" >}}\n\n"
+                res += "{{< image src=\"" + newFileName + "\" alt=\"" + imgTitle + "\" gen=\"1\" >}}\n\n"
                 i++;
             }
         }
