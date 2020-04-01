@@ -22,7 +22,7 @@ import com.google.gson.JsonPrimitive
  * Whenever methods are added or removed from this class, 
  * elkjs's corresponding JsonAdapter must be update accordingly!
  */
-public final class JsonAdapter {
+final class JsonAdapter {
 
     // - - - - - - - - - - - - - - - - - - -
     // Getting the id of an element

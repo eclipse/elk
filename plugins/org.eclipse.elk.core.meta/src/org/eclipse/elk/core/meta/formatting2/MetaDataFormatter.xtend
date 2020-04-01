@@ -15,7 +15,6 @@ import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 import org.eclipse.xtext.formatting2.IHiddenRegionFormatter
 import org.eclipse.elk.core.meta.services.MetaDataGrammarAccess
-import org.eclipse.xtext.formatting2.regionaccess.ISemanticRegion
 import com.google.inject.Inject
 import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdOption

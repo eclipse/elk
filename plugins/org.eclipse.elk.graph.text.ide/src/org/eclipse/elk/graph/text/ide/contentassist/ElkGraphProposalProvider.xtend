@@ -190,13 +190,10 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
                     val enumVal = property.getEnumValue(i)
                     
                     val displayString = new StringBuilder(proposal)
-                    var priority = 3
                     if (ElkGraphUtil.isExperimentalPropertyValue(enumVal)) {
                         displayString.append(" - Experimental")
-                        priority = 1
                     } else if (ElkGraphUtil.isAdvancedPropertyValue(enumVal)) {
                         displayString.append(" - Advanced")
-                        priority = 2
                     }
                     val entry = proposalCreator.createProposal(proposal, context, ContentAssistEntry.KIND_VALUE) [
                         label = displayString.toString

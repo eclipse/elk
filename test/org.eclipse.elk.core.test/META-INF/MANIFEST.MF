@@ -9,3 +9,4 @@ Require-Bundle: com.google.guava;bundle-version="15.0.0",
  org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.alg.test
+Bundle-Vendor: Eclipse Modeling Project

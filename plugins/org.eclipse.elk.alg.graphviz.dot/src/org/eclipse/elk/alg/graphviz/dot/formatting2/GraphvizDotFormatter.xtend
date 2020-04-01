@@ -32,7 +32,7 @@ class GraphvizDotFormatter extends AbstractFormatter2 {
 
     def dispatch void format(GraphvizModel graphvizModel, extension IFormattableDocument document) {
         var region = graphvizModel.previousHiddenRegion
-        while (region != null) {
+        while (region !== null) {
             document.set(region, [autowrap])
             region = region.nextHiddenRegion
         }
