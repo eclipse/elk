@@ -111,6 +111,7 @@ algorithm box (BoxLayoutProvider) {
     supports interactive
     supports nodeSize.minimum
     supports box.packingMode
+    supports contentAlignment = ContentAlignment.topCenter()
 }
 group box {
     option packingMode: PackingMode {
