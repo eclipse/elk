@@ -3,6 +3,9 @@ name: ELK Nightly CI
 on:
   schedule:
     - cron: '25 14 * * *'
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
