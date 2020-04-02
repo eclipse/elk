@@ -2,7 +2,7 @@ name: ELK Nightly CI
 
 on:
   schedule:
-    - cron: '30 21 * * *'
+    - cron: '25 14 * * *'
 
 jobs:
   build:
@@ -19,14 +19,16 @@ jobs:
       with:
         repository: eclipse/elk-models
         path: elk-models
-    - name: Set up Java version
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Set up Java version ${{ matrix.java-version }}
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java-version }}
-    - name: Build with Maven
+    - name: Build and verify with maven
       working-directory: /home/runner/work/elk/elk/elk/build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs -Dmaven.repo.local=./mvnrepo clean package
-    - name: Run tests
-      working-directory: /home/runner/work/elk/elk/elk/build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs -Dmaven.repo.local=./mvnrepo --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models clean integration-test
-
+      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models clean verify
