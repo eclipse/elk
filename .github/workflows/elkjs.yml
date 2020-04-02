@@ -1,0 +1,42 @@
+name: elkjs
+
+on: 
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        path: elk
+    - uses: actions/checkout@v2
+      with:
+        repository: kieler/elkjs
+        path: elkjs
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install, build, and test
+      working-directory: $GITHUB_WORKSPACE/elkjs
+      run: |
+        npm install
+        npm run build --if-present
+        npm test
+      env:
+        CI: true
