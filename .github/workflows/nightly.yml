@@ -3,16 +3,14 @@ name: ELK Nightly CI
 on:
   schedule:
     - cron: '25 14 * * *'
-  pull_request:
-    branches:
-      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java-version: [ 8, 9, 12 ]
+        # 9--11 are known to fail due to some dependency issue(s)
+        java-version: [ 8, 12 ] 
   
     steps:
     - uses: actions/checkout@v2
