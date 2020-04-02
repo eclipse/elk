@@ -589,7 +589,9 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         if (!tgtRep.isFlexible) {
             tgtOffset += tgtPort.getPosition().y;
         } 
-        assert (srcOffset - tgtOffset) == Math.round(srcOffset - tgtOffset) : "Port positions must be integral";
+        assert DoubleMath.fuzzyEquals(srcOffset - tgtOffset, Math.round(srcOffset - tgtOffset),
+                EPSILON) : "Port positions must be integral";
+        
         int tgtDelta = (int) Math.max(0, srcOffset - tgtOffset);
         int srcDelta = (int) Math.max(0, tgtOffset - srcOffset);
 
