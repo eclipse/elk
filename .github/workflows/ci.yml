@@ -1,0 +1,36 @@
+name: ELK CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 9--11 are known to fail due to some dependency issue(s)
+        java-version: [ 8, 12 ]
+  
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        path: elk
+    - uses: actions/checkout@v2
+      with:
+        repository: eclipse/elk-models
+        path: elk-models
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Set up Java version ${{ matrix.java-version }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java-version }}
+    - name: Build and verify with maven
+      working-directory: /home/runner/work/elk/elk/elk/build/
+      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models clean verify
