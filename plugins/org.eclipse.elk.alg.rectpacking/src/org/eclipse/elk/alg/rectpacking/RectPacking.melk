@@ -14,6 +14,7 @@ package org.eclipse.elk.alg.rectpacking
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal
+import org.eclipse.elk.core.options.ContentAlignment
 
 //BUNDLE
 bundle {
@@ -36,6 +37,7 @@ algorithm rectpacking (RectPackingLayoutProvider) {
     supports org.eclipse.elk.expandNodes
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
+    supports org.eclipse.elk.contentAlignment = ContentAlignment.topCenter()
     supports optimizationGoal
     supports lastPlaceShift
     supports onlyFirstIteration

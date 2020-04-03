@@ -252,12 +252,15 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                     nextRowIndex = rowIndexIter.next();
                 }
                 ElkNode box = boxIter.next();
+                double oldHeight = box.getHeight();
                 box.setHeight(rowHeight);
+                double newHeight = rowHeight;
                 if (boxIter.nextIndex() == nextRowIndex) {
                     double newWidth = broadestRow - xpos - padding.getRight();
                     double oldWidth = box.getWidth();
                     box.setWidth(newWidth);
-                    ElkUtil.translate(box, (newWidth - oldWidth) / 2, 0.0);
+                    // Content alignment
+                    ElkUtil.translate(box, new KVector(newWidth, newHeight), new KVector(oldWidth, oldHeight));
                 }
                 xpos += box.getWidth() + minSpacing;
             }

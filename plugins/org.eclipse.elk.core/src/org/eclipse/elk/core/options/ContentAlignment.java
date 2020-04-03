@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.options;
+package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
 
@@ -61,5 +61,12 @@ public enum ContentAlignment {
      */
     public static EnumSet<ContentAlignment> bottomRight() {
         return EnumSet.of(V_BOTTOM, H_RIGHT);
+    }
+
+    /**
+     * @return a set containing {@link #V_TOP} and {@link #H_CENTER}.
+     */
+    public static EnumSet<ContentAlignment> topCenter() {
+        return EnumSet.of(V_TOP, H_CENTER);
     }
 }

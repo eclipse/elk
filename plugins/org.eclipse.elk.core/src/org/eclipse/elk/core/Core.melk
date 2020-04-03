@@ -111,6 +111,7 @@ algorithm box (BoxLayoutProvider) {
     supports interactive
     supports nodeSize.minimum
     supports box.packingMode
+    supports contentAlignment = ContentAlignment.topCenter()
 }
 group box {
     option packingMode: PackingMode {
@@ -167,6 +168,13 @@ programmatic option bendPoints: KVectorChain {
         any bend points, and the target point, so it must have at least two points."
     targets edges
     legacyIds de.cau.cs.kieler.bendPoints
+}
+advanced option contentAlignment: EnumSet<ContentAlignment> {
+    label "Content Alignment"
+    description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+    default = ContentAlignment.topLeft()
+    targets parents
+    legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
 }
 advanced option debugMode: boolean {
     label "Debug Mode"

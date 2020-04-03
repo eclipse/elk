@@ -134,7 +134,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
     supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
     supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
-	supports contentAlignment
+	supports org.eclipse.elk.contentAlignment
 	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
 	supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
 	supports org.eclipse.elk.alg.layered.compaction.postCompaction.constraints
@@ -841,14 +841,6 @@ group edgeLabels {
 /* ------------------------
  *    miscellaneous
  * ------------------------*/
-advanced option contentAlignment: EnumSet<ContentAlignment> {
-	label "Content Alignment"
-	description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
-	default = EnumSet.noneOf(ContentAlignment)
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
-}
-
 advanced option directionCongruency: DirectionCongruency {
     label "Direction Congruency"
     description
