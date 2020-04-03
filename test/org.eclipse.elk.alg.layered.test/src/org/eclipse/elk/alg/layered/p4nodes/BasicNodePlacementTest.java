@@ -53,7 +53,7 @@ public class BasicNodePlacementTest extends TestGraphCreator {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
-                new ModelResourcePath("realworld/ptolemy/flattened/**/").withFilter(new FileExtensionFilter("elkt")),
+                new ModelResourcePath("realworld/ptolemy/flattened/**/").withFilter(new FileExtensionFilter("elkg")),
                 new ModelResourcePath("tests/layered/node_placement/**/"));
     }
     
