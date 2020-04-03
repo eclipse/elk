@@ -90,7 +90,6 @@ public class InLayerConstraintProcessorTest extends TestGraphCreator {
             InLayerConstraint lastConstraint = null;
             for (LNode node : layer) {
                 InLayerConstraint currentConstraint = node.getProperty(InternalProperties.IN_LAYER_CONSTRAINT);
-                System.out.println(currentConstraint.name());
 
                 if (lastConstraint != null && currentConstraint != lastConstraint) {
                     // if the value changes check valid transitions

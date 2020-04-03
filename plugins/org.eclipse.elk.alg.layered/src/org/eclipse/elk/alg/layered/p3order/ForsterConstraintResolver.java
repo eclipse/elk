@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
 public class ForsterConstraintResolver implements IInitializable {
 
     /** Whether there are successor constraints between non-dummies. */
-    private boolean constraintsBetweenNonDummies;
+    private boolean constraintsBetweenNonDummies = false;
     /** the layout units for handling dummy nodes for north / south ports. */
     private Multimap<LNode, LNode> layoutUnits;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
@@ -58,10 +58,10 @@ public class ForsterConstraintResolver implements IInitializable {
      *            the current node order
      */
     public ForsterConstraintResolver(final LNode[][] currentNodeOrder) {
-        assert currentNodeOrder.length > 0 && currentNodeOrder[0].length > 0;
-        
-        constraintsBetweenNonDummies = currentNodeOrder[0][0].getGraph().getProperty(
-                InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS_BETWEEN_NON_DUMMIES);
+        if (currentNodeOrder.length > 0 && currentNodeOrder[0].length > 0) {
+            constraintsBetweenNonDummies = currentNodeOrder[0][0].getGraph()
+                    .getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS_BETWEEN_NON_DUMMIES);
+        }
         barycenterStates = new BarycenterState[currentNodeOrder.length][];
         constraintGroups = new ConstraintGroup[currentNodeOrder.length][];
         layoutUnits = LinkedHashMultimap.create();
