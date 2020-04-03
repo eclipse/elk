@@ -84,8 +84,9 @@ public final class GraphFromFile extends TestGraph {
             }
         }
 
-        // Set proper file filters
-        resourcePaths.stream().forEach(path -> path.setFilter(GRAPH_FILE_FILTER));
+        // Set a default graph file filter in case no explicit filter has been specified
+        resourcePaths.stream().filter(path -> path.getFilter() == null)
+                .forEach(path -> path.setFilter(GRAPH_FILE_FILTER));
 
         // Turn the abstract paths into absolute paths
         return resourcePaths.stream().flatMap(path -> path.listResources().stream())

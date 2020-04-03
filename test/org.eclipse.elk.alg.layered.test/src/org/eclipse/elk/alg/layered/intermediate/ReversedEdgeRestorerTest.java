@@ -43,7 +43,7 @@ public class ReversedEdgeRestorerTest {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
-                new ModelResourcePath("realworld/ptolemy/flattened/**/").withFilter(new FileExtensionFilter("elkt")));
+                new ModelResourcePath("realworld/ptolemy/flattened/**/").withFilter(new FileExtensionFilter("elkg")));
     }
 
 
