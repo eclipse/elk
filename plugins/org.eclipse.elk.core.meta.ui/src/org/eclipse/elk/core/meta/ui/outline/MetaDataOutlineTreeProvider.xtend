@@ -29,7 +29,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
 class MetaDataOutlineTreeProvider extends DefaultOutlineTreeProvider {
     
     protected def void _createChildren(DocumentRootNode rootNode, MdModel model) {
-        if (model.bundle != null) {
+        if (model.bundle !== null) {
             createNode(rootNode, model.bundle);
         }
     }

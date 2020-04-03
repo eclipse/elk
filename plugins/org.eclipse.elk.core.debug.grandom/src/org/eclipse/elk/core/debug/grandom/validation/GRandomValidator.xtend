@@ -21,7 +21,7 @@ import org.eclipse.xtext.validation.Check
  */
 class GRandomValidator extends AbstractGRandomValidator {
 	
-	private static val ERRORS = newArrayList(
+	static val ERRORS = newArrayList(
             Pair.of([Configuration c | c.form != Form.TREES && c.MD], 
                 Pair.of("maxDegree only defined on trees.", GRandomPackage.Literals.CONFIGURATION__MD)),
             Pair.of([Configuration c | c.form != Form.TREES && c.MW], 

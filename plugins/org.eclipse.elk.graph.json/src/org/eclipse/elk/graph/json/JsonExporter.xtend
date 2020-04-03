@@ -31,35 +31,35 @@ import java.util.Random
 /**
  * Exporter from elk graph to json.
  */
-public final class JsonExporter {
+final class JsonExporter {
     
     extension JsonAdapter = new JsonAdapter
 
-    private val BiMap<ElkNode, String> nodeIdMap = HashBiMap.create()
-    private val BiMap<ElkPort, String> portIdMap = HashBiMap.create()
-    private val BiMap<ElkEdge, String> edgeIdMap = HashBiMap.create()
-    private val BiMap<ElkEdgeSection, String> edgeSectionIdMap = HashBiMap.create()
+    val BiMap<ElkNode, String> nodeIdMap = HashBiMap.create()
+    val BiMap<ElkPort, String> portIdMap = HashBiMap.create()
+    val BiMap<ElkEdge, String> edgeIdMap = HashBiMap.create()
+    val BiMap<ElkEdgeSection, String> edgeSectionIdMap = HashBiMap.create()
 
-    private val Map<ElkNode, Object> nodeJsonMap = Maps.newHashMap
-    private val Map<ElkPort, Object> portJsonMap = Maps.newHashMap
-    private val Map<ElkEdge, Object> edgeJsonMap = Maps.newHashMap
-    private val Map<ElkEdgeSection, Object> edgeSectionJsonMap = Maps.newHashMap
+    val Map<ElkNode, Object> nodeJsonMap = Maps.newHashMap
+    val Map<ElkPort, Object> portJsonMap = Maps.newHashMap
+    val Map<ElkEdge, Object> edgeJsonMap = Maps.newHashMap
+    val Map<ElkEdgeSection, Object> edgeSectionJsonMap = Maps.newHashMap
 
-    private var nodeIdCounter = 0
-    private var portIdCounter = 0
-    private var edgeIdCounter = 0
-    private var edgeSectionIdCounter = 0
+    var nodeIdCounter = 0
+    var portIdCounter = 0
+    var edgeIdCounter = 0
+    var edgeSectionIdCounter = 0
     
     // configuration
-    private var omitZeroPos = true
-    private var omitZeroDim = true
-    private var omitLayout = false
-    private var shortLayoutOptionKeys = true
-    private var omitUnknownLayoutOptions = true
+    var omitZeroPos = true
+    var omitZeroDim = true
+    var omitLayout = false
+    var shortLayoutOptionKeys = true
+    var omitUnknownLayoutOptions = true
     
     new () { }
 
-    public def setOptions(boolean omitZeroPos, boolean omitZeroDim, boolean omitLayout, 
+    def setOptions(boolean omitZeroPos, boolean omitZeroDim, boolean omitLayout, 
         boolean shortLayoutOptionKeys, boolean omitUnknownLayoutOptions) {
         this.omitZeroPos = omitZeroPos
         this.omitZeroDim = omitZeroDim
@@ -68,7 +68,7 @@ public final class JsonExporter {
         this.omitUnknownLayoutOptions = omitUnknownLayoutOptions
     }
 
-    public def export(ElkNode root) {
+    def export(ElkNode root) {
         init
 
         // create a tmp array
@@ -452,7 +452,7 @@ public final class JsonExporter {
         return LayoutMetaDataService.instance.getOptionDataBySuffix(property.id) !== null
     }
     
-    private val RANDOM = new Random()
+    val RANDOM = new Random()
     private def String sixDigitRandomNumber() {
         return RANDOM.nextInt(1000000) + ""
     }

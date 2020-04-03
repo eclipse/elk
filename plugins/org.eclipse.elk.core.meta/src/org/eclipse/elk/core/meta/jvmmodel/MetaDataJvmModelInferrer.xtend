@@ -533,18 +533,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             
         }
         return "UNDEFINED";
-    }
-    
-    private def boolean hasSupertype(JvmDeclaredType type, Class<?> superType) {
-        if (type.superTypes.findFirst[ t | t.qualifiedName == superType.canonicalName] !== null) {
-            return true;
-        } else {
-            return type.superTypes
-                        .map[rt | rt.type]
-                        .filter(JvmDeclaredType)
-                        .findFirst[t | t.hasSupertype(superType) ] !== null
-        }
-    }    
+    }  
     
     private def JvmTypeReference getOptionTypeClass(MdOption property) {
         if (property.type !== null) {

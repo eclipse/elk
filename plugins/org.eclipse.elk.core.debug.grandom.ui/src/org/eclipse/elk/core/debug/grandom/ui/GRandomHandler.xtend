@@ -32,14 +32,14 @@ class GRandomHandler extends AbstractHandler {
         PlatformUI.getWorkbench().saveAllEditors(true);
         val selection = HandlerUtil.getCurrentSelection(event);
         if (selection instanceof IStructuredSelection) {
-            val element = (selection as IStructuredSelection).getFirstElement();
+            val element = selection.getFirstElement();
 
             if (element instanceof IFile) {
                 try {
                     // load the file into a resource  
                     val resourceSet = new ResourceSetImpl();
                     val r = resourceSet.createResource(URI.createFileURI("dummy.elkr"));
-                    r.load((element as IFile).contents, Collections.emptyMap());
+                    r.load(element.contents, Collections.emptyMap());
                     val project = element.project
 
                     if (!r.getContents().isEmpty() && r.getContents().get(0) instanceof RandGraph) {
