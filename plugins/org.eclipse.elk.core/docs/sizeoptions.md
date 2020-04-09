@@ -31,7 +31,7 @@ In this example, the darker area is the node's client area which remains once pa
 
 #### `PORTS_OVERHANG`
 
-![Ports overhang](/images/options/ports_overhang.png)
+![Ports overhang](/images/options/node_size_options_ports_overhang.png)
 
 
 #### `UNIFORM_PORT_SPACING`
