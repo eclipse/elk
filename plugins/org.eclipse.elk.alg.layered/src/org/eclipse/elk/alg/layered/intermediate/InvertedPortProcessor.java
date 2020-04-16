@@ -208,6 +208,11 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
             EdgeLabelPlacement labelPlacement = label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.HEAD) {
+                // Remember which edge the label originally belonged to, unless it already knows
+                if (!label.hasProperty(InternalProperties.END_LABEL_EDGE)) {
+                    label.setProperty(InternalProperties.END_LABEL_EDGE, edge);
+                }
+                
                 labelIterator.remove();
                 dummyEdge.getLabels().add(label);
             }
@@ -270,6 +275,10 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
             LLabel label = labelIterator.next();
             
             if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
+                // Remember which edge the label belonged to originally
+                assert !label.hasProperty(InternalProperties.END_LABEL_EDGE);
+                label.setProperty(InternalProperties.END_LABEL_EDGE, edge);
+                
                 labelIterator.remove();
                 dummyEdge.getLabels().add(label);
             }
