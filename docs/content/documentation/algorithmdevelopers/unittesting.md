@@ -85,6 +85,9 @@ public List<AbstractResourcePath> provideGraphs() {
 
     // Only .elkt files contained in a directory and its subdirectories
     paths.add(new ModelResourcePath("realworld/ptolemy/**/").withFilter(new FileExtensionFilter("elkt")));
+    
+    // Only files with names starting with "ci" contained in a directory and its subdirectories
+    paths.add(new ModelResourcePath("realworld/ptolemy/**/").withFilter(new FileNameFilter("ci.+")));
 
     return paths;
 }
