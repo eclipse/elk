@@ -14,7 +14,7 @@ and can thus also be used outside of Eclipse.
 * [The ELK homepage](http://www.eclipse.org/elk)
 * [... and ELK's documentation](http://www.eclipse.org/elk/documentation.html)
 * [ELK Live](https://rtsys.informatik.uni-kiel.de/elklive/) (web-based playground to play around with ELK)
-* [elkjs](https://github.com/OpenKieler/elkjs) (JavaScript library transpiled from ELK's Java sources)
+* [elkjs](https://github.com/kieler/elkjs) (JavaScript library transpiled from ELK's Java sources)
 
 ## Example Layout
 
