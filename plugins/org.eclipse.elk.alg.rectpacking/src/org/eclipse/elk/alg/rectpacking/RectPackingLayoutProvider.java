@@ -96,6 +96,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             });
             for (ElkNode elkNode : fixedNodes) {
                 int position = elkNode.getProperty(RectPackingOptions.DESIRED_POSITION);
+                position = Math.min(position, rectangles.size());
                 rectangles.add(position, elkNode);
             }
 
