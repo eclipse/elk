@@ -880,8 +880,10 @@ public final class LGraphUtil {
             assert false : finalExternalPortSide;
         }
         
-        // Finally apply the anchor by setting the dummy port position accordingly
+        // Finally apply the anchor by setting the dummy port position accordingly. Also, remember the anchor on the
+        // dummy itself since the hierarchical port processors depend on that
         dummyPort.getPosition().set(anchor);
+        dummy.setProperty(LayeredOptions.PORT_ANCHOR, anchor);
         
         if (portConstraints.isOrderFixed()) {
             // The order of ports is fixed in some way, so what we will have to do is to remember information about it
