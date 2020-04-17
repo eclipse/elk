@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 TypeFox GmbH and others.
+ * Copyright (c) 2018, 2020 TypeFox GmbH and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -97,7 +97,10 @@ public class LayoutAlgorithmResolver implements IGraphElementVisitor {
      * Determine whether it is mandatory to resolve the layout algorithm for the given node.
      */
     protected boolean mustResolve(final ElkNode node) {
-        return !node.hasProperty(CoreOptions.RESOLVED_ALGORITHM) && !node.getChildren().isEmpty();
+        // Hierarchical nodes must have their layout algorithm resolved, but so do nodes that have inside self loops
+        // self loop and nothing else.
+        return !node.hasProperty(CoreOptions.RESOLVED_ALGORITHM)
+                && (!node.getChildren().isEmpty() || node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE));
     }
     
     /**
