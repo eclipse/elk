@@ -13,9 +13,9 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -81,7 +81,21 @@ public class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
      * at least {@link PortConstraints#FIXED_ORDER}.
      */
     private void hidePorts(final SelfLoopHolder slHolder) {
-        if (slHolder.getLNode().getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        LNode lNode = slHolder.getLNode();
+        LGraph nestedGraph = lNode.getNestedGraph();
+        
+        /* There are two cases in which we want to refrain from hiding ports:
+         * 1. The port order is already fixed. Then the code that would compute a proper port order won't be confused by
+         *    the self-loop ports, so there's no need to hide them.
+         * 2. The self loop holder has another graph inside of it which contains external ports. In that case, the
+         *    crossing minimization will compute proper port orders. The self loop holder will have the port order
+         *    applied and its port constraints set to FIXED_POS, so this is basically the first case with extra steps.
+         */
+        boolean orderFixed = lNode.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
+        boolean hierarchyMode = nestedGraph != null && nestedGraph.getProperty(InternalProperties.GRAPH_PROPERTIES)
+                .contains(GraphProperties.EXTERNAL_PORTS);
+        
+        if (orderFixed || hierarchyMode) {
             // No need to hide any ports
             return;
         }
@@ -96,19 +110,9 @@ public class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 slPort.setHidden(true);
                 slHolder.setPortsHidden(true);
                 
-                // Remove external port dummy this port belongs to, if any (#352)
-                LNode dummy = lPort.getProperty(InternalProperties.PORT_DUMMY);
-                if (dummy != null) {
-                    Layer layer = dummy.getLayer();
-                    if (layer == null) {
-                        dummy.getGraph().getLayerlessNodes().remove(dummy);
-                    } else {
-                        layer.getNodes().remove(dummy);
-                        if (layer.getNodes().isEmpty()) {
-                            layer.getGraph().getLayers().remove(layer);
-                        }
-                    }
-                }
+                // Originally, we removed external port dummy this port belongs to, if any (#352). Now, we should never
+                // run into this case.
+                assert lPort.getProperty(InternalProperties.PORT_DUMMY) == null;
             }
         }
     }
