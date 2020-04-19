@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.json.test
 
+import com.google.gson.JsonIOException
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.graph.json.ElkGraphJson
@@ -23,7 +24,7 @@ class GraphTest {
     
     @Test 
     def void graphMustBeObjectTest() {
-        ElkGraphJson.forGraph("{id:1}").toElk
+        ElkGraphJson.forGraph("{\"id\":1}").toElk
     }
     
     @Test(expected = JsonImportException) 
@@ -51,5 +52,32 @@ class GraphTest {
         assertTrue(root.containedEdges.size === 1)
         
         assertTrue(root.getProperty(CoreOptions.DIRECTION) == Direction.DOWN)
+    }
+    
+    val sloppyJsonGraph = '''
+        {
+          // the root node
+          id: "root",
+          /* Now the graph */ 
+          "children": [ {"id": "c"}; {"id": "c1"} ],
+          'edges': [] // Endline comment
+        }
+    '''
+    
+    @Test(expected = JsonIOException)
+    def void rejectSloppyJsonIfNotLenient() {
+         ElkGraphJson.forGraph(sloppyJsonGraph)
+                     .lenient(false)
+                     .toElk
+    }
+    
+    @Test
+    def void acceptSloppyJsonIfLenient() {
+        val root = ElkGraphJson.forGraph(sloppyJsonGraph).toElk
+        
+        assertEquals("root", root.identifier)
+        assertEquals(2, root.children.size)
+        assertEquals("c", root.children.head.identifier)
+        assertEquals("c1", root.children.last.identifier)
     }
 }

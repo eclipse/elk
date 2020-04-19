@@ -9,14 +9,19 @@
  */
 package org.eclipse.elk.graph.json;
 
+import java.io.IOException;
+import java.io.StringReader;
+
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.graph.ElkNode;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
 
 /**
  * Utility methods to import and export the ELK Graph JSON Format.
@@ -64,6 +69,9 @@ public final class ElkGraphJson {
         private JsonObject jsonGraph;
         private String graph;
         private Maybe<JsonImporter> importerMaybe;
+        /** See {@link JsonReader#setLenient(boolean)} for details. */
+        private boolean lenient = true;
+        
         
         /**
          * In case a later application of layout information is desired, pass a {@link Maybe} instance to this method.
@@ -80,18 +88,40 @@ public final class ElkGraphJson {
         }
 
         /**
+         * If <code>true</code>, be more relaxed when parsing the JSON, e.g. allow property keys without quotes. By
+         * default <code>true</code>. For details see {@link JsonReader#setLenient(boolean)}.
+         */
+        public ImportBuilder lenient(final boolean beLenient) {
+            this.lenient = beLenient;
+            return this;
+        }
+
+        /**
+         * Part of a GSON workaround as GSON is by default always 'lenient'. See
+         * https://github.com/google/gson/issues/1208.
+         */
+        private static final TypeAdapter<JsonElement> GSON_ELEMENT_ADAPTER = new Gson().getAdapter(JsonElement.class);
+
+        /**
          * Perform the actual import and return the resulting ELK Graph.
          * 
          * @return the root node of the imported ELK Graph.
          */
         public ElkNode toElk() {
             if (jsonGraph == null) {
-                JsonParser parser = new JsonParser();
-                JsonElement json = parser.parse(graph);
-                if (!(json instanceof JsonObject)) {
-                    throw new JsonImportException("Top-level element of the graph must be a json object.");
+                // Due to a GSON workaround the following lines are a bit more complicated that they have to be.
+                // See the javadoc comment of GSON_ELEMENT_ADAPTER for details.
+                JsonReader reader = new JsonReader(new StringReader(graph));
+                reader.setLenient(this.lenient);
+                try {
+                    JsonElement json = GSON_ELEMENT_ADAPTER.read(reader);
+                    if (!(json instanceof JsonObject)) {
+                        throw new JsonImportException("Top-level element of the graph must be a json object.");
+                    }
+                    jsonGraph = json.getAsJsonObject();
+                } catch (IOException e) {
+                    throw new JsonIOException(e);
                 }
-                jsonGraph = json.getAsJsonObject();
             }
 
             JsonImporter importer = new JsonImporter();
