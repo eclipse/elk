@@ -101,4 +101,12 @@ class ExportTest {
       assertFalse(json.contains("layoutOptions"))
       assertFalse(json.contains("junctionPoints"))
   }
+  
+  @Test
+  def void copeWithNullProperty() {
+      val graph = createGraph
+      graph.setProperty(CoreOptions.RANDOM_SEED, 4) // arbitrary property
+      graph.setProperty(null, 3) // This shouldn't raise a nullpointer
+  }
+  
 }
