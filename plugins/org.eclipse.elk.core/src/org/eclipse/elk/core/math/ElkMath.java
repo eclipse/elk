@@ -998,7 +998,7 @@ public final class ElkMath {
      *            start point of second line
      * @param l22
      *            end point of second line
-     * @return {@code true} if the two lines intersect, {@code false} otherwise. In particular, of the start or and
+     * @return {@code true} if the two lines intersect, {@code false} otherwise. In particular, if the start or end
      *         point of one of the lines only "touches" the other line, no intersection is assumed.
      */
     public static boolean intersects(final KVector l11, final KVector l12, final KVector l21, final KVector l22) {
@@ -1020,8 +1020,16 @@ public final class ElkMath {
         // System.out.println("d: " + d + ", s: " + s + ", t: " + t);
         
         // use < instead of <= to not recognize "touching" as intersection
-        return 0 < s && s < 1
-            && 0 < t && t < 1;
+        final boolean intersects =
+                // 0 < s
+                DoubleMath.fuzzyCompare(0, s, DOUBLE_EQ_EPSILON) < 0
+                // s < 1
+                && DoubleMath.fuzzyCompare(s, 1, DOUBLE_EQ_EPSILON) < 0
+                // 0 < t
+                && DoubleMath.fuzzyCompare(0, t, DOUBLE_EQ_EPSILON) < 0
+                // t < 1
+                && DoubleMath.fuzzyCompare(t, 1, DOUBLE_EQ_EPSILON) < 0;
+        return intersects;
     }
     
     /**
