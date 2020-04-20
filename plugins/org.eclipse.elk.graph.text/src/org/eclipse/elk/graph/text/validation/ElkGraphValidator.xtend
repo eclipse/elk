@@ -45,6 +45,14 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
     LayoutOptionValidator layoutOptionValidator
 	
 	@Check
+	def void checkPropertyKey(ElkPropertyToValueMapEntryImpl entry) {
+	   val optionData = LayoutMetaDataService.instance.getOptionData(entry.key.id)
+	   if (optionData === null) {
+	       warning("'" + entry.key.id + "' is not a layout option.", ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
+	   }  
+	}
+	
+	@Check
 	def void checkPropertyValue(ElkPropertyToValueMapEntryImpl entry) {
 	    val option = entry.key.toLayoutOption
 	    if (option !== null) {
