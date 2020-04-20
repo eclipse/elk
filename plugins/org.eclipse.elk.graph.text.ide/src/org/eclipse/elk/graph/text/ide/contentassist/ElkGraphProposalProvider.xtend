@@ -12,7 +12,9 @@ package org.eclipse.elk.graph.text.ide.contentassist
 import com.google.common.base.Predicate
 import com.google.inject.Inject
 import com.google.inject.Provider
+import java.util.Collections
 import java.util.List
+import java.util.Set
 import org.eclipse.elk.core.data.ILayoutMetaData
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutMetaDataService
@@ -98,10 +100,13 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     protected def void completePropertyKey(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         switch model: context.currentModel {
             ElkNode: {
-                if (model.parent === null || !model.children.empty)
-                    proposeProperties(model, model.algorithm, LayoutOptionData.Target.PARENTS, context, acceptor)
-                if (model.parent !== null)
-                    proposeProperties(model, model.parent.algorithm, LayoutOptionData.Target.NODES, context, acceptor)
+                var targets = newHashSet(LayoutOptionData.Target.NODES)
+                if (!model.children.empty) {
+                    targets.add(LayoutOptionData.Target.PARENTS)
+                }
+                val responsibleLayoutAlgorithm = model.parent === null ? model.algorithm : model.parent.algorithm
+
+                proposeProperties(model, responsibleLayoutAlgorithm, targets, context, acceptor)
             }
             ElkEdge: {
                 proposeProperties(model, model.algorithm, LayoutOptionData.Target.EDGES, context, acceptor)
@@ -116,14 +121,19 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     }
     
     protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
-            LayoutOptionData.Target targetType, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
+        LayoutOptionData.Target targetType, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
+        proposeProperties(element, algorithmData, #{targetType}, context, acceptor)
+    }
+    
+    protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
+        Set<LayoutOptionData.Target> targetTypes, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         if (conflictHelper.existsConflict('a', context)) {
             // Early-exit in case any property id would conflict with the previous token
             return
         }
         val metaDataService = LayoutMetaDataService.instance
         val filteredOptions = metaDataService.optionData.filter[ o |
-            (targetType === null || o.targets.contains(targetType))
+            (targetTypes.nullOrEmpty || !Collections.disjoint(o.targets, targetTypes))
             && (algorithmData === null || algorithmData.knowsOption(o) || CoreOptions.ALGORITHM == o)
             && (element === null || !element.properties.map.containsKey(o))
         ]
