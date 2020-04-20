@@ -35,12 +35,6 @@
    <feature url="features/org.eclipse.elk.gmf.source_0.7.0.qualifier.jar" id="org.eclipse.elk.gmf.feature.source" version="0.7.0.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.graphiti_0.7.0.qualifier.jar" id="org.eclipse.elk.graphiti.feature" version="0.7.0.qualifier">
-      <category name="elk"/>
-   </feature>
-   <feature url="features/org.eclipse.elk.graphiti.source_0.7.0.qualifier.jar" id="org.eclipse.elk.graphiti.feature.source" version="0.7.0.qualifier">
-      <category name="elk"/>
-   </feature>
    <feature url="features/org.eclipse.elk.graphviz_0.7.0.qualifier.jar" id="org.eclipse.elk.graphviz.feature" version="0.7.0.qualifier">
       <category name="elk"/>
    </feature>
@@ -66,5 +60,4 @@
    </category-def>
    <repository-reference location="http://download.eclipse.org/releases/mars" enabled="true" />
    <repository-reference location="http://guava-osgi.googlecode.com/svn/trunk/repository/" enabled="true" />
-   <repository-reference location="http://download.eclipse.org/graphiti/updates/0.10.2" enabled="true" />
 </site>
