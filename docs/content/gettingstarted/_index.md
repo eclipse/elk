@@ -18,7 +18,7 @@ This guide refers to the pre-0.1.0 version of the Eclipse Layout Kernel. Since t
 First off, you will have to actually install ELK. Head over to our downloads section and paste the URL of our update site into your Eclipse installation. You will discover four features:
 
 * The core feature contains the basic layout kernel infrastructure. This one you definitely need to install.
-* Depending on what technology your editor is based on, you may be lucky enough to find that we have already done much of the work necessary to make your editor work with ELK. We provide out-of-the-box interfaces for GMF- and Graphiti-based editors. The one for GMF works well without customization for many editors, while the one for Graphiti often needs more work.
+* Depending on what technology your editor is based on, you may be lucky enough to find that we have already done much of the work necessary to make your editor work with ELK. We provide out-of-the-box interfaces for GMF-based editors, which work well without customization for many editors. Note that prior to release 0.7.0 there has been support for Graphiti editors as well. If you are interested, feel free to check out the old code.
 * While ELK comes with a number of layout algorithms, you may also want to use the [Graphviz](http://www.graphviz.org/) library. Installing the corresponding feature allows ELK to use Graphviz if it is installed on your computer.
 
 
