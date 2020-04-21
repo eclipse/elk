@@ -244,13 +244,12 @@
       </plugin>
 
       <!-- Enable Java assertions during JUnit test runs. -->
-      <!-- The "enableAssertions" property is only available in the maven-surefire plugin. -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
         <version>${tycho-version}</version>
         <configuration>
-          <argLine>-ea</argLine>
+          <enableAssertions>true</enableAssertions>
           <!-- There seems to be an issue with executing several tests in parallel in that
                it can happen that failed tests are eventually reported as having succeeded.
                A resolution is to set forkCount=1 and reuseForks=false
