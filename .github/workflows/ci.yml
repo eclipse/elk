@@ -33,4 +33,4 @@ jobs:
         java-version: ${{ matrix.java-version }}
     - name: Build and verify with maven
       working-directory: /home/runner/work/elk/elk/elk/build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models clean verify
+      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models -fae clean verify
