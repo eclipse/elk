@@ -13,9 +13,9 @@ package org.eclipse.elk.core.^labels
  * Label management definitions of the Eclipse Layout Kernel.
  */
 bundle {
-	label "ELK Label Management"
-	metadataClass LabelManagementOptions
-	idPrefix org.eclipse.elk.^labels
+    label "ELK Label Management"
+    metadataClass LabelManagementOptions
+    idPrefix org.eclipse.elk.^labels
 }
 
 programmatic option labelManager: ILabelManager {

@@ -15,10 +15,10 @@ bundle {
     metadataClass options.DisCoMetaDataProvider
     idPrefix org.eclipse.elk.disco
 }
- 
+
 algorithm disco(DisCoLayoutProvider) {
     label "ELK DisCo"
-    description 
+    description
         "Layouter for arranging unconnected subgraphs. The subgraphs themselves are, by default, not laid out."
     metadataClass options.DisCoOptions
     preview images/disco_layout.png
@@ -37,15 +37,16 @@ algorithm disco(DisCoLayoutProvider) {
 }
 
 group componentCompaction {
+
     option strategy : CompactionStrategy {
         label "Connected Components Compaction Strategy"
-        description 
+        description
             "Strategy for packing different connected components in order to save space 
              and enhance readability of a graph."
         default = CompactionStrategy.POLYOMINO
         targets parents
     }
-    
+
     option componentLayoutAlgorithm: String {
         label "Connected Components Layout Algorithm"
         description
@@ -53,20 +54,25 @@ group componentCompaction {
              before the components themselves are compacted. If unspecified, 
              the positions of the components' nodes are not altered. "
         targets parents
-    }  
+    }
+
 }
 
 group debug {
+
     programmatic option discoGraph: Object {
         label "DCGraph"
-        description "Access to the DCGraph is intended for the debug view,"
+        description
+            "Access to the DCGraph is intended for the debug view,"
         targets parents
     }
-    
+
     programmatic option discoPolys: Object {
         label "List of Polyominoes"
-        description "Access to the polyominoes is intended for the debug view,"
+        description
+            "Access to the polyominoes is intended for the debug view,"
         targets parents
     }
+
 }
 

@@ -10,10 +10,6 @@
 package org.eclipse.elk.alg.radial
 
 import org.eclipse.elk.alg.radial.RadialLayoutProvider
-import org.eclipse.elk.alg.radial.options.AnnulusWedgeCriteria
-import org.eclipse.elk.alg.radial.options.CompactionStrategy
-import org.eclipse.elk.alg.radial.options.RadialTranslationStrategy
-import org.eclipse.elk.alg.radial.options.SortingStrategy
 
 bundle {
     metadataClass options.RadialMetaDataProvider
@@ -23,7 +19,7 @@ bundle {
 algorithm radial(RadialLayoutProvider) {
     label "ELK Radial"
     metadataClass options.RadialOptions
-    description 
+    description
         "A radial layout provider which is based on the algorithm of Peter Eades published in \"Drawing free trees.\", 
          published by International Institute for Advanced Study of Social Information Science, Fujitsu Limited in 1991. 
          The radial layouter takes a tree and places the nodes in radial order around the root. The nodes of the same 
@@ -43,10 +39,9 @@ algorithm radial(RadialLayoutProvider) {
 }
 
 /////////////////////////////////Options///////////////////////////////
-
 option orderId: int {
     label "Order ID "
-    description 
+    description
         "The id can be used to define an order for nodes of one radius. This can be used to sort them in the 
          layer accordingly."
     default = 0
@@ -55,24 +50,25 @@ option orderId: int {
 
 option radius: double {
     label "Radius"
-    description "The radius option can be used to set the initial radius for the radial layouter."
+    description
+        "The radius option can be used to set the initial radius for the radial layouter."
     default = 0.0
     targets parents
-}  
+}
 
 //Compaction
 option compactor: CompactionStrategy {
     label "Compaction"
-    description 
+    description
         "With the compacter option it can be determined how compaction on the graph is done. 
          It can be chosen between none, the radial compaction or the compaction of wedges separately."
     targets parents
     default = CompactionStrategy.NONE
-} 
+}
 
 option compactionStepSize: int {
     label "Compaction Step Size"
-    description 
+    description
         "Determine the size of steps with which the compaction is done. 
          Step size 1 correlates to a compaction of 1 pixel per Iteration."
     lowerBound = 0
@@ -83,7 +79,7 @@ option compactionStepSize: int {
 
 option sorter: SortingStrategy {
     label "Sorter"
-    description 
+    description
         "Sort the nodes per radius according to the sorting algorithm. The strategies are none, by the given order id, 
          or sorting them by polar coordinates."
     targets parents
@@ -92,7 +88,7 @@ option sorter: SortingStrategy {
 
 option wedgeCriteria: AnnulusWedgeCriteria {
     label "Annulus Wedge Criteria"
-    description 
+    description
         "Determine how the wedge for the node placement is calculated. 
          It can be chosen between wedge determination by the number of leaves or by the maximum sum of diagonals."
     targets parents
@@ -101,7 +97,7 @@ option wedgeCriteria: AnnulusWedgeCriteria {
 
 option optimizationCriteria: RadialTranslationStrategy {
     label "Translation Optimization"
-    description 
+    description
         "Find the optimal translation of the nodes of the first radii according to this criteria. 
          For example edge crossings can be minimized."
     default = RadialTranslationStrategy.NONE

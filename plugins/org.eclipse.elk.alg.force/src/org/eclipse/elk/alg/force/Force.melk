@@ -33,8 +33,7 @@ algorithm force(ForceLayoutProvider) {
     features multi_edges, edge_labels
     preview images/force_layout.png
     supports org.eclipse.elk.priority = 1
-	   documentation 
-	       "Priorities set on nodes determine the order in which connected components are placed:
+    documentation "Priorities set on nodes determine the order in which connected components are placed:
             components with a higher sum of node priorities will end up
             before components with a lower sum.
             Priorities set on edges usually directly influence the attractive force of a connection,
@@ -56,14 +55,16 @@ algorithm force(ForceLayoutProvider) {
 
 option model: ForceModelStrategy {
     label "Force Model"
-    description "Determines the model for force calculation."
+    description
+        "Determines the model for force calculation."
     default = ForceModelStrategy.FRUCHTERMAN_REINGOLD
     targets parents
 }
 
 option iterations: int {
     label "Iterations"
-    description "The number of iterations on the force model."
+    description
+        "The number of iterations on the force model."
     default = 300
     lowerBound = 1
     targets parents
@@ -81,7 +82,8 @@ option repulsivePower: int {
 
 option temperature: double {
     label "FR Temperature"
-    description "The temperature is used as a scaling factor for particle displacements."
+    description
+        "The temperature is used as a scaling factor for particle displacements."
     default = 0.001
     lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
@@ -90,7 +92,8 @@ option temperature: double {
 
 option repulsion: double {
     label "Eades Repulsion"
-    description "Factor for repulsive forces in Eades' model."
+    description
+        "Factor for repulsive forces in Eades' model."
     default = 5.0
     lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents

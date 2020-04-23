@@ -37,15 +37,18 @@ bundle {
 
 category layered {
     label "Layered"
-    description "The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes
+    description
+        "The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes
         the direction of edges by pointing as many edges as possible into the same direction.
         The nodes are arranged in layers, which are sometimes called \"hierarchies\", and then
         reordered such that the number of edge crossings is minimized. Afterwards, concrete
         coordinates are computed for the nodes and edge bend points."
 }
+
 category orthogonal {
     label "Orthogonal"
-    description "Orthogonal methods that follow the \"topology-shape-metrics\" approach by Batini,
+    description
+        "Orthogonal methods that follow the \"topology-shape-metrics\" approach by Batini,
         Nardelli and Tamassia '86. The first phase determines the topology of the drawing by
         applying a planarization technique, which results in a planar representation of the graph.
         The orthogonal shape is computed in the second phase, which aims at minimizing the number
@@ -53,35 +56,47 @@ category orthogonal {
         coordinates for nodes and edge bend points by applying a compaction method, thus defining
         the metrics."
 }
+
 category force {
     label "Force"
-    description "Layout algorithms that follow physical analogies by simulating a system of attractive and
+    description
+        "Layout algorithms that follow physical analogies by simulating a system of attractive and
         repulsive forces. The first successful method of this kind was proposed by Eades in 1984."
 }
+
 category circle {
     label "Circle"
-    description "Circular layout algorithms emphasize cycles or biconnected components of a graph by
+    description
+        "Circular layout algorithms emphasize cycles or biconnected components of a graph by
         arranging them in circles. This is useful if a drawing is desired where such components
         are clearly grouped, or where cycles are shown as prominent OPTIONS of the graph."
 }
+
 category tree {
     label "Tree"
-    description "Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs
+    description
+        "Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs
         that have no undirected cycles can be emphasized using an algorithm of this type."
 }
+
 category planar {
     label "Planar"
-    description "Algorithms that require a planar or upward planar graph. Most of these algorithms are 
+    description
+        "Algorithms that require a planar or upward planar graph. Most of these algorithms are 
         theoretically interesting, but not practically usable."
 }
+
 category radial {
     label "Radial"
-    description "Radial layout algorithms usually position the nodes of the graph on concentric circles."
+    description
+        "Radial layout algorithms usually position the nodes of the graph on concentric circles."
 }
+
 //------- UTILITY ALGORITHMS
-algorithm fixed (FixedLayoutProvider) {
+algorithm fixed(FixedLayoutProvider) {
     label "Fixed Layout"
-    description "Keeps the current layout as it is, without any automatic modification. Optional coordinates
+    description
+        "Keeps the current layout as it is, without any automatic modification. Optional coordinates
         can be given for nodes and edge bend points."
     metadataClass core.options.FixedLayouterOptions 
     supports padding = new ElkPadding(15)
@@ -91,9 +106,11 @@ algorithm fixed (FixedLayoutProvider) {
     supports nodeSize.minimum
     supports nodeSize.fixedGraphSize
 }
-algorithm box (BoxLayoutProvider) {
+
+algorithm box(BoxLayoutProvider) {
     label "Box Layout"
-    description "Algorithm for packing of unconnected boxes, i.e. graphs without edges."
+    description
+        "Algorithm for packing of unconnected boxes, i.e. graphs without edges."
     metadataClass core.options.BoxLayouterOptions
     preview images/box_layout.png
     supports padding = new ElkPadding(15)
@@ -112,20 +129,26 @@ algorithm box (BoxLayoutProvider) {
     supports box.packingMode
     supports contentAlignment = ContentAlignment.topCenter()
 }
+
 group box {
+
     option packingMode: PackingMode {
         label "Box Layout Mode"
-        description "Configures the packing mode used by the {@link BoxLayoutProvider}.
+        description
+            "Configures the packing mode used by the {@link BoxLayoutProvider}.
              If SIMPLE is not required (neither priorities are used nor the interactive mode),
              GROUP_DEC can improve the packing and decrease the area. 
              GROUP_MIXED and GROUP_INC may, in very specific scenarios, work better."
         default = BoxLayoutProvider.PackingMode.SIMPLE
         targets parents
     }
+
 }
-algorithm random (RandomLayoutProvider) {
+
+algorithm random(RandomLayoutProvider) {
     label "Randomizer"
-    description "Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be
+    description
+        "Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be
         useful to demonstrate the power of \"real\" layout algorithms."
     metadataClass core.options.RandomLayouterOptions
     preview images/random_layout.png
@@ -134,327 +157,427 @@ algorithm random (RandomLayoutProvider) {
     supports randomSeed = 0
     supports aspectRatio = 1.6f
 }
+
 //------- UI OPTIONS 
 option ^algorithm: String {
     label "Layout Algorithm"
-    description "Select a specific layout algorithm."
+    description
+        "Select a specific layout algorithm."
     targets parents
 }
+
 programmatic option resolvedAlgorithm: LayoutAlgorithmData {
     label "Resolved Layout Algorithm"
-    description "Meta data associated with the selected algorithm."
+    description
+        "Meta data associated with the selected algorithm."
     targets parents
 }
+
 advanced option alignment: Alignment {
     label "Alignment"
-    description "Alignment of the selected node relative to other nodes;
+    description
+        "Alignment of the selected node relative to other nodes;
         the exact meaning depends on the used algorithm."
     default = Alignment.AUTOMATIC
     targets nodes
 }
+
 advanced option aspectRatio: double {
     label "Aspect Ratio"
-    description "The desired aspect ratio of the drawing, that is the quotient of width by height."
+    description
+        "The desired aspect ratio of the drawing, that is the quotient of width by height."
     lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
 }
+
 programmatic option bendPoints: KVectorChain {
     label "Bend Points"
-    description "A fixed list of bend points for the edge. This is used by the 'Fixed Layout' algorithm to
+    description
+        "A fixed list of bend points for the edge. This is used by the 'Fixed Layout' algorithm to
         specify a pre-defined routing for an edge. The vector chain must include the source point,
         any bend points, and the target point, so it must have at least two points."
     targets edges
 }
+
 advanced option contentAlignment: EnumSet<ContentAlignment> {
     label "Content Alignment"
-    description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+    description
+        "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
     default = ContentAlignment.topLeft()
     targets parents
 }
+
 advanced option debugMode: boolean {
     label "Debug Mode"
-    description "Whether additional debug information shall be generated."
+    description
+        "Whether additional debug information shall be generated."
     default = false
     targets parents
 }
+
 option direction: Direction {
     label "Direction"
-    description "Overall direction of edges: horizontal (right / left) or
+    description
+        "Overall direction of edges: horizontal (right / left) or
         vertical (down / up)."
     default = Direction.UNDEFINED
     targets parents
 }
+
 option edgeRouting: EdgeRouting {
     label "Edge Routing"
-    description "What kind of edge routing style should be applied for the content of a parent node.
+    description
+        "What kind of edge routing style should be applied for the content of a parent node.
         Algorithms may also set this option to single edges in order to mark them as splines.
         The bend point list of edges with this option set to SPLINES must be interpreted as control
         points for a piecewise cubic spline."
     default = EdgeRouting.UNDEFINED
     targets parents
 }
+
 advanced option expandNodes: boolean {
     label "Expand Nodes"
     // TODO improve description, e.g. what is 'expand'
-    description "If active, nodes are expanded to fill the area of their parent."
+    description
+        "If active, nodes are expanded to fill the area of their parent."
     default = false
     targets parents
 }
+
 advanced option hierarchyHandling: HierarchyHandling {
     label "Hierarchy Handling"
-    description "If this option is set to SEPARATE_CHILDREN, each hierarchy level of the graph is processed independently, 
+    description
+        "If this option is set to SEPARATE_CHILDREN, each hierarchy level of the graph is processed independently, 
         possibly by different layout algorithms, beginning with the lowest level. 
         If it is set to INCLUDE_CHILDREN, the algorithm is responsible to process
         all hierarchy levels that are contained in the associated parent node.
         If the root node is set to inherit (or not set at all), the default behavior is SEPARATE_CHILDREN."
     default = HierarchyHandling.INHERIT
-    targets parents , nodes
+    targets parents, nodes
 }
+
 advanced option padding: ElkPadding {
     label "Padding"
-    description "The padding to be left to a parent element's border when placing child elements. This can
+    description
+        "The padding to be left to a parent element's border when placing child elements. This can
         also serve as an output option of a layout algorithm if node size calculation is setup
         appropriately."
     default = new ElkPadding(12)
-    targets parents , nodes
+    targets parents, nodes
 }
+
 advanced option interactive: boolean {
     label "Interactive"
-    description "Whether the algorithm should be run in interactive mode for the content of a parent node.
+    description
+        "Whether the algorithm should be run in interactive mode for the content of a parent node.
         What this means exactly depends on how the specific algorithm interprets this option.
         Usually in the interactive mode algorithms try to modify the current layout as little as
         possible."
     default = false
     targets parents
 }
+
 advanced option interactiveLayout: boolean {
     label "interactive Layout"
-    description "Whether the graph should be changeable interactively and by setting constraints"
+    description
+        "Whether the graph should be changeable interactively and by setting constraints"
     default = false
     targets parents
 }
+
 // --- SPACING
 group spacing {
+
     option componentComponent: double {
         label "Components Spacing"
-        description "Spacing to be preserved between pairs of connected components. 
+        description
+            "Spacing to be preserved between pairs of connected components. 
             This option is only relevant if 'separateConnectedComponents' is activated."
         default = 20f
         lowerBound = 0.0
         targets parents
     }
+
     option edgeEdge: double {
         label "Edge Spacing"
-        description "Spacing to be preserved between any two edges. Note that while this can somewhat easily be satisfied 
+        description
+            "Spacing to be preserved between any two edges. Note that while this can somewhat easily be satisfied 
             for the segments of orthogonally drawn edges, it is harder for general polylines or splines."
         default = 10
         lowerBound = 0.0
         targets parents
     }
+
     option edgeLabel: double {
         label "Edge Label Spacing"
-        description "The minimal distance to be preserved between a label and the edge it is associated with.
+        description
+            "The minimal distance to be preserved between a label and the edge it is associated with.
             Note that the placement of a label is influenced by the 'edgelabels.placement' option."
         default = 2
         lowerBound = 0.0
         targets parents
     }
+
     option edgeNode: double {
         label "Edge Node Spacing"
-        description "Spacing to be preserved between nodes and edges."
+        description
+            "Spacing to be preserved between nodes and edges."
         default = 10
         lowerBound = 0.0
         targets parents   
     }
+
     option labelLabel: double {
         label "Label Spacing"
-        description "Determines the amount of space to be left between two labels 
+        description
+            "Determines the amount of space to be left between two labels 
              of the same graph element."
         default = 0
         lowerBound = 0.0
         targets parents
     }
+
     option labelNode: double {
         label "Label Node Spacing"
-        description "Spacing to be preserved between labels and the border of node they are associated with. 
+        description
+            "Spacing to be preserved between labels and the border of node they are associated with. 
             Note that the placement of a label is influenced by the 'nodelabels.placement' option."
         default = 5
         lowerBound = 0.0
         targets parents
     }
+
     option labelPort: double {
         label "Label Port Spacing"
-        description "Spacing to be preserved between labels and the ports they are associated with. 
+        description
+            "Spacing to be preserved between labels and the ports they are associated with. 
             Note that the placement of a label is influenced by the 'portlabels.placement' option."
         default = 1
         lowerBound = 0.0
         targets parents
     }
+
     option nodeNode: double {
         label "Node Spacing"
-        description "The minimal distance to be preserved between each two nodes."
+        description
+            "The minimal distance to be preserved between each two nodes."
         default = 20
         lowerBound = 0.0
         targets parents
     }
+
     option nodeSelfLoop: double {
         label "Node Self Loop Spacing"
-        description "Spacing to be preserved between a node and its self loops."
+        description
+            "Spacing to be preserved between a node and its self loops."
         default = 10
         lowerBound = 0.0
         targets parents
     }
+
     option portPort: double {
         label "Port Spacing"
-        description "Spacing between pairs of ports of the same node."
+        description
+            "Spacing between pairs of ports of the same node."
         default = 10
         lowerBound = 0.0
-        targets parents , nodes
+        targets parents, nodes
     }
+
     advanced option individualOverride: IndividualSpacings {
         label "Individual Spacing Override"
-        description "In general spacing values apply to the children of the hierarchical node 
+        description
+            "In general spacing values apply to the children of the hierarchical node 
             (possibly the root node) for which the values are actually specified. Hereby,
             the children include ports, edges, and labels. "
-        targets nodes , edges, ports, labels
+        targets nodes, edges, ports, labels
     }
+
     advanced option portsSurrounding: ElkMargin {
         label "Additional Port Space"
-        description "Additional space around the sets of ports on each node side. For each side of a node,
+        description
+            "Additional space around the sets of ports on each node side. For each side of a node,
             this option can reserve additional space before and after the ports on each side. For
             example, a top spacing of 20 makes sure that the first port on the western and eastern
             side is 20 units away from the northern border."
         default = new ElkMargin(0)
         targets parents
     }
+
 }
+
 // --- PARTITIONING 
 group partitioning {
+
     advanced option partition: Integer {
         label "Layout Partition"
-        description "Partition to which the node belongs to. If 'layoutPartitions' is true,
+        description
+            "Partition to which the node belongs to. If 'layoutPartitions' is true,
              a pair of nodes with different partition indices is placed such that 
              the node with lower index is placed to the left of the other node (with left-to-right layout direction)."
-        targets parents , nodes
+        targets parents, nodes
     }
+
     advanced option activate: Boolean {
         label "Layout Partitioning"
-        description "Whether to activate partitioned layout."
+        description
+            "Whether to activate partitioned layout."
         default = false
         targets parents
     }
+
 }
+
 // --- NODE LABELS
 group nodeLabels {
+
     advanced option padding: ElkPadding {
         label "Node Label Padding"
-        description "Define padding for node labels that are placed inside of a node."
+        description
+            "Define padding for node labels that are placed inside of a node."
         default = new ElkPadding(5)
         targets nodes
     }
+
     option placement: EnumSet<NodeLabelPlacement> {
         label "Node Label Placement"
-        description "Hints for where node labels are to be placed; if empty, the node label's position is not
+        description
+            "Hints for where node labels are to be placed; if empty, the node label's position is not
             modified."
         default = NodeLabelPlacement.fixed
-        targets nodes , labels
+        targets nodes, labels
     }
+
 }
+
 // --- PORT ALIGNMENT
 group portAlignment {
+
     option ^default: PortAlignment {
         label "Port Alignment"
-        description "Defines the default port distribution for a node. May be overridden for each side individually."
+        description
+            "Defines the default port distribution for a node. May be overridden for each side individually."
         default = PortAlignment.DISTRIBUTED
         targets nodes
     }
+
     advanced option north: PortAlignment {
         label "Port Alignment (North)"
-        description "Defines how ports on the northern side are placed, overriding the node's general port alignment."
+        description
+            "Defines how ports on the northern side are placed, overriding the node's general port alignment."
         targets nodes
     }
+
     advanced option south: PortAlignment {
         label "Port Alignment (South)"
-        description "Defines how ports on the southern side are placed, overriding the node's general port alignment."
+        description
+            "Defines how ports on the southern side are placed, overriding the node's general port alignment."
         targets nodes
     }
+
     advanced option west: PortAlignment {
         label "Port Alignment (West)"
-        description "Defines how ports on the western side are placed, overriding the node's general port alignment."
+        description
+            "Defines how ports on the western side are placed, overriding the node's general port alignment."
         targets nodes
     }
+
     advanced option east: PortAlignment {
         label "Port Alignment (East)"
-        description "Defines how ports on the eastern side are placed, overriding the node's general port alignment."
+        description
+            "Defines how ports on the eastern side are placed, overriding the node's general port alignment."
         targets nodes
     }
+
 }
+
 option portConstraints: PortConstraints {
     label "Port Constraints"
-    description "Defines constraints of the position of the ports of a node."
+    description
+        "Defines constraints of the position of the ports of a node."
     default = PortConstraints.UNDEFINED
     targets nodes
 }
+
 advanced option position: KVector {
     label "Position"
-    description "The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
+    description
+        "The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
         specify a pre-defined position."
-    targets nodes , ports, labels
+    targets nodes, ports, labels
 }
+
 advanced option priority: int {
     label "Priority"
-    description "Defines the priority of an object; its meaning depends on the specific layout algorithm
+    description
+        "Defines the priority of an object; its meaning depends on the specific layout algorithm
         and the context where it is used."
-    targets nodes , edges
+    targets nodes, edges
 }
+
 advanced option randomSeed: int {
     label "Randomization Seed"
-    description "Seed used for pseudo-random number generators to control the layout algorithm. If the
+    description
+        "Seed used for pseudo-random number generators to control the layout algorithm. If the
         value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time)."
     targets parents
 }
+
 option separateConnectedComponents: boolean {
     label "Separate Connected Components"
-    description "Whether each connected component should be processed separately."
+    description
+        "Whether each connected component should be processed separately."
     targets parents
 }
+
 // --- NODE SIZE
 group nodeSize {
+
     option constraints: EnumSet<SizeConstraint> {
         label "Node Size Constraints"
-        description "What should be taken into account when calculating a node's size. Empty size constraints
+        description
+            "What should be taken into account when calculating a node's size. Empty size constraints
             specify that a node's size is already fixed and should not be changed."
         documentation "@sizeconstraints.md"
         default = EnumSet.noneOf(SizeConstraint)
         targets nodes
     }
+
     option options: EnumSet<SizeOptions> {
         label "Node Size Options"
-        description "Options modifying the behavior of the size constraints set on a node. Each member of the
+        description
+            "Options modifying the behavior of the size constraints set on a node. Each member of the
             set specifies something that should be taken into account when calculating node sizes.
             The empty set corresponds to no further modifications."
         documentation "@sizeoptions.md"
         default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE)
         targets nodes
     }
+
     advanced option minimum: KVector {
         label "Node Size Minimum"
-        description "The minimal size to which a node can be reduced."
+        description
+            "The minimal size to which a node can be reduced."
         default = new KVector(0, 0)
         targets nodes
     }
+
     option fixedGraphSize: boolean {
         label "Fixed Graph Size"
-        description "By default, the fixed layout provider will enlarge a graph until it is large enough to contain
+        description
+            "By default, the fixed layout provider will enlarge a graph until it is large enough to contain
             its children. If this option is set, it won't do so."
         default = false
         targets parents
     }
+
 }
+
 //------- PROGRAMMATIC OPTIONS
 output option junctionPoints: KVectorChain {
     label "Junction Points"
-    description "This option is not used as option, but as output of the layout algorithms. It is
+    description
+        "This option is not used as option, but as output of the layout algorithms. It is
         attached to edges and determines the points where junction symbols should be drawn in
         order to represent hyperedges with orthogonal routing. Whether such points are computed
         depends on the chosen layout algorithm and edge routing style. The points are put into
@@ -462,101 +585,132 @@ output option junctionPoints: KVectorChain {
     targets edges
     default = new KVectorChain()
 }
+
 option commentBox: boolean {
     label "Comment Box"
-    description "Whether the node should be regarded as a comment box instead of a regular node. In that
+    description
+        "Whether the node should be regarded as a comment box instead of a regular node. In that
         case its placement should be similar to how labels are handled. Any edges incident to a
         comment box specify to which graph elements the comment is related."
     default = false
     targets nodes
 }
+
 // --- EDGE LABELS
 group edgeLabels {
+
     option placement: EdgeLabelPlacement {
         label "Edge Label Placement"
-        description "Gives a hint on where to put edge labels."
+        description
+            "Gives a hint on where to put edge labels."
         default = EdgeLabelPlacement.UNDEFINED
         targets labels
     }
+
     option inline: boolean {
         label "Inline Edge Labels"
-        description "If true, an edge label is placed directly on its edge. May only apply to center edge labels.
+        description
+            "If true, an edge label is placed directly on its edge. May only apply to center edge labels.
             This kind of label placement is only advisable if the label's rendering is such that it is not
             crossed by its edge and thus stays legible."
         default = false
         targets labels
     }
+
 }
+
 // --- FONT
 group font {
+
     programmatic option name: String {
         label "Font Name"
-        description "Font name used for a label."
+        description
+            "Font name used for a label."
         targets labels
     }
+
     programmatic option size: int {
         label "Font Size"
-        description "Font size used for a label."
+        description
+            "Font size used for a label."
         lowerBound = 1
         targets labels
     }
+
 }
+
 programmatic option hypernode: boolean {
     label "Hypernode"
-    description "Whether the node should be handled as a hypernode."
+    description
+        "Whether the node should be handled as a hypernode."
     default = false
     targets nodes
 }
+
 programmatic option labelManager: ILabelManager {
     label "Label Manager"
-    description "Label managers can shorten labels upon a layout algorithm's request."
-    targets parents , labels
+    description
+        "Label managers can shorten labels upon a layout algorithm's request."
+    targets parents, labels
 }
+
 option margins: ElkMargin {
     label "Margins"
-    description "Margins define additional space around the actual bounds of a graph element. For instance,
+    description
+        "Margins define additional space around the actual bounds of a graph element. For instance,
         ports or labels being placed on the outside of a node's border might introduce such a
         margin. The margin is used to guarantee non-overlap of other graph elements with those
         ports or labels."
     default = new ElkMargin()
     targets nodes
 }
+
 option noLayout: boolean {
     label "No Layout"
-    description "No layout is done for the associated element. This is used to mark parts of a diagram to
+    description
+        "No layout is done for the associated element. This is used to mark parts of a diagram to
         avoid their inclusion in the layout graph, or to mark parts of the layout graph to
         prevent layout engines from processing them. If you wish to exclude the contents of a
         compound node from automatic layout, while the node itself is still considered on its own
         layer, use the 'Fixed Layout' algorithm for that node."
     default = false
-    targets nodes , edges, ports, labels
+    targets nodes, edges, ports, labels
 }
+
 // --- PORT
 group port {
+
     option anchor: KVector {
         label "Port Anchor Offset"
-        description "The offset to the port position where connections shall be attached."
+        description
+            "The offset to the port position where connections shall be attached."
         targets ports
     }
+
     programmatic option index: int {
         label "Port Index"
-        description "The index of a port in the fixed order around a node. The order is assumed as clockwise,
+        description
+            "The index of a port in the fixed order around a node. The order is assumed as clockwise,
             starting with the leftmost port on the top side. This option must be set if 'Port
             Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
             Additionally, the option 'Port Side' must be defined in this case."
         targets ports
     }
+
     option side: PortSide {
         label "Port Side"
-        description "The side of a node on which a port is situated. This option must be set if 'Port
+        description
+            "The side of a node on which a port is situated. This option must be set if 'Port
             Constraints' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given
             for the ports."
         default = PortSide.UNDEFINED
         targets ports
     }
+
     option borderOffset: double {
         label "Port Border Offset"
-        description "The offset of ports on the node border. With a positive offset the port is moved outside
+        description
+            "The offset of ports on the node border. With a positive offset the port is moved outside
             of the node, while with a negative offset the port is moved towards the inside. An offset
             of 0 means that the port is placed directly on the node border, i.e.
             if the port side is north, the port's south border touches the nodes's north border;
@@ -565,18 +719,24 @@ group port {
             if the port side is west, the port's east border touches the node's west border."
         targets ports
     }
+
 }
+
 // --- PORT LABELS
 group portLabels {
+
     option placement: PortLabelPlacement {
         label "Port Label Placement"
-        description "Decides on a placement method for port labels."
+        description
+            "Decides on a placement method for port labels."
         default = PortLabelPlacement.OUTSIDE
         targets nodes
     }
+
     option nextToPortIfPossible: boolean {
         label "Port Labels Next to Port"
-        description "Usually, inside port labels of hierarchical nodes are placed not next to their port,
+        description
+            "Usually, inside port labels of hierarchical nodes are placed not next to their port,
            but with an offset to avoid edge-label crossings. The offset is not necessary if the
            port has no connections that would cross the label, but is usually applied anyway to
            keep things uniform. Setting this option to true places labels next to their ports if
@@ -584,19 +744,24 @@ group portLabels {
         default = false
         targets nodes
     }
+
     option treatAsGroup: boolean {
         label "Treat Port Labels as Group"
-        description "If this option is true (default), the labels of a port will be treated as a group when
+        description
+            "If this option is true (default), the labels of a port will be treated as a group when
            it comes to centering them next to their port. If this option is false, only the first label will
            be centered next to the port, with the others being placed below. This only applies to labels of
            eastern and western ports and will have no effect if labels are not placed next to their port."
         default = true
         targets nodes
     }
+
 }
+
 programmatic option scaleFactor: double {
     label "Scale Factor"
-    description "The scaling factor to be applied to the corresponding node in recursive layout. It causes
+    description
+        "The scaling factor to be applied to the corresponding node in recursive layout. It causes
         the corresponding node's size to be adjusted, and its ports and labels to be sized and
         placed accordingly after the layout of that node has been determined (and before the node
         itself and its siblings are arranged). The scaling is not reverted afterwards, so the
@@ -608,103 +773,134 @@ programmatic option scaleFactor: double {
     // TODO
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
+
 // --- INSIDE SELF LOOPS
 group insideSelfLoops {
+
     advanced option activate: boolean {
         label "Activate Inside Self Loops"
-        description "Whether this node allows to route self loops inside of it instead of around it. If set to true,
+        description
+            "Whether this node allows to route self loops inside of it instead of around it. If set to true,
             this will make the node a compound node if it isn't already, and will require the layout algorithm
             to support compound nodes with hierarchical ports."
         default = false
         targets nodes
     }
+
     advanced option yo: boolean {
         label "Inside Self Loop"
-        description "Whether a self loop should be routed inside a node instead of around that node."
+        description
+            "Whether a self loop should be routed inside a node instead of around that node."
         default = false
         targets edges
     }
+
 }
+
 // --- EDGE
 group edge {
+
     programmatic option thickness: double {
         label "Edge Thickness"
-        description "The thickness of an edge. This is a hint on the line width used to draw an edge, possibly
+        description
+            "The thickness of an edge. This is a hint on the line width used to draw an edge, possibly
             requiring more space to be reserved for it."
         default = 1
         targets edges
     }
+
     // TODO should this be moved to specific options of a layouter that actually supports different edge types?
     programmatic option type: EdgeType {
         label "Edge Type"
-        description "The type of an edge. This is usually used for UML class diagrams, where associations must
+        description
+            "The type of an edge. This is usually used for UML class diagrams, where associations must
             be handled differently from generalizations."
         default = EdgeType.NONE
         targets edges
     }
+
 }
+
 //------- GLOBAL OPTIONS
 global option animate: boolean {
     label "Animate"
-    description "Whether the shift from the old layout to the new computed layout shall be animated."
+    description
+        "Whether the shift from the old layout to the new computed layout shall be animated."
     default = true
     targets parents
 }
+
 global option animTimeFactor: int {
     label "Animation Time Factor"
-    description "Factor for computation of animation time. The higher the value, the longer the animation
+    description
+        "Factor for computation of animation time. The higher the value, the longer the animation
         time. If the value is 0, the resulting time is always equal to the minimum defined by
         'Minimal Animation Time'."
     default = 100
     lowerBound = 0
     targets parents
 }
+
 global option layoutAncestors: boolean {
     label "Layout Ancestors"
-    description "Whether the hierarchy levels on the path from the selected element to the root of the
+    description
+        "Whether the hierarchy levels on the path from the selected element to the root of the
         diagram shall be included in the layout process."
     default = false
     targets parents
 }
+
 global option maxAnimTime: int {
     label "Maximal Animation Time"
-    description "The maximal time for animations, in milliseconds."
+    description
+        "The maximal time for animations, in milliseconds."
     default = 4000
     lowerBound = 0
     targets parents
 }
+
 global option minAnimTime: int {
     label "Minimal Animation Time"
-    description "The minimal time for animations, in milliseconds."
+    description
+        "The minimal time for animations, in milliseconds."
     default = 400
     lowerBound = 0
     targets parents
 }
+
 global option progressBar: boolean {
     label "Progress Bar"
-    description "Whether a progress bar shall be displayed during layout computations."
+    description
+        "Whether a progress bar shall be displayed during layout computations."
     default = false
     targets parents
 }
+
 global option validateGraph: boolean {
     label "Validate Graph"
-    description "Whether the graph shall be validated before any layout algorithm is applied. If this
+    description
+        "Whether the graph shall be validated before any layout algorithm is applied. If this
         option is enabled and at least one error is found, the layout process is aborted and a message
         is shown to the user."
     default = false
     targets parents
 }
+
 global option validateOptions: boolean {
     label "Validate Options"
-    description "Whether layout options shall be validated before any layout algorithm is applied. If this
+    description
+        "Whether layout options shall be validated before any layout algorithm is applied. If this
         option is enabled and at least one error is found, the layout process is aborted and a message
         is shown to the user."
     default = true
     targets parents
 }
+
 global option zoomToFit: boolean {
     label "Zoom to Fit"
-    description "Whether the zoom level shall be set to view the whole diagram after layout."
+    description
+        "Whether the zoom level shall be set to view the whole diagram after layout."
     default = false
     targets parents
 }
+

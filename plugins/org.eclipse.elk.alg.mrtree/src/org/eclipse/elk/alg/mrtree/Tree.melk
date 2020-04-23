@@ -10,8 +10,6 @@
 package org.eclipse.elk.alg.mrtree
 
 import org.eclipse.elk.alg.mrtree.TreeLayoutProvider
-import org.eclipse.elk.alg.mrtree.options.OrderWeighting
-import org.eclipse.elk.alg.mrtree.options.TreeifyingOrder
 import org.eclipse.elk.core.math.ElkPadding
 
 /**
@@ -24,7 +22,7 @@ bundle {
 
 algorithm mrtree(TreeLayoutProvider) {
     label "ELK Mr. Tree"
-    description 
+    description
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
         the input graph and arranges all nodes according to the resulting parent-children
         hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
@@ -36,11 +34,10 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.spacing.nodeNode = 20
     supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.priority = 1
-	   documentation 
-	       "Priorities set on nodes determine the order in which connected components are placed:
+    documentation "Priorities set on nodes determine the order in which connected components are placed:
             components with a higher sum of node priorities will end up
             before components with a lower sum."
-    supports org.eclipse.elk.separateConnectedComponents = true 
+    supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.debugMode
     supports weighting
     supports searchOrder
@@ -48,14 +45,16 @@ algorithm mrtree(TreeLayoutProvider) {
 
 option weighting: OrderWeighting {
     label "Weighting of Nodes"
-    description "Which weighting to use when computing a node order."
+    description
+        "Which weighting to use when computing a node order."
     default = OrderWeighting.DESCENDANTS
     targets parents
 }
 
 option searchOrder: TreeifyingOrder {
     label "Search Order"
-    description "Which search order to use when computing a spanning tree."
+    description
+        "Which search order to use when computing a spanning tree."
     default = TreeifyingOrder.DFS
     targets parents
 }
