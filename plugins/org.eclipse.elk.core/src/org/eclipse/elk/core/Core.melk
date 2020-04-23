@@ -151,14 +151,12 @@ advanced option alignment: Alignment {
         the exact meaning depends on the used algorithm."
     default = Alignment.AUTOMATIC
     targets nodes
-    legacyIds de.cau.cs.kieler.alignment
 }
 advanced option aspectRatio: double {
     label "Aspect Ratio"
     description "The desired aspect ratio of the drawing, that is the quotient of width by height."
     lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
-    legacyIds de.cau.cs.kieler.aspectRatio
 }
 programmatic option bendPoints: KVectorChain {
     label "Bend Points"
@@ -166,21 +164,18 @@ programmatic option bendPoints: KVectorChain {
         specify a pre-defined routing for an edge. The vector chain must include the source point,
         any bend points, and the target point, so it must have at least two points."
     targets edges
-    legacyIds de.cau.cs.kieler.bendPoints
 }
 advanced option contentAlignment: EnumSet<ContentAlignment> {
     label "Content Alignment"
     description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
     default = ContentAlignment.topLeft()
     targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
 }
 advanced option debugMode: boolean {
     label "Debug Mode"
     description "Whether additional debug information shall be generated."
     default = false
     targets parents
-    legacyIds de.cau.cs.kieler.debugMode
 }
 option direction: Direction {
     label "Direction"
@@ -188,7 +183,6 @@ option direction: Direction {
         vertical (down / up)."
     default = Direction.UNDEFINED
     targets parents
-    legacyIds de.cau.cs.kieler.direction
 }
 option edgeRouting: EdgeRouting {
     label "Edge Routing"
@@ -198,7 +192,6 @@ option edgeRouting: EdgeRouting {
         points for a piecewise cubic spline."
     default = EdgeRouting.UNDEFINED
     targets parents
-    legacyIds de.cau.cs.kieler.edgeRouting
 }
 advanced option expandNodes: boolean {
     label "Expand Nodes"
@@ -206,7 +199,6 @@ advanced option expandNodes: boolean {
     description "If active, nodes are expanded to fill the area of their parent."
     default = false
     targets parents
-    legacyIds de.cau.cs.kieler.expandNodes
 }
 advanced option hierarchyHandling: HierarchyHandling {
     label "Hierarchy Handling"
@@ -217,7 +209,6 @@ advanced option hierarchyHandling: HierarchyHandling {
         If the root node is set to inherit (or not set at all), the default behavior is SEPARATE_CHILDREN."
     default = HierarchyHandling.INHERIT
     targets parents , nodes
-    legacyIds de.cau.cs.kieler.hierarchyHandling
 }
 advanced option padding: ElkPadding {
     label "Padding"
@@ -251,7 +242,6 @@ group spacing {
         default = 20f
         lowerBound = 0.0
         targets parents
-        legacyIds de.cau.cs.kieler.borderSpacing
     }
     option edgeEdge: double {
         label "Edge Spacing"
@@ -283,7 +273,6 @@ group spacing {
         default = 0
         lowerBound = 0.0
         targets parents
-        legacyIds de.cau.cs.kieler.labelSpacing
     }
     option labelNode: double {
         label "Label Node Spacing"
@@ -292,7 +281,6 @@ group spacing {
         default = 5
         lowerBound = 0.0
         targets parents
-        legacyIds de.cau.cs.kieler.labelSpacing
     }
     option labelPort: double {
         label "Label Port Spacing"
@@ -308,7 +296,6 @@ group spacing {
         default = 20
         lowerBound = 0.0
         targets parents
-        legacyIds de.cau.cs.kieler.spacing
     }
     option nodeSelfLoop: double {
         label "Node Self Loop Spacing"
@@ -323,7 +310,6 @@ group spacing {
         default = 10
         lowerBound = 0.0
         targets parents , nodes
-        legacyIds de.cau.cs.kieler.portSpacing
     }
     advanced option individualOverride: IndividualSpacings {
         label "Individual Spacing Override"
@@ -350,14 +336,12 @@ group partitioning {
              a pair of nodes with different partition indices is placed such that 
              the node with lower index is placed to the left of the other node (with left-to-right layout direction)."
         targets parents , nodes
-        legacyIds de.cau.cs.kieler.partition
     }
     advanced option activate: Boolean {
         label "Layout Partitioning"
         description "Whether to activate partitioned layout."
         default = false
         targets parents
-        legacyIds de.cau.cs.kieler.layoutPartitions
     }
 }
 // --- NODE LABELS
@@ -367,7 +351,6 @@ group nodeLabels {
         description "Define padding for node labels that are placed inside of a node."
         default = new ElkPadding(5)
         targets nodes
-        legacyIds de.cau.cs.kieler.nodeLabelInset
     }
     option placement: EnumSet<NodeLabelPlacement> {
         label "Node Label Placement"
@@ -375,7 +358,6 @@ group nodeLabels {
             modified."
         default = NodeLabelPlacement.fixed
         targets nodes , labels
-        legacyIds de.cau.cs.kieler.nodeLabelPlacement
     }
 }
 // --- PORT ALIGNMENT
@@ -385,31 +367,26 @@ group portAlignment {
         description "Defines the default port distribution for a node. May be overridden for each side individually."
         default = PortAlignment.DISTRIBUTED
         targets nodes
-        legacyIds de.cau.cs.kieler.portAlignment
     }
     advanced option north: PortAlignment {
         label "Port Alignment (North)"
         description "Defines how ports on the northern side are placed, overriding the node's general port alignment."
         targets nodes
-        legacyIds de.cau.cs.kieler.portAlignment.north
     }
     advanced option south: PortAlignment {
         label "Port Alignment (South)"
         description "Defines how ports on the southern side are placed, overriding the node's general port alignment."
         targets nodes
-        legacyIds de.cau.cs.kieler.portAlignment.south
     }
     advanced option west: PortAlignment {
         label "Port Alignment (West)"
         description "Defines how ports on the western side are placed, overriding the node's general port alignment."
         targets nodes
-        legacyIds de.cau.cs.kieler.portAlignment.west
     }
     advanced option east: PortAlignment {
         label "Port Alignment (East)"
         description "Defines how ports on the eastern side are placed, overriding the node's general port alignment."
         targets nodes
-        legacyIds de.cau.cs.kieler.portAlignment.east
     }
 }
 option portConstraints: PortConstraints {
@@ -417,34 +394,29 @@ option portConstraints: PortConstraints {
     description "Defines constraints of the position of the ports of a node."
     default = PortConstraints.UNDEFINED
     targets nodes
-    legacyIds de.cau.cs.kieler.portConstraints
 }
 advanced option position: KVector {
     label "Position"
     description "The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
         specify a pre-defined position."
     targets nodes , ports, labels
-    legacyIds de.cau.cs.kieler.position
 }
 advanced option priority: int {
     label "Priority"
     description "Defines the priority of an object; its meaning depends on the specific layout algorithm
         and the context where it is used."
     targets nodes , edges
-    legacyIds de.cau.cs.kieler.priority
 }
 advanced option randomSeed: int {
     label "Randomization Seed"
     description "Seed used for pseudo-random number generators to control the layout algorithm. If the
         value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time)."
     targets parents
-    legacyIds de.cau.cs.kieler.randomSeed
 }
 option separateConnectedComponents: boolean {
     label "Separate Connected Components"
     description "Whether each connected component should be processed separately."
     targets parents
-    legacyIds de.cau.cs.kieler.separateConnComp
 }
 // --- NODE SIZE
 group nodeSize {
@@ -489,7 +461,6 @@ output option junctionPoints: KVectorChain {
         the vector chain with no specific order."
     targets edges
     default = new KVectorChain()
-    legacyIds de.cau.cs.kieler.junctionPoints
 }
 option commentBox: boolean {
     label "Comment Box"
@@ -498,7 +469,6 @@ option commentBox: boolean {
         comment box specify to which graph elements the comment is related."
     default = false
     targets nodes
-    legacyIds de.cau.cs.kieler.commentBox
 }
 // --- EDGE LABELS
 group edgeLabels {
@@ -507,7 +477,6 @@ group edgeLabels {
         description "Gives a hint on where to put edge labels."
         default = EdgeLabelPlacement.UNDEFINED
         targets labels
-        legacyIds de.cau.cs.kieler.edgeLabelPlacement
     }
     option inline: boolean {
         label "Inline Edge Labels"
@@ -524,14 +493,12 @@ group font {
         label "Font Name"
         description "Font name used for a label."
         targets labels
-        legacyIds de.cau.cs.kieler.fontName
     }
     programmatic option size: int {
         label "Font Size"
         description "Font size used for a label."
         lowerBound = 1
         targets labels
-        legacyIds de.cau.cs.kieler.fontSize
     }
 }
 programmatic option hypernode: boolean {
@@ -539,7 +506,6 @@ programmatic option hypernode: boolean {
     description "Whether the node should be handled as a hypernode."
     default = false
     targets nodes
-    legacyIds de.cau.cs.kieler.hypernode
 }
 programmatic option labelManager: ILabelManager {
     label "Label Manager"
@@ -554,7 +520,6 @@ option margins: ElkMargin {
         ports or labels."
     default = new ElkMargin()
     targets nodes
-    legacyIds de.cau.cs.kieler.margins
 }
 option noLayout: boolean {
     label "No Layout"
@@ -565,7 +530,6 @@ option noLayout: boolean {
         layer, use the 'Fixed Layout' algorithm for that node."
     default = false
     targets nodes , edges, ports, labels
-    legacyIds de.cau.cs.kieler.noLayout
 }
 // --- PORT
 group port {
@@ -573,7 +537,6 @@ group port {
         label "Port Anchor Offset"
         description "The offset to the port position where connections shall be attached."
         targets ports
-        legacyIds de.cau.cs.kieler.portAnchor
     }
     programmatic option index: int {
         label "Port Index"
@@ -582,7 +545,6 @@ group port {
             Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
             Additionally, the option 'Port Side' must be defined in this case."
         targets ports
-        legacyIds de.cau.cs.kieler.portIndex
     }
     option side: PortSide {
         label "Port Side"
@@ -591,7 +553,6 @@ group port {
             for the ports."
         default = PortSide.UNDEFINED
         targets ports
-        legacyIds de.cau.cs.kieler.portSide
     }
     option borderOffset: double {
         label "Port Border Offset"
@@ -603,7 +564,6 @@ group port {
             if the port side is south, the port's north border touches the node's south border;
             if the port side is west, the port's east border touches the node's west border."
         targets ports
-        legacyIds de.cau.cs.kieler.offset
     }
 }
 // --- PORT LABELS
@@ -613,7 +573,6 @@ group portLabels {
         description "Decides on a placement method for port labels."
         default = PortLabelPlacement.OUTSIDE
         targets nodes
-        legacyIds de.cau.cs.kieler.portLabelPlacement
     }
     option nextToPortIfPossible: boolean {
         label "Port Labels Next to Port"
@@ -646,7 +605,6 @@ programmatic option scaleFactor: double {
     lowerBound = ExclusiveBounds.greaterThan(0)
     default = 1
     targets nodes
-    legacyIds de.cau.cs.kieler.scaleFactor
     // TODO
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
@@ -659,14 +617,12 @@ group insideSelfLoops {
             to support compound nodes with hierarchical ports."
         default = false
         targets nodes
-        legacyIds de.cau.cs.kieler.selfLoopInside
     }
     advanced option yo: boolean {
         label "Inside Self Loop"
         description "Whether a self loop should be routed inside a node instead of around that node."
         default = false
         targets edges
-        legacyIds de.cau.cs.kieler.selfLoopInside
     }
 }
 // --- EDGE
@@ -677,7 +633,6 @@ group edge {
             requiring more space to be reserved for it."
         default = 1
         targets edges
-        legacyIds de.cau.cs.kieler.thickness
     }
     // TODO should this be moved to specific options of a layouter that actually supports different edge types?
     programmatic option type: EdgeType {
@@ -686,7 +641,6 @@ group edge {
             be handled differently from generalizations."
         default = EdgeType.NONE
         targets edges
-        legacyIds de.cau.cs.kieler.edgeType
     }
 }
 //------- GLOBAL OPTIONS
@@ -695,7 +649,6 @@ global option animate: boolean {
     description "Whether the shift from the old layout to the new computed layout shall be animated."
     default = true
     targets parents
-    legacyIds de.cau.cs.kieler.animate
 }
 global option animTimeFactor: int {
     label "Animation Time Factor"
@@ -705,7 +658,6 @@ global option animTimeFactor: int {
     default = 100
     lowerBound = 0
     targets parents
-    legacyIds de.cau.cs.kieler.animTimeFactor
 }
 global option layoutAncestors: boolean {
     label "Layout Ancestors"
@@ -713,7 +665,6 @@ global option layoutAncestors: boolean {
         diagram shall be included in the layout process."
     default = false
     targets parents
-    legacyIds de.cau.cs.kieler.layoutAncestors
 }
 global option maxAnimTime: int {
     label "Maximal Animation Time"
@@ -721,7 +672,6 @@ global option maxAnimTime: int {
     default = 4000
     lowerBound = 0
     targets parents
-    legacyIds de.cau.cs.kieler.maxAnimTime
 }
 global option minAnimTime: int {
     label "Minimal Animation Time"
@@ -729,14 +679,12 @@ global option minAnimTime: int {
     default = 400
     lowerBound = 0
     targets parents
-    legacyIds de.cau.cs.kieler.minAnimTime
 }
 global option progressBar: boolean {
     label "Progress Bar"
     description "Whether a progress bar shall be displayed during layout computations."
     default = false
     targets parents
-    legacyIds de.cau.cs.kieler.progressBar
 }
 global option validateGraph: boolean {
     label "Validate Graph"
@@ -759,5 +707,4 @@ global option zoomToFit: boolean {
     description "Whether the zoom level shall be set to view the whole diagram after layout."
     default = false
     targets parents
-    legacyIds de.cau.cs.kieler.zoomToFit
 }
