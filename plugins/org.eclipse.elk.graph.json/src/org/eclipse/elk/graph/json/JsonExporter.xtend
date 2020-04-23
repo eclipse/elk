@@ -16,7 +16,9 @@ import com.google.common.collect.Maps
 import java.util.Collections
 import java.util.Iterator
 import java.util.Map
+import java.util.Random
 import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
@@ -24,9 +26,7 @@ import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.ElkShape
-import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.graph.properties.IProperty
-import java.util.Random
 
 /**
  * Exporter from elk graph to json.
@@ -208,16 +208,20 @@ final class JsonExporter {
         }
 
         // transfer junction points, if existent
-        val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
-        if (!omitLayout && !jps.nullOrEmpty) {
-            val jsonJPs = newJsonArray
-            jps.forEach[ jp |
-                val jsonPnt = newJsonObject
-                jsonPnt.addJsonObj("x", jp.x)
-                jsonPnt.addJsonObj("y", jp.y)
-                jsonJPs.addJsonArr(jsonPnt)
-            ]
-            jsonObj.addJsonObj("junctionPoints", jsonJPs)
+        // make sure not to initialize an empty set of junction points by accident (#559)
+        // when immediately using 'getProperty'
+        if (!omitLayout && edge.hasProperty(CoreOptions.JUNCTION_POINTS)) {
+            val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
+            if (!omitLayout && !jps.nullOrEmpty) {
+                val jsonJPs = newJsonArray
+                jps.forEach[ jp |
+                    val jsonPnt = newJsonObject
+                    jsonPnt.addJsonObj("x", jp.x)
+                    jsonPnt.addJsonObj("y", jp.y)
+                    jsonJPs.addJsonArr(jsonPnt)
+                ]
+                jsonObj.addJsonObj("junctionPoints", jsonJPs)
+            }
         }
 
         // properties        
@@ -302,7 +306,7 @@ final class JsonExporter {
         val jsonProps = newJsonObject
         val parent = parentA.toJsonObject
         parent.addJsonObj("layoutOptions", jsonProps)
-        holder.properties.entrySet.forEach [ p |
+        holder.properties.entrySet.filter[it.key !== null].forEach [ p |
             if (!omitUnknownLayoutOptions || p.key.isKnown) {
                 var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
                 jsonProps.addProperty(key, p.value.toString)                

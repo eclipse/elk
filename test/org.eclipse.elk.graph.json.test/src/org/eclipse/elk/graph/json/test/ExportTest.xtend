@@ -86,4 +86,27 @@ class ExportTest {
       assertTrue(json2.contains("direction"))
       assertTrue(json2.contains("foo.bar.dummy"))
   }
+  
+  @Test
+  def void dontExportEmptyJunctionPoints() {
+      val graph = createGraph
+      val n1 = createNode(graph)
+      val n2 = createNode(graph)
+      createSimpleEdge(n1, n2)
+      
+      val json = ElkGraphJson.forGraph(graph)
+                             .omitLayout(false)
+                             .toJson
+
+      assertFalse(json.contains("layoutOptions"))
+      assertFalse(json.contains("junctionPoints"))
+  }
+  
+  @Test
+  def void copeWithNullProperty() {
+      val graph = createGraph
+      graph.setProperty(CoreOptions.RANDOM_SEED, 4) // arbitrary property
+      graph.setProperty(null, 3) // This shouldn't raise a nullpointer
+  }
+  
 }
