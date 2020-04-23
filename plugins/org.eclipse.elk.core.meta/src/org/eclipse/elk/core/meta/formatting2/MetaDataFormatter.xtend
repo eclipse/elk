@@ -27,9 +27,11 @@ import org.eclipse.elk.core.meta.metaData.MdGroupOrOption
 
 class MetaDataFormatter extends AbstractFormatter2 {
 
+    static val Procedure1<? super IHiddenRegionFormatter> no_space = [noSpace]
     static val Procedure1<? super IHiddenRegionFormatter> one_space = [oneSpace]
     static val Procedure1<? super IHiddenRegionFormatter> new_line = [newLine]
     static val Procedure1<? super IHiddenRegionFormatter> indention = [indent]
+    static val Procedure1<? super IHiddenRegionFormatter> new_line_twice = [setNewLines(2, 2, 2)]
 
     @Inject extension MetaDataGrammarAccess
 
@@ -54,7 +56,7 @@ class MetaDataFormatter extends AbstractFormatter2 {
     def dispatch void format(MdBundle bundle, extension IFormattableDocument document) {
         bundle.regionFor.keyword(mdBundleAccess.bundleKeyword_1_0).append(one_space)
         interior(
-            bundle.regionFor.keyword(mdBundleAccess.leftCurlyBracketKeyword_1_1).prepend(one_space).append(new_line),
+            bundle.regionFor.keyword(mdBundleAccess.leftCurlyBracketKeyword_1_1).prepend(one_space),
             bundle.regionFor.keyword(mdBundleAccess.rightCurlyBracketKeyword_1_3),
             indention
         )
@@ -65,22 +67,22 @@ class MetaDataFormatter extends AbstractFormatter2 {
         bundle.regionFor.keyword(mdBundleAccess.idPrefixKeyword_1_2_3_0).prepend(new_line).append(one_space)
 
         for (member : bundle.members) {
-            member.append(new_line).format
+            member.prepend(new_line_twice).format
         }
     }
 
     def dispatch void format(MdGroup group, extension IFormattableDocument document) {
         group.regionFor.keyword(mdGroupAccess.groupKeyword_0).append(one_space)
         interior(
-            group.regionFor.keyword(mdGroupAccess.leftCurlyBracketKeyword_2).prepend(one_space).append(new_line),
-            group.regionFor.keyword(mdGroupAccess.rightCurlyBracketKeyword_5),
+            group.regionFor.keyword(mdGroupAccess.leftCurlyBracketKeyword_2).prepend(one_space),
+            group.regionFor.keyword(mdGroupAccess.rightCurlyBracketKeyword_5).prepend(new_line_twice),
             indention
         )
 
         group.regionFor.keyword(mdGroupAccess.documentationKeyword_3_0).append(one_space)
 
         for (child : group.children) {
-            child.append(new_line).format
+            child.prepend(new_line_twice).format
         }
     }
 
@@ -96,10 +98,15 @@ class MetaDataFormatter extends AbstractFormatter2 {
             option.regionFor.keyword(mdOptionAccess.leftCurlyBracketKeyword_5).prepend(one_space).append(new_line),
             option.regionFor.keyword(mdOptionAccess.rightCurlyBracketKeyword_8),
             indention
-        )
+        ) 
 
         option.regionFor.keyword(mdOptionAccess.labelKeyword_6_0_0).prepend(new_line).append(one_space)
-        option.regionFor.keyword(mdOptionAccess.descriptionKeyword_6_1_0).prepend(new_line).append(one_space)
+        option.regionFor.keyword(mdOptionAccess.descriptionKeyword_6_1_0).prepend(new_line).append(new_line)
+        interior(
+            option.regionFor.keyword(mdOptionAccess.descriptionKeyword_6_1_0),
+            option.regionFor.assignment(mdOptionAccess.descriptionAssignment_6_1_1).nextSemanticRegion,
+            indention
+        )
         option.regionFor.keyword(mdOptionAccess.documentationKeyword_6_2_0).prepend(new_line).append(one_space)
         option.regionFor.keyword(mdOptionAccess.defaultKeyword_6_3_0).prepend(new_line).append(one_space)
         option.regionFor.keyword(mdOptionAccess.equalsSignKeyword_6_3_1).append(one_space)
@@ -108,9 +115,9 @@ class MetaDataFormatter extends AbstractFormatter2 {
         option.regionFor.keyword(mdOptionAccess.upperBoundKeyword_6_5_0).prepend(new_line).append(one_space)
         option.regionFor.keyword(mdOptionAccess.equalsSignKeyword_6_5_1).append(one_space)
         option.regionFor.keyword(mdOptionAccess.targetsKeyword_6_6_0).prepend(new_line).append(one_space)
-        option.regionFor.keyword(mdOptionAccess.commaKeyword_6_6_2_0).prepend(one_space).append(one_space)
+        option.regionFor.keyword(mdOptionAccess.commaKeyword_6_6_2_0).prepend(no_space).append(one_space)
         option.regionFor.keyword(mdOptionAccess.legacyIdsKeyword_6_7_0).prepend(new_line).append(one_space)
-        option.regionFor.keyword(mdOptionAccess.commaKeyword_6_7_2_0).prepend(one_space).append(one_space)
+        option.regionFor.keyword(mdOptionAccess.commaKeyword_6_7_2_0).prepend(no_space).append(one_space)
 
         for (dependencies : option.dependencies) {
             dependencies.append(new_line)
@@ -127,7 +134,7 @@ class MetaDataFormatter extends AbstractFormatter2 {
         algorithm.regionFor.keyword(mdAlgorithmAccess.deprecatedDeprecatedKeyword_0_0).append(one_space)
 
         algorithm.regionFor.keyword(mdAlgorithmAccess.algorithmKeyword_1).append(one_space)
-        algorithm.regionFor.keyword(mdAlgorithmAccess.leftParenthesisKeyword_3).prepend(one_space)
+        algorithm.regionFor.keyword(mdAlgorithmAccess.leftParenthesisKeyword_3).prepend(no_space)
         interior(
             algorithm.regionFor.keyword(mdAlgorithmAccess.leftCurlyBracketKeyword_7).prepend(one_space).append(
                 new_line),
@@ -137,7 +144,12 @@ class MetaDataFormatter extends AbstractFormatter2 {
 
         algorithm.regionFor.keyword(mdAlgorithmAccess.labelKeyword_8_0_0).prepend(new_line).append(one_space)
         algorithm.regionFor.keyword(mdAlgorithmAccess.metadataClassKeyword_8_1_0).prepend(new_line).append(one_space)
-        algorithm.regionFor.keyword(mdAlgorithmAccess.descriptionKeyword_8_2_0).prepend(new_line).append(one_space)
+        algorithm.regionFor.keyword(mdAlgorithmAccess.descriptionKeyword_8_2_0).prepend(new_line).append(new_line)
+        interior(
+            algorithm.regionFor.keyword(mdAlgorithmAccess.descriptionKeyword_8_2_0),
+            algorithm.regionFor.assignment(mdAlgorithmAccess.descriptionAssignment_8_2_1).nextSemanticRegion,
+            indention
+        )
         algorithm.regionFor.keyword(mdAlgorithmAccess.documentationKeyword_8_3_0).prepend(new_line).append(one_space)
         algorithm.regionFor.keyword(mdAlgorithmAccess.categoryKeyword_8_4_0).prepend(new_line).append(one_space)
         algorithm.regionFor.keyword(mdAlgorithmAccess.previewKeyword_8_5_0).prepend(new_line).append(one_space)
@@ -160,7 +172,12 @@ class MetaDataFormatter extends AbstractFormatter2 {
         )
 
         category.regionFor.keyword(mdCategoryAccess.labelKeyword_4_0_0).prepend(new_line).append(one_space)
-        category.regionFor.keyword(mdCategoryAccess.descriptionKeyword_4_1_0).prepend(new_line).append(one_space)
+        category.regionFor.keyword(mdCategoryAccess.descriptionKeyword_4_1_0).prepend(new_line).append(new_line)
+        interior(
+            category.regionFor.keyword(mdCategoryAccess.descriptionKeyword_4_1_0),
+            category.regionFor.assignment(mdCategoryAccess.descriptionAssignment_4_1_1).nextSemanticRegion,
+            indention
+        )
         category.regionFor.keyword(mdCategoryAccess.documentationKeyword_4_2_0).prepend(new_line).append(one_space)
     }
 
