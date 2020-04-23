@@ -99,8 +99,7 @@ algorithm box (BoxLayoutProvider) {
     supports padding = new ElkPadding(15)
     supports spacing.nodeNode = 15
     supports priority = 0
-	   documentation 
-	       "Priorities set on nodes determine the order in which they are placed:
+    documentation "Priorities set on nodes determine the order in which they are placed:
             boxes with a higher priority will end up before boxes with a lower priority.
             Boxes with equal priorities are sorted from smaller to bigger
             unless the layout algorithm is set to interactive mode."
@@ -492,7 +491,7 @@ output option junctionPoints: KVectorChain {
     default = new KVectorChain()
     legacyIds de.cau.cs.kieler.junctionPoints
 }
-programmatic option commentBox: boolean {
+option commentBox: boolean {
     label "Comment Box"
     description "Whether the node should be regarded as a comment box instead of a regular node. In that
         case its placement should be similar to how labels are handled. Any edges incident to a
@@ -547,7 +546,7 @@ programmatic option labelManager: ILabelManager {
     description "Label managers can shorten labels upon a layout algorithm's request."
     targets parents , labels
 }
-programmatic option margins: ElkMargin {
+option margins: ElkMargin {
     label "Margins"
     description "Margins define additional space around the actual bounds of a graph element. For instance,
         ports or labels being placed on the outside of a node's border might introduce such a
@@ -557,7 +556,7 @@ programmatic option margins: ElkMargin {
     targets nodes
     legacyIds de.cau.cs.kieler.margins
 }
-programmatic option noLayout: boolean {
+option noLayout: boolean {
     label "No Layout"
     description "No layout is done for the associated element. This is used to mark parts of a diagram to
         avoid their inclusion in the layout graph, or to mark parts of the layout graph to
@@ -570,7 +569,7 @@ programmatic option noLayout: boolean {
 }
 // --- PORT
 group port {
-    programmatic option anchor: KVector {
+    option anchor: KVector {
         label "Port Anchor Offset"
         description "The offset to the port position where connections shall be attached."
         targets ports
@@ -585,7 +584,7 @@ group port {
         targets ports
         legacyIds de.cau.cs.kieler.portIndex
     }
-    programmatic option side: PortSide {
+    option side: PortSide {
         label "Port Side"
         description "The side of a node on which a port is situated. This option must be set if 'Port
             Constraints' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given
@@ -594,7 +593,7 @@ group port {
         targets ports
         legacyIds de.cau.cs.kieler.portSide
     }
-    programmatic option borderOffset: double {
+    option borderOffset: double {
         label "Port Border Offset"
         description "The offset of ports on the node border. With a positive offset the port is moved outside
             of the node, while with a negative offset the port is moved towards the inside. An offset
