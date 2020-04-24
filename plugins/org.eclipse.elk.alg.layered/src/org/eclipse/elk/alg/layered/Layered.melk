@@ -190,7 +190,6 @@ group cycleBreaking {
             usually point right)."
         default = CycleBreakingStrategy.GREEDY
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.cycleBreaking
     }
     
 }
@@ -206,7 +205,6 @@ group layering {
         description "Strategy for node layering."
         default = LayeringStrategy.NETWORK_SIMPLEX
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.nodeLayering
     }
     
     advanced option layerConstraint: LayerConstraint {
@@ -214,7 +212,6 @@ group layering {
         description "Determines a constraint on the placement of the node regarding the layering."
         default = LayerConstraint.NONE
         targets nodes
-        legacyIds de.cau.cs.kieler.klay.layered.layerConstraint
     }
 
     advanced option layerChoiceConstraint: int {
@@ -246,7 +243,6 @@ group layering {
             default = 4
             lowerBound = -1
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.MIN_WIDTH
         }
         
@@ -260,7 +256,6 @@ group layering {
             default = 2
             lowerBound = -1
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.MIN_WIDTH
         }
         
@@ -273,7 +268,6 @@ group layering {
             description "Reduces number of dummy nodes after layering phase (if possible)."
             default = NodePromotionStrategy.NONE
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.nodePromotion
         }
         
         advanced option maxIterations: int {
@@ -282,7 +276,6 @@ group layering {
             default = 0
             lowerBound = 0
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.nodePromotionBoundary
             requires org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
         }
 
@@ -312,7 +305,6 @@ group crossingMinimization {
         description "Strategy for crossing minimization."
         default = CrossingMinimizationStrategy.LAYER_SWEEP
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.crossMin
     }
     
     advanced option hierarchicalSweepiness: double {
@@ -343,7 +335,6 @@ group crossingMinimization {
                  after the regular layer sweep as a post-processor."
             default = GreedySwitchType.TWO_SIDED
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
         }
     }
     
@@ -390,7 +381,6 @@ group nodePlacement {
         description "Strategy for node placement."
         default = NodePlacementStrategy.BRANDES_KOEPF
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.nodePlace
     }
     
     option favorStraightEdges: boolean {
@@ -418,7 +408,6 @@ group nodePlacement {
                  additional edges during the creation of each of the four alignments."
         	default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
         	targets parents
-        	legacyIds de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy
         	requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
         }
         
@@ -429,7 +418,6 @@ group nodePlacement {
                  one producing the smallest height, or the combination of all four."
             default = FixedAlignment.NONE
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.fixedAlignment
             requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
         }
         
@@ -443,7 +431,6 @@ group nodePlacement {
             default = 0.3
             lowerBound = ExclusiveBounds.greaterThan(0)
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening
             requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.LINEAR_SEGMENTS
         }
         
@@ -626,7 +613,6 @@ group compaction {
             description "Specifies whether and how post-process compaction is applied."
             default = GraphCompactionStrategy.NONE
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.postCompaction
         }
         
         advanced option constraints: ConstraintCalculationStrategy {
@@ -634,7 +620,6 @@ group compaction {
             description "Specifies whether and how post-process compaction is applied."
             default = ConstraintCalculationStrategy.SCANLINE
             targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.postCompaction.constraints
         }
         
     }
@@ -644,7 +629,6 @@ group compaction {
         description "Tries to further compact components (disconnected sub-graphs)."
         default = false
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.components.compact
         requires org.eclipse.elk.separateConnectedComponents == true
     }
     
@@ -661,7 +645,6 @@ group highDegreeNodes {
         description "Makes room around high degree nodes to place leafs and trees."
         default = false
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treatment
     }
     
     advanced option threshold: int {
@@ -670,7 +653,6 @@ group highDegreeNodes {
         default = 16
         lowerBound = 0
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.threshold
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
     }
     
@@ -680,7 +662,6 @@ group highDegreeNodes {
         default = 5
         lowerBound = 0
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
     }
 
@@ -826,7 +807,6 @@ group edgeLabels {
         description "Method to decide on edge label sides."
         default = EdgeLabelSideSelection.SMART_DOWN
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
     }
     
     advanced option centerLabelPlacementStrategy: CenterEdgeLabelPlacementStrategy {
@@ -834,7 +814,6 @@ group edgeLabels {
         description "Determines in which layer center labels of long edges should be placed."
         default = CenterEdgeLabelPlacementStrategy.MEDIAN_LAYER
         targets parents, labels
-        legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
     }
 }
 
@@ -856,7 +835,6 @@ advanced option feedbackEdges: boolean {
 	description "Whether feedback edges should be highlighted by routing around the nodes."
 	default = false
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.feedBackEdges
 }
 
 advanced option interactiveReferencePoint: InteractiveReferencePoint {
@@ -864,7 +842,6 @@ advanced option interactiveReferencePoint: InteractiveReferencePoint {
 	description "Determines which point of a node is considered by interactive layout phases."
 	default = InteractiveReferencePoint.CENTER
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.interactiveReferencePoint
 	requires org.eclipse.elk.alg.layered.cycleBreaking.strategy == CycleBreakingStrategy.INTERACTIVE
 	requires org.eclipse.elk.alg.layered.crossingMinimization.strategy == CrossingMinimizationStrategy.INTERACTIVE
 }
@@ -878,7 +855,6 @@ advanced option mergeEdges: boolean {
 		edges share an output port."
 	default = false
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.mergeEdges
 }
 
 advanced option mergeHierarchyEdges: boolean {
@@ -891,7 +867,6 @@ advanced option mergeHierarchyEdges: boolean {
 		the process. In particular, all edges that form a hyperedge can share a port."
 	default = true
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
 }
 
 advanced option northOrSouthPort: boolean {
@@ -901,7 +876,6 @@ advanced option northOrSouthPort: boolean {
         side (if port constraints permit)"
     default = false
     targets ports
-    legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
 }
 
 advanced option portSortingStrategy: PortSortingStrategy {
@@ -919,7 +893,6 @@ advanced option thoroughness: int {
 	default = 7
     lowerBound = 1
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.thoroughness
 }
 
 advanced option unnecessaryBendpoints: boolean {
@@ -931,5 +904,4 @@ advanced option unnecessaryBendpoints: boolean {
 		where an edge changes direction."
 	default = false
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.unnecessaryBendpoints
 }

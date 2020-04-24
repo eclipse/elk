@@ -288,10 +288,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     // Hierarchy Handling
     
     /**
-     * Evaluates one level of inheritance for property {@link CoreOptions#HIERARCHY_HANDLING}.
-     * Additionally provides legacy support for property {@link CoreOptions#LAYOUT_HIERARCHY} and
-     * replaces it with the new property. If the root node is evaluated and it is set to inherit (or
-     * not set at all) the property is set to {@link HierarchyHandling#SEPARATE_CHILDREN}.
+     * Evaluates one level of inheritance for property {@link CoreOptions#HIERARCHY_HANDLING}. If the root node is
+     * evaluated and it is set to inherit (or not set at all) the property is set to
+     * {@link HierarchyHandling#SEPARATE_CHILDREN}.
      * 
      * @param layoutNode
      *            The current node which should be evaluated
