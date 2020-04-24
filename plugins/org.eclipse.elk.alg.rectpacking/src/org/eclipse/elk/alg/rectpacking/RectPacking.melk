@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.rectpacking
  */
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
-import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal
+import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal
 import org.eclipse.elk.core.options.ContentAlignment
 
 //BUNDLE

@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.firstiteration.AreaApproximation;
+import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.seconditeration.RowFillingAndCompaction;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingUtil;
-import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
