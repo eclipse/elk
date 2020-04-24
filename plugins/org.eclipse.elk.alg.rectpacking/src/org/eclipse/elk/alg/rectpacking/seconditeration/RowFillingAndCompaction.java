@@ -69,7 +69,7 @@ public class RowFillingAndCompaction {
      */
     public DrawingData start(final List<ElkNode> rectangles, final double maxWidth, final KVector minParentSize) {
         // Initial placement for rectangles in blocks in each row.
-        List<RectRow> rows = InitialPlacement.place(rectangles, minParentSize.x, nodeNodeSpacing);
+        List<RectRow> rows = InitialPlacement.place(rectangles, maxWidth, nodeNodeSpacing);
 
         // Compaction of blocks.
         if (compaction) {
