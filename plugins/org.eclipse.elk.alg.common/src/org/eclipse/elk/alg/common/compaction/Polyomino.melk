@@ -14,37 +14,38 @@ bundle {
     metadataClass options.PolyominoOptions
     idPrefix org.eclipse.elk
 }
- 
+
 group polyomino {
-    
+
     option traversalStrategy: TraversalStrategy {
         label "Polyomino Traversal Strategy"
-        description 
+        description
             "Traversal strategy for trying different candidate positions for polyominoes."
         default = TraversalStrategy.QUADRANTS_LINE_BY_LINE
         targets parents
     }
-    
+
     option lowLevelSort: LowLevelSortingCriterion {
         label "Polyomino Secondary Sorting Criterion"
-        description 
+        description
             "Possible secondary sorting criteria for the processing order of polyominoes. 
              They are used when polyominoes are equal according to the primary 
              sorting criterion HighLevelSortingCriterion."
         default = LowLevelSortingCriterion.BY_SIZE_AND_SHAPE
         targets parents
     }
-    
-     option highLevelSort: HighLevelSortingCriterion {
+
+    option highLevelSort: HighLevelSortingCriterion {
         label "Polyomino Primary Sorting Criterion"
-        description "Possible primary sorting criteria for the processing order of polyominoes."
+        description
+            "Possible primary sorting criteria for the processing order of polyominoes."
         default = HighLevelSortingCriterion.NUM_OF_EXTERNAL_SIDES_THAN_NUM_OF_EXTENSIONS_LAST
         targets parents
     }
-    
+
     option fill: boolean {
         label "Fill Polyominoes"
-        description 
+        description
             "Use the Profile Fill algorithm to fill polyominoes to prevent small polyominoes
              from being placed inside of big polyominoes with large holes. Might increase packing area."
         default = true
