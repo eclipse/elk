@@ -14,17 +14,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.LayoutConfigurator.IOptionFilter;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
-import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -38,11 +34,8 @@ import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.validation.GraphValidator;
 import org.eclipse.elk.core.validation.LayoutOptionValidator;
-import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
-import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -138,7 +131,7 @@ public class DiagramLayoutEngine {
         public IGraphElementVisitor addLayoutRun(final IGraphElementVisitor configurator) {
             configurators.add(configurator);
             if (configurator instanceof LayoutConfigurator) {
-                ((LayoutConfigurator) configurator).addFilter(OPTION_TARGET_FILTER);
+                ((LayoutConfigurator) configurator).addFilter(LayoutConfigurator.OPTION_TARGET_FILTER);
             }
             return configurator;
         }
@@ -157,34 +150,7 @@ public class DiagramLayoutEngine {
     public static final String PREF_DEBUG_STORE = "elk.debug.store";
     /** preference identifier for execution time measurement. */
     public static final String PREF_DEBUG_EXEC_TIME = "elk.debug.exectime";
-    
-    /**
-     * Filter for {@link LayoutConfigurator} that checks for each option whether its configured targets
-     * match the input element.
-     */
-    public static final IOptionFilter OPTION_TARGET_FILTER =
-        (e, property) -> {
-            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
-            if (optionData != null) {
-                Set<LayoutOptionData.Target> targets = optionData.getTargets();
-                if (e instanceof ElkNode) {
-                    if (!((ElkNode) e).isHierarchical()) {
-                        return targets.contains(LayoutOptionData.Target.NODES);
-                    } else {
-                        return targets.contains(LayoutOptionData.Target.NODES)
-                                || targets.contains(LayoutOptionData.Target.PARENTS);
-                    }
-                } else if (e instanceof ElkEdge) {
-                    return targets.contains(LayoutOptionData.Target.EDGES);
-                } else if (e instanceof ElkPort) {
-                    return targets.contains(LayoutOptionData.Target.PORTS);
-                } else if (e instanceof ElkLabel) {
-                    return targets.contains(LayoutOptionData.Target.LABELS);
-                }
-            }
-            return true;
-        };
-    
+        
     /**
      * Property for the diagram layout connector used for automatic layout. This property is
      * attached to layout mappings created by the {@code layout} methods.

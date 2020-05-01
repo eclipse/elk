@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 Kiel University and others.
+ * Copyright (c) 2015, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,7 +11,10 @@ package org.eclipse.elk.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
@@ -65,11 +68,55 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     }
     
     /**
+     * Functional interface that allows to specify whether a certain property should be set for a certain property
+     * holder.
+     */
+    @FunctionalInterface
+    public interface IPropertyHolderOptionFilter {
+        /**
+         * @return {@code true} if and only if the passed property holder may be configured with the passed property.
+         */
+        boolean accept(IPropertyHolder holder, IProperty<?> property);
+    }
+
+    /**
+     * Generic filter that prevents the {@link LayoutConfigurator} from overwriting layout options that are 
+     * already set for a graph element.
+     */
+    public static final IPropertyHolderOptionFilter NO_OVERWRITE_HOLDER = (e, p) -> !e.hasProperty(p);
+    
+    /**
      * Generic filter that prevents the {@link LayoutConfigurator} from overwriting layout options that are 
      * already set for a graph element.
      */
     public static final IOptionFilter NO_OVERWRITE = (e, p) -> !e.hasProperty(p);
     
+    /**
+     * A filter for that checks for each option whether its configured targets match the input element. Uses the
+     * {@link LayoutOptionData} obtained from the {@link LayoutMetaDataService} to do so.
+     */
+    public static final IOptionFilter OPTION_TARGET_FILTER = (e, property) -> {
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
+        if (optionData != null) {
+            Set<LayoutOptionData.Target> targets = optionData.getTargets();
+            if (e instanceof ElkNode) {
+                if (!((ElkNode) e).isHierarchical()) {
+                    return targets.contains(LayoutOptionData.Target.NODES);
+                } else {
+                    return targets.contains(LayoutOptionData.Target.NODES)
+                            || targets.contains(LayoutOptionData.Target.PARENTS);
+                }
+            } else if (e instanceof ElkEdge) {
+                return targets.contains(LayoutOptionData.Target.EDGES);
+            } else if (e instanceof ElkPort) {
+                return targets.contains(LayoutOptionData.Target.PORTS);
+            } else if (e instanceof ElkLabel) {
+                return targets.contains(LayoutOptionData.Target.LABELS);
+            }
+        }
+        return true;
+    };
+
     /**
      * Whether to clear the layout of each graph element before the new configuration is applied.
      */
