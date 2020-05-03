@@ -42,7 +42,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider implemen
 
     @Override
     public void layout(final ElkNode elkgraph, final IElkProgressMonitor progressMonitor) {
-        // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an LGraph
+        // Import the graph (layeredGraph won't be null since the ElkGraphTransformer always returns an LGraph
         // instance, even though the IGraphTransformer interface would allow null as a return value)
         IGraphTransformer<ElkNode> graphTransformer = new ElkGraphTransformer();
         LGraph layeredGraph = graphTransformer.importGraph(elkgraph);
