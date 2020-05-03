@@ -22,155 +22,155 @@ import org.eclipse.elk.core.util.ExclusiveBounds
  * Declarations for the ELK Layered layout algorithm.
  */
 bundle {
-	metadataClass options.LayeredMetaDataProvider
-	idPrefix org.eclipse.elk.layered  
+    metadataClass options.LayeredMetaDataProvider
+    idPrefix org.eclipse.elk.layered  
 }
 
 algorithm layered(LayeredLayoutProvider) {
-	label "ELK Layered"
-	description
-		"Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
-		possible into one direction by placing nodes into subsequent layers. This implementation
-		supports different routing styles (straight, orthogonal, splines); if orthogonal routing is
-		selected, arbitrary port constraints are respected, thus enabling the layout of block
-		diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
-		compound graphs with cross-hierarchy edges is supported when the respective option is
-		activated on the top level."
-	metadataClass options.LayeredOptions
-	category org.eclipse.elk.layered
-	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
-	preview images/layered_layout.png
-	// general spacings
-	supports org.eclipse.elk.spacing.componentComponent
-	supports org.eclipse.elk.spacing.edgeEdge
-	supports org.eclipse.elk.spacing.edgeLabel
-	supports org.eclipse.elk.spacing.edgeNode
-	supports org.eclipse.elk.spacing.labelLabel
-	supports org.eclipse.elk.spacing.labelPort
-	supports org.eclipse.elk.spacing.labelNode
-	supports org.eclipse.elk.spacing.nodeNode = 20
-	supports org.eclipse.elk.spacing.nodeSelfLoop
-	supports org.eclipse.elk.spacing.portPort
-	supports org.eclipse.elk.spacing.individualOverride
-	documentation "Most parts of the algorithm do not support this yet."
-	// layer-based spacings
-	supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
-	supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
-	supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
-	// layer-based priorities
-	supports org.eclipse.elk.priority = 0
-	documentation "Used by the 'simple row graph placer' to decide which connected components to place first.
+    label "ELK Layered"
+    description
+        "Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
+        possible into one direction by placing nodes into subsequent layers. This implementation
+        supports different routing styles (straight, orthogonal, splines); if orthogonal routing is
+        selected, arbitrary port constraints are respected, thus enabling the layout of block
+        diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
+        compound graphs with cross-hierarchy edges is supported when the respective option is
+        activated on the top level."
+    metadataClass options.LayeredOptions
+    category org.eclipse.elk.layered
+    features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
+    preview images/layered_layout.png
+    // general spacings
+    supports org.eclipse.elk.spacing.componentComponent
+    supports org.eclipse.elk.spacing.edgeEdge
+    supports org.eclipse.elk.spacing.edgeLabel
+    supports org.eclipse.elk.spacing.edgeNode
+    supports org.eclipse.elk.spacing.labelLabel
+    supports org.eclipse.elk.spacing.labelPort
+    supports org.eclipse.elk.spacing.labelNode
+    supports org.eclipse.elk.spacing.nodeNode = 20
+    supports org.eclipse.elk.spacing.nodeSelfLoop
+    supports org.eclipse.elk.spacing.portPort
+    supports org.eclipse.elk.spacing.individualOverride
+    documentation "Most parts of the algorithm do not support this yet."
+    // layer-based spacings
+    supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
+    supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
+    supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
+    // layer-based priorities
+    supports org.eclipse.elk.priority = 0
+    documentation "Used by the 'simple row graph placer' to decide which connected components to place first.
             A component's priority is the sum of the node priorities,
             and components with higher priorities will be placed
             before components with lower priorities."
-	supports priority.direction
-	supports priority.shortness
-	documentation "Currently only supported by the network simplex layerer."
-	supports priority.straightness
-	// wrapping related
-	supports wrapping.strategy
-	supports wrapping.additionalEdgeSpacing
-	supports wrapping.correctionFactor
-	supports wrapping.cutting.strategy
-	supports wrapping.cutting.cuts
-	supports wrapping.cutting.msd.freedom
-	supports wrapping.validify.strategy
-	supports wrapping.validify.forbiddenIndices
-	supports wrapping.multiEdge.improveCuts
-	supports wrapping.multiEdge.distancePenalty
-	supports wrapping.multiEdge.improveWrappedEdges
-	// flexible nodes during node placement
-	supports nodePlacement.networkSimplex.nodeFlexibility
-	supports nodePlacement.networkSimplex.nodeFlexibility.^default
-	// splines
-	supports edgeRouting.splines.mode
-	supports edgeRouting.splines.sloppy.layerSpacingFactor
-	// other options
-	supports org.eclipse.elk.padding = new ElkPadding(12)
-	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
-	supports org.eclipse.elk.port.borderOffset = 0
-	supports org.eclipse.elk.randomSeed = 1
-	supports org.eclipse.elk.aspectRatio = 1.6f
-	supports org.eclipse.elk.noLayout
-	supports org.eclipse.elk.portConstraints
-	supports org.eclipse.elk.port.side
-	supports org.eclipse.elk.debugMode
-	supports org.eclipse.elk.alignment
-	supports org.eclipse.elk.hierarchyHandling
-	supports org.eclipse.elk.separateConnectedComponents = true
-	supports org.eclipse.elk.insideSelfLoops.activate
-	supports org.eclipse.elk.insideSelfLoops.yo
-	supports org.eclipse.elk.nodeSize.constraints
-	supports org.eclipse.elk.nodeSize.options
-	supports org.eclipse.elk.direction = Direction.UNDEFINED
-	supports org.eclipse.elk.nodeLabels.placement
-	supports org.eclipse.elk.nodeLabels.padding
-	supports org.eclipse.elk.portLabels.placement
-	supports org.eclipse.elk.portLabels.nextToPortIfPossible
-	supports org.eclipse.elk.portLabels.treatAsGroup
-	supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
-	supports org.eclipse.elk.portAlignment.north
-	supports org.eclipse.elk.portAlignment.south
-	supports org.eclipse.elk.portAlignment.west
-	supports org.eclipse.elk.portAlignment.east
-	supports unnecessaryBendpoints
-	supports org.eclipse.elk.alg.layered.layering.strategy
-	supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
-	supports thoroughness
-	supports org.eclipse.elk.alg.layered.layering.layerConstraint
-	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
-	supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
-	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
-	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
-	supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
-	supports mergeEdges
-	supports mergeHierarchyEdges
-	supports interactiveReferencePoint
-	supports org.eclipse.elk.alg.layered.nodePlacement.strategy
-	supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
-	supports feedbackEdges
-	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
-	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
-	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
-	supports org.eclipse.elk.contentAlignment
-	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
-	supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
-	supports org.eclipse.elk.alg.layered.compaction.postCompaction.constraints
-	supports org.eclipse.elk.alg.layered.compaction.connectedComponents
-	supports org.eclipse.elk.alg.layered.highDegreeNodes.treatment
-	supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
-	supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
-	supports org.eclipse.elk.nodeSize.minimum
-	supports org.eclipse.elk.junctionPoints
-	supports org.eclipse.elk.edge.thickness
-	supports org.eclipse.elk.edgeLabels.placement
-	supports org.eclipse.elk.edgeLabels.inline
-	supports org.eclipse.elk.alg.layered.crossingMinimization.hierarchicalSweepiness
-	supports org.eclipse.elk.port.index
-	supports org.eclipse.elk.commentBox
-	supports org.eclipse.elk.hypernode
-	supports org.eclipse.elk.port.anchor
-	supports org.eclipse.elk.partitioning.activate
-	supports org.eclipse.elk.partitioning.partition
-	supports org.eclipse.elk.alg.layered.layering.minWidth.upperBoundOnWidth
-	supports org.eclipse.elk.alg.layered.layering.minWidth.upperLayerEstimationScalingFactor
-	supports org.eclipse.elk.position
-	supports northOrSouthPort
-	supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
-	supports edgeLabels.sideSelection
-	supports edgeLabels.centerLabelPlacementStrategy
-	supports org.eclipse.elk.margins
-	supports layering.coffmanGraham.layerBound
-	supports nodePlacement.favorStraightEdges
-	supports org.eclipse.elk.spacing.portsSurrounding
-	supports directionCongruency
-	supports portSortingStrategy
-	supports edgeRouting.polyline.slopedEdgeZoneWidth
-	supports layering.layerChoiceConstraint
-	supports crossingMinimization.positionChoiceConstraint
-	supports org.eclipse.elk.interactiveLayout
-	supports layering.layerID
-	supports crossingMinimization.positionID
+    supports priority.direction
+    supports priority.shortness
+    documentation "Currently only supported by the network simplex layerer."
+    supports priority.straightness
+    // wrapping related
+    supports wrapping.strategy
+    supports wrapping.additionalEdgeSpacing
+    supports wrapping.correctionFactor
+    supports wrapping.cutting.strategy
+    supports wrapping.cutting.cuts
+    supports wrapping.cutting.msd.freedom
+    supports wrapping.validify.strategy
+    supports wrapping.validify.forbiddenIndices
+    supports wrapping.multiEdge.improveCuts
+    supports wrapping.multiEdge.distancePenalty
+    supports wrapping.multiEdge.improveWrappedEdges
+    // flexible nodes during node placement
+    supports nodePlacement.networkSimplex.nodeFlexibility
+    supports nodePlacement.networkSimplex.nodeFlexibility.^default
+    // splines
+    supports edgeRouting.splines.mode
+    supports edgeRouting.splines.sloppy.layerSpacingFactor
+    // other options
+    supports org.eclipse.elk.padding = new ElkPadding(12)
+    supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+    supports org.eclipse.elk.port.borderOffset = 0
+    supports org.eclipse.elk.randomSeed = 1
+    supports org.eclipse.elk.aspectRatio = 1.6f
+    supports org.eclipse.elk.noLayout
+    supports org.eclipse.elk.portConstraints
+    supports org.eclipse.elk.port.side
+    supports org.eclipse.elk.debugMode
+    supports org.eclipse.elk.alignment
+    supports org.eclipse.elk.hierarchyHandling
+    supports org.eclipse.elk.separateConnectedComponents = true
+    supports org.eclipse.elk.insideSelfLoops.activate
+    supports org.eclipse.elk.insideSelfLoops.yo
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.direction = Direction.UNDEFINED
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.nodeLabels.padding
+    supports org.eclipse.elk.portLabels.placement
+    supports org.eclipse.elk.portLabels.nextToPortIfPossible
+    supports org.eclipse.elk.portLabels.treatAsGroup
+    supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
+    supports org.eclipse.elk.portAlignment.north
+    supports org.eclipse.elk.portAlignment.south
+    supports org.eclipse.elk.portAlignment.west
+    supports org.eclipse.elk.portAlignment.east
+    supports unnecessaryBendpoints
+    supports org.eclipse.elk.alg.layered.layering.strategy
+    supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
+    supports thoroughness
+    supports org.eclipse.elk.alg.layered.layering.layerConstraint
+    supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
+    supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+    supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
+    supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
+    supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
+    supports mergeEdges
+    supports mergeHierarchyEdges
+    supports interactiveReferencePoint
+    supports org.eclipse.elk.alg.layered.nodePlacement.strategy
+    supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
+    supports feedbackEdges
+    supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
+    supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
+    supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
+    supports org.eclipse.elk.contentAlignment
+    supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
+    supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
+    supports org.eclipse.elk.alg.layered.compaction.postCompaction.constraints
+    supports org.eclipse.elk.alg.layered.compaction.connectedComponents
+    supports org.eclipse.elk.alg.layered.highDegreeNodes.treatment
+    supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
+    supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
+    supports org.eclipse.elk.nodeSize.minimum
+    supports org.eclipse.elk.junctionPoints
+    supports org.eclipse.elk.edge.thickness
+    supports org.eclipse.elk.edgeLabels.placement
+    supports org.eclipse.elk.edgeLabels.inline
+    supports org.eclipse.elk.alg.layered.crossingMinimization.hierarchicalSweepiness
+    supports org.eclipse.elk.port.index
+    supports org.eclipse.elk.commentBox
+    supports org.eclipse.elk.hypernode
+    supports org.eclipse.elk.port.anchor
+    supports org.eclipse.elk.partitioning.activate
+    supports org.eclipse.elk.partitioning.partition
+    supports org.eclipse.elk.alg.layered.layering.minWidth.upperBoundOnWidth
+    supports org.eclipse.elk.alg.layered.layering.minWidth.upperLayerEstimationScalingFactor
+    supports org.eclipse.elk.position
+    supports northOrSouthPort
+    supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
+    supports edgeLabels.sideSelection
+    supports edgeLabels.centerLabelPlacementStrategy
+    supports org.eclipse.elk.margins
+    supports layering.coffmanGraham.layerBound
+    supports nodePlacement.favorStraightEdges
+    supports org.eclipse.elk.spacing.portsSurrounding
+    supports directionCongruency
+    supports portSortingStrategy
+    supports edgeRouting.polyline.slopedEdgeZoneWidth
+    supports layering.layerChoiceConstraint
+    supports crossingMinimization.positionChoiceConstraint
+    supports org.eclipse.elk.interactiveLayout
+    supports layering.layerID
+    supports crossingMinimization.positionID
 }
 
 /* ------------------------
@@ -178,15 +178,15 @@ algorithm layered(LayeredLayoutProvider) {
  * ------------------------*/
 group cycleBreaking {
 
-	option strategy: CycleBreakingStrategy {
-		label "Cycle Breaking Strategy"
-		description
-			"Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines
+    option strategy: CycleBreakingStrategy {
+        label "Cycle Breaking Strategy"
+        description
+            "Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines
             which edges to reverse to break the cycles. Reversed edges will end up pointing to the
             opposite direction of regular edges (that is, reversed edges will point left if edges
             usually point right)."
-		default = CycleBreakingStrategy.GREEDY
-		targets parents
+        default = CycleBreakingStrategy.GREEDY
+        targets parents
     }
 
 }
@@ -196,105 +196,105 @@ group cycleBreaking {
  * ------------------------*/
 group layering {
 
-	option strategy: LayeringStrategy {
-		label "Node Layering Strategy"
-		description
-			"Strategy for node layering."
-		default = LayeringStrategy.NETWORK_SIMPLEX
-		targets parents
+    option strategy: LayeringStrategy {
+        label "Node Layering Strategy"
+        description
+            "Strategy for node layering."
+        default = LayeringStrategy.NETWORK_SIMPLEX
+        targets parents
     }
 
-	advanced option layerConstraint: LayerConstraint {
-		label "Layer Constraint"
-		description
-			"Determines a constraint on the placement of the node regarding the layering."
-		default = LayerConstraint.NONE
-		targets nodes
+    advanced option layerConstraint: LayerConstraint {
+        label "Layer Constraint"
+        description
+            "Determines a constraint on the placement of the node regarding the layering."
+        default = LayerConstraint.NONE
+        targets nodes
     }
 
-	advanced option layerChoiceConstraint: int {
-		label "Layer Choice Constraint"
-		description
-			"Allows to set a constraint regarding the layer placement of a node. 
+    advanced option layerChoiceConstraint: int {
+        label "Layer Choice Constraint"
+        description
+            "Allows to set a constraint regarding the layer placement of a node. 
                      Let i be the value of teh constraint. Assumed the drawing has n layers and i < n.
                      If set to i, it expresses that the node should be placed in i-th layer.
                      Should i>=n be true then the node is placed in the last layer of the drawing."
-		default = -1
-		lowerBound = -1
-		targets nodes
+        default = -1
+        lowerBound = -1
+        targets nodes
     }
 
-	output option layerID: int {
-		label "Layer ID"
-		description
-			"Layer identifier that was calculated by ELK Layered for a node"
-		default = -1
-		lowerBound = -1
-		targets nodes
+    output option layerID: int {
+        label "Layer ID"
+        description
+            "Layer identifier that was calculated by ELK Layered for a node"
+        default = -1
+        lowerBound = -1
+        targets nodes
     }
 
-	group minWidth {
+    group minWidth {
 
-		advanced option upperBoundOnWidth: int {
-			label "Upper Bound On Width [MinWidth Layerer]"
-			description
-				"Defines a loose upper bound on the width of the MinWidth layerer.
+        advanced option upperBoundOnWidth: int {
+            label "Upper Bound On Width [MinWidth Layerer]"
+            description
+                "Defines a loose upper bound on the width of the MinWidth layerer.
                  If set to '-1' multiple values are tested and the best result is selected."
-			default = 4
-			lowerBound = -1
-			targets parents
+            default = 4
+            lowerBound = -1
+            targets parents
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.MIN_WIDTH
-		}
+        }
 
-		advanced option upperLayerEstimationScalingFactor: int {
-			label "Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
-			description
-				"Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
+        advanced option upperLayerEstimationScalingFactor: int {
+            label "Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
+            description
+                "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
                 haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
                 algorithm. Compensates for too high estimations.
                 If set to '-1' multiple values are tested and the best result is selected."
-			default = 2
-			lowerBound = -1
-			targets parents
+            default = 2
+            lowerBound = -1
+            targets parents
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.MIN_WIDTH
-		}
-
-	}
-
-	group nodePromotion {
-
-		advanced option strategy: NodePromotionStrategy {
-			label "Node Promotion Strategy"
-			description
-				"Reduces number of dummy nodes after layering phase (if possible)."
-			default = NodePromotionStrategy.NONE
-			targets parents
         }
 
-		advanced option maxIterations: int {
-			label "Max Node Promotion Iterations"
-			description
-				"Limits the number of iterations for node promotion."
-			default = 0
-			lowerBound = 0
-			targets parents
+    }
+
+    group nodePromotion {
+
+        advanced option strategy: NodePromotionStrategy {
+            label "Node Promotion Strategy"
+            description
+                "Reduces number of dummy nodes after layering phase (if possible)."
+            default = NodePromotionStrategy.NONE
+            targets parents
+        }
+
+        advanced option maxIterations: int {
+            label "Max Node Promotion Iterations"
+            description
+                "Limits the number of iterations for node promotion."
+            default = 0
+            lowerBound = 0
+            targets parents
             requires org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
-		}
+        }
 
-	}
+    }
 
-	group coffmanGraham {
+    group coffmanGraham {
 
-		advanced option layerBound: int {
-			label "Layer Bound"
-			description
-				"The maximum number of nodes allowed per layer."
-			default = Integer.MAX_VALUE
-			targets parents
+        advanced option layerBound: int {
+            label "Layer Bound"
+            description
+                "The maximum number of nodes allowed per layer."
+            default = Integer.MAX_VALUE
+            targets parents
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.COFFMAN_GRAHAM
-		}
+        }
 
-	}
+    }
 
 }
 
@@ -303,78 +303,78 @@ group layering {
  * ------------------------*/
 group crossingMinimization {
 
-	option strategy: CrossingMinimizationStrategy {
-		label "Crossing Minimization Strategy"
-		description
-			"Strategy for crossing minimization."
-		default = CrossingMinimizationStrategy.LAYER_SWEEP
-		targets parents
+    option strategy: CrossingMinimizationStrategy {
+        label "Crossing Minimization Strategy"
+        description
+            "Strategy for crossing minimization."
+        default = CrossingMinimizationStrategy.LAYER_SWEEP
+        targets parents
     }
 
-	advanced option hierarchicalSweepiness: double {
-		label "Hierarchical Sweepiness"
-		description
-			"How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."
-		default = 0.1
-		targets parents
+    advanced option hierarchicalSweepiness: double {
+        label "Hierarchical Sweepiness"
+        description
+            "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."
+        default = 0.1
+        targets parents
         requires org.eclipse.elk.hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN
-	}
+    }
 
-	group greedySwitch {
+    group greedySwitch {
 
-		advanced option activationThreshold: int {
-			label "Greedy Switch Activation Threshold"
-			description
-				"By default it is decided automatically if the greedy switch is activated or not. 
+        advanced option activationThreshold: int {
+            label "Greedy Switch Activation Threshold"
+            description
+                "By default it is decided automatically if the greedy switch is activated or not. 
                  The decision is based on whether the size of the input graph (without dummy nodes) 
                  is smaller than the value of this option. A '0' enforces the activation."
-			default = 40
-			targets parents
-			lowerBound = 0
+            default = 40
+            targets parents
+            lowerBound = 0
         }
 
-		advanced option type: GreedySwitchType {
-			label "Greedy Switch Crossing Minimization"
-			description
-				"Greedy Switch strategy for crossing minimization. The greedy switch heuristic is executed 
+        advanced option type: GreedySwitchType {
+            label "Greedy Switch Crossing Minimization"
+            description
+                "Greedy Switch strategy for crossing minimization. The greedy switch heuristic is executed 
                  after the regular layer sweep as a post-processor."
-			default = GreedySwitchType.TWO_SIDED
-			targets parents
+            default = GreedySwitchType.TWO_SIDED
+            targets parents
         }
 
-	}
+    }
 
-	advanced option semiInteractive: boolean {
-		label "Semi-Interactive Crossing Minimization"
-		description
-			"Preserves the order of nodes within a layer but still minimizes crossings between edges connecting 
+    advanced option semiInteractive: boolean {
+        label "Semi-Interactive Crossing Minimization"
+        description
+            "Preserves the order of nodes within a layer but still minimizes crossings between edges connecting 
              long edge dummies. Derives the desired order from positions specified by the 'org.eclipse.elk.position' 
              layout option. Requires a crossing minimization strategy that is able to process 'in-layer' constraints."
-		default = false
-		targets parents
-		requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
-	}
+        default = false
+        targets parents
+        requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
+    }
 
-	advanced option positionChoiceConstraint: int {
-		label "Position Choice Constraint"
-		description
-			"Allows to set a constraint regarding the position placement of a node in a layer. 
+    advanced option positionChoiceConstraint: int {
+        label "Position Choice Constraint"
+        description
+            "Allows to set a constraint regarding the position placement of a node in a layer. 
                      Assumed the layer in which the node placed includes n other nodes and i < n.
                      If set to i, it expresses that the node should be placed at the i-th position.
                      Should i>=n be true then the node is placed at the last position in the layer.
                     "
-		default = -1
-		lowerBound = -1
-		targets nodes
+        default = -1
+        lowerBound = -1
+        targets nodes
     }
 
-	output option positionID: int {
-		label "Position ID"
-		description
-			"Position within a layer that was determined by ELK Layered for a node."
-		default = -1
-		lowerBound = -1
-		targets nodes
+    output option positionID: int {
+        label "Position ID"
+        description
+            "Position within a layer that was determined by ELK Layered for a node."
+        default = -1
+        lowerBound = -1
+        targets nodes
     }
 
 }
@@ -384,96 +384,96 @@ group crossingMinimization {
  * ------------------------*/
 group nodePlacement {
 
-	option strategy: NodePlacementStrategy {
-		label "Node Placement Strategy"
-		description
-			"Strategy for node placement."
-		default = NodePlacementStrategy.BRANDES_KOEPF
-		targets parents
+    option strategy: NodePlacementStrategy {
+        label "Node Placement Strategy"
+        description
+            "Strategy for node placement."
+        default = NodePlacementStrategy.BRANDES_KOEPF
+        targets parents
     }
 
-	option favorStraightEdges: boolean {
-		label "Favor Straight Edges Over Balancing"
-		description
-			"Favor straight edges over a balanced node placement.
+    option favorStraightEdges: boolean {
+        label "Favor Straight Edges Over Balancing"
+        description
+            "Favor straight edges over a balanced node placement.
              The default behavior is determined automatically based on the used 'edgeRouting'.
              For an orthogonal style it is set to true, for all other styles to false."
-		// no default, see description
-		targets parents
+        // no default, see description
+        targets parents
         requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX
-		requires strategy == NodePlacementStrategy.BRANDES_KOEPF
-	}
+        requires strategy == NodePlacementStrategy.BRANDES_KOEPF
+    }
 
-	group bk {
+    group bk {
 
-		advanced option edgeStraightening: EdgeStraighteningStrategy {
-			label "BK Edge Straightening"
-			description
-				"Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
+        advanced option edgeStraightening: EdgeStraighteningStrategy {
+            label "BK Edge Straightening"
+            description
+                "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
                  at the expense of diagram size.
                  There is a subtle difference to the 'favorStraightEdges' option, which decides whether 
                  a balanced placement of the nodes is desired, or not. In bk terms this means combining the four 
                  alignments into a single balanced one, or not. This option on the other hand tries to straighten 
                  additional edges during the creation of each of the four alignments."
-			default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
-			targets parents
-        	requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
-		}
-
-		advanced option fixedAlignment: FixedAlignment {
-			label "BK Fixed Alignment"
-			description
-				"Tells the BK node placer to use a certain alignment (out of its four) instead of the 
-                 one producing the smallest height, or the combination of all four."
-			default = FixedAlignment.NONE
-			targets parents
+            default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
+            targets parents
             requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
-		}
+        }
 
-	}
+        advanced option fixedAlignment: FixedAlignment {
+            label "BK Fixed Alignment"
+            description
+                "Tells the BK node placer to use a certain alignment (out of its four) instead of the 
+                 one producing the smallest height, or the combination of all four."
+            default = FixedAlignment.NONE
+            targets parents
+            requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
+        }
 
-	group linearSegments {
+    }
 
-		advanced option deflectionDampening: double {
-			label "Linear Segments Deflection Dampening"
-			description
-				"Dampens the movement of nodes to keep the diagram from getting too large."
-			default = 0.3
-			lowerBound = ExclusiveBounds.greaterThan(0)
-			targets parents
+    group linearSegments {
+
+        advanced option deflectionDampening: double {
+            label "Linear Segments Deflection Dampening"
+            description
+                "Dampens the movement of nodes to keep the diagram from getting too large."
+            default = 0.3
+            lowerBound = ExclusiveBounds.greaterThan(0)
+            targets parents
             requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.LINEAR_SEGMENTS
-		}
+        }
 
-	}
+    }
 
-	group networkSimplex {
+    group networkSimplex {
 
-		advanced option nodeFlexibility: NodeFlexibility {
-			label "Node Flexibility"
-			description
-				"Aims at shorter and straighter edges. Two configurations are possible: 
+        advanced option nodeFlexibility: NodeFlexibility {
+            label "Node Flexibility"
+            description
+                "Aims at shorter and straighter edges. Two configurations are possible: 
                  (a) allow ports to move freely on the side they are assigned to (the order is always defined beforehand),
                  (b) additionally allow to enlarge a node wherever it helps. 
                  If this option is not configured for a node, the 'nodeFlexibility.default' value is used, 
                  which is specified for the node's parent."
-			targets nodes
+            targets nodes
             requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX
-		}
+        }
 
-		group nodeFlexibility {
+        group nodeFlexibility {
 
-			advanced option ^default: NodeFlexibility {
-				label "Node Flexibility Default"
-				description
-					"Default value of the 'nodeFlexibility' option for the children of a hierarchical node."
-				default = NodeFlexibility.NONE
-				targets parents   
+            advanced option ^default: NodeFlexibility {
+                label "Node Flexibility Default"
+                description
+                    "Default value of the 'nodeFlexibility' option for the children of a hierarchical node."
+                default = NodeFlexibility.NONE
+                targets parents   
                 requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX
-			}
+            }
 
-		}
+        }
 
-	}
+    }
 
 }
 
@@ -482,68 +482,68 @@ group nodePlacement {
  * ------------------------*/
 group edgeRouting {
 
-	group splines {
+    group splines {
 
-		option mode: SplineRoutingMode {
-			label "Spline Routing Mode"
-			description
-				"Specifies the way control points are assembled for each individual edge.
+        option mode: SplineRoutingMode {
+            label "Spline Routing Mode"
+            description
+                "Specifies the way control points are assembled for each individual edge.
                  CONSERVATIVE ensures that edges are properly routed around the nodes 
                  but feels rather orthogonal at times.  
                  SLOPPY uses fewer control points to obtain curvier edge routes but may result in 
                  edges overlapping nodes. "
-			default = SplineRoutingMode.SLOPPY
-			targets parents
+            default = SplineRoutingMode.SLOPPY
+            targets parents
             requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
-		}
+        }
 
-		group sloppy {
+        group sloppy {
 
-			option layerSpacingFactor: double {
-				label "Sloppy Spline Layer Spacing Factor"
-				description
-					"Spacing factor for routing area between layers when using sloppy spline routing."
-				default = 0.2
-				targets parents
+            option layerSpacingFactor: double {
+                label "Sloppy Spline Layer Spacing Factor"
+                description
+                    "Spacing factor for routing area between layers when using sloppy spline routing."
+                default = 0.2
+                targets parents
                 requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES // TODO this should be an AND
-				requires splines.mode == SplineRoutingMode.SLOPPY
-			}
+                requires splines.mode == SplineRoutingMode.SLOPPY
+            }
 
-		}
+        }
 
-	}
-
-	group polyline {
-
-		advanced option slopedEdgeZoneWidth: double {
-			label "Sloped Edge Zone Width"
-			description
-				"Width of the strip to the left and to the right of each layer where the polyline edge router
-                    is allowed to refrain from ensuring that edges are routed horizontally. This prevents awkward
-                    bend points for nodes that extent almost to the edge of their layer."
-			documentation "@slopedEdgeZoneWidth.md"
-			default = 2.0
-			targets parents
-            requires org.eclipse.elk.edgeRouting == EdgeRouting.POLYLINE
-		}
-
-	}
-
-	option selfLoopDistribution: SelfLoopDistributionStrategy {
-		label "Self-Loop Distribution"
-		description
-			"Alter the distribution of the loops around the node. It only takes effect for PortConstraints.FREE."
-		default = SelfLoopDistributionStrategy.NORTH
-		targets nodes
     }
 
-	option selfLoopOrdering: SelfLoopOrderingStrategy {
-		label "Self-Loop Ordering"
-		description
-			"Alter the ordering of the loops they can either be stacked or sequenced.
+    group polyline {
+
+        advanced option slopedEdgeZoneWidth: double {
+            label "Sloped Edge Zone Width"
+            description
+                "Width of the strip to the left and to the right of each layer where the polyline edge router
+                    is allowed to refrain from ensuring that edges are routed horizontally. This prevents awkward
+                    bend points for nodes that extent almost to the edge of their layer."
+            documentation "@slopedEdgeZoneWidth.md"
+            default = 2.0
+            targets parents
+            requires org.eclipse.elk.edgeRouting == EdgeRouting.POLYLINE
+        }
+
+    }
+
+    option selfLoopDistribution: SelfLoopDistributionStrategy {
+        label "Self-Loop Distribution"
+        description
+            "Alter the distribution of the loops around the node. It only takes effect for PortConstraints.FREE."
+        default = SelfLoopDistributionStrategy.NORTH
+        targets nodes
+    }
+
+    option selfLoopOrdering: SelfLoopOrderingStrategy {
+        label "Self-Loop Ordering"
+        description
+            "Alter the ordering of the loops they can either be stacked or sequenced.
                 It only takes effect for PortConstraints.FREE."
-		default = SelfLoopOrderingStrategy.STACKED
-		targets nodes
+        default = SelfLoopOrderingStrategy.STACKED
+        targets nodes
     }
 
 }
@@ -553,34 +553,34 @@ group edgeRouting {
  * ------------------------*/
 group spacing {
 
-	option edgeNodeBetweenLayers: double {
-		label "Edge Node Between Layers Spacing"
-		description
-			"The spacing to be preserved between nodes and edges that are routed next to the node's layer. 
+    option edgeNodeBetweenLayers: double {
+        label "Edge Node Between Layers Spacing"
+        description
+            "The spacing to be preserved between nodes and edges that are routed next to the node's layer. 
              For the spacing between nodes and edges that cross the node's layer 'spacing.edgeNode' is used."
-		default = 10
-		lowerBound = 0.0
-		targets parents
+        default = 10
+        lowerBound = 0.0
+        targets parents
     }
 
-	option edgeEdgeBetweenLayers: double {
-		label "Edge Edge Between Layer Spacing"
-		description
-			"Spacing to be preserved between pairs of edges that are routed between the same pair of layers. 
+    option edgeEdgeBetweenLayers: double {
+        label "Edge Edge Between Layer Spacing"
+        description
+            "Spacing to be preserved between pairs of edges that are routed between the same pair of layers. 
              Note that 'spacing.edgeEdge' is used for the spacing between pairs of edges crossing the same layer."
-		default = 10
-		lowerBound = 0.0
-		targets parents
+        default = 10
+        lowerBound = 0.0
+        targets parents
     }
 
-	option nodeNodeBetweenLayers: double {
-		label "Node Node Between Layers Spacing"
-		description
-			"The spacing to be preserved between any pair of nodes of two adjacent layers. 
+    option nodeNodeBetweenLayers: double {
+        label "Node Node Between Layers Spacing"
+        description
+            "The spacing to be preserved between any pair of nodes of two adjacent layers. 
              Note that 'spacing.nodeNode' is used for the spacing between nodes within the layer itself."
-		default = 20
-		lowerBound = 0.0
-		targets parents
+        default = 20
+        lowerBound = 0.0
+        targets parents
     }
 
 }
@@ -590,34 +590,34 @@ group spacing {
  * ------------------------*/
 group priority {
 
-	advanced option direction: int {
-		label "Direction Priority"
-		description
-			"Defines how important it is to have a certain edge point into the direction of the overall layout.
+    advanced option direction: int {
+        label "Direction Priority"
+        description
+            "Defines how important it is to have a certain edge point into the direction of the overall layout.
              This option is evaluated during the cycle breaking phase."
-		default = 0
-		lowerBound = 0
-		targets edges
+        default = 0
+        lowerBound = 0
+        targets edges
     }
 
-	advanced option shortness: int {
-		label "Shortness Priority"
-		description
-			"Defines how important it is to keep an edge as short as possible.
+    advanced option shortness: int {
+        label "Shortness Priority"
+        description
+            "Defines how important it is to keep an edge as short as possible.
              This option is evaluated during the layering phase."
-		default = 0
-		lowerBound = 0
-		targets edges
+        default = 0
+        lowerBound = 0
+        targets edges
     }
 
-	advanced option straightness: int {
-		label "Straightness Priority"
-		description
-			"Defines how important it is to keep an edge straight, i.e. aligned with one of the two axes.
+    advanced option straightness: int {
+        label "Straightness Priority"
+        description
+            "Defines how important it is to keep an edge straight, i.e. aligned with one of the two axes.
              This option is evaluated during node placement."
-		default = 0
-		lowerBound = 0
-		targets edges
+        default = 0
+        lowerBound = 0
+        targets edges
     }
 
 }
@@ -627,34 +627,34 @@ group priority {
  * ------------------------*/
 group compaction {
 
-	group postCompaction {
+    group postCompaction {
 
-		advanced option strategy: GraphCompactionStrategy {
-			label "Post Compaction Strategy"
-			description
-				"Specifies whether and how post-process compaction is applied."
-			default = GraphCompactionStrategy.NONE
-			targets parents
+        advanced option strategy: GraphCompactionStrategy {
+            label "Post Compaction Strategy"
+            description
+                "Specifies whether and how post-process compaction is applied."
+            default = GraphCompactionStrategy.NONE
+            targets parents
         }
 
-		advanced option constraints: ConstraintCalculationStrategy {
-			label "Post Compaction Constraint Calculation"
-			description
-				"Specifies whether and how post-process compaction is applied."
-			default = ConstraintCalculationStrategy.SCANLINE
-			targets parents
+        advanced option constraints: ConstraintCalculationStrategy {
+            label "Post Compaction Constraint Calculation"
+            description
+                "Specifies whether and how post-process compaction is applied."
+            default = ConstraintCalculationStrategy.SCANLINE
+            targets parents
         }
 
-	}
+    }
 
-	advanced option connectedComponents: boolean {
-		label "Connected Components Compaction"
-		description
-			"Tries to further compact components (disconnected sub-graphs)."
-		default = false
-		targets parents
+    advanced option connectedComponents: boolean {
+        label "Connected Components Compaction"
+        description
+            "Tries to further compact components (disconnected sub-graphs)."
+        default = false
+        targets parents
         requires org.eclipse.elk.separateConnectedComponents == true
-	}
+    }
 
 }
 
@@ -663,33 +663,33 @@ group compaction {
  * ------------------------*/
 group highDegreeNodes {
 
-	advanced option treatment: boolean {
-		label "High Degree Node Treatment"
-		description
-			"Makes room around high degree nodes to place leafs and trees."
-		default = false
-		targets parents
+    advanced option treatment: boolean {
+        label "High Degree Node Treatment"
+        description
+            "Makes room around high degree nodes to place leafs and trees."
+        default = false
+        targets parents
     }
 
-	advanced option threshold: int {
-		label "High Degree Node Threshold"
-		description
-			"Whether a node is considered to have a high degree."
-		default = 16
-		lowerBound = 0
-		targets parents
+    advanced option threshold: int {
+        label "High Degree Node Threshold"
+        description
+            "Whether a node is considered to have a high degree."
+        default = 16
+        lowerBound = 0
+        targets parents
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
-	}
+    }
 
-	advanced option treeHeight: int {
-		label "High Degree Node Maximum Tree Height"
-		description
-			"Maximum height of a subtree connected to a high degree node to be moved to separate layers."
-		default = 5
-		lowerBound = 0
-		targets parents
+    advanced option treeHeight: int {
+        label "High Degree Node Maximum Tree Height"
+        description
+            "Maximum height of a subtree connected to a high degree node to be moved to separate layers."
+        default = 5
+        lowerBound = 0
+        targets parents
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
-	}
+    }
 
 }
 
@@ -698,137 +698,137 @@ group highDegreeNodes {
  * ------------------------*/
 group wrapping {
 
-	advanced option strategy: WrappingStrategy {
-		label "Graph Wrapping Strategy"
-		description
-			"For certain graphs and certain prescribed drawing areas it may be desirable to 
+    advanced option strategy: WrappingStrategy {
+        label "Graph Wrapping Strategy"
+        description
+            "For certain graphs and certain prescribed drawing areas it may be desirable to 
              split the laid out graph into chunks that are placed side by side. 
              The edges that connect different chunks are 'wrapped' around from the end of 
              one chunk to the start of the other chunk.
              The points between the chunks are referred to as 'cuts'."
-		targets parents
-		default = WrappingStrategy.OFF
+        targets parents
+        default = WrappingStrategy.OFF
     }
 
-	advanced option additionalEdgeSpacing: double {
-		label "Additional Wrapped Edges Spacing"
-		description
-			"To visually separate edges that are wrapped from regularly routed edges an additional spacing value 
+    advanced option additionalEdgeSpacing: double {
+        label "Additional Wrapped Edges Spacing"
+        description
+            "To visually separate edges that are wrapped from regularly routed edges an additional spacing value 
              can be specified in form of this layout option. The spacing is added to the regular edgeNode spacing."
-		default = 10
-		targets parents
+        default = 10
+        targets parents
         requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
-		requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
-	}
+        requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
+    }
 
-	advanced option correctionFactor: double {
-		label "Correction Factor for Wrapping"
-		description
-			"At times and for certain types of graphs the executed wrapping may produce results that 
+    advanced option correctionFactor: double {
+        label "Correction Factor for Wrapping"
+        description
+            "At times and for certain types of graphs the executed wrapping may produce results that 
              are consistently biased in the same fashion: either wrapping to often or to rarely. 
              This factor can be used to correct the bias. Internally, it is simply multiplied with 
              the 'aspect ratio' layout option."
-		default = 1.0
-		targets parents
+        default = 1.0
+        targets parents
         requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
-		requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
-	}
+        requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
+    }
 
-	group cutting {
+    group cutting {
 
-		advanced option strategy: CuttingStrategy {
-			label "Cutting Strategy"
-			description
-				"The strategy by which the layer indexes are determined at which the layering crumbles into chunks."
-			default = CuttingStrategy.MSD
-			targets parents
+        advanced option strategy: CuttingStrategy {
+            label "Cutting Strategy"
+            description
+                "The strategy by which the layer indexes are determined at which the layering crumbles into chunks."
+            default = CuttingStrategy.MSD
+            targets parents
             requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
-			requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
-		}
+            requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
+        }
 
-		advanced option cuts: List<Integer> {
-			label "Manually Specified Cuts"
-			description
-				"Allows the user to specify her own cuts for a certain graph."
-			targets parents 
+        advanced option cuts: List<Integer> {
+            label "Manually Specified Cuts"
+            description
+                "Allows the user to specify her own cuts for a certain graph."
+            targets parents 
             requires wrapping.cutting.strategy == CuttingStrategy.MANUAL
-		}
+        }
 
-		group msd {
+        group msd {
 
-			advanced option freedom: Integer {
-				label "MSD Freedom"
-				description
-					"The MSD cutting strategy starts with an initial guess on the number of chunks the graph 
+            advanced option freedom: Integer {
+                label "MSD Freedom"
+                description
+                    "The MSD cutting strategy starts with an initial guess on the number of chunks the graph 
                      should be split into. The freedom specifies how much the strategy may deviate from this guess.
                      E.g. if an initial number of 3 is computed, a freedom of 1 allows 2, 3, and 4 cuts."
-				default = 1
-				lowerBound = 0
-				targets parents
+                default = 1
+                lowerBound = 0
+                targets parents
                 requires wrapping.cutting.strategy == CuttingStrategy.MSD
-			}
+            }
 
-		}
+        }
 
-	}
+    }
 
-	group validify {
+    group validify {
 
-		advanced option strategy: ValidifyStrategy {
-			label "Validification Strategy"
-			description
-				"When wrapping graphs, one can specify indices that are not allowed as split points.  
+        advanced option strategy: ValidifyStrategy {
+            label "Validification Strategy"
+            description
+                "When wrapping graphs, one can specify indices that are not allowed as split points.  
                  The validification strategy makes sure every computed split point is allowed."
-			default = ValidifyStrategy.GREEDY
-			targets parents
+            default = ValidifyStrategy.GREEDY
+            targets parents
             requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
-			requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
-		}
+            requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
+        }
 
-		advanced option forbiddenIndices: List<Integer> {
-			label "Valid Indices for Wrapping"
+        advanced option forbiddenIndices: List<Integer> {
+            label "Valid Indices for Wrapping"
             targets parents 
             requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
             requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
         }
 
-	}
+    }
 
-	group singleEdge {
+    group singleEdge {
 
-	}
+    }
 
-	group multiEdge {
+    group multiEdge {
 
-		advanced option improveCuts: boolean {
-			label "Improve Cuts"
-			description
-				"For general graphs it is important that not too many edges wrap backwards. 
+        advanced option improveCuts: boolean {
+            label "Improve Cuts"
+            description
+                "For general graphs it is important that not too many edges wrap backwards. 
                  Thus a compromise between evenly-distributed cuts and the total number of cut edges is sought."
-			default = true
-			targets parents
+            default = true
+            targets parents
             requires strategy == WrappingStrategy.MULTI_EDGE
-		}
+        }
 
-		advanced option distancePenalty: double {
-			label "Distance Penalty When Improving Cuts "
+        advanced option distancePenalty: double {
+            label "Distance Penalty When Improving Cuts "
             default = 2.0
             targets parents
             requires strategy == WrappingStrategy.MULTI_EDGE
             requires improveCuts == true
         }
 
-		advanced option improveWrappedEdges: boolean {
-			label "Improve Wrapped Edges"
-			description
-				"The initial wrapping is performed in a very simple way. As a consequence, edges that wrap from 
+        advanced option improveWrappedEdges: boolean {
+            label "Improve Wrapped Edges"
+            description
+                "The initial wrapping is performed in a very simple way. As a consequence, edges that wrap from 
                  one chunk to another may be unnecessarily long. Activating this option tries to shorten such edges."
-			default = true
-			targets parents 
+            default = true
+            targets parents 
             requires strategy == WrappingStrategy.MULTI_EDGE
-		}
+        }
 
-	}
+    }
 
 }
 
@@ -837,20 +837,20 @@ group wrapping {
  * ------------------------*/
 group edgeLabels {
 
-	option sideSelection: EdgeLabelSideSelection {
-		label "Edge Label Side Selection"
-		description
-			"Method to decide on edge label sides."
-		default = EdgeLabelSideSelection.SMART_DOWN
-		targets parents
+    option sideSelection: EdgeLabelSideSelection {
+        label "Edge Label Side Selection"
+        description
+            "Method to decide on edge label sides."
+        default = EdgeLabelSideSelection.SMART_DOWN
+        targets parents
     }
 
-	advanced option centerLabelPlacementStrategy: CenterEdgeLabelPlacementStrategy {
-		label "Edge Center Label Placement Strategy"
-		description
-			"Determines in which layer center labels of long edges should be placed."
-		default = CenterEdgeLabelPlacementStrategy.MEDIAN_LAYER
-		targets parents, labels
+    advanced option centerLabelPlacementStrategy: CenterEdgeLabelPlacementStrategy {
+        label "Edge Center Label Placement Strategy"
+        description
+            "Determines in which layer center labels of long edges should be placed."
+        default = CenterEdgeLabelPlacementStrategy.MEDIAN_LAYER
+        targets parents, labels
     }
 
 }
@@ -859,90 +859,90 @@ group edgeLabels {
  *    miscellaneous
  * ------------------------*/
 advanced option directionCongruency: DirectionCongruency {
-	label "Direction Congruency"
-	description
-		"Specifies how drawings of the same graph with different layout directions compare to each other: 
+    label "Direction Congruency"
+    description
+        "Specifies how drawings of the same graph with different layout directions compare to each other: 
          either a natural reading direction is preserved or the drawings are rotated versions of each other."
-	default = DirectionCongruency.READING_DIRECTION
-	targets parents
-	documentation "@transformation.md"
+    default = DirectionCongruency.READING_DIRECTION
+    targets parents
+    documentation "@transformation.md"
 }
 
 advanced option feedbackEdges: boolean {
-	label "Feedback Edges"
-	description
-		"Whether feedback edges should be highlighted by routing around the nodes."
-	default = false
-	targets parents
+    label "Feedback Edges"
+    description
+        "Whether feedback edges should be highlighted by routing around the nodes."
+    default = false
+    targets parents
 }
 
 advanced option interactiveReferencePoint: InteractiveReferencePoint {
-	label "Interactive Reference Point"
-	description
-		"Determines which point of a node is considered by interactive layout phases."
-	default = InteractiveReferencePoint.CENTER
-	targets parents
-	requires org.eclipse.elk.alg.layered.cycleBreaking.strategy == CycleBreakingStrategy.INTERACTIVE
-	requires org.eclipse.elk.alg.layered.crossingMinimization.strategy == CrossingMinimizationStrategy.INTERACTIVE
+    label "Interactive Reference Point"
+    description
+        "Determines which point of a node is considered by interactive layout phases."
+    default = InteractiveReferencePoint.CENTER
+    targets parents
+    requires org.eclipse.elk.alg.layered.cycleBreaking.strategy == CycleBreakingStrategy.INTERACTIVE
+    requires org.eclipse.elk.alg.layered.crossingMinimization.strategy == CrossingMinimizationStrategy.INTERACTIVE
 }
 
 advanced option mergeEdges: boolean {
-	label "Merge Edges"
-	description
-		"Edges that have no ports are merged so they touch the connected nodes at the same points.
-		When this option is disabled, one port is created for each edge directly connected to a
-		node. When it is enabled, all such incoming edges share an input port, and all outgoing
-		edges share an output port."
-	default = false
-	targets parents
+    label "Merge Edges"
+    description
+        "Edges that have no ports are merged so they touch the connected nodes at the same points.
+        When this option is disabled, one port is created for each edge directly connected to a
+        node. When it is enabled, all such incoming edges share an input port, and all outgoing
+        edges share an output port."
+    default = false
+    targets parents
 }
 
 advanced option mergeHierarchyEdges: boolean {
-	label "Merge Hierarchy-Crossing Edges"
-	description
-		"If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports
-		as possible. They are broken by the algorithm, with hierarchical ports inserted as
-		required. Usually, one such port is created for each edge at each hierarchy crossing point.
-		With this option set to true, we try to create as few hierarchical ports as possible in
-		the process. In particular, all edges that form a hyperedge can share a port."
-	default = true
-	targets parents
+    label "Merge Hierarchy-Crossing Edges"
+    description
+        "If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports
+        as possible. They are broken by the algorithm, with hierarchical ports inserted as
+        required. Usually, one such port is created for each edge at each hierarchy crossing point.
+        With this option set to true, we try to create as few hierarchical ports as possible in
+        the process. In particular, all edges that form a hyperedge can share a port."
+    default = true
+    targets parents
 }
 
 advanced option northOrSouthPort: boolean {
-	label "North or South Port"
-	description
-		"Specifies that this port can either be placed on the north side of a node or on the south
+    label "North or South Port"
+    description
+        "Specifies that this port can either be placed on the north side of a node or on the south
         side (if port constraints permit)"
-	default = false
-	targets ports
+    default = false
+    targets ports
 }
 
 advanced option portSortingStrategy: PortSortingStrategy {
-	label "Port Sorting Strategy"
-	description
-		"Only relevant for nodes with FIXED_SIDE port constraints. Determines the way a node's ports are 
+    label "Port Sorting Strategy"
+    description
+        "Only relevant for nodes with FIXED_SIDE port constraints. Determines the way a node's ports are 
          distributed on the sides of a node if their order is not prescribed. The option is set on parent nodes."
-	default = PortSortingStrategy.INPUT_ORDER
-	targets parents
+    default = PortSortingStrategy.INPUT_ORDER
+    targets parents
 }
 
 advanced option thoroughness: int {
-	label "Thoroughness"
-	description
-		"How much effort should be spent to produce a nice layout."
-	default = 7
-	lowerBound = 1
-	targets parents
+    label "Thoroughness"
+    description
+        "How much effort should be spent to produce a nice layout."
+    default = 7
+    lowerBound = 1
+    targets parents
 }
 
 advanced option unnecessaryBendpoints: boolean {
-	label "Add Unnecessary Bendpoints"
-	description
-		"Adds bend points even if an edge does not change direction. If true, each long edge dummy
-		will contribute a bend point to its edges and hierarchy-crossing edges will always get a
-		bend point where they cross hierarchy boundaries. By default, bend points are only added
-		where an edge changes direction."
-	default = false
-	targets parents
+    label "Add Unnecessary Bendpoints"
+    description
+        "Adds bend points even if an edge does not change direction. If true, each long edge dummy
+        will contribute a bend point to its edges and hierarchy-crossing edges will always get a
+        bend point where they cross hierarchy boundaries. By default, bend points are only added
+        where an edge changes direction."
+    default = false
+    targets parents
 }
