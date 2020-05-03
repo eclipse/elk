@@ -28,6 +28,7 @@ import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredSpacings;
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.UnsupportedGraphException;
@@ -103,6 +104,16 @@ class ElkGraphImporter {
         // Remember things
         if (topLevelGraph.getProperty(LayeredOptions.PARTITIONING_ACTIVATE)) {
             graphProperties.add(GraphProperties.PARTITIONS);
+        }
+        
+        // Apply a spacing configuration based on a base value (if it has been requested)
+        //  Note that the computed spacing values are set on the lgraph and not the elkgraph to avoid polluting 
+        //  the input graph. If the spacing values were set on the input graph, a second layout run of the same 
+        //  input graph - with a different base value - would yield an unexpected result as the computed spacing 
+        //  values of the first layout run would be used (explicitly set spacing values are not overwritten).
+        if (topLevelGraph.hasProperty(LayeredOptions.SPACING_BASE_VALUE)) {
+            LayeredSpacings.withBaseValue(topLevelGraph.getProperty(LayeredOptions.SPACING_BASE_VALUE))
+                    .apply(topLevelGraph);
         }
 
         // Import the graph either with or without multiple nested levels of hierarchy
@@ -213,7 +224,7 @@ class ElkGraphImporter {
                 transformNode(child, lgraph);
             }
         }
-        
+
         // iterate the list of contained edges to preserve the 'input order' of the edges
         // (this is not part of the previous loop since all children must have already been transformed)
         for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
@@ -287,6 +298,12 @@ class ElkGraphImporter {
                 if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
                     nestedGraph = createLGraph(elknode);
                     nestedGraph.setProperty(LayeredOptions.DIRECTION, parentGraphDirection);
+                    
+                    // Apply a spacing configuration, for details see comment int #importGraph(...)
+                    if (nestedGraph.hasProperty(LayeredOptions.SPACING_BASE_VALUE)) {
+                        LayeredSpacings.withBaseValue(nestedGraph.getProperty(LayeredOptions.SPACING_BASE_VALUE))
+                                .apply(nestedGraph);
+                    }
                     
                     // We need to make sure that we make the graph large enough for any ports, node labels, etc.
                     // if the size constraints are not empty

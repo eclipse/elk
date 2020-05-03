@@ -54,6 +54,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.individualOverride
     documentation "Most parts of the algorithm do not support this yet."
     // layer-based spacings
+    supports org.eclipse.elk.alg.layered.spacing.baseValue
     supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
@@ -552,6 +553,17 @@ group edgeRouting {
  *    spacing
  * ------------------------*/
 group spacing {
+
+    option baseValue: double {
+        label "Spacing Base Value"
+        description
+            "An optional base value for all other layout options of the 'spacing' group. It can be used to conveniently 
+             alter the overall 'spaciousness' of the drawing. Whenever an explicit value is set for the other layout 
+             options, this base value will have no effect. The base value is not inherited, i.e. it must be set for 
+             each hierarchical node."
+        targets parents
+        lowerBound = 0.0
+    }
 
     option edgeNodeBetweenLayers: double {
         label "Edge Node Between Layers Spacing"
