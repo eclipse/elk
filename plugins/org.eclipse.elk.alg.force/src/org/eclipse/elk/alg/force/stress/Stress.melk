@@ -41,14 +41,15 @@ algorithm stress(StressLayoutProvider) {
 
 option fixed: boolean {
     label "Fixed Position"
-    description "Prevent that the node is moved by the layout algorithm."
+    description
+        "Prevent that the node is moved by the layout algorithm."
     default = false
     targets nodes
 }
 
 option desiredEdgeLength: double {
     label "Desired Edge Length"
-    description 
+    description
         "Either specified for parent nodes or for individual edges, 
         where the latter takes higher precedence."
     default = 100.0
@@ -57,21 +58,23 @@ option desiredEdgeLength: double {
 
 option dimension: Dimension {
     label "Layout Dimension"
-    description "Dimensions that are permitted to be altered during layout."
+    description
+        "Dimensions that are permitted to be altered during layout."
     default = Dimension.XY
     targets parents
 }
 
 option epsilon: double {
     label "Stress Epsilon"
-    description "Termination criterion for the iterative process."
+    description
+        "Termination criterion for the iterative process."
     default = 10e-4
     targets parents
-} 
+}
 
 option iterationLimit: int {
     label "Iteration Limit"
-    description 
+    description
         "Maximum number of performed iterations. Takes higher
         precedence than 'epsilon'."
     default = Integer.MAX_VALUE

@@ -8,24 +8,23 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/ 
 package org.eclipse.elk.alg.rectpacking
- 
-/* Metadata file for rectangle packing algorithms. Enables support for options and specifies auto-generated files.
- */
+
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal
 import org.eclipse.elk.core.options.ContentAlignment
 
-//BUNDLE
+// BUNDLE
 bundle {
     metadataClass options.RectPackingMetaDataProvider
     idPrefix org.eclipse.elk.rectpacking
 }
 
-//ALGORITHM
-algorithm rectpacking (RectPackingLayoutProvider) {
+// ALGORITHM
+algorithm rectpacking(RectPackingLayoutProvider) {
     label "Rectangle Packing"
-    description "Algorithm for packing of unconnected boxes, i.e. graphs without edges. The given order of the boxes
+    description
+        "Algorithm for packing of unconnected boxes, i.e. graphs without edges. The given order of the boxes
         is always preserved and the main reading direction of the boxes is left to right. The algorithm is divided into
         two phases. One phase approximates the width in which the rectangles can be placed. The next phase places the rectangles
         in rows using the previously calculated width as bounding width and bundles rectangles with a similar height in blocks.
@@ -49,10 +48,11 @@ algorithm rectpacking (RectPackingLayoutProvider) {
     supports currentPosition
 }
 
-//OPTIONS
+// OPTIONS
 advanced option optimizationGoal: OptimizationGoal {
     label "Optimization Goal"
-    description "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
+    description
+        "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
          sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
     documentation "@packingstrategy.md"
     targets nodes
@@ -61,7 +61,8 @@ advanced option optimizationGoal: OptimizationGoal {
 
 programmatic option lastPlaceShift: boolean {
     label "Shift Last Placed."
-    description "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
+    description
+        "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
          possible to shift the rectangle further to the left or right, resulting in less whitespace. True (default) 
          enables the shift and false disables it. Disabling the shift produces a greater approximated area by the first 
          iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
@@ -73,7 +74,8 @@ programmatic option lastPlaceShift: boolean {
 
 output option currentPosition: int {
     label "Current position of a node in the order of nodes"
-    description "The rectangles are ordered. Normally according to their definition the the model.
+    description
+        "The rectangles are ordered. Normally according to their definition the the model.
                  This option specifies the current position of a node."
     default = -1
     lowerBound = -1
@@ -82,7 +84,8 @@ output option currentPosition: int {
 
 advanced option desiredPosition: int {
     label "Desired index of node"
-    description "The rectangles are ordered. Normally according to their definition the the model.
+    description
+        "The rectangles are ordered. Normally according to their definition the the model.
                  This option allows to specify a desired position that has preference over the
                  original position."
     default = -1
@@ -92,7 +95,8 @@ advanced option desiredPosition: int {
 
 programmatic option onlyFirstIteration: boolean {
     label "Only Area Approximation"
-    description "If enabled only the width approximation step is executed and the nodes are placed accordingly.
+    description
+        "If enabled only the width approximation step is executed and the nodes are placed accordingly.
         The nodes are layouted according to the packingStrategy.
         If set to true not expansion of nodes is taking place."
     targets nodes
@@ -101,7 +105,8 @@ programmatic option onlyFirstIteration: boolean {
 
 programmatic option rowCompaction: boolean {
     label "Compact Rows"
-    description "Enables compaction. Compacts blocks if they do not use the full height of the row.
+    description
+        "Enables compaction. Compacts blocks if they do not use the full height of the row.
         This option allows to have a smaller drawing.
         If this option is disabled all nodes are placed next to each other in rows."
     targets nodes
@@ -110,7 +115,8 @@ programmatic option rowCompaction: boolean {
 
 advanced option expandToAspectRatio: boolean {
     label "Fit Aspect Ratio"
-    description "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
+    description
+        "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
             The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
             in unreasonable ndoe expansion."
     targets nodes

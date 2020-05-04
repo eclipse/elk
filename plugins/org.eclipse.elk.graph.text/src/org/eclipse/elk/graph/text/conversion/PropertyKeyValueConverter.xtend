@@ -58,7 +58,13 @@ class PropertyKeyValueConverter extends AbstractValueConverter<IProperty<?>> {
         val idSuffix = Strings.split(string, '.').map[idValueConverter.toValue(it, node)].join('.')
         val optionData = LayoutMetaDataService.instance.getOptionDataBySuffix(idSuffix)
         if (optionData === null)
-            throw new ValueConverterException("No layout option with identifier '" + idSuffix + "' can be found.", node, null)
+            // If the currently given id is not a known layout option, a new property instance is created and 
+            // returned that shall not be registered with the LayoutMetaDataService.
+            // The thinking behind this is to allow custom "key: value" pairs within an elkt document, 
+            // where the purpose of the custom elements is unknown to the ELK (but hopefully known to the user). 
+            // Note that the specified values will yield 'LayoutOptionProxy' instances.
+            return new org.eclipse.elk.graph.properties.Property<Object>(string)
+          
         return optionData
     }
     

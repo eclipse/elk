@@ -323,6 +323,24 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
         
         for (LPort port : node.getPorts()) {
             KVector absolutePortAnchor = port.getAbsoluteAnchor();
+            
+            if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
+                // North/south ports require special handling (also see #515):
+                // The dummy node that represents the north/south port will have been placed at:
+                //  - the very left x-coordinate of the currently processed layer for incoming edges 
+                //  - the very right x-coordinate for outgoing edges
+                // However, the actual x-coordinate of the port itself is very likely to have a different x-coordinate.
+                // The code below introduces bendpoints that prevent edge/node overlaps based on a condition that
+                // checks that a node's position is "far enough away" from the left-most x-coordinate of the layer.
+                // Consequently, we have to use the north/south port's x-coordinate instead of the dummy node's one.
+                LPort correspondingPort = (LPort) port.getProperty(InternalProperties.ORIGIN);
+                absolutePortAnchor.x = correspondingPort.getAbsoluteAnchor().x;
+                // While it makes sense either way, it is important to move the dummy node to the correct location
+                // as well. Otherwise the #addBendPoint(...) method won't add the computed bendpoint as it
+                // thinks it's superfluous.
+                node.getPosition().x = absolutePortAnchor.x;
+            }
+            
             KVector bendPoint = new KVector(0, absolutePortAnchor.y);
             
             if (port.getSide() == PortSide.EAST) {

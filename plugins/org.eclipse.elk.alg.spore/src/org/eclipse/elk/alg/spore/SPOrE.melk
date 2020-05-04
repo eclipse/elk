@@ -11,11 +11,6 @@ package org.eclipse.elk.alg.spore
 
 import org.eclipse.elk.alg.spore.OverlapRemovalLayoutProvider
 import org.eclipse.elk.alg.spore.ShrinkTreeLayoutProvider
-import org.eclipse.elk.alg.spore.options.CompactionStrategy
-import org.eclipse.elk.alg.spore.options.RootSelection
-import org.eclipse.elk.alg.spore.options.SpanningTreeCostFunction
-import org.eclipse.elk.alg.spore.options.StructureExtractionStrategy
-import org.eclipse.elk.alg.spore.options.TreeConstructionStrategy
 import org.eclipse.elk.core.math.ElkPadding
 
 bundle {
@@ -26,7 +21,7 @@ bundle {
 algorithm sporeOverlap(OverlapRemovalLayoutProvider) {
     label "ELK SPOrE Overlap Removal"
     metadataClass options.SporeOverlapRemovalOptions
-    description 
+    description
         "A node overlap removal algorithm proposed by Nachmanson et al. in \"Node overlap removal 
          by growing a tree\"."
     preview images/overlap-removal.png
@@ -42,7 +37,7 @@ algorithm sporeOverlap(OverlapRemovalLayoutProvider) {
 algorithm sporeCompaction(ShrinkTreeLayoutProvider) {
     label "ELK SPOrE Compaction"
     metadataClass options.SporeCompactionOptions
-    description 
+    description
         "ShrinkTree is a compaction algorithm that maintains the topology of a layout. 
          The relocation of diagram elements is based on contracting a spanning tree."
     preview images/compaction-example.png
@@ -68,71 +63,90 @@ option underlyingLayoutAlgorithm: String {
          compacted. If this is null, nothing is applied before compaction."
     targets parents
 }
-    
+
 group structure {
-     advanced option structureExtractionStrategy: StructureExtractionStrategy {
+
+    advanced option structureExtractionStrategy: StructureExtractionStrategy {
         label "Structure Extraction Strategy"
-        description "This option defines what kind of triangulation or other partitioning of the plane 
+        description
+            "This option defines what kind of triangulation or other partitioning of the plane 
                     is applied to the vertices."
         targets parents
         default = StructureExtractionStrategy.DELAUNAY_TRIANGULATION
     }
+
 }
 
 group processingOrder {
+
     advanced option treeConstruction: TreeConstructionStrategy {
         label "Tree Construction Strategy"
-        description "Whether a minimum spanning tree or a maximum spanning tree should be constructed."
+        description
+            "Whether a minimum spanning tree or a maximum spanning tree should be constructed."
         targets parents
         default = TreeConstructionStrategy.MINIMUM_SPANNING_TREE
     }
-    
+
     option spanningTreeCostFunction: SpanningTreeCostFunction {
         label "Cost Function for Spanning Tree"
-        description "The cost function is used in the creation of the spanning tree."
+        description
+            "The cost function is used in the creation of the spanning tree."
         targets parents
         default = SpanningTreeCostFunction.CIRCLE_UNDERLAP
     }
+
     advanced option preferredRoot: String {
         label "Root node for spanning tree construction"
-        description "The identifier of the node that is preferred as the root of the spanning tree. 
+        description
+            "The identifier of the node that is preferred as the root of the spanning tree. 
                      If this is null, the first node is chosen."
         targets parents
         default = null
         requires rootSelection == RootSelection.FIXED
     }
+
     advanced option rootSelection: RootSelection {
         label "Root selection for spanning tree"
-        description "This sets the method used to select a root node for the construction of a spanning tree"
+        description
+            "This sets the method used to select a root node for the construction of a spanning tree"
         targets parents
         default = RootSelection.CENTER_NODE
     }
+
 }
 
 group compaction {
+
     advanced option compactionStrategy: CompactionStrategy {
         label "Compaction Strategy"
-        description "This option defines how the compaction is applied."
+        description
+            "This option defines how the compaction is applied."
         targets parents
         default = CompactionStrategy.DEPTH_FIRST
     }
+
     advanced option orthogonal: boolean {
         label "Orthogonal Compaction"
-        description "Restricts the translation of nodes to orthogonal directions in the compaction phase."
+        description
+            "Restricts the translation of nodes to orthogonal directions in the compaction phase."
         targets parents
         default = false
     }
+
 }
 
 group overlapRemoval {
+
     option maxIterations: int {
         label "Upper limit for iterations of overlap removal"
         targets parents
         default = 64
     }
+
     advanced option runScanline: boolean {
         label "Whether to run a supplementary scanline overlap check."
         targets parents
         default = true
     }
+
 }

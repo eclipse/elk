@@ -9,28 +9,28 @@
  *******************************************************************************/
 package org.eclipse.elk.conn.gmf.layouter
 
-import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.Direction
 
 /**
  * Layout algorithms contributed by GMF / GEF.
  */
 bundle {
-	label "GMF"
-	metadataClass GmfMetaDataProvider
+    label "GMF"
+    metadataClass GmfMetaDataProvider
 }
 
 algorithm Draw2D(Draw2DLayoutProvider) {
-	label "Draw2D Layout"
-	description
-		"'Directed Graph Layout' provided by the Draw2D framework. This is the same algorithm that
+    label "Draw2D Layout"
+    description
+        "'Directed Graph Layout' provided by the Draw2D framework. This is the same algorithm that
 		is used by the standard layout button of GMF diagrams."
     metadataClass Draw2DOptions
-	category org.eclipse.elk.layered
-	features multi_edges
-	preview images/draw2d.png
+    category org.eclipse.elk.layered
+    features multi_edges
+    preview images/draw2d.png
 	supports org.eclipse.elk.spacing.nodeNode = 16
-	supports org.eclipse.elk.padding = new ElkPadding(16)
-	supports org.eclipse.elk.direction = Direction.RIGHT
-	supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.padding = new ElkPadding(16)
+    supports org.eclipse.elk.direction = Direction.RIGHT
+    supports org.eclipse.elk.nodeSize.constraints
 }
