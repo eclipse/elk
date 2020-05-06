@@ -54,7 +54,7 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
 
     @Override
     public void process(final LGraph lGraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Adding partition constraint edges", 1);
+        monitor.begin("Partition preprocessing", 1);
         
         // Collect nodes which have a partition set
         Multimap<Integer, LNode> partitionToNodesMap = HashMultimap.create();
