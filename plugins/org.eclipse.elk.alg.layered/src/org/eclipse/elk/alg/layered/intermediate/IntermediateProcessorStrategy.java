@@ -56,12 +56,12 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     
     /** Moves trees of high degree nodes to separate layers. */
     HIGH_DEGREE_NODE_LAYER_PROCESSOR,
-    /** Remove partition constraint edges. */
-    PARTITION_POSTPROCESSOR,
     /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
     NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
+    /** Remove partition constraint edges. */
+    PARTITION_POSTPROCESSOR,
     /** Handles northern and southern hierarchical ports. */
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Adds successor constraints between regular nodes before crossing minimization. */

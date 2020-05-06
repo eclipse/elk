@@ -31,7 +31,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Slots:</dt>
  *     <dd>Before phase 3.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>None.</dd>
+ *     <dd>{@link NodePromotion}</dd>
+ *     <dd>{@link LayerConstraintProcessor}</dd>
  * </dl>
  *
  * @see PartitionPreprocessor
