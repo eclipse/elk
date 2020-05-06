@@ -17,6 +17,7 @@ import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -67,10 +68,15 @@ public class RowFillingAndCompaction {
      * @param nodeNodeSpacing The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
-    public DrawingData start(final List<ElkNode> rectangles, final double maxWidth, final KVector minParentSize) {
+    public DrawingData start(final List<ElkNode> rectangles, final double maxWidth, final KVector minParentSize,
+            final IElkProgressMonitor progressMonitor, final ElkNode layoutGraph) {
         // Initial placement for rectangles in blocks in each row.
         List<RectRow> rows = InitialPlacement.place(rectangles, maxWidth, nodeNodeSpacing);
-
+        
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "After placement");
+        }
+        
         // Compaction of blocks.
         if (compaction) {
             for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
@@ -94,6 +100,10 @@ public class RowFillingAndCompaction {
         }
          
         calculateDimensions(rows);
+
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "After compaction");
+        }
         
         double totalWidth = Math.max(this.drawingWidth, minParentSize.x);
         double minHeight = Math.max(this.drawingHeight, minParentSize.y);
@@ -109,6 +119,10 @@ public class RowFillingAndCompaction {
         
         if (this.expandNodes) {
             RectangleExpansion.expand(rows, totalWidth + nodeNodeSpacing, additionalHeight, nodeNodeSpacing);
+        }
+
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(layoutGraph, "After expansion");
         }
 
         return new DrawingData(this.aspectRatio, totalWidth, this.drawingHeight + additionalHeight, DrawingDataDescriptor.WHOLE_DRAWING);

@@ -255,7 +255,7 @@ public class Block {
             rows.add(new BlockRow(this.x, this.y, nodeNodeSpacing));
         }
         for (ElkNode rect : children) {
-            if (currentX + rect.getWidth() + nodeNodeSpacing > width) {
+            if (currentX + rect.getWidth() + nodeNodeSpacing > width && maxHeightInRow > 0) {
                 currentX = 0;
                 currentY += maxHeightInRow;
                 currentWidth = Math.max(currentWidth, widthInRow);
