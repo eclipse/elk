@@ -72,7 +72,10 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // Whether interactive layout is activ.
         boolean interactive = layoutGraph.getProperty(RectPackingOptions.INTERACTIVE);
         // A target width for the algorithm. If this is set the width approximation step is skipped.
-        double targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
+        double targetWidth = -1;
+        if (layoutGraph.hasProperty(RectPackingOptions.TARGET_WIDTH)) {
+            targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
+        }
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
