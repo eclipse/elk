@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.seconditeration.RowFillingAndCompaction;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
+import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
 import org.eclipse.elk.alg.rectpacking.util.DrawingUtil;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
@@ -70,6 +71,11 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         boolean expandToAspectRatio = layoutGraph.getProperty(RectPackingOptions.EXPAND_TO_ASPECT_RATIO);
         // Whether interactive layout is activ.
         boolean interactive = layoutGraph.getProperty(RectPackingOptions.INTERACTIVE);
+        // A target width for the algorithm. If this is set the width approximation step is skipped.
+        double targetWidth = -1;
+        if (layoutGraph.hasProperty(RectPackingOptions.TARGET_WIDTH)) {
+            targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
+        }
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
@@ -112,12 +118,15 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         minSize.x -= padding.getHorizontal();
         minSize.y -= padding.getVertical();
         double maxWidth = minSize.x;
-        
-        // Initial width approximation.
-        AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
-        drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
-        if (progressMonitor.isLoggingEnabled()) {
-            progressMonitor.logGraph(layoutGraph, "After approximation");
+        if (targetWidth < 0 || targetWidth < minSize.x) {
+            // Initial width approximation.
+            AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
+            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
+            if (progressMonitor.isLoggingEnabled()) {
+                progressMonitor.logGraph(layoutGraph, "After approximation");
+            }
+        } else {
+            drawing = new DrawingData(aspectRatio, targetWidth, 0, DrawingDataDescriptor.WHOLE_DRAWING);
         }
         // Placement according to approximated width.
         if (!onlyFirstIteration) {
@@ -126,10 +135,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             // Modify the initial approximation if necessary.
             maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
             
-            drawing = secondIt.start(rectangles, maxWidth, minSize);
-        }
-        if (progressMonitor.isLoggingEnabled()) {
-            progressMonitor.logGraph(layoutGraph, "After compaction");
+            drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph);
         }
 
         // Final touch.

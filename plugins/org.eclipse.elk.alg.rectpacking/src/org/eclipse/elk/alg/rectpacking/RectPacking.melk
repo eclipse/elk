@@ -46,6 +46,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports org.eclipse.elk.interactiveLayout
     supports desiredPosition
     supports currentPosition
+    supports targetWidth
 }
 
 // OPTIONS
@@ -122,4 +123,13 @@ advanced option expandToAspectRatio: boolean {
     targets nodes
     default = false
     requires org.eclipse.elk.expandNodes
+}
+
+advanced option targetWidth: double {
+    label "Target Width"
+    description
+        "Option to place the rectangles in the given target width
+            instead of approximating the width using the desired aspect ratio."
+    targets nodes
+    default = -1
 }
