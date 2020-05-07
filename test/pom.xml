@@ -26,6 +26,7 @@
     <module>org.eclipse.elk.alg.common.test</module>
     <module>org.eclipse.elk.alg.disco.test</module>
     <module>org.eclipse.elk.alg.layered.test</module>
+    <module>org.eclipse.elk.alg.rectpacking.test</module>
     <module>org.eclipse.elk.alg.spore.test</module>
     <module>org.eclipse.elk.alg.test</module>
     <module>org.eclipse.elk.core.test</module>
