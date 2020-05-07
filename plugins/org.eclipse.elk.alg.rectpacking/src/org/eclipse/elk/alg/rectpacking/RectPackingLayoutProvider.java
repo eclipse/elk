@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.firstiteration.AreaApproximation;
+import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.seconditeration.RowFillingAndCompaction;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingUtil;
-import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
@@ -111,6 +111,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // Remove padding to get the space the algorithm can use.
         minSize.x -= padding.getHorizontal();
         minSize.y -= padding.getVertical();
+        double maxWidth = minSize.x;
         
         // Initial width approximation.
         AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
@@ -123,9 +124,9 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             DrawingUtil.resetCoordinates(rectangles);
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
             // Modify the initial approximation if necessary.
-            minSize.x = Math.max(minSize.x, drawing.getDrawingWidth());
+            maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
             
-            drawing = secondIt.start(rectangles, minSize);
+            drawing = secondIt.start(rectangles, maxWidth, minSize);
         }
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(layoutGraph, "After compaction");

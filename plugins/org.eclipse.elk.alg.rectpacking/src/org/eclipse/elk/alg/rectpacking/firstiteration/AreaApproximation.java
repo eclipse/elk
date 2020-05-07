@@ -13,9 +13,9 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
-import org.eclipse.elk.alg.rectpacking.util.OptimizationGoal;
 import org.eclipse.elk.graph.ElkNode;
 
 /**

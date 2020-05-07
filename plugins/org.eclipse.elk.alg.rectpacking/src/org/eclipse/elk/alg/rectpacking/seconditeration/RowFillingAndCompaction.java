@@ -67,9 +67,9 @@ public class RowFillingAndCompaction {
      * @param nodeNodeSpacing The spacing between two nodes.
      * @return Drawing data for a produced drawing.
      */
-    public DrawingData start(final List<ElkNode> rectangles, final KVector minParentSize) {
+    public DrawingData start(final List<ElkNode> rectangles, final double maxWidth, final KVector minParentSize) {
         // Initial placement for rectangles in blocks in each row.
-        List<RectRow> rows = InitialPlacement.place(rectangles, minParentSize.x, nodeNodeSpacing);
+        List<RectRow> rows = InitialPlacement.place(rectangles, maxWidth, nodeNodeSpacing);
 
         // Compaction of blocks.
         if (compaction) {
@@ -79,7 +79,7 @@ public class RowFillingAndCompaction {
                     RectRow previousRow = rows.get(rowIdx - 1);
                     currentRow.setY(previousRow.getY() + previousRow.getHeight());
                 }
-                Compaction.compact(rowIdx, rows, minParentSize.x, nodeNodeSpacing);
+                Compaction.compact(rowIdx, rows, maxWidth, nodeNodeSpacing);
                 adjustWidthAndHeight(currentRow);
             }
         } else {

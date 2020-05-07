@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.util;
+package org.eclipse.elk.alg.rectpacking.options;
 
 /**
  * Specifies the strategy employed to pack rectangles sequentially during {@link AreaApproximation}.
