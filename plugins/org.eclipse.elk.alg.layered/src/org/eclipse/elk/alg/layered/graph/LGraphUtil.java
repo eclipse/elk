@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2019 Kiel University and others.
+ * Copyright (c) 2014, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -845,6 +845,12 @@ public final class LGraphUtil {
             if (!explicitAnchor) {
                 anchor.x = portSize.x;
             }
+            
+            // The port anchors think that there is a difference between the port's left and right border
+            // coordinates, which makes sense if the port has a non-zero width. The port dummy, however,
+            // will have a width of zero. Thus, the anchor must be relative to -portWidth. This fixes #546.
+            anchor.x -= portSize.x;
+            
             break;
         
         case EAST:

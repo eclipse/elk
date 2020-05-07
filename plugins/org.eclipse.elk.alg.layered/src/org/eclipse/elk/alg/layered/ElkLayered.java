@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -570,9 +570,9 @@ public final class ElkLayered {
                 }
                 // Graph debug output
                 // elkjs-exclude-start
-                DebugUtil.logDebugGraph(monitor, lgraph, slotIndex++, processor.getClass().getSimpleName());
+                DebugUtil.logDebugGraph(monitor, lgraph, slotIndex++, "Before " + processor.getClass().getSimpleName());
                 // elkjs-exclude-end
-
+                
                 notifyProcessorReady(lgraph, processor);
                 processor.process(lgraph, monitor.subTask(monitorProgress));
                 notifyProcessorFinished(lgraph, processor);
@@ -580,7 +580,7 @@ public final class ElkLayered {
 
             // Graph debug output
             // elkjs-exclude-start
-            DebugUtil.logDebugGraph(monitor, lgraph, slotIndex, "finished");
+            DebugUtil.logDebugGraph(monitor, lgraph, slotIndex, "Finished");
             // elkjs-exclude-end
         } else {
             // Invoke each layout processor
