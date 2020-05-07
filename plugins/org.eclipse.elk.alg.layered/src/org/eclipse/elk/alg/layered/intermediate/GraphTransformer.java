@@ -255,7 +255,7 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
                 
                 // Mirror port label positions
                 for (LLabel label : port.getLabels()) {
-                    mirrorX(label.getPosition(), -label.getSize().x);
+                    mirrorX(label.getPosition(), port.getSize().x - label.getSize().x);
                 }
             }
             
@@ -454,7 +454,7 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
                 
                 // Mirror port label positions
                 for (LLabel label : port.getLabels()) {
-                    mirrorY(label.getPosition(), -label.getSize().y);
+                    mirrorY(label.getPosition(), port.getSize().y - label.getSize().y);
                 }
             }
             
