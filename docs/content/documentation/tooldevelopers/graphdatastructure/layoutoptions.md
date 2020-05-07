@@ -92,7 +92,7 @@ That is the reason why the first example above does not use `CoreOptions.DEBUG_M
 
 ### Checking for the Presence of Property Values
 
-If we can always call `getProperty(...)` on a graph element, we may not be able to distinguish a default value from a value explicitly set on that element. If we need to, we can check whether a property was explicitly set through `hasProperty(...)`:
+We can always call `getProperty(...)` on a graph element and get a (more or less) sensible result, but we may not be able to distinguish a default value from a value explicitly set on that element. If we need to, we can check whether a property was explicitly set through `hasProperty(...)`:
 
 ```java
 if (propertyHolder.hasProperty(MyAlgorithmOptions.OPTIONAL_GIZMO)) {
