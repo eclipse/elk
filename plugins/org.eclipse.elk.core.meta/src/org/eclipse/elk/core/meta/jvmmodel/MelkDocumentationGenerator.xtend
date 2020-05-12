@@ -42,7 +42,7 @@ import org.eclipse.elk.core.meta.metaData.MdOptionDependency
  * Generates documentation from the source model that pertains to a *.melk file.
  * <p>
  * For each algorithm, option and group in the model, a Markdown file is created in the directory specified by
- * the vm argument {@code elk.metadata.documentation.folder}. This path usually points to the docs folder in the
+ * the vm argument {@code elk.metadata.documentation.outputPath}. This path usually points to the docs folder in the
  * git repository for elk, when the Oomph setup appends the vm argument to the eclipse.ini.
  * The docs folder in the master branch will be hosted on a Github page.
  * </p>
@@ -664,16 +664,16 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
     /**
      * Possible values for enumeration types.
      */
-    private def Iterable<JvmField> getPossibleValues(JvmTypeReference type) {
+    private def Iterable<? extends JvmField> getPossibleValues(JvmTypeReference type) {
         if (type !== null) {
             val jvmType = type.type
             if (jvmType instanceof JvmEnumerationType) {
-                val dType = jvmType as JvmDeclaredType
-                return dType.declaredFields
+                val enumType = jvmType as JvmEnumerationType
+                return enumType.literals
             // in case of EnumSet the inner type is extracted
             } else if (jvmType.identifier == EnumSet.canonicalName) {
-                val dType = (type as JvmParameterizedTypeReference).arguments.head.type as JvmDeclaredType
-                return dType.declaredFields
+                val enumType = (type as JvmParameterizedTypeReference).arguments.head.type as JvmEnumerationType
+                return enumType.literals
             }
         }
         return null
