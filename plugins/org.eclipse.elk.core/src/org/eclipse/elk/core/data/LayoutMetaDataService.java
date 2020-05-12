@@ -52,6 +52,9 @@ public final class LayoutMetaDataService {
     public static synchronized LayoutMetaDataService getInstance() {
         if (instance == null) {
             instance = new LayoutMetaDataService();
+            
+            // Be sure to load CoreOptions first
+            instance.registerLayoutMetaDataProviders(new CoreOptions());
 
             // Non of the following is available in GWT
             // elkjs-exclude-start
