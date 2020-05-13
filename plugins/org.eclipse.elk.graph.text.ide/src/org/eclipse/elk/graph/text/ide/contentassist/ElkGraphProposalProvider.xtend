@@ -122,7 +122,12 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     
     protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
         LayoutOptionData.Target targetType, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
-        proposeProperties(element, algorithmData, #{targetType}, context, acceptor)
+        proposeProperties(
+            element,
+            algorithmData,
+            targetType !== null ? #{targetType} : #{},
+            context,
+            acceptor)
     }
     
     protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
