@@ -19,12 +19,14 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
+import org.eclipse.elk.alg.test.framework.annotations.Configurator;
 import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.FileNameFilter;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.core.math.ElkRectangle;
+import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.graph.ElkNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +48,17 @@ public class Issue603Test {
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
                 new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("603.+\\.elkt")));
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Configuration
+
+    @Configurator
+    public void configureNodeLabelPlacement(final ElkNode graph) {
+        graph.getChildren().stream()
+            .forEach(node -> node.setProperty(
+                    LayeredOptions.NODE_LABELS_PLACEMENT,
+                    NodeLabelPlacement.insideTopCenter()));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
