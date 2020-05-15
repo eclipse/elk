@@ -27,6 +27,7 @@ import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.VerticalPortPla
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 
@@ -198,19 +199,24 @@ public final class NodeLabelAndSizeCalculator {
     
     /**
      * Computes the padding required to place inside non-center node labels. This can be used to reserve space around
-     * a hierarchical node while laying out its content.
+     * a hierarchical node while laying out its content. The layout direction is interesting here: usually, one would
+     * probably either use the graph's layout direction, or the layout direction used to lay out the node's children.
+     * However, the way the node's labels are placed may not have anything to do with either direction.
      * 
      * @param graph
-     *            the node's parent graph.
+     *            the node's parent graph which may specify spacings inherited by the node.
      * @param node
      *            the node to process.
+     * @param layoutDirection
+     *            the layout direction to assume when computing the paddings.
      * @return the padding required for inside node labels.
      */
-    public static ElkPadding computeInsideNodeLabelPadding(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
+    public static ElkPadding computeInsideNodeLabelPadding(final GraphAdapter<?> graph, final NodeAdapter<?> node,
+            final Direction layoutDirection) {
+        
         // Create a node context and fill it with all the inside node labels
         NodeContext nodeContext = new NodeContext(null, node);
-        NodeLabelCellCreator.createNodeLabelCells(nodeContext, true, 
-                graph == null ? true : graph.getProperty(CoreOptions.DIRECTION).isHorizontal());
+        NodeLabelCellCreator.createNodeLabelCells(nodeContext, true, !layoutDirection.isVertical());
         
         GridContainerCell labelCellContainer = nodeContext.insideNodeLabelContainer;
         ElkPadding padding = new ElkPadding();
