@@ -479,7 +479,8 @@ class ElkGraphImporter {
         // since size information stored there may apply to the current graph node)
         ElkPadding nodeLabelpadding = NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding(
                 elkgraph.getParent() == null ? null : ElkGraphAdapters.adapt(elkgraph.getParent()),
-                ElkGraphAdapters.adaptSingleNode(elkgraph));
+                ElkGraphAdapters.adaptSingleNode(elkgraph),
+                Direction.RIGHT);
         ElkPadding nodePadding = lgraph.getProperty(LayeredOptions.PADDING);
 
         // Setup the graph's padding
