@@ -23,7 +23,7 @@ bundle {
 }
 
 algorithm dot(GraphvizLayoutProvider#DOT) {
-    label "Dot"
+    label "Graphviz Dot"
     description
         "Layered drawings of directed graphs. The algorithm aims edges in the same direction (top
 		to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge
@@ -56,7 +56,7 @@ algorithm dot(GraphvizLayoutProvider#DOT) {
 }
 
 algorithm neato(GraphvizLayoutProvider#NEATO) {
-    label "Neato"
+    label "Graphviz Neato"
     description
         "Spring model layouts. Neato attempts to minimize a global energy function, which is
 		equivalent to statistical multi-dimensional scaling. The solution is achieved using
@@ -87,7 +87,7 @@ algorithm neato(GraphvizLayoutProvider#NEATO) {
 }
 
 algorithm fdp(GraphvizLayoutProvider#FDP) {
-    label "FDP"
+    label "Graphviz FDP"
     description
         "Spring model layouts similar to those of Neato, but does this by reducing forces rather
 		 than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a
@@ -114,7 +114,7 @@ algorithm fdp(GraphvizLayoutProvider#FDP) {
 }
 
 algorithm twopi(GraphvizLayoutProvider#TWOPI) {
-    label "Twopi"
+    label "Graphviz Twopi"
     description
         "Radial layouts, after Wills '97. The nodes are placed on concentric circles depending on
 		 their distance from a given root node. The algorithm is designed to handle not only small
@@ -138,7 +138,7 @@ algorithm twopi(GraphvizLayoutProvider#TWOPI) {
 }
 
 algorithm circo(GraphvizLayoutProvider#CIRCO) {
-    label "Circo"
+    label "Graphviz Circo"
     description
         "Circular layout, after Six and Tollis '99, Kaufmann and Wiese '02. The algorithm finds
 		biconnected components and arranges each component in a circle, trying to minimize the
