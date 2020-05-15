@@ -610,9 +610,9 @@ public final class ElkUtil {
      * @param newSize The new size.
      * @param oldSize The old size.
      */
-    public static void translate(final ElkNode parent, final KVector newSize, final KVector oldSize) {
+    public static void translate(final ElkNode node, final KVector newSize, final KVector oldSize) {
         Set<ContentAlignment> contentAlignment =
-                parent.getProperty(CoreOptions.CONTENT_ALIGNMENT);
+                node.getParent().getProperty(CoreOptions.CONTENT_ALIGNMENT);
         double xTranslate = 0;
         double yTranslate = 0;
         
@@ -634,7 +634,7 @@ public final class ElkUtil {
             }
         }
 
-        translate(parent, xTranslate, yTranslate);
+        translate(node, xTranslate, yTranslate);
     }
 
 
