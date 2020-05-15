@@ -94,7 +94,7 @@ category radial {
 
 //------- UTILITY ALGORITHMS
 algorithm fixed(FixedLayoutProvider) {
-    label "Fixed Layout"
+    label "ELK Fixed"
     description
         "Keeps the current layout as it is, without any automatic modification. Optional coordinates
         can be given for nodes and edge bend points."
@@ -108,7 +108,7 @@ algorithm fixed(FixedLayoutProvider) {
 }
 
 algorithm box(BoxLayoutProvider) {
-    label "Box Layout"
+    label "ELK Box"
     description
         "Algorithm for packing of unconnected boxes, i.e. graphs without edges."
     metadataClass core.options.BoxLayouterOptions
@@ -146,7 +146,7 @@ group box {
 }
 
 algorithm random(RandomLayoutProvider) {
-    label "Randomizer"
+    label "ELK Randomizer"
     description
         "Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be
         useful to demonstrate the power of \"real\" layout algorithms."
