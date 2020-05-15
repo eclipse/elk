@@ -129,8 +129,8 @@ public class ElkUtilTest {
      */
     public ElkNode createContentAlignmentTestGraph(final EnumSet<ContentAlignment> contentAlignment) {
         ElkNode parent = ElkGraphUtil.createGraph();
-        parent.setProperty(CoreOptions.CONTENT_ALIGNMENT, contentAlignment);
         ElkNode node = ElkGraphUtil.createNode(parent);
+        node.setProperty(CoreOptions.CONTENT_ALIGNMENT, contentAlignment);
         ElkNode innerBehavior = ElkGraphUtil.createNode(node);
         node.setDimensions(100, 100);
         innerBehavior.setDimensions(80, 80);
