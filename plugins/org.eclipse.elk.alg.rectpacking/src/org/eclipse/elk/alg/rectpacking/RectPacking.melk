@@ -36,7 +36,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports org.eclipse.elk.expandNodes
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
-    supports org.eclipse.elk.contentAlignment = ContentAlignment.topCenter()
+    supports org.eclipse.elk.contentAlignment
     supports optimizationGoal
     supports lastPlaceShift
     supports onlyFirstIteration
