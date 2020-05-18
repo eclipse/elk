@@ -11,8 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # 9--11 are known to fail due to some dependency issue(s)
-        java-version: [ 8, 12 ]
+        # We check LTS versions and the latest release
+        # 8  - LTS - required by elkjs
+        # 11 - LTS - unfortunately 9-11 fail due to some dependency issue(s) with the tests
+        # 14 - latest
+        java-version: [ 8, 11, 14 ]
   
     steps:
     # Checkout the reposity of both elk and elk-models (the latter is required for the tests)
