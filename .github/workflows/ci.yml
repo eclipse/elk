@@ -38,10 +38,10 @@ jobs:
       # Run mvn in the 'build' folder
       working-directory: /home/runner/work/elk/elk/elk/build/
       # As line breaks do not seem to be supported, env variables are used as workaround to make the mvn call readable
-      run: mvn $opts $meta $doc $test $test-models clean verify
+      run: mvn $opts $meta $doc $test $test_models clean verify
       env: 
         opts: --fail-at-end --no-transfer-progress
         meta: --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly
         doc: --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs
         test: --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk
-        test-models: --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models
+        test_models: --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models
