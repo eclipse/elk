@@ -599,7 +599,7 @@ public class DiagramLayoutEngine {
                 do {
                     ElkNode parent = node.getParent();
                     for (ElkNode child : parent.getChildren()) {
-                        if (child != node && params.configurators.get(0) instanceof LayoutConfigurator) {
+                        if (child != node) {
                             for (IGraphElementVisitor c : params.configurators) {
                                 if (c instanceof LayoutConfigurator) {
                                     IPropertyHolder childConfig = ((LayoutConfigurator) c).configure(child);
