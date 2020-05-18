@@ -1,18 +1,26 @@
+# Runs ELK's build and tests every night. 
+# This is helpful to detect general build errors, 
+# since PRs are not blocked by unsuccesful 'ci.yml' builds
+# and direct pushes to master are allowed.
 name: ELK Nightly CI
 
 on:
   schedule:
-    - cron: '25 14 * * *'
+    - cron: '00 03 * * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # 9--11 are known to fail due to some dependency issue(s)
-        java-version: [ 8, 12 ] 
+        # We check LTS versions and the latest release
+        # 8  - LTS - required by elkjs
+        # 11 - LTS - unfortunately 9-11 fail due to some dependency issue(s) with the tests
+        # 14 - latest
+        java-version: [ 8, 14 ]
   
     steps:
+    # Checkout the reposity of both elk and elk-models (the latter is required for the tests)
     - uses: actions/checkout@v2
       with:
         path: elk
@@ -20,6 +28,7 @@ jobs:
       with:
         repository: eclipse/elk-models
         path: elk-models
+    # Prepare and use a cache for maven
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
@@ -31,5 +40,13 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
     - name: Build and verify with maven
+      # Run mvn in the 'build' folder
       working-directory: /home/runner/work/elk/elk/elk/build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models clean verify
+      # As line breaks do not seem to be supported, env variables are used as workaround to make the mvn call readable
+      run: mvn $opts $meta $doc $test $test_models clean verify
+      env: 
+        opts: --fail-at-end --no-transfer-progress
+        meta: --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly
+        doc: --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs
+        test: --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk
+        test_models: --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models
