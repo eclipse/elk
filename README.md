@@ -7,7 +7,7 @@ The Eclipse Layout Kernel provides a number of layout algorithms
 as well as an Eclipse-based infrastructure to connect them
 to editors and viewers.
 The layout algorithms are plain Java
-and can thus also be used outside of Eclipse.
+and can thus also be used outside of Eclipse. 
 
 ## More Info
 
