@@ -337,16 +337,6 @@ group spacing {
         targets parents
     }
 
-    option labelNode: double {
-        label "Label Node Spacing"
-        description
-            "Spacing to be preserved between labels and the border of node they are associated with. 
-            Note that the placement of a label is influenced by the 'nodelabels.placement' option."
-        default = 5
-        lowerBound = 0.0
-        targets parents
-    }
-
     option labelPort: double {
         label "Label Port Spacing"
         description
@@ -430,11 +420,23 @@ group partitioning {
 
 // --- NODE LABELS
 group nodeLabels {
+    
+    advanced option margin: ElkMargin {
+        label "Node Label Margin"
+        description
+            "Define margin for node labels that are placed outside of a node (see 'nodeLabels.placement').
+             The margin affects not only the node's direct labels but also the labels of the node's 
+             ports and certain edges. "
+        default = new ElkMargin(5)
+        targets nodes
+    }
 
     advanced option padding: ElkPadding {
         label "Node Label Padding"
         description
-            "Define padding for node labels that are placed inside of a node."
+            "Define padding for node labels that are placed inside of a node (see 'nodeLabels.placement').
+             The padding affects not only the node's direct labels but also the labels of the node's 
+             ports and certain edges. "
         default = new ElkPadding(5)
         targets nodes
     }
