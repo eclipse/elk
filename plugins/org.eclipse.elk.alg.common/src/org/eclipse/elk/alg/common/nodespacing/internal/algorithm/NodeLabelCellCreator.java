@@ -108,22 +108,23 @@ public final class NodeLabelCellCreator {
         if (!onlyInside) {
             StripContainerCell northContainer = new StripContainerCell(
                     Strip.HORIZONTAL, symmetry, nodeContext.labelCellSpacing);
-            northContainer.getPadding().bottom = nodeContext.nodeLabelSpacing;
+            // Note that top margin translates to bottom padding (likewise for the cases below)
+            northContainer.getPadding().bottom = nodeContext.nodeLabelsMargin.top;
             nodeContext.outsideNodeLabelContainers.put(PortSide.NORTH, northContainer);
             
             StripContainerCell southContainer = new StripContainerCell(
                     Strip.HORIZONTAL, symmetry, nodeContext.labelCellSpacing);
-            southContainer.getPadding().top = nodeContext.nodeLabelSpacing;
+            southContainer.getPadding().top = nodeContext.nodeLabelsMargin.bottom;
             nodeContext.outsideNodeLabelContainers.put(PortSide.SOUTH, southContainer);
             
             StripContainerCell westContainer = new StripContainerCell(
                     Strip.VERTICAL, symmetry, nodeContext.labelCellSpacing);
-            westContainer.getPadding().right = nodeContext.nodeLabelSpacing;
+            westContainer.getPadding().right = nodeContext.nodeLabelsMargin.left;
             nodeContext.outsideNodeLabelContainers.put(PortSide.WEST, westContainer);
             
             StripContainerCell eastContainer = new StripContainerCell(
                     Strip.VERTICAL, symmetry, nodeContext.labelCellSpacing);
-            eastContainer.getPadding().left = nodeContext.nodeLabelSpacing;
+            eastContainer.getPadding().left = nodeContext.nodeLabelsMargin.right;
             nodeContext.outsideNodeLabelContainers.put(PortSide.EAST, eastContainer);
         }
     }
