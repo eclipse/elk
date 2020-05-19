@@ -89,7 +89,7 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.EXTERNAL_PORT, 
                 LayeredOptions.SPACING_EDGE_EDGE); // TODO
         nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.LABEL, 
-                LayeredOptions.SPACING_LABEL_NODE);
+                LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
 
         // external
         nodeTypeSpacing(NodeType.EXTERNAL_PORT, 
