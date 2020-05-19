@@ -15,6 +15,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortLabelPlacement;
+import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
@@ -109,30 +110,20 @@ public final class NodeMarginCalculator  {
      * Calculates and assigns margins to all nodes.
      */
     public void process() {
-        double spacing = adapter.getProperty(CoreOptions.SPACING_LABEL_NODE);
-
         // Iterate through all nodes
         for (NodeAdapter<?> node : adapter.getNodes()) {
-            processNode(node, spacing);
+            processNode(node);
         }
-    }
-    
-    /**
-     * Calculates and assigns margins to the given node. The node is expected to be part of the graph the calculator
-     * was created for.
-     */
-    public void processNode(final NodeAdapter<?> node) {
-        double spacing = adapter.getProperty(CoreOptions.SPACING_LABEL_NODE);
-        processNode(node, spacing);
     }
 
     /**
-     * Calculates the margin of the given node.
-     * 
-     * @param node the node whose margin to calculate.
-     * @param labelSpacing label spacing set on the layered graph.
+     * Calculates and assigns margins to the given node. The node is expected to be part of the graph the calculator was
+     * created for.
      */
-    private void processNode(final NodeAdapter<?> node, final double labelSpacing) {
+    public void processNode(final NodeAdapter<?> node) {
+
+        ElkMargin desiredNodeMargin = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_MARGIN);
+
         // This will be our bounding box. We'll start with one that's the same size
         // as our node, and at the same position.
         ElkRectangle boundingBox = new ElkRectangle(
@@ -185,29 +176,33 @@ public final class NodeMarginCalculator  {
             }
             
             // End labels of edges connected to the port
+            // TODO cds: layered calls #excludeEdgeHeadTailLabels, is this ever active?
             if (includeEdgeHeadTailLabels) {
-                KVector requiredPortLabelSpace = new KVector(-labelSpacing, -labelSpacing);
-                
-                // TODO: maybe leave space for manually placed ports 
+                KVector requiredPortLabelSpace = new KVector(-desiredNodeMargin.left, -desiredNodeMargin.top);
+
+                // TODO cds: it's not margin but spacing between pairs of labels, right?
+                double labelLabelSpacing =
+                        IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_LABEL);
+                // TODO: maybe leave space for manually placed ports
                 if (node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
                     for (LabelAdapter<?> label : port.getLabels()) {
-                        requiredPortLabelSpace.x += label.getSize().x + labelSpacing;
-                        requiredPortLabelSpace.y += label.getSize().y + labelSpacing;
+                        // TODO cds: why spacing in both directions? Doesn't it depend on the stacking direction?
+                        requiredPortLabelSpace.x += label.getSize().x + labelLabelSpacing;
+                        requiredPortLabelSpace.y += label.getSize().y + labelLabelSpacing;
                     }
                 }
                 
                 requiredPortLabelSpace.x = Math.max(requiredPortLabelSpace.x, 0.0);
                 requiredPortLabelSpace.y = Math.max(requiredPortLabelSpace.y, 0.0);
                 
-                processEdgeHeadTailLabels(boundingBox, port.getOutgoingEdges(), port.getIncomingEdges(),
-                        node, port, requiredPortLabelSpace, labelSpacing);
+                processEdgeHeadTailLabels(boundingBox, port.getOutgoingEdges(), port.getIncomingEdges(), node, port,
+                        requiredPortLabelSpace);
             }
         }
         
         // Process end labels of edges directly connected to the node
         if (includeEdgeHeadTailLabels) {
-            processEdgeHeadTailLabels(boundingBox, node.getOutgoingEdges(), node.getIncomingEdges(),
-                    node, null, null, labelSpacing);
+            processEdgeHeadTailLabels(boundingBox, node.getOutgoingEdges(), node.getIncomingEdges(), node, null, null);
         }
         
         // Reset the margin
@@ -230,12 +225,10 @@ public final class NodeMarginCalculator  {
      * @param port the port if the edges are connected to one.
      * @param portLabelSpace if the edges are connected to a port, this is the space required to
      *                               place the port's labels.
-     * @param labelSpacing label spacing.
      */
     private void processEdgeHeadTailLabels(final ElkRectangle boundingBox,
             final Iterable<EdgeAdapter<?>> outgoingEdges, final Iterable<EdgeAdapter<?>> incomingEdges,
-            final NodeAdapter<?> node, final PortAdapter<?> port, final KVector portLabelSpace,
-            final double labelSpacing) {
+            final NodeAdapter<?> node, final PortAdapter<?> port, final KVector portLabelSpace) {
         
         ElkRectangle labelBox = new ElkRectangle();
         
@@ -243,7 +236,7 @@ public final class NodeMarginCalculator  {
         for (EdgeAdapter<?> edge : outgoingEdges) {
             for (LabelAdapter<?> label : edge.getLabels()) {
                 if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL) {
-                    computeLabelBox(labelBox, label, false, node, port, portLabelSpace, labelSpacing);
+                    computeLabelBox(labelBox, label, false, node, port, portLabelSpace);
                     boundingBox.union(labelBox);
                 }
             }
@@ -253,7 +246,7 @@ public final class NodeMarginCalculator  {
         for (EdgeAdapter<?> edge : incomingEdges) {
             for (LabelAdapter<?> label : edge.getLabels()) {
                 if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
-                    computeLabelBox(labelBox, label, true, node, port, portLabelSpace, labelSpacing);
+                    computeLabelBox(labelBox, label, true, node, port, portLabelSpace);
                     boundingBox.union(labelBox);
                 }
             }
@@ -272,11 +265,10 @@ public final class NodeMarginCalculator  {
      *             directly to the node.
      * @param portLabelSpace if the edges are connected to a port, this is the space required to
      *                       place the port's labels.
-     * @param labelSpacing label spacing.
      */
     private void computeLabelBox(final ElkRectangle labelBox, final LabelAdapter<?> label,
             final boolean incomingEdge, final NodeAdapter<?> node, final PortAdapter<?> port,
-            final KVector portLabelSpace, final double labelSpacing) {
+            final KVector portLabelSpace) {
         
         labelBox.x = node.getPosition().x;
         labelBox.y = node.getPosition().y;
@@ -288,48 +280,50 @@ public final class NodeMarginCalculator  {
         labelBox.width = label.getSize().x;
         labelBox.height = label.getSize().y;
         
+        ElkMargin desiredNodeMargin = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_MARGIN);
+
         if (port == null) {
             // The edge is connected directly to the node
             if (incomingEdge) {
                 // Assume the edge enters the node at its western side
-                labelBox.x -= labelSpacing + label.getSize().x;
+                labelBox.x -= desiredNodeMargin.left + label.getSize().x;
             } else {
                 // Assume the edge leaves the node at its eastern side
-                labelBox.x += node.getSize().x + labelSpacing;
+                labelBox.x += node.getSize().x + desiredNodeMargin.right;
             }
         } else {
             switch (port.getSide()) {
             case UNDEFINED:
             case EAST:
                 labelBox.x += port.getSize().x
-                           + labelSpacing
+                           + desiredNodeMargin.left
                            + portLabelSpace.x
-                           + labelSpacing;
+                           + desiredNodeMargin.right; // TODO cds: I feel this is wrong (same below)
                 break;
                 
             case WEST:
-                labelBox.x -= labelSpacing
+                labelBox.x -= desiredNodeMargin.left
                            + portLabelSpace.x
-                           + labelSpacing
+                           + desiredNodeMargin.right
                            + label.getSize().x;
                 break;
                 
             case NORTH:
                 labelBox.x += port.getSize().x
-                           + labelSpacing;
-                labelBox.y -= labelSpacing
+                           + desiredNodeMargin.left;
+                labelBox.y -= desiredNodeMargin.top
                            + portLabelSpace.y
-                           + labelSpacing
+                           + desiredNodeMargin.bottom
                            + label.getSize().y;
                 break;
                 
             case SOUTH:
                 labelBox.x += port.getSize().x
-                           + labelSpacing;
+                           + desiredNodeMargin.left;
                 labelBox.y += port.getSize().y
-                           + labelSpacing
+                           + desiredNodeMargin.top
                            + portLabelSpace.y
-                           + labelSpacing;
+                           + desiredNodeMargin.bottom;
                 break;
             }
         }
