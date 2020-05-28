@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.elk.graph.json.text.ide
 Bundle-ManifestVersion: 2
-Bundle-Name: org.eclipse.elk.graph.json.text.ide
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: ELK Textual JSON Graph Format Generic IDE Services
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-Version: 0.7.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.graph.json.text.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.elk.graph.json.text,
+Require-Bundle: org.eclipse.elk.graph,
+ org.eclipse.elk.graph.json.text,
  org.eclipse.xtext.ide,
  org.eclipse.xtext.xbase.ide,
- org.eclipse.elk.graph;bundle-version="0.7.0",
  org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.graph.json.text.ide.contentassist.antlr,

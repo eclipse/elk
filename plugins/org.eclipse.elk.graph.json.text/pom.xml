@@ -18,21 +18,21 @@
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
-  <artifactId>org.eclipse.elk.graph.json.text.ide</artifactId>
-  <name>ELK Textual JSON Graph Format Generic IDE Services</name>
+  <artifactId>org.eclipse.elk.graph.json.text</artifactId>
+  <name>ELK Textual JSON Graph Format</name>
   <version>0.7.0-SNAPSHOT</version>
-  <description>Generic IDE Services for the textual ELK JSON Graph format.</description>
+  <description>An Xtext language for the JSON ELK Graph data structure.</description>
   <packaging>eclipse-plugin</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
-      <artifactId>org.eclipse.elk.graph.json.text</artifactId>
+      <artifactId>org.eclipse.elk.core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.xtext</groupId>
-      <artifactId>org.eclipse.xtext.ide</artifactId>
+      <artifactId>org.eclipse.xtext</artifactId>
       <version>${xtext-version}</version>
     </dependency>
   </dependencies>
