@@ -1,4 +1,6 @@
-# Eclipse Layout Kernel (ELK)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/eclipse/elk/master/docs/static/img/elk_with_text.svg?sanitize=true" height="150"> 
+</p>
 
 Diagrams and visual languages are a great thing,
 but getting the layout just right for them to be easily understandable
