@@ -24,7 +24,7 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
 import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 
 @SuppressWarnings("all")
-public class ElkGraphJsonSyntacticSequencer extends AbstractSyntacticSequencer {
+public abstract class AbstractElkGraphJsonSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected ElkGraphJsonGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_EdgeElement_ElkEdge_ElkEdgeSources___CommaKeyword_2_q_RightSquareBracketKeyword_3_CommaKeyword_2_0_KeySourcesParserRuleCall_1_0_ColonKeyword_1_1_LeftSquareBracketKeyword_0__p;

@@ -14,7 +14,6 @@ import com.google.inject.Provider;
 import com.google.inject.name.Names;
 import java.util.Properties;
 import org.eclipse.elk.graph.json.text.formatting2.ElkGraphJsonFormatter;
-import org.eclipse.elk.graph.json.text.generator.ElkGraphJsonGenerator;
 import org.eclipse.elk.graph.json.text.parser.antlr.ElkGraphJsonAntlrTokenFileProvider;
 import org.eclipse.elk.graph.json.text.parser.antlr.ElkGraphJsonParser;
 import org.eclipse.elk.graph.json.text.parser.antlr.internal.InternalElkGraphJsonLexer;
@@ -29,7 +28,6 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.formatting2.FormatterPreferenceValuesProvider;
 import org.eclipse.xtext.formatting2.FormatterPreferences;
 import org.eclipse.xtext.formatting2.IFormatter2;
-import org.eclipse.xtext.generator.IGenerator2;
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.IParser;
@@ -202,11 +200,6 @@ public abstract class AbstractElkGraphJsonRuntimeModule extends DefaultRuntimeMo
 	// contributed by org.eclipse.xtext.xtext.generator.builder.BuilderIntegrationFragment2
 	public void configureIResourceDescriptionsPersisted(Binder binder) {
 		binder.bind(IResourceDescriptions.class).annotatedWith(Names.named(ResourceDescriptionsProvider.PERSISTED_DESCRIPTIONS)).to(ResourceSetBasedResourceDescriptions.class);
-	}
-	
-	// contributed by org.eclipse.xtext.xtext.generator.generator.GeneratorFragment2
-	public Class<? extends IGenerator2> bindIGenerator2() {
-		return ElkGraphJsonGenerator.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.formatting.Formatter2Fragment2
