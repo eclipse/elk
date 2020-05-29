@@ -27,7 +27,7 @@ import org.eclipse.xtext.serializer.ISerializationContext;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 
 @SuppressWarnings("all")
-public class ElkGraphJsonSemanticSequencer extends AbstractDelegatingSemanticSequencer {
+public abstract class AbstractElkGraphJsonSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 
 	@Inject
 	private ElkGraphJsonGrammarAccess grammarAccess;

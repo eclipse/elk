@@ -11,6 +11,8 @@ package org.eclipse.elk.graph.json.text
 
 import org.eclipse.elk.graph.json.text.conversion.ElkGraphJsonValueConverterService
 import org.eclipse.elk.graph.json.text.naming.ElkGraphJsonQualifiedNameProvider
+import org.eclipse.elk.graph.json.text.serializer.ElkGraphJsonTransientValueService
+import org.eclipse.xtext.serializer.sequencer.ITransientValueService
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -25,5 +27,8 @@ class ElkGraphJsonRuntimeModule extends AbstractElkGraphJsonRuntimeModule {
         ElkGraphJsonQualifiedNameProvider
     }
     
-    
+    def Class<? extends ITransientValueService> bindITransientValueService2() {
+        ElkGraphJsonTransientValueService
+    }
+
 }
