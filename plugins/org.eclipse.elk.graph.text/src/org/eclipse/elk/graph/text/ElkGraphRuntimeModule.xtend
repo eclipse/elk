@@ -41,4 +41,9 @@ class ElkGraphRuntimeModule extends AbstractElkGraphRuntimeModule {
     override bindILinker() {
         ElkGraphLinker
     }
+    
+    override bindIAstFactory() {
+        ElkGraphAstFactory
+    }
+    
 }
