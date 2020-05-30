@@ -86,3 +86,9 @@ footer .logo-eclipse-white {
 footer .copyright-text {
   text-align: right;
 }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
