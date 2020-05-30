@@ -32,7 +32,7 @@ A few notes:
 ## Running Unit Tests
 
 {{% note title="A Quick Warning" mode="warning" %}}
-The unit tests currently seem to work only with Java 8 and 12.
+Due to some tycho/surefire issue the unit tests cannot be executed with Java 9 and 10.
 {{% /note %}}
 
 The unit tests require our [models repository](https://github.com/eclipse/elk-models) to be checked out as well. If it is, the following command line will run the tests:
