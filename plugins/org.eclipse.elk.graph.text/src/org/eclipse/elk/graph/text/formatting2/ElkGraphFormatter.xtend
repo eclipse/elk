@@ -44,7 +44,12 @@ class ElkGraphFormatter extends AbstractFormatter2 {
             node.regionFor.keyword(elkNodeAccess.nodeKeyword_0).append(one_space)
             interior(
                 node.regionFor.keyword(elkNodeAccess.leftCurlyBracketKeyword_2_0).prepend(one_space).append(new_line),
-                node.regionFor.keyword(elkNodeAccess.rightCurlyBracketKeyword_2_4),
+                node.regionFor.keyword(elkNodeAccess.rightCurlyBracketKeyword_2_5),
+                [indent]
+            )
+            interior(
+                node.regionFor.keyword(elkNodeAccess.leftCurlyBracketKeyword_2_3_1).prepend(one_space).append(new_line),
+                node.regionFor.keyword(elkNodeAccess.rightCurlyBracketKeyword_2_3_3).append(new_line),
                 [indent]
             )
         }

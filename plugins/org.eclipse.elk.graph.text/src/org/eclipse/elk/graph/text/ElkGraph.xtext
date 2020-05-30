@@ -22,6 +22,12 @@ ElkNode returns ElkNode:
     'node' identifier=ID ('{'
         ShapeLayout?
         properties+=Property*
+        ('individualSpacing' '{'
+            // Note that the following properties will in fact not 
+            // become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+            // using a custom 'IAstFactory'.
+            properties+=IndividualSpacingProperty*
+        '}')?
         (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
     '}')?;
 
@@ -92,6 +98,11 @@ Number returns ecore::EDouble:
 
 Property returns ElkPropertyToValueMapEntry:
     key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null');
+
+// To differentiate individual spacing options from all other options in a custom 'IAstFactory' (see also above), 
+// have a second property rule with a different name.
+IndividualSpacingProperty returns ElkPropertyToValueMapEntry:
+    Property;
 
 PropertyKey returns IProperty hidden():
     ID ('.' ID)*;
