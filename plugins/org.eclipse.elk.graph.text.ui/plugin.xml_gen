@@ -204,6 +204,15 @@
 			</activeWhen>
 		</handler>
 	</extension>
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+			base-type="org.eclipse.core.runtime.text"
+			file-extensions="elkt"
+			id="org.eclipse.elk.graph.text.ElkGraph.contenttype"
+			name="ElkGraph File"
+			priority="normal">
+		</content-type>
+	</extension>
 	<!-- adding resource factories -->
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
@@ -388,12 +397,18 @@
 			class="org.eclipse.elk.graph.text.ui.ElkGraphExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="elkt">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.elk.graph.text.ElkGraph.contenttype"
+			contentViewerId="org.eclipse.elk.graph.text.ElkGraph.compare.contentViewers" />
 	</extension>
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer id="org.eclipse.elk.graph.text.ElkGraph.compare.contentMergeViewers"
 			class="org.eclipse.elk.graph.text.ui.ElkGraphExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
 			extensions="elkt" label="ElkGraph Compare">
 		</viewer>
+		<contentTypeBinding
+			contentTypeId="org.eclipse.elk.graph.text.ElkGraph.contenttype"
+			contentMergeViewerId="org.eclipse.elk.graph.text.ElkGraph.compare.contentMergeViewers" />
 	</extension>
 	<extension point="org.eclipse.ui.editors.documentProviders">
 		<provider id="org.eclipse.elk.graph.text.ElkGraph.editors.documentProviders"

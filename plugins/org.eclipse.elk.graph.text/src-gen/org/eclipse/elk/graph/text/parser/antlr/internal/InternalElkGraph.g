@@ -305,12 +305,45 @@ ruleElkNode returns [EObject current=null]
 				)
 			)*
 			(
+				otherlv_5='individualSpacing'
+				{
+					newLeafNode(otherlv_5, grammarAccess.getElkNodeAccess().getIndividualSpacingKeyword_2_3_0());
+				}
+				otherlv_6='{'
+				{
+					newLeafNode(otherlv_6, grammarAccess.getElkNodeAccess().getLeftCurlyBracketKeyword_2_3_1());
+				}
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_0_0());
+							newCompositeNode(grammarAccess.getElkNodeAccess().getPropertiesIndividualSpacingPropertyParserRuleCall_2_3_2_0());
 						}
-						lv_labels_5_0=ruleElkLabel
+						lv_properties_7_0=ruleIndividualSpacingProperty
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getElkNodeRule());
+							}
+							add(
+								$current,
+								"properties",
+								lv_properties_7_0,
+								"org.eclipse.elk.graph.text.ElkGraph.IndividualSpacingProperty");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)*
+				otherlv_8='}'
+				{
+					newLeafNode(otherlv_8, grammarAccess.getElkNodeAccess().getRightCurlyBracketKeyword_2_3_3());
+				}
+			)?
+			(
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_4_0_0());
+						}
+						lv_labels_9_0=ruleElkLabel
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getElkNodeRule());
@@ -318,7 +351,7 @@ ruleElkNode returns [EObject current=null]
 							add(
 								$current,
 								"labels",
-								lv_labels_5_0,
+								lv_labels_9_0,
 								"org.eclipse.elk.graph.text.ElkGraph.ElkLabel");
 							afterParserOrEnumRuleCall();
 						}
@@ -328,9 +361,9 @@ ruleElkNode returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_1_0());
+							newCompositeNode(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_4_1_0());
 						}
-						lv_ports_6_0=ruleElkPort
+						lv_ports_10_0=ruleElkPort
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getElkNodeRule());
@@ -338,7 +371,7 @@ ruleElkNode returns [EObject current=null]
 							add(
 								$current,
 								"ports",
-								lv_ports_6_0,
+								lv_ports_10_0,
 								"org.eclipse.elk.graph.text.ElkGraph.ElkPort");
 							afterParserOrEnumRuleCall();
 						}
@@ -348,9 +381,9 @@ ruleElkNode returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_2_0());
+							newCompositeNode(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_4_2_0());
 						}
-						lv_children_7_0=ruleElkNode
+						lv_children_11_0=ruleElkNode
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getElkNodeRule());
@@ -358,7 +391,7 @@ ruleElkNode returns [EObject current=null]
 							add(
 								$current,
 								"children",
-								lv_children_7_0,
+								lv_children_11_0,
 								"org.eclipse.elk.graph.text.ElkGraph.ElkNode");
 							afterParserOrEnumRuleCall();
 						}
@@ -368,9 +401,9 @@ ruleElkNode returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_3_0());
+							newCompositeNode(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_4_3_0());
 						}
-						lv_containedEdges_8_0=ruleElkEdge
+						lv_containedEdges_12_0=ruleElkEdge
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getElkNodeRule());
@@ -378,16 +411,16 @@ ruleElkNode returns [EObject current=null]
 							add(
 								$current,
 								"containedEdges",
-								lv_containedEdges_8_0,
+								lv_containedEdges_12_0,
 								"org.eclipse.elk.graph.text.ElkGraph.ElkEdge");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
 			)*
-			otherlv_9='}'
+			otherlv_13='}'
 			{
-				newLeafNode(otherlv_9, grammarAccess.getElkNodeAccess().getRightCurlyBracketKeyword_2_4());
+				newLeafNode(otherlv_13, grammarAccess.getElkNodeAccess().getRightCurlyBracketKeyword_2_5());
 			}
 		)?
 	)
@@ -1972,6 +2005,31 @@ ruleProperty returns [EObject current=null]
 			}
 		)
 	)
+;
+
+// Entry rule entryRuleIndividualSpacingProperty
+entryRuleIndividualSpacingProperty returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getIndividualSpacingPropertyRule()); }
+	iv_ruleIndividualSpacingProperty=ruleIndividualSpacingProperty
+	{ $current=$iv_ruleIndividualSpacingProperty.current; }
+	EOF;
+
+// Rule IndividualSpacingProperty
+ruleIndividualSpacingProperty returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	{
+		newCompositeNode(grammarAccess.getIndividualSpacingPropertyAccess().getPropertyParserRuleCall());
+	}
+	this_Property_0=ruleProperty
+	{
+		$current = $this_Property_0.current;
+		afterParserOrEnumRuleCall();
+	}
 ;
 
 // Entry rule entryRulePropertyKey

@@ -124,25 +124,39 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cShapeLayoutParserRuleCall_2_1 = (RuleCall)cGroup_2.eContents().get(1);
 		private final Assignment cPropertiesAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
 		private final RuleCall cPropertiesPropertyParserRuleCall_2_2_0 = (RuleCall)cPropertiesAssignment_2_2.eContents().get(0);
-		private final Alternatives cAlternatives_2_3 = (Alternatives)cGroup_2.eContents().get(3);
-		private final Assignment cLabelsAssignment_2_3_0 = (Assignment)cAlternatives_2_3.eContents().get(0);
-		private final RuleCall cLabelsElkLabelParserRuleCall_2_3_0_0 = (RuleCall)cLabelsAssignment_2_3_0.eContents().get(0);
-		private final Assignment cPortsAssignment_2_3_1 = (Assignment)cAlternatives_2_3.eContents().get(1);
-		private final RuleCall cPortsElkPortParserRuleCall_2_3_1_0 = (RuleCall)cPortsAssignment_2_3_1.eContents().get(0);
-		private final Assignment cChildrenAssignment_2_3_2 = (Assignment)cAlternatives_2_3.eContents().get(2);
-		private final RuleCall cChildrenElkNodeParserRuleCall_2_3_2_0 = (RuleCall)cChildrenAssignment_2_3_2.eContents().get(0);
-		private final Assignment cContainedEdgesAssignment_2_3_3 = (Assignment)cAlternatives_2_3.eContents().get(3);
-		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_2_3_3_0 = (RuleCall)cContainedEdgesAssignment_2_3_3.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_2_4 = (Keyword)cGroup_2.eContents().get(4);
+		private final Group cGroup_2_3 = (Group)cGroup_2.eContents().get(3);
+		private final Keyword cIndividualSpacingKeyword_2_3_0 = (Keyword)cGroup_2_3.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2_3_1 = (Keyword)cGroup_2_3.eContents().get(1);
+		private final Assignment cPropertiesAssignment_2_3_2 = (Assignment)cGroup_2_3.eContents().get(2);
+		private final RuleCall cPropertiesIndividualSpacingPropertyParserRuleCall_2_3_2_0 = (RuleCall)cPropertiesAssignment_2_3_2.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_2_3_3 = (Keyword)cGroup_2_3.eContents().get(3);
+		private final Alternatives cAlternatives_2_4 = (Alternatives)cGroup_2.eContents().get(4);
+		private final Assignment cLabelsAssignment_2_4_0 = (Assignment)cAlternatives_2_4.eContents().get(0);
+		private final RuleCall cLabelsElkLabelParserRuleCall_2_4_0_0 = (RuleCall)cLabelsAssignment_2_4_0.eContents().get(0);
+		private final Assignment cPortsAssignment_2_4_1 = (Assignment)cAlternatives_2_4.eContents().get(1);
+		private final RuleCall cPortsElkPortParserRuleCall_2_4_1_0 = (RuleCall)cPortsAssignment_2_4_1.eContents().get(0);
+		private final Assignment cChildrenAssignment_2_4_2 = (Assignment)cAlternatives_2_4.eContents().get(2);
+		private final RuleCall cChildrenElkNodeParserRuleCall_2_4_2_0 = (RuleCall)cChildrenAssignment_2_4_2.eContents().get(0);
+		private final Assignment cContainedEdgesAssignment_2_4_3 = (Assignment)cAlternatives_2_4.eContents().get(3);
+		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_2_4_3_0 = (RuleCall)cContainedEdgesAssignment_2_4_3.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_2_5 = (Keyword)cGroup_2.eContents().get(5);
 		
 		//ElkNode:
 		//	'node' identifier=ID ('{'
 		//	ShapeLayout?
-		//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
+		//	properties+=Property* ('individualSpacing' '{'
+		//	// Note that the following properties will in fact not 
+		//	// become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+		//	// using a custom 'IAstFactory'.
+		//	properties+=IndividualSpacingProperty*
+		//	'}')? (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 		//	'}')?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'node' identifier=ID ('{' ShapeLayout? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
+		//'node' identifier=ID ('{' ShapeLayout? properties+=Property* ('individualSpacing' '{' // Note that the following properties will in fact not 
+		//// become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+		//// using a custom 'IAstFactory'.
+		//properties+=IndividualSpacingProperty* '}')? (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
 		//containedEdges+=ElkEdge)* '}')?
 		public Group getGroup() { return cGroup; }
 		
@@ -155,7 +169,10 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIdentifierIDTerminalRuleCall_1_0() { return cIdentifierIDTerminalRuleCall_1_0; }
 		
-		//('{' ShapeLayout? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
+		//('{' ShapeLayout? properties+=Property* ('individualSpacing' '{' // Note that the following properties will in fact not 
+		//// become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+		//// using a custom 'IAstFactory'.
+		//properties+=IndividualSpacingProperty* '}')? (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
 		//containedEdges+=ElkEdge)* '}')?
 		public Group getGroup_2() { return cGroup_2; }
 		
@@ -171,35 +188,59 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//Property
 		public RuleCall getPropertiesPropertyParserRuleCall_2_2_0() { return cPropertiesPropertyParserRuleCall_2_2_0; }
 		
-		//(labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
-		public Alternatives getAlternatives_2_3() { return cAlternatives_2_3; }
+		//('individualSpacing' '{' // Note that the following properties will in fact not 
+		//// become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+		//// using a custom 'IAstFactory'.
+		//properties+=IndividualSpacingProperty* '}')?
+		public Group getGroup_2_3() { return cGroup_2_3; }
 		
-		//labels+=ElkLabel
-		public Assignment getLabelsAssignment_2_3_0() { return cLabelsAssignment_2_3_0; }
+		//'individualSpacing'
+		public Keyword getIndividualSpacingKeyword_2_3_0() { return cIndividualSpacingKeyword_2_3_0; }
 		
-		//ElkLabel
-		public RuleCall getLabelsElkLabelParserRuleCall_2_3_0_0() { return cLabelsElkLabelParserRuleCall_2_3_0_0; }
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2_3_1() { return cLeftCurlyBracketKeyword_2_3_1; }
 		
-		//ports+=ElkPort
-		public Assignment getPortsAssignment_2_3_1() { return cPortsAssignment_2_3_1; }
+		//// Note that the following properties will in fact not 
+		//// become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+		//// using a custom 'IAstFactory'.
+		//properties+=IndividualSpacingProperty*
+		public Assignment getPropertiesAssignment_2_3_2() { return cPropertiesAssignment_2_3_2; }
 		
-		//ElkPort
-		public RuleCall getPortsElkPortParserRuleCall_2_3_1_0() { return cPortsElkPortParserRuleCall_2_3_1_0; }
-		
-		//children+=ElkNode
-		public Assignment getChildrenAssignment_2_3_2() { return cChildrenAssignment_2_3_2; }
-		
-		//ElkNode
-		public RuleCall getChildrenElkNodeParserRuleCall_2_3_2_0() { return cChildrenElkNodeParserRuleCall_2_3_2_0; }
-		
-		//containedEdges+=ElkEdge
-		public Assignment getContainedEdgesAssignment_2_3_3() { return cContainedEdgesAssignment_2_3_3; }
-		
-		//ElkEdge
-		public RuleCall getContainedEdgesElkEdgeParserRuleCall_2_3_3_0() { return cContainedEdgesElkEdgeParserRuleCall_2_3_3_0; }
+		//IndividualSpacingProperty
+		public RuleCall getPropertiesIndividualSpacingPropertyParserRuleCall_2_3_2_0() { return cPropertiesIndividualSpacingPropertyParserRuleCall_2_3_2_0; }
 		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_2_4() { return cRightCurlyBracketKeyword_2_4; }
+		public Keyword getRightCurlyBracketKeyword_2_3_3() { return cRightCurlyBracketKeyword_2_3_3; }
+		
+		//(labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
+		public Alternatives getAlternatives_2_4() { return cAlternatives_2_4; }
+		
+		//labels+=ElkLabel
+		public Assignment getLabelsAssignment_2_4_0() { return cLabelsAssignment_2_4_0; }
+		
+		//ElkLabel
+		public RuleCall getLabelsElkLabelParserRuleCall_2_4_0_0() { return cLabelsElkLabelParserRuleCall_2_4_0_0; }
+		
+		//ports+=ElkPort
+		public Assignment getPortsAssignment_2_4_1() { return cPortsAssignment_2_4_1; }
+		
+		//ElkPort
+		public RuleCall getPortsElkPortParserRuleCall_2_4_1_0() { return cPortsElkPortParserRuleCall_2_4_1_0; }
+		
+		//children+=ElkNode
+		public Assignment getChildrenAssignment_2_4_2() { return cChildrenAssignment_2_4_2; }
+		
+		//ElkNode
+		public RuleCall getChildrenElkNodeParserRuleCall_2_4_2_0() { return cChildrenElkNodeParserRuleCall_2_4_2_0; }
+		
+		//containedEdges+=ElkEdge
+		public Assignment getContainedEdgesAssignment_2_4_3() { return cContainedEdgesAssignment_2_4_3; }
+		
+		//ElkEdge
+		public RuleCall getContainedEdgesElkEdgeParserRuleCall_2_4_3_0() { return cContainedEdgesElkEdgeParserRuleCall_2_4_3_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_2_5() { return cRightCurlyBracketKeyword_2_5; }
 	}
 	public class ElkLabelElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.ElkLabel");
@@ -373,7 +414,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_1() { return cLeftSquareBracketKeyword_1; }
 		
-		//('position' ':' x=Number ',' y=Number)? & ('size' ':' width=Number ',' height=Number)?
+		//(('position' ':' x=Number ',' y=Number)? & ('size' ':' width=Number ',' height=Number)?)
 		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
 		
 		//('position' ':' x=Number ',' y=Number)?
@@ -591,7 +632,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_1() { return cLeftSquareBracketKeyword_1; }
 		
-		//sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+
+		//(sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+)
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//sections+=ElkSingleEdgeSection
@@ -672,15 +713,15 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//{ElkEdgeSection}
 		public Action getElkEdgeSectionAction_0() { return cElkEdgeSectionAction_0; }
 		
-		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
 		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		//properties+=Property*
+		//properties+=Property*)
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)?
+		//endX=Number ',' endY=Number)?)
 		public UnorderedGroup getUnorderedGroup_1_0() { return cUnorderedGroup_1_0; }
 		
 		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
@@ -918,15 +959,15 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_3() { return cLeftSquareBracketKeyword_3; }
 		
-		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
 		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		//properties+=Property*
+		//properties+=Property*)
 		public Group getGroup_4() { return cGroup_4; }
 		
-		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)?
+		//endX=Number ',' endY=Number)?)
 		public UnorderedGroup getUnorderedGroup_4_0() { return cUnorderedGroup_4_0; }
 		
 		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
@@ -1159,7 +1200,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//':'
 		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
 		
-		//value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null'
+		//(value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//value=StringValue
@@ -1188,6 +1229,19 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'null'
 		public Keyword getNullKeyword_2_4() { return cNullKeyword_2_4; }
+	}
+	public class IndividualSpacingPropertyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.IndividualSpacingProperty");
+		private final RuleCall cPropertyParserRuleCall = (RuleCall)rule.eContents().get(1);
+		
+		//// To differentiate individual spacing options from all other options in a custom 'IAstFactory' (see also above), 
+		//// have a second property rule with a different name.
+		//IndividualSpacingProperty ElkPropertyToValueMapEntry:
+		//	Property;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//Property
+		public RuleCall getPropertyParserRuleCall() { return cPropertyParserRuleCall; }
 	}
 	public class PropertyKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.PropertyKey");
@@ -1291,6 +1345,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	private final QualifiedIdElements pQualifiedId;
 	private final NumberElements pNumber;
 	private final PropertyElements pProperty;
+	private final IndividualSpacingPropertyElements pIndividualSpacingProperty;
 	private final PropertyKeyElements pPropertyKey;
 	private final StringValueElements pStringValue;
 	private final QualifiedIdValueElements pQualifiedIdValue;
@@ -1321,6 +1376,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		this.pQualifiedId = new QualifiedIdElements();
 		this.pNumber = new NumberElements();
 		this.pProperty = new PropertyElements();
+		this.pIndividualSpacingProperty = new IndividualSpacingPropertyElements();
 		this.pPropertyKey = new PropertyKeyElements();
 		this.pStringValue = new StringValueElements();
 		this.pQualifiedIdValue = new QualifiedIdValueElements();
@@ -1372,7 +1428,12 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	//ElkNode:
 	//	'node' identifier=ID ('{'
 	//	ShapeLayout?
-	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
+	//	properties+=Property* ('individualSpacing' '{'
+	//	// Note that the following properties will in fact not 
+	//	// become properties of the ElkNode, but be placed in an 'IndividualSpacings' layout option
+	//	// using a custom 'IAstFactory'.
+	//	properties+=IndividualSpacingProperty*
+	//	'}')? (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	//	'}')?;
 	public ElkNodeElements getElkNodeAccess() {
 		return pElkNode;
@@ -1516,6 +1577,18 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getPropertyAccess().getRule();
 	}
 	
+	//// To differentiate individual spacing options from all other options in a custom 'IAstFactory' (see also above), 
+	//// have a second property rule with a different name.
+	//IndividualSpacingProperty ElkPropertyToValueMapEntry:
+	//	Property;
+	public IndividualSpacingPropertyElements getIndividualSpacingPropertyAccess() {
+		return pIndividualSpacingProperty;
+	}
+	
+	public ParserRule getIndividualSpacingPropertyRule() {
+		return getIndividualSpacingPropertyAccess().getRule();
+	}
+	
 	//PropertyKey IProperty hidden():
 	//	ID ('.' ID)*;
 	public PropertyKeyElements getPropertyKeyAccess() {
@@ -1591,8 +1664,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal STRING:
-	//	'"' ('\\' . | !('\\' | '"'))* '"' |
-	//	"'" ('\\' . | !('\\' | "'"))* "'";
+	//	'"' ('\\' . | !('\\' | '"'))* '"' | "'" ('\\' . | !('\\' | "'"))* "'";
 	public TerminalRule getSTRINGRule() {
 		return gaTerminals.getSTRINGRule();
 	}

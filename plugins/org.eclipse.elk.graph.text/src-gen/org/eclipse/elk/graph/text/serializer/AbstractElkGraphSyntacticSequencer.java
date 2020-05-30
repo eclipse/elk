@@ -28,11 +28,13 @@ public abstract class AbstractElkGraphSyntacticSequencer extends AbstractSyntact
 
 	protected ElkGraphGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q;
+	protected AbstractElementAlias match_ElkNode___IndividualSpacingKeyword_2_3_0_LeftCurlyBracketKeyword_2_3_1_RightCurlyBracketKeyword_2_3_3__q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (ElkGraphGrammarAccess) access;
 		match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getElkEdgeAccess().getLeftCurlyBracketKeyword_7_0()), new TokenAlias(false, false, grammarAccess.getElkEdgeAccess().getRightCurlyBracketKeyword_7_4()));
+		match_ElkNode___IndividualSpacingKeyword_2_3_0_LeftCurlyBracketKeyword_2_3_1_RightCurlyBracketKeyword_2_3_3__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getElkNodeAccess().getIndividualSpacingKeyword_2_3_0()), new TokenAlias(false, false, grammarAccess.getElkNodeAccess().getLeftCurlyBracketKeyword_2_3_1()), new TokenAlias(false, false, grammarAccess.getElkNodeAccess().getRightCurlyBracketKeyword_2_3_3()));
 	}
 	
 	@Override
@@ -49,6 +51,8 @@ public abstract class AbstractElkGraphSyntacticSequencer extends AbstractSyntact
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if (match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q.equals(syntax))
 				emit_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ElkNode___IndividualSpacingKeyword_2_3_0_LeftCurlyBracketKeyword_2_3_1_RightCurlyBracketKeyword_2_3_3__q.equals(syntax))
+				emit_ElkNode___IndividualSpacingKeyword_2_3_0_LeftCurlyBracketKeyword_2_3_1_RightCurlyBracketKeyword_2_3_3__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -61,6 +65,35 @@ public abstract class AbstractElkGraphSyntacticSequencer extends AbstractSyntact
 	 *     targets+=[ElkConnectableShape|QualifiedId] (ambiguity) (rule end)
 	 */
 	protected void emit_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     ('individualSpacing' '{' '}')?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     height=Number ']' (ambiguity) '}' (rule end)
+	 *     height=Number ']' (ambiguity) children+=ElkNode
+	 *     height=Number ']' (ambiguity) containedEdges+=ElkEdge
+	 *     height=Number ']' (ambiguity) labels+=ElkLabel
+	 *     height=Number ']' (ambiguity) ports+=ElkPort
+	 *     identifier=ID '{' (ambiguity) children+=ElkNode
+	 *     identifier=ID '{' (ambiguity) containedEdges+=ElkEdge
+	 *     identifier=ID '{' (ambiguity) labels+=ElkLabel
+	 *     identifier=ID '{' (ambiguity) ports+=ElkPort
+	 *     properties+=Property (ambiguity) '}' (rule end)
+	 *     properties+=Property (ambiguity) children+=ElkNode
+	 *     properties+=Property (ambiguity) containedEdges+=ElkEdge
+	 *     properties+=Property (ambiguity) labels+=ElkLabel
+	 *     properties+=Property (ambiguity) ports+=ElkPort
+	 *     y=Number ']' (ambiguity) '}' (rule end)
+	 *     y=Number ']' (ambiguity) children+=ElkNode
+	 *     y=Number ']' (ambiguity) containedEdges+=ElkEdge
+	 *     y=Number ']' (ambiguity) labels+=ElkLabel
+	 *     y=Number ']' (ambiguity) ports+=ElkPort
+	 */
+	protected void emit_ElkNode___IndividualSpacingKeyword_2_3_0_LeftCurlyBracketKeyword_2_3_1_RightCurlyBracketKeyword_2_3_3__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

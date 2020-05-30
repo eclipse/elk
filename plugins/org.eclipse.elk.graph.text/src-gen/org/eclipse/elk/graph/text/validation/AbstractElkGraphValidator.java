@@ -22,5 +22,4 @@ public abstract class AbstractElkGraphValidator extends AbstractDeclarativeValid
 		result.add(EPackage.Registry.INSTANCE.getEPackage("http://www.eclipse.org/elk/ElkGraph"));
 		return result;
 	}
-	
 }

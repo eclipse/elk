@@ -169,6 +169,7 @@ public abstract class AbstractElkGraphSemanticSequencer extends AbstractDelegati
 	 *         identifier=ID 
 	 *         ((x=Number y=Number) | (width=Number height=Number))* 
 	 *         properties+=Property* 
+	 *         properties+=IndividualSpacingProperty* 
 	 *         (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	 *     )
 	 */
@@ -212,6 +213,7 @@ public abstract class AbstractElkGraphSemanticSequencer extends AbstractDelegati
 	/**
 	 * Contexts:
 	 *     Property returns ElkPropertyToValueMapEntry
+	 *     IndividualSpacingProperty returns ElkPropertyToValueMapEntry
 	 *
 	 * Constraint:
 	 *     (key=PropertyKey (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)?)
