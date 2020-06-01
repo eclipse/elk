@@ -46,10 +46,13 @@
     <module>org.eclipse.elk.core.service</module>
     <module>org.eclipse.elk.core.ui</module>
     <module>org.eclipse.elk.graph</module>
-    <module>org.eclipse.elk.graph.json</module>
     <module>org.eclipse.elk.graph.text</module>
     <module>org.eclipse.elk.graph.text.ide</module>
     <module>org.eclipse.elk.graph.text.ui</module>
+    <module>org.eclipse.elk.graph.json</module>
+    <module>org.eclipse.elk.graph.json.text</module>
+    <module>org.eclipse.elk.graph.json.text.ide</module>
+    <module>org.eclipse.elk.graph.json.text.ui</module>
   </modules>
 
 </project>

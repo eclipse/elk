@@ -99,6 +99,27 @@ SPDX-License-Identifier: EPL-2.0
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.elk.graph.json.text"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.graph.json.text.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.graph.json.text.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.elk.core.debug.grandom"
          download-size="0"
          install-size="0"
