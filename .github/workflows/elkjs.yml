@@ -1,3 +1,4 @@
+# To verify that changes of a PR do not break elkjs. 
 name: elkjs
 
 on: 
@@ -7,14 +8,16 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [10.x]
+        # We check against LTSs supported by GWT
+        # 8  - LTS 
+        # 11 - LTS
+        java-version: [ 8, 11 ]
 
     steps:
+    # Checkout the repository of both elk and elkjs, place them next to each other. 
     - uses: actions/checkout@v2
       with:
         path: elk
@@ -22,6 +25,7 @@ jobs:
       with:
         repository: kieler/elkjs
         path: elkjs
+    # Prepare and use caches for both gradle and npm.
     - name: Cache gradle packages
       uses: actions/cache@v1
       with:
@@ -34,16 +38,18 @@ jobs:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
         restore-keys: ${{ runner.os }}-node-
-    - name: Set up JDK 1.8
+    # elkjs (or rather GWT) requires Java 1.8
+    - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.java-version }}
     - name: Grant execute permission for gradlew
       run: chmod +x $GITHUB_WORKSPACE/elkjs/gradlew
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 10.x
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 10.x
+    # Finally build elkjs and run its tests
     - name: npm install, build, and test
       run: |
         npm install

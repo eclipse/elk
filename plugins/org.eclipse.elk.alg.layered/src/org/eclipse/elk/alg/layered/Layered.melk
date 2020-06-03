@@ -155,7 +155,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.layering.minWidth.upperBoundOnWidth
     supports org.eclipse.elk.alg.layered.layering.minWidth.upperLayerEstimationScalingFactor
     supports org.eclipse.elk.position
-    supports northOrSouthPort
+    supports allowNonFlowPortsToSwitchSides
     supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
     supports edgeLabels.sideSelection
     supports edgeLabels.centerLabelPlacementStrategy
@@ -909,13 +909,17 @@ advanced option mergeHierarchyEdges: boolean {
     targets parents
 }
 
-advanced option northOrSouthPort: boolean {
-    label "North or South Port"
+advanced option allowNonFlowPortsToSwitchSides: boolean {
+    label "Allow Non-Flow Ports To Switch Sides"
     description
-        "Specifies that this port can either be placed on the north side of a node or on the south
-        side (if port constraints permit)"
+        "Specifies whether non-flow ports may switch sides if their node's port constraints are either FIXED_SIDE
+         or FIXED_ORDER. A non-flow port is a port on a side that is not part of the currently configured layout flow.
+         For instance, given a left-to-right layout direction, north and south ports would be considered non-flow ports.
+         Further note that the underlying criterium whether to switch sides or not solely relies on the
+         minimization of edge crossings. Hence, edge length and other aesthetics criteria are not addressed."
     default = false
     targets ports
+    legacyIds org.eclipse.elk.layered.northOrSouthPort
 }
 
 advanced option portSortingStrategy: PortSortingStrategy {

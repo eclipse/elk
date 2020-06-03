@@ -87,8 +87,8 @@ class SweepCopy {
      */
     public void transferNodeAndPortOrdersToGraph(final LGraph lGraph, final boolean setPortContstraints) {
         
-        // the 'NORTH_OR_SOUTH_PORT' option allows the crossing minimizer to decide 
-        // the side a corresponding dummy node is placed on in order to reduce the number of crossings
+        // the {@link LayeredOptions.ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES} option allows the crossing minimizer 
+        // to decide the side a corresponding dummy node is placed on in order to reduce the number of crossings
         // as a consequence the configured port side may not be valid anymore and has to be corrected
         List<LNode> northSouthPortDummies = Lists.newArrayList();
         Set<LNode> updatePortOrder = Sets.newHashSet();

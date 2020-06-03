@@ -212,10 +212,10 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
                     // In addition, northern dummy nodes must appear before the regular node
                     dummy.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, node);
                  
-                    // If originPort has port constraint NORTH_OR_SOUTH_PORT,
+                    // If originPort has port constraint ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES,
                     // do not apply successor constraints to the dummy node dummy.
                     // Their position will be determined according to their barycenter value.
-                    // If originPort does not have the port constraint NORTH_OR_SOUTH_PORT,
+                    // If originPort does not have the port constraint ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES,
                     // the dummy node dummy needs to appear before the regular node.
 
                     // Each dummy node has least one port (there may be two if an odd port
@@ -225,7 +225,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
                     // The port the dummy node was created for
                     LPort originPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
 
-                    if (!originPort.getProperty(LayeredOptions.NORTH_OR_SOUTH_PORT)) {
+                    if (!originPort.getProperty(LayeredOptions.ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES)) {
                         dummy.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
                                 successor);
                     }
@@ -255,10 +255,10 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
                     // In addition, southern dummy nodes must appear after the regular node
                     dummy.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, node);
 
-                    // If originPort has port constraint NORTH_OR_SOUTH_PORT,
+                    // If originPort has port constraint ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES,
                     // do not apply successor constraints to the dummy node dummy.
                     // Their position will be determined according to their barycenter value.
-                    // If originPort does not have the port constraint NORTH_OR_SOUTH_PORT,
+                    // If originPort does not have the port constraint ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES,
                     // the dummy node dummy needs to appear before the regular node.
 
                     // Each dummy node has at least one port (there may be two if an odd port
@@ -268,7 +268,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
                     // The port the dummy node was created for
                     LPort originPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
 
-                    if (!originPort.getProperty(LayeredOptions.NORTH_OR_SOUTH_PORT)) {
+                    if (!originPort.getProperty(LayeredOptions.ALLOW_NON_FLOW_PORTS_TO_SWITCH_SIDES)) {
                         predecessor.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
                                 dummy);
                     }

@@ -1,3 +1,4 @@
+# To verify that the changes of a PR do not break the build and pass the tests. 
 name: ELK CI
 
 on:
@@ -10,10 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # 9--11 are known to fail due to some dependency issue(s)
-        java-version: [ 8, 12 ]
+        # We check LTS versions and the latest release
+        # 8  - LTS
+        # 11 - LTS
+        # 14 - latest
+        java-version: [ 8, 11, 14 ]
   
     steps:
+    # Checkout the reposity of both elk and elk-models (the latter is required for the tests)
     - uses: actions/checkout@v2
       with:
         path: elk
@@ -21,6 +26,7 @@ jobs:
       with:
         repository: eclipse/elk-models
         path: elk-models
+    # Prepare and use a cache for maven
     - uses: actions/cache@v1
       with:
         path: ~/.m2/repository
@@ -32,5 +38,13 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
     - name: Build and verify with maven
+      # Run mvn in the 'build' folder
       working-directory: /home/runner/work/elk/elk/elk/build/
-      run: mvn --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models --fail-at-end --no-transfer-progress clean verify
+      # As line breaks do not seem to be supported, env variables are used as workaround to make the mvn call readable
+      run: mvn $opts $meta $doc $test $test_models clean verify
+      env: 
+        opts: --fail-at-end --no-transfer-progress
+        meta: --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly
+        doc: --define elk.metadata.documentation.outputPath=/home/runner/work/elk/elk/elk/docs
+        test: --define tests.paths.elk-repo=/home/runner/work/elk/elk/elk
+        test_models: --define tests.paths.models-repo=/home/runner/work/elk/elk/elk-models
