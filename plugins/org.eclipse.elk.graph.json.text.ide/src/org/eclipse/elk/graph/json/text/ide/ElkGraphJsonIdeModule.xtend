@@ -9,9 +9,16 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.json.text.ide
 
+import org.eclipse.elk.graph.json.text.ide.contentassist.ElkGraphJsonProposalProvider
+import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 
 /**
  * Use this class to register ide components.
  */
 class ElkGraphJsonIdeModule extends AbstractElkGraphJsonIdeModule {
+        
+    def Class<? extends IdeContentProposalProvider> bindIdeContentProposalProvider() {
+        ElkGraphJsonProposalProvider
+    }
+    
 }
