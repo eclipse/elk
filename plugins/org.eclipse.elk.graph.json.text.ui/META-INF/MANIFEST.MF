@@ -27,4 +27,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.graph.json.text.ui.quickfix,
  org.eclipse.elk.graph.json.text.ui.contentassist,
  org.eclipse.elk.graph.json.text.ui.internal
-Bundle-Activator: org.eclipse.elk.graph.json.text.ui.internal.TextActivator
+Bundle-Activator: org.eclipse.elk.graph.json.text.ui.ElkGraphJsonTextUiActivator
