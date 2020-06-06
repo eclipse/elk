@@ -12,24 +12,15 @@ package org.eclipse.elk.graph.text.ide.contentassist
 import com.google.common.base.Predicate
 import com.google.inject.Inject
 import com.google.inject.Provider
-import java.util.Collections
 import java.util.List
-import java.util.Set
 import org.eclipse.elk.core.data.ILayoutMetaData
-import org.eclipse.elk.core.data.LayoutAlgorithmData
-import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.data.LayoutDataContentAssist
 import org.eclipse.elk.core.data.LayoutOptionData
-import org.eclipse.elk.core.data.LayoutOptionData.Type
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkGraphElement
-import org.eclipse.elk.graph.ElkLabel
-import org.eclipse.elk.graph.ElkNode
-import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess
-import org.eclipse.elk.graph.util.ElkGraphUtil
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtext.Assignment
@@ -44,7 +35,6 @@ import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.util.Strings
 
-import static extension org.eclipse.elk.graph.text.ElkGraphTextUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 
 /**
@@ -98,80 +88,24 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     }
     
     protected def void completePropertyKey(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
-        switch model: context.currentModel {
-            ElkNode: {
-                var targets = newHashSet(LayoutOptionData.Target.NODES)
-                if (!model.children.empty) {
-                    targets.add(LayoutOptionData.Target.PARENTS)
-                }
-                val responsibleLayoutAlgorithm = model.parent === null ? model.algorithm : model.parent.algorithm
-
-                proposeProperties(model, responsibleLayoutAlgorithm, targets, context, acceptor)
-            }
-            ElkEdge: {
-                proposeProperties(model, model.algorithm, LayoutOptionData.Target.EDGES, context, acceptor)
-            }
-            ElkPort: {
-                proposeProperties(model, model.algorithm, LayoutOptionData.Target.PORTS, context, acceptor)
-            }
-            ElkLabel: {
-                proposeProperties(model, model.algorithm, LayoutOptionData.Target.LABELS, context, acceptor)
-            }
-        }
-    }
-    
-    protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
-        LayoutOptionData.Target targetType, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
-        proposeProperties(
-            element,
-            algorithmData,
-            targetType !== null ? #{targetType} : #{},
-            context,
-            acceptor)
-    }
-    
-    protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
-        Set<LayoutOptionData.Target> targetTypes, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         if (conflictHelper.existsConflict('a', context)) {
             // Early-exit in case any property id would conflict with the previous token
             return
         }
-        val metaDataService = LayoutMetaDataService.instance
-        val filteredOptions = metaDataService.optionData.filter[ o |
-            (targetTypes.nullOrEmpty || !Collections.disjoint(o.targets, targetTypes))
-            && (algorithmData === null || algorithmData.knowsOption(o) || CoreOptions.ALGORITHM == o)
-            && (element === null || !element.properties.map.containsKey(o))
-        ]
-        for (option : filteredOptions) {
-            val matchesName = !context.prefix.empty && option.name.toLowerCase.contains(context.prefix.toLowerCase)
-            val idSplit = Strings.split(option.id, '.')
-            val prefixSplit = if (!matchesName) Strings.split(context.prefix, '.')
-            var foundMatch = false
-            var i = idSplit.size - 1
-            if (i >= 1 && option.group == idSplit.get(i - 1)) {
-                i--
-            }
-            while (i >= 0 && !foundMatch) {
-                val suffix = idSplit.drop(i)
-                if (metaDataService.getOptionDataBySuffix(suffix.join('.')) !== null
-                        && (matchesName || suffix.startsWith(prefixSplit)))
-                    foundMatch = true
-                else
-                    i--
-            }
-            if (foundMatch) {
-                val suffix = idSplit.drop(i)
+        val model = context.currentModel
+        if (model instanceof ElkGraphElement) {
+            LayoutDataContentAssist.getLayoutOptionProposals(model, context.prefix).forEach [ p |
                 val entry = new ContentAssistEntry => [
-                    proposal = suffix.convert
+                    proposal = Strings.split(p.proposal, '.').convert
                     prefix = context.prefix
                     kind = ContentAssistEntry.KIND_PROPERTY
-                    label = suffix.join('.')
-                    description = getDescription(option)
-                    documentation = option.description
-                    source = option
+                    label = p.label ?: p.proposal
+                    description = getDescription(p.data)
+                    documentation = p.data.description
+                    source = p.data
                 ]
                 acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
-            }
+            ]
         }
     }
     
@@ -182,68 +116,25 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     protected def void completePropertyValue(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         val model = context.currentModel
         if (model instanceof ElkPropertyToValueMapEntryImpl) {
-            val property = model.key
-            if (property instanceof LayoutOptionData) {
-                if (CoreOptions.ALGORITHM == property || property.id == DISCO_LAYOUT_ALG_ID)
+            val option = model.key
+            if (option instanceof LayoutOptionData) {
+                if (CoreOptions.ALGORITHM == option || option.id == DISCO_LAYOUT_ALG_ID)
                     proposeAlgorithms(context, acceptor)
-                else 
-                    typeAwarePropertyValueProposal(property, context, acceptor)
+                else
+                    typeAwarePropertyValueProposal(option, context, acceptor)
             }
         }
     }
     
-    private def typeAwarePropertyValueProposal(LayoutOptionData property, ContentAssistContext context, 
-            IIdeContentProposalAcceptor acceptor) {
-         
-         switch (property.type) {
-             case Type.BOOLEAN,
-             case Type.ENUM, 
-             case Type.ENUMSET: {
-                 val choices = property.choices
-                 for (var i = 0; i < choices.length; i++) {
-                    val proposal = choices.get(i)
-                    val enumVal = property.getEnumValue(i)
-                    
-                    val displayString = new StringBuilder(proposal)
-                    if (ElkGraphUtil.isExperimentalPropertyValue(enumVal)) {
-                        displayString.append(" - Experimental")
-                    } else if (ElkGraphUtil.isAdvancedPropertyValue(enumVal)) {
-                        displayString.append(" - Advanced")
-                    }
-                    val entry = proposalCreator.createProposal(proposal, context, ContentAssistEntry.KIND_VALUE) [
-                        label = displayString.toString
-                        source = property
-                    ]
-                    acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
-                 }
-             }
-             case DOUBLE: {
-                 val entry = proposalCreator.createProposal("0.0", context, ContentAssistEntry.KIND_VALUE) [
-                     label = property.type.toString
-                    source = property
-                 ]
-                 acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
-             }
-             case INT: {
-                 val entry = proposalCreator.createProposal("0", context, ContentAssistEntry.KIND_VALUE) [
-                     label = property.type.toString
-                     source = property
-                 ]
-                 acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
-             }
-             case OBJECT: {
-                val proposal = try {
-                    "\"" + property.getOptionClass().newInstance().toString() + "\"";
-                } catch (InstantiationException e) ""
-                  catch (IllegalAccessException e) ""
-                val entry = proposalCreator.createProposal(proposal, context, ContentAssistEntry.KIND_VALUE) [
-                     label = property.type.toString()
-                     source = property
-                ]
-                acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
-             }
-             default: { } // nothing to propose
-         }
+    private def typeAwarePropertyValueProposal(LayoutOptionData property, ContentAssistContext context,
+        IIdeContentProposalAcceptor acceptor) {
+        LayoutDataContentAssist.getLayoutOptionValueProposal(property, context.prefix).forEach [ p |
+            val entry = proposalCreator.createProposal(p.proposal, context, ContentAssistEntry.KIND_VALUE) [
+                label = p.label
+                source = property
+            ]
+            acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
+        ]
     }
     
     protected def proposeAlgorithms(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
@@ -251,52 +142,18 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
             // Early-exit in case any algorithm id would conflict with the previous token
             return
         }
-        val metaDataService = LayoutMetaDataService.instance
-        for (algorithm : metaDataService.algorithmData) {
-            val matchesName = !context.prefix.empty && algorithm.name.toLowerCase.contains(context.prefix.toLowerCase)
-            val idSplit = Strings.split(algorithm.id, '.')
-            val prefixSplit = if (!matchesName) Strings.split(context.prefix, '.')
-            var foundMatch = false
-            var i = idSplit.size - 1
-            while (i >= 0 && !foundMatch) {
-                val suffix = idSplit.drop(i)
-                if (metaDataService.getAlgorithmDataBySuffix(suffix.join('.')) !== null
-                        && (matchesName || suffix.startsWith(prefixSplit)))
-                    foundMatch = true
-                else
-                    i--
-            }
-            if (foundMatch) {
-                val suffix = idSplit.drop(i)
-                val entry = new ContentAssistEntry => [
-                    proposal = suffix.convert
-                    prefix = context.prefix
-                    kind = ContentAssistEntry.KIND_VALUE
-                    label = suffix.join('.')
-                    description = getDescription(algorithm)
-                    documentation = algorithm.description
-                    source = algorithm
-                ]
-                acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
-            }
-        }
-    }
-    
-    private def startsWith(Iterable<String> strings, List<String> prefix) {
-        if (prefix.empty)
-            return true
-        val stringList = strings.toList
-        for (var i = 0; i < stringList.size - prefix.size + 1; i++) {
-            var j = 0
-            var matches = true
-            while (j < prefix.size && matches) {
-                matches = stringList.get(i + j).startsWith(prefix.get(j))
-                j++
-            }
-            if (matches)
-                return true
-        }
-        return false
+        LayoutDataContentAssist.getLayoutAlgorithmProposals(context.prefix).forEach [ p |
+            val entry = new ContentAssistEntry => [
+                proposal = Strings.split(p.proposal, '.').convert
+                prefix = context.prefix
+                kind = ContentAssistEntry.KIND_VALUE
+                label = p.label ?: p.proposal
+                description = getDescription(p.data)
+                documentation = p.data.description
+                source = p.data
+            ]
+            acceptor.accept(entry, proposalPriorities.getDefaultPriority(entry))
+        ]
     }
     
     private def convert(Iterable<String> suffix) {
