@@ -147,7 +147,7 @@ class ElkGraphJsonProposalProvider extends IdeContentProposalProvider {
     private def typeAwarePropertyValueProposal(LayoutOptionData option, ContentAssistContext context,
         IIdeContentProposalAcceptor acceptor) {
         LayoutDataContentAssist.getLayoutOptionValueProposal(option, context.prefix.unquoteIfNecessary).forEach [ p |
-            val proposal = if (#{Type.ENUM, Type.ENUMSET, Type.OBJECT, Type.STRING}.contains(option.type)) {
+            val proposal = if (#{Type.ENUM, Type.ENUMSET, Type.STRING}.contains(option.type)) {
                     '"' + p.proposal + '"'
                 } else {
                     p.proposal
