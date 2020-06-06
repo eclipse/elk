@@ -122,7 +122,7 @@ class ElkGraphJsonFormatter extends AbstractFormatter2 {
             if (compact) append(one_space) else append(new_line)
         ]
         interior(
-            element.regionFor.keyword(openingKeyword).prepend(one_space) => [
+            element.regionFor.keyword(openingKeyword).prepend(no_space) => [
                 if (compact) append(one_space) else append(new_line)
             ],
             element.regionFor.keyword(closingKeyword) => [
