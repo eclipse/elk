@@ -100,7 +100,7 @@ public final class InsidePortLabelCellCreator {
      * Does the work for {@link #calculatePortLabelWidth(NodeContext)} for the given port side.
      */
     private static void setupEastOrWestPortLabelCell(final NodeContext nodeContext, final PortSide portSide) {
-        if (nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE) {
+        if (nodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE)) {
             calculateWidthDueToLabels(nodeContext, portSide);   
         }
         setupTopAndBottomPadding(nodeContext, portSide);

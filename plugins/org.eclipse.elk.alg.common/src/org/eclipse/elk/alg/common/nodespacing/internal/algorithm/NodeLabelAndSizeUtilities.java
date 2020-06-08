@@ -18,6 +18,7 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -215,7 +216,7 @@ public final class NodeLabelAndSizeUtilities {
             PortContext firstPort = portContexts.iterator().next();
             
             return !firstPort.labelsNextToPort && (portContexts.size() == 2
-                    || nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS));
+                    || nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT));
         } else {
             return false;
         }
