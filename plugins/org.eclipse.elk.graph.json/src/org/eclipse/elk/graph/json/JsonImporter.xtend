@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, 2019 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -18,7 +18,7 @@ import java.util.Map
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeLabelPlacement
-import org.eclipse.elk.graph.EMapPropertyHolder
+import org.eclipse.elk.core.util.IndividualSpacings
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkGraphElement
@@ -26,6 +26,7 @@ import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.ElkShape
+import org.eclipse.elk.graph.properties.IPropertyHolder
 import org.eclipse.elk.graph.util.ElkGraphUtil
 
 /**
@@ -114,6 +115,7 @@ final class JsonImporter {
         node.identifier = jsonNode.toJsonObject.idSave 
         
         jsonNode.transformProperties(node)
+        jsonNode.transformIndividualSpacings(node)
         jsonNode.transformShapeLayout(node)
         jsonNode.transformPorts(node)
         jsonNode.transformLabels(node)
@@ -400,7 +402,7 @@ final class JsonImporter {
         ]
     }
 
-    private def transformProperties(Object jsonObjA, EMapPropertyHolder layoutData) {
+    private def transformProperties(Object jsonObjA, IPropertyHolder layoutData) {
         val jsonObj = jsonObjA.toJsonObject
         
         var layoutOptions = jsonObj.optJSONObject("layoutOptions")
@@ -417,8 +419,25 @@ final class JsonImporter {
             ]
         }
     }
+    
+    private def transformIndividualSpacings(Object jsonObjA, IPropertyHolder layoutData) {
+        val jsonObj = jsonObjA.toJsonObject
+        
+        val jsonIndividualSpacings = jsonObj.optJSONObject("individualSpacings")
+        if (jsonIndividualSpacings !== null) {
+            if (!layoutData.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+                layoutData.setProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE, new IndividualSpacings())   
+            }
+            val individualSpacings = layoutData.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            val opts = jsonIndividualSpacings
+            opts?.keysJsonObj?.forEach[ k |
+                val value = opts.getJsonObj(k)?.stringVal
+                individualSpacings.setOption(k, value)
+            ]
+        }
+    }
        
-    private def setOption(EMapPropertyHolder e, String id, String value) {
+    private def setOption(IPropertyHolder e, String id, String value) {
         val optionData = LayoutMetaDataService.instance.getOptionDataBySuffix(id)
         if (optionData !== null) {
             val parsed = optionData.parseValue(value)
