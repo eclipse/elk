@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -19,7 +19,6 @@ import java.util.Map
 import java.util.Random
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkLabel
@@ -27,6 +26,7 @@ import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.ElkShape
 import org.eclipse.elk.graph.properties.IProperty
+import org.eclipse.elk.graph.properties.IPropertyHolder
 
 /**
  * Exporter from elk graph to json.
@@ -128,6 +128,7 @@ final class JsonExporter {
         
         // properties
         node.transformProperties(jsonObj)
+        node.transformIndividualSpacings(jsonObj)
         node.transferShapeLayout(jsonObj)
     }
 
@@ -297,16 +298,40 @@ final class JsonExporter {
         label.transferShapeLayout(jsonLabel)
     }
 
-    private def void transformProperties(EMapPropertyHolder holder, Object parentA) {
+    private def void transformProperties(IPropertyHolder holder, Object parentA) {
         // skip if empty
-        if (holder.properties.nullOrEmpty) {
+        if (holder === null || holder.allProperties === null || holder.allProperties.empty) {
             return
         }
         
         val jsonProps = newJsonObject
         val parent = parentA.toJsonObject
         parent.addJsonObj("layoutOptions", jsonProps)
-        holder.properties.entrySet.filter[it.key !== null].forEach [ p |
+        holder.getAllProperties.entrySet
+            .filter[ key !== null ]
+            .filter[ key != CoreOptions.SPACING_INDIVIDUAL_OVERRIDE ]
+            .forEach [ p |
+                if (!omitUnknownLayoutOptions || p.key.isKnown) {
+                    var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
+                    jsonProps.addProperty(key, p.value.toString)                
+                }
+            ]
+    }
+    
+    private def void transformIndividualSpacings(IPropertyHolder holder, Object parentA) {
+        // skip if empty
+        if (holder === null || !holder.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+            return
+        }
+        val individualSpacings = holder.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)
+        if (individualSpacings.allProperties === null || individualSpacings.allProperties.empty) {
+            return;
+        }
+        
+        val jsonProps = newJsonObject
+        val parent = parentA.toJsonObject
+        parent.addJsonObj("individualSpacings", jsonProps)
+        individualSpacings.allProperties.entrySet.filter[it.key !== null].forEach [ p |
             if (!omitUnknownLayoutOptions || p.key.isKnown) {
                 var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
                 jsonProps.addProperty(key, p.value.toString)                
