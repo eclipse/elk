@@ -105,7 +105,7 @@ public class DiagramLayoutEngine {
      */
     public static final class Parameters {
         
-        private List<LayoutConfigurator> configurators = new LinkedList<LayoutConfigurator>();
+        private List<IGraphElementVisitor> configurators = new LinkedList<IGraphElementVisitor>();
         private MapPropertyHolder globalSettings = new MapPropertyHolder();
         private boolean overrideDiagramConfig = true;
         
@@ -135,9 +135,11 @@ public class DiagramLayoutEngine {
          * 
          * @return the given configurator
          */
-        public LayoutConfigurator addLayoutRun(final LayoutConfigurator configurator) {
+        public IGraphElementVisitor addLayoutRun(final IGraphElementVisitor configurator) {
             configurators.add(configurator);
-            configurator.addFilter(OPTION_TARGET_FILTER);
+            if (configurator instanceof LayoutConfigurator) {
+                ((LayoutConfigurator) configurator).addFilter(OPTION_TARGET_FILTER);
+            }
             return configurator;
         }
         
@@ -145,7 +147,7 @@ public class DiagramLayoutEngine {
          * Convenience method for {@code addLayout(new LayoutConfigurator())}.
          */
         public LayoutConfigurator addLayoutRun() {
-            return addLayoutRun(new LayoutConfigurator());
+            return (LayoutConfigurator) addLayoutRun(new LayoutConfigurator());
         }
     }
     
@@ -550,22 +552,25 @@ public class DiagramLayoutEngine {
         if (params.configurators.isEmpty()) {
             params.addLayoutRun(diagramConfig);
         } else {
-            ListIterator<LayoutConfigurator> configIter = params.configurators.listIterator();
+            ListIterator<IGraphElementVisitor> configIter = params.configurators.listIterator();
             while (configIter.hasNext()) {
                 boolean isFirstConfig = !configIter.hasPrevious();
-                LayoutConfigurator setupConfig = configIter.next();
-                if (params.overrideDiagramConfig) {
-                    if (isFirstConfig || setupConfig.isClearLayout()) {
-                        LayoutConfigurator newConfig;
-                        if (configIter.hasNext()) {
-                            newConfig = new LayoutConfigurator().overrideWith(diagramConfig);
-                        } else {
-                            newConfig = diagramConfig;
+                IGraphElementVisitor setupConfig = configIter.next();
+                if (setupConfig instanceof LayoutConfigurator) {
+                    LayoutConfigurator layoutConfigurator = (LayoutConfigurator) setupConfig;
+                    if (params.overrideDiagramConfig) {
+                        if (isFirstConfig || layoutConfigurator.isClearLayout()) {
+                            LayoutConfigurator newConfig;
+                            if (configIter.hasNext()) {
+                                newConfig = new LayoutConfigurator().overrideWith(diagramConfig);
+                            } else {
+                                newConfig = diagramConfig;
+                            }
+                            configIter.set(newConfig.overrideWith(layoutConfigurator));
                         }
-                        configIter.set(newConfig.overrideWith(setupConfig));
+                    } else {
+                        layoutConfigurator.overrideWith(diagramConfig);
                     }
-                } else {
-                    setupConfig.overrideWith(diagramConfig);
                 }
             }
         }
@@ -595,14 +600,16 @@ public class DiagramLayoutEngine {
                     ElkNode parent = node.getParent();
                     for (ElkNode child : parent.getChildren()) {
                         if (child != node) {
-                            for (LayoutConfigurator c : params.configurators) {
-                                IPropertyHolder childConfig = c.configure(child);
-                                // Do not layout the content of the child node
-                                childConfig.setProperty(CoreOptions.NO_LAYOUT, true);
-                                // Do not change the size of the child node
-                                childConfig.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
-                                // Do not move the ports of the child node
-                                childConfig.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+                            for (IGraphElementVisitor c : params.configurators) {
+                                if (c instanceof LayoutConfigurator) {
+                                    IPropertyHolder childConfig = ((LayoutConfigurator) c).configure(child);
+                                    // Do not layout the content of the child node
+                                    childConfig.setProperty(CoreOptions.NO_LAYOUT, true);
+                                    // Do not change the size of the child node
+                                    childConfig.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
+                                    // Do not move the ports of the child node
+                                    childConfig.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+                                }
                             }
                         }
                     }
@@ -659,7 +666,7 @@ public class DiagramLayoutEngine {
         } else {
             // Perform layout multiple times with different configurations
             progressMonitor.begin("Diagram layout engine", params.configurators.size());
-            ListIterator<LayoutConfigurator> configIter = params.configurators.listIterator();
+            ListIterator<IGraphElementVisitor> configIter = params.configurators.listIterator();
             while (configIter.hasNext()) {
                 visitors.addFirst(configIter.next());
                 IGraphElementVisitor[] visitorsArray = visitors.toArray(new IGraphElementVisitor[visitors.size()]);
@@ -674,10 +681,13 @@ public class DiagramLayoutEngine {
                         mapping.getLayoutGraph().getProperty(LayoutConfigurator.ADD_LAYOUT_CONFIG);
                 
                 if (addConfig != null) {
-                    ListIterator<LayoutConfigurator> configIter2 = params.configurators.listIterator(
+                    ListIterator<IGraphElementVisitor> configIter2 = params.configurators.listIterator(
                             configIter.nextIndex());
                     while (configIter2.hasNext()) {
-                        configIter2.next().overrideWith(addConfig);
+                        IGraphElementVisitor c = configIter2.next();
+                        if (c instanceof LayoutConfigurator) {
+                            ((LayoutConfigurator) c).overrideWith(addConfig);
+                        }
                     }
                 }
             }
