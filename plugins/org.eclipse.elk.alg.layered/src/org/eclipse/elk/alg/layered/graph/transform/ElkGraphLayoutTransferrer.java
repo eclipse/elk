@@ -198,7 +198,7 @@ class ElkGraphLayoutTransferrer {
         }
         
         // Set port label positions, if they were not fixed
-        if (lnode.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) != PortLabelPlacement.FIXED) {
+        if (!PortLabelPlacement.isFixed(lnode.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT))) {
             for (LPort lport : lnode.getPorts()) {
                 for (LLabel llabel : lport.getLabels()) {
                     ElkLabel elklabel = (ElkLabel) llabel.getProperty(InternalProperties.ORIGIN);
