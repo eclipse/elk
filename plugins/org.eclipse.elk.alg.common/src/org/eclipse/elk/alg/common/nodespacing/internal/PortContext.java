@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.common.nodespacing.internal;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 
 /**
@@ -66,8 +67,7 @@ public final class PortContext {
         
         // Whether labels are supposed to be placed next to their port is determined differently depending on whether
         // they are to be placed inside or outside
-        switch (parentNodeContext.portLabelsPlacement) {
-        case INSIDE:
+        if (parentNodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE)) {
             if (parentNodeContext.treatAsCompoundNode) {
                 // There might be connections to the inside. That means that we may want to place port labels next to
                 // their port, if possible
@@ -76,9 +76,7 @@ public final class PortContext {
             } else {
                 labelsNextToPort = true;
             }
-            break;
-            
-        case OUTSIDE:
+        } else if (parentNodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE)) {
             if (parentNodeContext.portLabelsNextToPort) {
                 // We can place a label next to an outside port if that port doesn't have incident edges
                 labelsNextToPort =
@@ -87,9 +85,7 @@ public final class PortContext {
                 // We are not to place labels next to the port anyway
                 labelsNextToPort = false;
             }
-            break;
-            
-        default:
+        } else {
             labelsNextToPort = false;
         }
     }

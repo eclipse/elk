@@ -189,7 +189,7 @@ public final class NodeMarginCalculator  {
                 KVector requiredPortLabelSpace = new KVector(-labelSpacing, -labelSpacing);
                 
                 // TODO: maybe leave space for manually placed ports 
-                if (node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
+                if (node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT).contains(PortLabelPlacement.OUTSIDE)) {
                     for (LabelAdapter<?> label : port.getLabels()) {
                         requiredPortLabelSpace.x += label.getSize().x + labelSpacing;
                         requiredPortLabelSpace.y += label.getSize().y + labelSpacing;

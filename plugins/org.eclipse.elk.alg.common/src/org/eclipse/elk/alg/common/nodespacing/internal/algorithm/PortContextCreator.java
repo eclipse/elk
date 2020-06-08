@@ -36,9 +36,10 @@ public final class PortContextCreator {
      * @param nodeContext
      */
     public static void createPortContexts(final NodeContext nodeContext, final boolean ignoreInsidePortLabels) {
-        // Hue hue hue...
-        boolean imPortLabels = !ignoreInsidePortLabels || nodeContext.portLabelsPlacement != PortLabelPlacement.INSIDE;
-        
+        // Hue hue hue... gimme color?
+        boolean imPortLabels =
+                !ignoreInsidePortLabels || !nodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE);
+
         int volatileId = 0;
         for (PortAdapter<?> port : nodeContext.node.getPorts()) {
             if (port.getSide() == PortSide.UNDEFINED) {
@@ -61,7 +62,7 @@ public final class PortContextCreator {
         nodeContext.portContexts.put(port.getSide(), portContext);
         
         // If the port has labels and if port labels are to be placed, we need to remember them
-        if (imPortLabels && nodeContext.portLabelsPlacement != PortLabelPlacement.FIXED) {
+        if (imPortLabels && !PortLabelPlacement.isFixed(nodeContext.portLabelsPlacement)) {
             portContext.portLabelCell = new LabelCell(nodeContext.labelLabelSpacing);
             port.getLabels().forEach(label -> portContext.portLabelCell.addLabel(label));
         }
