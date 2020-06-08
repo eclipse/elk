@@ -10,10 +10,12 @@
 package org.eclipse.elk.graph.json.test
 
 import com.google.gson.JsonIOException
+import org.eclipse.elk.alg.test.PlainJavaInitialization
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.graph.json.ElkGraphJson
 import org.eclipse.elk.graph.json.JsonImportException
+import org.junit.Before
 import org.junit.Test
 
 import static org.junit.Assert.*
@@ -21,6 +23,11 @@ import static org.junit.Assert.*
 /**
  */
 class GraphTest {
+    
+    @Before
+    def void init() {
+        PlainJavaInitialization.initializePlainJavaLayout
+    } 
     
     @Test 
     def void graphMustBeObjectTest() {
@@ -38,7 +45,7 @@ class GraphTest {
         {
           "id": "root",
           "properties": {
-            "direction": "DOWN"
+            "elk.direction": "DOWN"
           },
           "children": [{"id": "n1", "width": 40, "height": 40},
                       {"id": "n2", "width": 40, "height": 40}],
