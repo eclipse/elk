@@ -229,7 +229,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
             return null;
         }
         
-        // if this open data instance is an ENUMSET or a REMOTE_ENUMSET, we need to allow empty strings
+        // if this open data instance is an ENUMSET, we need to allow empty strings
         // to denote that no enumeration value is selected. Otherwise, we forbid empty strings
         if (valueString.length() == 0 && type != Type.ENUMSET) {
             return null;

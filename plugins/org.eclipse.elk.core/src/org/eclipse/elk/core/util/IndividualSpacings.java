@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.util.stream.Collectors;
+
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.graph.ElkNode;
@@ -16,15 +20,28 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
+import com.google.common.base.Strings;
+
 /**
  * A property holder which can be used to define individual spacing overrides. The overrides are applied to the
  * element this object is set on, which is done through the {@link CoreOptions#SPACING_INDIVIDUAL} property.
  */
-public class IndividualSpacings extends MapPropertyHolder {
+public class IndividualSpacings extends MapPropertyHolder implements IDataObject {
 
     /** Serialization identifier. */
     private static final long serialVersionUID = 737614242607924309L;
     
+    /**
+     * Constructs an empty spacings container.
+     */
+    public IndividualSpacings() { }
+    
+    /**
+     * Constructs a new spacings container and copies all properties of {@code other} to the new container.
+     */
+    public IndividualSpacings(final IndividualSpacings other) {
+        getAllProperties().putAll(other.getAllProperties());
+    }
     
     /**
      * Returns the value of the given property as it applies to the given node. First checks whether an individual
@@ -87,6 +104,49 @@ public class IndividualSpacings extends MapPropertyHolder {
         }
         
         return result;
+    }
+    
+    /** A (hopefully) unique separator that allows single occurrences of commas, colons, and semi-colons in-between. */
+    private static final String SERIALIZED_OPTION_SEPARATOR = ";,;";
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        final String serialized = getAllProperties().entrySet().stream()
+                .map(entry -> entry.getKey().getId() + ":" + entry.getValue().toString())
+                .collect(Collectors.joining(SERIALIZED_OPTION_SEPARATOR));
+        return serialized;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void parse(final String string) {
+        if (Strings.isNullOrEmpty(string)) {
+            // Nothing to do.
+            return;
+        }
+        try {
+            String[] options = string.split(SERIALIZED_OPTION_SEPARATOR);
+            for (String optionString : options) {
+                String[] option = optionString.split("\\:");
+                LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionDataBySuffix(option[0]);
+                if (optionData == null) {
+                    throw new IllegalArgumentException("Invalid option id: " + option[0]);
+                }
+                Object value = optionData.parseValue(option[1]);
+                if (value == null) {
+                    throw new IllegalArgumentException("Invalid option value: " + option[1]);
+                }
+                setProperty(optionData, value);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "The given string does not match the expected format for individual spacings.", e);
+        }
     }
 
 }

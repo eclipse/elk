@@ -398,7 +398,10 @@ group spacing {
             on the graph would result in the ports of all of the graph's nodes to be spaced apart by 5px. 
             A single node may desire a larger spacing and hence set an individual spacing.portPort of 10.
             Note that not all algorithms (or concrete configurations of a specific algorithm)
-            support this behavior."
+            support this behavior.
+
+            When specified as a string (in elkg or elkt) the individual options must be separated by ';,;'.
+            Example: \"spacing.portPort:5;,;spacing.nodeNode:10\""
         targets nodes, edges, ports, labels
     }
 
