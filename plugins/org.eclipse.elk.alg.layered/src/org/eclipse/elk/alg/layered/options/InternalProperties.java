@@ -409,6 +409,11 @@ public final class InternalProperties {
     public static final IProperty<Double> SPLINE_NS_PORT_Y_COORD = new Property<>("splines.nsPortY");
     
     /**
+     * Set for nodes and edges to preserve the order in the model file.
+     */
+    public static final IProperty<Integer> MODEL_ORDER = new Property<>("modelOrder");
+    
+    /**
      * Hidden default constructor.
      */
     private InternalProperties() {

@@ -219,15 +219,21 @@ class ElkGraphImporter {
      */
     private void importFlatGraph(final ElkNode elkgraph, final LGraph lgraph) {
         // Transform the node's children, unless we're told not to
+        int index = 0;
         for (ElkNode child : elkgraph.getChildren()) {
             if (!child.getProperty(LayeredOptions.NO_LAYOUT)) {
+                child.setProperty(InternalProperties.MODEL_ORDER, index);
                 transformNode(child, lgraph);
+                index++;
             }
         }
 
         // iterate the list of contained edges to preserve the 'input order' of the edges
         // (this is not part of the previous loop since all children must have already been transformed)
+        index = 0;
         for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
+            elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
+            index++;
             ElkNode source = ElkGraphUtil.getSourceNode(elkedge);
             ElkNode target = ElkGraphUtil.getTargetNode(elkedge);
             

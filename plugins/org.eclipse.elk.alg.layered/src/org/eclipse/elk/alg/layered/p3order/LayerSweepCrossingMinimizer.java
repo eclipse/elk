@@ -179,6 +179,12 @@ public class LayerSweepCrossingMinimizer
         graphsWhoseNodeOrderChanged.clear();
 
         int bestCrossings = Integer.MAX_VALUE;
+        if (gData.lGraph().getProperty(LayeredOptions.PRESERVE_ORDER)) {
+            // Set the current order of nodes and ports as the currently best order.
+            // If no unnecessary crossings are produced by this solution this order is preserved.
+            bestCrossings = countCurrentNumberOfCrossings(gData);
+            gData.setBestNodeNPortOrder(new SweepCopy(gData.lGraph().toNodeArray()));
+        }
         int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
         for (int i = 0; i < thouroughness; i++) {
             int crossings = minimizeCrossingsWithCounter(gData);

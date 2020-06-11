@@ -302,6 +302,11 @@ final class GraphConfigurator {
         default: // OFF
         }
         
+        if (lgraph.getProperty(LayeredOptions.PRESERVE_ORDER)) {
+            configuration
+                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.SORT_BY_INPUT_ORDER_OF_MODEL);
+        }
+        
         return configuration;
     }
     
