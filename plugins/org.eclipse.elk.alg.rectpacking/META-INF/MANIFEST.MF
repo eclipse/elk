@@ -11,4 +11,5 @@ Require-Bundle: org.eclipse.elk.graph,
  com.google.guava,
  org.eclipse.xtext.xbase.lib;bundle-version="2.10.0"
 Export-Package: org.eclipse.elk.alg.rectpacking,
+ org.eclipse.elk.alg.rectpacking.graphvisitors,
  org.eclipse.elk.alg.rectpacking.options
