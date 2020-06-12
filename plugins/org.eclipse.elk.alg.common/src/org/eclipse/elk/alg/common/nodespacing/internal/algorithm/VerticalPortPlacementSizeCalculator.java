@@ -232,11 +232,11 @@ public final class VerticalPortPlacementSizeCalculator {
         Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
 
         boolean portLabelsOutside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE);
-        boolean spaceEfficientPortLabels =
-                !nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE)
-                        && (nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT)
-                                || portContexts.size() == 2);
+        boolean alwaysSameSide = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
+        boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
         boolean uniformPortSpacing = nodeContext.sizeOptions.contains(SizeOptions.UNIFORM_PORT_SPACING);
+
+        boolean spaceEfficientPortLabels = !alwaysSameSide && (spaceEfficient || portContexts.size() == 2);
 
         // Set the vertical port margins of all ports according to how their labels will be placed. We'll be
         // modifying the margins soon enough.
