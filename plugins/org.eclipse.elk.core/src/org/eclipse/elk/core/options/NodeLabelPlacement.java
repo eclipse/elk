@@ -10,6 +10,9 @@
 package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 /**
  * Options for controlling how node labels are placed by layout algorithms. The corresponding layout
@@ -240,5 +243,31 @@ public enum NodeLabelPlacement {
      */
     public static EnumSet<NodeLabelPlacement> outsideBottomRight() {
         return EnumSet.of(OUTSIDE, V_BOTTOM, H_RIGHT);
+    }
+    
+    
+    /**
+     * @return whether the passed {@value placement} is considered valid as described in the class's javadoc.
+     */
+    public static boolean isValid(final Set<NodeLabelPlacement> placement) {
+        final Set<NodeLabelPlacement> validInsideOutside =
+                EnumSet.of(NodeLabelPlacement.INSIDE, NodeLabelPlacement.OUTSIDE);
+        if (Sets.intersection(validInsideOutside, placement).size() > 1) {
+            return false;
+        }
+
+        final Set<NodeLabelPlacement> validHorizontal =
+                EnumSet.of(NodeLabelPlacement.H_LEFT, NodeLabelPlacement.H_CENTER, NodeLabelPlacement.H_RIGHT);
+        if (Sets.intersection(validHorizontal, placement).size() > 1) {
+            return false;
+        }
+
+        final Set<NodeLabelPlacement> validVertical =
+                EnumSet.of(NodeLabelPlacement.V_TOP, NodeLabelPlacement.V_CENTER, NodeLabelPlacement.V_BOTTOM);
+        if (Sets.intersection(validVertical, placement).size() > 1) {
+            return false;
+        }
+
+        return true;
     }
 }
