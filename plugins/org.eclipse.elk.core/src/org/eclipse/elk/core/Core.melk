@@ -687,7 +687,7 @@ group port {
         targets ports
     }
 
-    programmatic option index: int {
+    option index: int {
         label "Port Index"
         description
             "The index of a port in the fixed order around a node. The order is assumed as clockwise,
