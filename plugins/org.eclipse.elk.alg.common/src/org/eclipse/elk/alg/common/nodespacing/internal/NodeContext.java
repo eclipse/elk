@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.common.nodespacing.cellsystem.GridContainerCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell.Strip;
+import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
@@ -136,9 +137,15 @@ public final class NodeContext {
         sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
         portConstraints = node.getProperty(CoreOptions.PORT_CONSTRAINTS);
         portLabelsPlacement = node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT);
-        
+        if (!PortLabelPlacement.isValid(portLabelsPlacement)) {
+            throw new UnsupportedConfigurationException("Invalid port label placement: " + portLabelsPlacement);
+        }
+
         portLabelsTreatAsGroup = node.getProperty(CoreOptions.PORT_LABELS_TREAT_AS_GROUP);
         nodeLabelPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        if (!NodeLabelPlacement.isValid(nodeLabelPlacement)) {
+            throw new UnsupportedConfigurationException("Invalid node label placement: " + nodeLabelPlacement);
+        }
         
         // Copy spacings for convenience
         nodeLabelsPadding = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_PADDING);

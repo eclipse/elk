@@ -12,6 +12,8 @@ package org.eclipse.elk.core.options;
 import java.util.EnumSet;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+
 /**
  * Options for controlling how port labels are placed by layout algorithms. The corresponding layout
  * option will usually accept an {@link EnumSet} over this enumeration, theoretically allowing
@@ -61,7 +63,8 @@ public enum PortLabelPlacement {
      * {@link PortSide#WEST} and {@link PortSide#EAST} this is <i>below</i> the port and for {@link PortSide#NORTH} and
      * {@link PortSide#SOUTH} it is <i>right</i> of the port.
      * 
-     * Note: the option does not apply to inside port labels.
+     * <p>
+     * Note: the option does not apply to inside port labels (unless a hierarchical edge connects).
      */
     ALWAYS_SAME_SIDE,
 
@@ -72,7 +75,8 @@ public enum PortLabelPlacement {
      * the others stay on the right side (and similar for the other port sides). This allows the node to be smaller
      * because the node size doesn't have to accommodate as many port labels, but it breaks symmetry.
      * 
-     * Note: the option does not apply to inside port labels.
+     * <p>
+     * Note: the option does not apply to inside port labels (unless a hierarchical edge connects).
      */
     SPACE_EFFICIENT;
 
@@ -96,6 +100,25 @@ public enum PortLabelPlacement {
      */
     public static boolean isFixed(final Set<PortLabelPlacement> placement) {
         return !placement.contains(PortLabelPlacement.INSIDE) && !placement.contains(PortLabelPlacement.OUTSIDE);
+    }
+    
+    /**
+     * @return whether the passed {@value placement} is considered valid as described in the class's javadoc.
+     */
+    public static boolean isValid(final Set<PortLabelPlacement> placement) {
+        final Set<PortLabelPlacement> validInsideOutside =
+                EnumSet.of(PortLabelPlacement.INSIDE, PortLabelPlacement.OUTSIDE);
+        if (Sets.intersection(validInsideOutside, placement).size() > 1) {
+            return false;
+        }
+
+        final Set<PortLabelPlacement> validPosition =
+                EnumSet.of(PortLabelPlacement.ALWAYS_SAME_SIDE, PortLabelPlacement.SPACE_EFFICIENT);
+        if (Sets.intersection(validPosition, placement).size() > 1) {
+            return false;
+        }
+
+        return true;
     }
 }
 
