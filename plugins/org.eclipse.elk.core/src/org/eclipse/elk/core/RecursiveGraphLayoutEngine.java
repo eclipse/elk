@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 
+import org.eclipse.elk.core.data.DeprecatedLayoutOptionReplacer;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -84,6 +85,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
+        ElkUtil.applyVisitors(layoutGraph, new DeprecatedLayoutOptionReplacer());
+
         if (!layoutGraph.hasProperty(CoreOptions.RESOLVED_ALGORITHM)) {
             // Apply the default algorithm resolver to the graph in order to obtain algorithm meta data
             ElkUtil.applyVisitors(layoutGraph, new LayoutAlgorithmResolver());

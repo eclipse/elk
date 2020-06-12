@@ -734,7 +734,6 @@ group portLabels {
         targets nodes
     }
 
-    // TODO where to add the deprecated thingy? both graph import in layered and in common label placement?
     deprecated option nextToPortIfPossible: boolean {
         label "Port Labels Next to Port"
         description
