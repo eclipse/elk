@@ -65,19 +65,22 @@ public final class PortContext {
         this.port = port;
         this.portPosition = new KVector(port.getPosition());
         
+        final boolean portLabelsNextToPort =
+                parentNodeContext.portLabelsPlacement.contains(PortLabelPlacement.NEXT_TO_PORT_IF_POSSIBLE);
+        
         // Whether labels are supposed to be placed next to their port is determined differently depending on whether
         // they are to be placed inside or outside
         if (parentNodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE)) {
             if (parentNodeContext.treatAsCompoundNode) {
                 // There might be connections to the inside. That means that we may want to place port labels next to
                 // their port, if possible
-                labelsNextToPort = parentNodeContext.portLabelsNextToPort && !port.hasCompoundConnections();
+                labelsNextToPort = portLabelsNextToPort && !port.hasCompoundConnections();
                 
             } else {
                 labelsNextToPort = true;
             }
         } else if (parentNodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE)) {
-            if (parentNodeContext.portLabelsNextToPort) {
+            if (portLabelsNextToPort) {
                 // We can place a label next to an outside port if that port doesn't have incident edges
                 labelsNextToPort =
                         !(port.getIncomingEdges().iterator().hasNext() || port.getOutgoingEdges().iterator().hasNext());

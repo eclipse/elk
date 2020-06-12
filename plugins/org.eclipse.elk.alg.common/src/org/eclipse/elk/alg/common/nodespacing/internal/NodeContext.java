@@ -65,8 +65,6 @@ public final class NodeContext {
     public final PortConstraints portConstraints;
     /** Whether port labels are placed inside or outside. */
     public final Set<PortLabelPlacement> portLabelsPlacement;
-    /** Whether port labels are to be placed next to their port, if possible. */
-    public final boolean portLabelsNextToPort;
     /** Whether to treat port labels as a group when centering them next to eastern or western ports. */
     public final boolean portLabelsTreatAsGroup;
     /** Where node labels are placed by default. */
@@ -138,7 +136,6 @@ public final class NodeContext {
         sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
         portConstraints = node.getProperty(CoreOptions.PORT_CONSTRAINTS);
         portLabelsPlacement = node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT);
-        portLabelsNextToPort = portLabelsPlacement.contains(PortLabelPlacement.NEXT_TO_PORT_IF_POSSIBLE);
         
         portLabelsTreatAsGroup = node.getProperty(CoreOptions.PORT_LABELS_TREAT_AS_GROUP);
         nodeLabelPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
