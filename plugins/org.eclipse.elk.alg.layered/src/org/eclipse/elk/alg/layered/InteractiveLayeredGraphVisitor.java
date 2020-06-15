@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
  * 
- * SPDX-License-Identifier: EPL-2.0  *******************************************************************************/
-package org.eclipse.elk.alg.layered.graphvisitors;
+ * SPDX-License-Identifier: EPL-2.0  
+ *******************************************************************************/
+package org.eclipse.elk.alg.layered;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,77 +29,78 @@ import org.eclipse.elk.graph.ElkPort;
 
 /**
  * Graph visitor which visits only the root node and recursively steps through the graph
- * to set interactive option for the layered algorithm.
+ * to set interactive options and pseudo coordinates for the layered algorithm.
+ * Interactive layout works via two consecutive layout runs.
+ * The first one is a "normal" run. The second one will is configured using this graph visitor.
+ * The graph visitor recursively sets the interactive strategies for all phases and assigns pseudo positions to all
+ * node based on their last position and the desired layer and position in the layer expressed by the
+ * {@code LayerChoiceConstraint} and {@code PositionChoiceConstraint}.
+ * The pseudo position have to represent layers and the ordering in the layer.
  */
 public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
 
     /**
-     * Constant help with node placement, since nodes should not overlap and the their width and height may not be
-     * final.
+     * Since nodes should not overlap and the their width and height may not be final.
+     * Therefore, they are placed with the following spacing, which is hopefully enough to make up for size
+     * changes caused by interactive layout.
      */
-    public static final int NODE_PLACEMENT_HELPER = 100000;
+    public static final int PSEUDO_POSITION_SPACING = Integer.MAX_VALUE;
     
     /**
-     * Set as the layer of a node that should be in the last layer.
+     * Constants used as the index of the last layer.
+     * This is used since a {@code layerConstraint} property might be set that assigns a node to the {@code LAST} layer.
+     * Since a {@code layerConstraint} should still be respected it is translated into a {@code layerChoiceConstraint}
+     * using this constant as the value for the last layer.
      */
-    public static final int LAST_LAYER = 100000;
+    public static final int LAST_LAYER_INDEX = Integer.MAX_VALUE;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.elk.core.util.IGraphElementVisitor#visit(org.eclipse.elk.graph.ElkGraphElement)
+    /**
+     * Visits all nodes and sets interactive options for the {@code layered} algorithm.
+     * This assumes that the {@code layered} algorithm is the default algorithm.
      */
     @Override
     public void visit(final ElkGraphElement element) {
         // Only apply to root of the graph
-        if (element.eContainer() == null && element instanceof ElkNode) {
+        if (element instanceof ElkNode) {
             ElkNode root = (ElkNode) element;
-            setInteractiveOptions(root);
+            setInteractiveOptionsAndPseudoPositions(root);
         }
     }
 
     /**
-     * Sets the coordinates of the nodes in the graph.
+     * Sets pseudo positions and interactive strategies for the given graph.
      * 
      * @param root
      *            Root of the graph
      */
-    private void setInteractiveOptions(final ElkNode root) {
-        String algorithm = root.getProperty(CoreOptions.ALGORITHM);
-        if (algorithm == null || LayeredOptions.ALGORITHM_ID.endsWith(algorithm)) {
-            // Make sure that potential usages of the LayerConstraint are translated into
-            // LayerChoiceConstraints
-            for (ElkNode node : root.getChildren()) {
-                if (node.hasProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT)) {
-                    LayerConstraint constraint = node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
-                    node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.NONE);
-                    switch (constraint) {
-                    case FIRST:
-                        if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
-                            node.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, 0);
+    private void setInteractiveOptionsAndPseudoPositions(final ElkNode root) {
+        if (!root.getChildren().isEmpty()) {
+            String algorithm = root.getProperty(CoreOptions.ALGORITHM);
+            if (algorithm == null || LayeredOptions.ALGORITHM_ID.endsWith(algorithm)) {
+                // Make sure that potential usages of the LayerConstraint are translated into
+                // LayerChoiceConstraints
+                for (ElkNode node : root.getChildren()) {
+                    if (node.hasProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT)) {
+                        LayerConstraint constraint = node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
+                        node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.NONE);
+                        switch (constraint) {
+                        case FIRST:
+                            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                                node.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, 0);
+                            }
+                            break;
+                        case LAST:
+                            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                                node.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, LAST_LAYER_INDEX);
+                            }
+                            break;
                         }
-                        break;
-                    case LAST:
-                        if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
-                            node.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, LAST_LAYER);
-                        }
-                        break;
                     }
+                    setCoordinates(root);
+                    setInteractiveStrategies(root);
                 }
             }
         }
-        for (ElkNode n : root.getChildren()) {
-            if (!n.getChildren().isEmpty()) {
-                setInteractiveOptions(n);
-            }
-        }
-        if (algorithm == null || LayeredOptions.ALGORITHM_ID.endsWith(algorithm)) {
-            if (!root.getChildren().isEmpty()) {
-                setCoordinates(root);
-                setInteractiveStrategies(root);
-            }
-        }
-
     }
 
     /**
@@ -319,25 +321,25 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 case RIGHT:
                     node.setX(position);
                     if (position + node.getWidth() / 2 >= nextPosition) {
-                        nextPosition = node.getX() + node.getWidth() + NODE_PLACEMENT_HELPER;
+                        nextPosition = node.getX() + node.getWidth() + PSEUDO_POSITION_SPACING;
                     }
                     break;
                 case LEFT:
                     node.setX(position);
                     if (node.getX() <= nextPosition) {
-                        nextPosition = node.getX() - NODE_PLACEMENT_HELPER;
+                        nextPosition = node.getX() - PSEUDO_POSITION_SPACING;
                     }
                     break;
                 case DOWN:
                     node.setY(position);
                     if (position + node.getHeight() >= nextPosition) {
-                        nextPosition = node.getY() + node.getHeight() + NODE_PLACEMENT_HELPER;
+                        nextPosition = node.getY() + node.getHeight() + PSEUDO_POSITION_SPACING;
                     }
                     break;
                 case UP:
                     node.setY(position);
                     if (node.getY() <= nextPosition) {
-                        nextPosition = node.getY() - NODE_PLACEMENT_HELPER;
+                        nextPosition = node.getY() - PSEUDO_POSITION_SPACING;
                     }
                     break;
                 }
@@ -388,15 +390,15 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             double yPos = nodes.get(0).getY();
             for (ElkNode node : nodes) {
                 node.setProperty(LayeredOptions.POSITION, new KVector(node.getX(), yPos));
-                yPos += node.getHeight() + NODE_PLACEMENT_HELPER;
+                yPos += node.getHeight() + PSEUDO_POSITION_SPACING;
             }
             break;
         case DOWN:
         case UP:
-            double xPos = nodes.get(0).getX() + 2 * layerId * NODE_PLACEMENT_HELPER;
+            double xPos = nodes.get(0).getX() + 2 * layerId * PSEUDO_POSITION_SPACING;
             for (ElkNode node : nodes) {
                 node.setProperty(LayeredOptions.POSITION, new KVector(xPos, node.getY()));
-                xPos += node.getWidth() + NODE_PLACEMENT_HELPER;
+                xPos += node.getWidth() + PSEUDO_POSITION_SPACING;
             }
             break;
         }

@@ -16,7 +16,6 @@ Require-Bundle: com.google.guava;bundle-version="15.0.0",
 Eclipse-RegisterBuddy: org.eclipse.elk.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.core.service,
- org.eclipse.elk.core.service.graphvisitors,
  org.eclipse.elk.core.service.internal;x-internal:=true,
  org.eclipse.elk.core.service.util
 Bundle-ActivationPolicy: lazy

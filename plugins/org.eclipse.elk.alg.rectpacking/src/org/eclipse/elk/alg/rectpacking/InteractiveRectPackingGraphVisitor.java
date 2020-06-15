@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
  * 
- * SPDX-License-Identifier: EPL-2.0  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.graphvisitors;
+ * SPDX-License-Identifier: EPL-2.0  
+ *******************************************************************************/
+package org.eclipse.elk.alg.rectpacking;
 
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -16,7 +17,8 @@ import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Graph visitor which visits only the root node and recursively steps through the graph
- * to set interactive option for the rectpacking algorithm.
+ * to set interactive options for the rectpacking algorithm.
+ * The rectpacking algorithm needs {@code Interactive} to be set to true in all root nodes.
  */
 public class InteractiveRectPackingGraphVisitor implements IGraphElementVisitor {
 
@@ -26,7 +28,7 @@ public class InteractiveRectPackingGraphVisitor implements IGraphElementVisitor 
     @Override
     public void visit(final ElkGraphElement element) {
         // Only apply to root of the graph
-        if (element.eContainer() == null && element instanceof ElkNode) {
+        if (element instanceof ElkNode) {
             ElkNode root = (ElkNode) element;
             setInteractiveOptions(root);
         }
@@ -39,11 +41,6 @@ public class InteractiveRectPackingGraphVisitor implements IGraphElementVisitor 
         String algorithm = root.getProperty(CoreOptions.ALGORITHM);
         if (algorithm != null && RectPackingOptions.ALGORITHM_ID.endsWith(algorithm) && !root.getChildren().isEmpty()) {
             root.setProperty(RectPackingOptions.INTERACTIVE, true);
-        }
-        for (ElkNode n : root.getChildren()) {
-            if (!n.getChildren().isEmpty()) {
-                setInteractiveOptions(n);
-            }
         }
         return;
     }
