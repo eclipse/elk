@@ -24,7 +24,7 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Sorts all child nodes and their edges of the given graph by their {@code MODEL_ORDER},
+ * Sorts all child nodes and their edges of the given graph by their {@link InternalProperties#MODEL_ORDER},
  * which represents the order in input graph.
  * Outgoing ports are sorted by the order of their edges, incoming ports are sorted by the order of their nodes in the
  * previous layer.
@@ -47,15 +47,20 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         int layerIndex = 0;
         for (Layer layer : graph) {
+            final int previousLayerIndex = layerIndex == 0 ? 0 : layerIndex - 1;
+            Layer previousLayer = graph.getLayers().get(previousLayerIndex);
             for (LNode node : layer.getNodes()) {
-                final int previousLayerIndex = layerIndex - 1;
                 Collections.sort(node.getPorts(), (p1, p2) -> {
                     // Sort incoming edges by sorting their ports by the order of the nodes they connect to.
                     if (p1.getOutgoingEdges().isEmpty() && p2.getOutgoingEdges().isEmpty()) {
-                        Layer previousLayer = graph.getLayers().get(previousLayerIndex);
                         LNode p1Node = p1.getIncomingEdges().get(0).getSource().getNode();
                         LNode p2Node = p2.getIncomingEdges().get(0).getSource().getNode();
-                        
+                        if (p1Node.equals(p2Node)) {
+                            // In this case both incoming edges must have a model order set. Check it.
+                            return Integer.compare(
+                                    p1.getIncomingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER),
+                                    p2.getIncomingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER));
+                        }
                         for (LNode previousNode : previousLayer) {
                             if (previousNode.equals(p1Node)) {
                                 return 1;
@@ -72,7 +77,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                                 p1.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER),
                                 p2.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER));
                     }
-                    // Sort outgoing ports are ordered after incoming ports.
+                    // Sort outgoing ports before incoming ports.
                     if (p1.getOutgoingEdges().isEmpty() && p2.getIncomingEdges().isEmpty()) {
                         return 1;
                     } else {
@@ -86,9 +91,44 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                 // by the connected edges.
                 if (!n1.hasProperty(InternalProperties.MODEL_ORDER)
                         || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
-                    return Integer.compare(
-                            getModelOrderFromConnectedEdges(n1),
-                            getModelOrderFromConnectedEdges(n2));
+                    // In this case the order of the connected nodes in the previous layer should be respected
+           
+                    LPort p1 = null;
+                    LPort p2 = null;
+                    // Get first incoming port
+                    for (LPort port : n1.getPorts()) {
+                        if (!port.getIncomingEdges().isEmpty()) {
+                            p1 = port;
+                            break;
+                        }
+                    }
+                    for (LPort port : n2.getPorts()) {
+                        if (!port.getIncomingEdges().isEmpty()) {
+                            p2 = port;
+                            break;
+                        }
+                    }
+                    
+                    // Get node in previous layer
+                    LNode p1Node = p1.getIncomingEdges().get(0).getSource().getNode();
+                    LNode p2Node = p2.getIncomingEdges().get(0).getSource().getNode();
+                    
+                    // If the nodes are equal the incoming edges can be used to order the nodes.
+                    if (p1Node.equals(p2Node)) {
+                        return Integer.compare(
+                              getModelOrderFromConnectedEdges(n1),
+                              getModelOrderFromConnectedEdges(n2));
+                    }
+                    
+                    // Else they are ordered by the nodes they connect to.
+                    // One can disregard the model order here, since it the orderings does already reflect it.
+                    for (LNode previousNode : previousLayer) {
+                        if (previousNode.equals(p1Node)) {
+                            return -1;
+                        } else if (previousNode.equals(p2Node)) {
+                            return 1;
+                        }
+                    }
                 }
                 // Order nodes by their order in the model.
                 return Integer.compare(
@@ -100,9 +140,9 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
     }
     
     /**
-     * The model order of the first incoming edge of a node.
+     * The {@link InternalProperties#MODEL_ORDER} of the first incoming edge of a node.
      * @param n The node
-     * @return The model order of the first incoming edge of the given node. Returns -1 if noch such edge exists.
+     * @return The model order of the first incoming edge of the given node. Returns -1 if no such edge exists.
      */
     private int getModelOrderFromConnectedEdges(final LNode n) {
         List<LPort> ports = n.getPorts();
