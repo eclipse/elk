@@ -241,12 +241,10 @@ public final class PortLabelPlacementCalculator {
         ElkRectangle labelContainerRect = insidePortLabelContainer.getCellRectangle();
         double leftBorder = labelContainerRect.x + ElkMath.maxd(
                 insidePortLabelContainer.getPadding().left,
-                nodeContext.surroundingPortMargins.left,
-                nodeContext.nodeLabelSpacing);
+                nodeContext.surroundingPortMargins.left);
         double rightBorder = labelContainerRect.x + labelContainerRect.width - ElkMath.maxd(
                 insidePortLabelContainer.getPadding().right,
-                nodeContext.surroundingPortMargins.right,
-                nodeContext.nodeLabelSpacing);
+                nodeContext.surroundingPortMargins.right);
         
         // Obtain a rectangle strip overlap remover, which will actually do most of the work
         RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover

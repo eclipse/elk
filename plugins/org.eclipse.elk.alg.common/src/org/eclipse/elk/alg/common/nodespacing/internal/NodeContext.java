@@ -74,7 +74,7 @@ public final class NodeContext {
     /** Space to leave around the node label area. */
     public final ElkPadding nodeLabelsPadding;
     /** Space between a node and its outside labels. */
-    public final double nodeLabelSpacing;
+    public final ElkMargin nodeLabelsMargin;
     /** Space between two labels. */
     public final double labelLabelSpacing;
     /** Space between two different label cells. */
@@ -144,7 +144,7 @@ public final class NodeContext {
         
         // Copy spacings for convenience
         nodeLabelsPadding = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_PADDING);
-        nodeLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_NODE);
+        nodeLabelsMargin = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_MARGIN);
         labelLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_LABEL);
         portPortSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_PORT_PORT);
         portLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_PORT);
