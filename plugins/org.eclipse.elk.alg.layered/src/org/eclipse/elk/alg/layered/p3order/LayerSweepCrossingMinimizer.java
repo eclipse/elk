@@ -184,6 +184,9 @@ public class LayerSweepCrossingMinimizer
             // If no unnecessary crossings are produced by this solution this order is preserved.
             bestCrossings = countCurrentNumberOfCrossings(gData);
             gData.setBestNodeNPortOrder(new SweepCopy(gData.lGraph().toNodeArray()));
+            if (bestCrossings == 0) {
+                return;
+            }
         }
         int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
         for (int i = 0; i < thouroughness; i++) {
