@@ -68,6 +68,11 @@ public class CommentPostprocessorTest {
             double nextTopX = Double.NaN;
             double nextBottomX = Double.NaN;
             
+            // We'll also keep track of the width required to place top and bottom comments to check whether they are
+            // centred above or below the node
+            double topCommentsWidth = 0;
+            double bottomCommentsWidth = 0;
+            
             for (ElkNode comment : gatherConnectedCommentsSortedByX(node)) {
                 if (comment.getY() < node.getY()) {
                     // Top comment; check y coordinate
@@ -77,7 +82,7 @@ public class CommentPostprocessorTest {
                             TOLERANCE);
                     
                     // Check x coordinate
-                    if (nextTopX != Double.NaN) {
+                    if (!Double.isNaN(nextTopX)) {
                         assertEquals(
                                 "Comment comment spacing " + commentCommentSpacing + " violated by comment " + comment,
                                 nextTopX,
@@ -86,6 +91,7 @@ public class CommentPostprocessorTest {
                     }
                     
                     nextTopX = comment.getX() + comment.getWidth() + commentCommentSpacing;
+                    topCommentsWidth += comment.getWidth() + commentCommentSpacing;
                     
                 } else {
                     // Bottom comment; check y coordinate
@@ -95,7 +101,7 @@ public class CommentPostprocessorTest {
                             TOLERANCE);
                     
                     // Check x coordinate
-                    if (nextBottomX != Double.NaN) {
+                    if (!Double.isNaN(nextBottomX)) {
                         assertEquals(
                                 "Comment comment spacing " + commentCommentSpacing + " violated by comment " + comment,
                                 nextBottomX,
@@ -104,7 +110,25 @@ public class CommentPostprocessorTest {
                     }
                     
                     nextBottomX = comment.getX() + comment.getWidth() + commentCommentSpacing;
+                    bottomCommentsWidth += comment.getWidth() + commentCommentSpacing;
                 }
+            }
+            
+            // Check if comments are centred
+            if (topCommentsWidth > 0) {
+                topCommentsWidth -= commentCommentSpacing;
+                assertEquals("Top comments not centred above node " + node,
+                        node.getX() + node.getWidth() / 2,
+                        nextTopX - commentCommentSpacing - (topCommentsWidth / 2),
+                        TOLERANCE);
+            }
+            
+            if (bottomCommentsWidth > 0) {
+                bottomCommentsWidth -= commentCommentSpacing;
+                assertEquals("Bottom comments not centred below node " + node,
+                        node.getX() + node.getWidth() / 2,
+                        nextBottomX - commentCommentSpacing - (bottomCommentsWidth / 2),
+                        TOLERANCE);
             }
         }
     }

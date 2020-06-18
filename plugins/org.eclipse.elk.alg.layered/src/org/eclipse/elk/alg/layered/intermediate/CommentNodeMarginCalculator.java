@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -43,23 +43,22 @@ public final class CommentNodeMarginCalculator implements ILayoutProcessor<LGrap
         monitor.begin("Node margin calculation", 1);
 
         // Iterate through the layers to additionally handle comments
-        double nodeNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
+        double commentCommentSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_COMMENT_COMMENT).doubleValue();
+        double commentNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_COMMENT_NODE).doubleValue();
+        
         layeredGraph.getLayers().stream()
             .flatMap(layer -> layer.getNodes().stream())
-            .forEach(lnode -> processComments(lnode, nodeNodeSpacing));
+            .forEach(lnode -> processComments(lnode, commentCommentSpacing, commentNodeSpacing));
 
         monitor.done();
     }
 
     /**
-     * Make some extra space for comment boxes that are placed near a node.
-     * 
-     * @param node
-     *            a node
-     * @param spacing
-     *            the overall spacing value
+     * Make some extra space for comment boxes that are placed near the given node.
      */
-    private void processComments(final LNode node, final double spacing) {
+    private void processComments(final LNode node, final double commentCommentSpacing,
+            final double commentNodeSpacing) {
+        
         LMargin margin = node.getMargin();
 
         // Consider comment boxes that are put on top of the node
@@ -71,8 +70,8 @@ public final class CommentNodeMarginCalculator implements ILayoutProcessor<LGrap
                 maxHeight = Math.max(maxHeight, commentBox.getSize().y);
                 topWidth += commentBox.getSize().x;
             }
-            topWidth += spacing / 2 * (topBoxes.size() - 1);
-            margin.top += maxHeight + spacing;
+            topWidth += commentCommentSpacing * (topBoxes.size() - 1);
+            margin.top += maxHeight + commentNodeSpacing;
         }
 
         // Consider comment boxes that are put in the bottom of the node
@@ -84,8 +83,8 @@ public final class CommentNodeMarginCalculator implements ILayoutProcessor<LGrap
                 maxHeight = Math.max(maxHeight, commentBox.getSize().y);
                 bottomWidth += commentBox.getSize().x;
             }
-            bottomWidth += spacing / 2 * (bottomBoxes.size() - 1);
-            margin.bottom += maxHeight + spacing;
+            bottomWidth += commentCommentSpacing * (bottomBoxes.size() - 1);
+            margin.bottom += maxHeight + commentNodeSpacing;
         }
 
         // Check if the maximum width of the comments is wider than the node itself, which the comments

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -32,40 +32,44 @@ import com.google.common.collect.Lists;
  * enough to hold all comments, which is ensured by the {@link InnermostNodeMarginCalculator}.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>Comments have been processed by {@link CommentPreprocessor}.
- *     Nodes are organized in layers and have been placed with enough spacing to hold their
- *     connected comment boxes.</dd>
- *   <dt>Postcondition:</dt><dd>Comments that have been removed by pre-processing are
- *     reinserted properly in the graph.</dd>
- *   <dt>Slots:</dt><dd>After phase 5.</dd>
+ *   <dt>Precondition:</dt>
+ *      <dd>Comments have been processed by {@link CommentPreprocessor}.</dd>
+ *      <dd>Nodes are organized in layers.</dd>
+ *      <dd>Nodes have been placed with enough spacing to hold their connected comment boxes.</dd>
+ *   <dt>Postcondition:</dt>
+ *      <dd>Comments that have been removed by pre-processing are reinserted properly in the graph.</dd>
+ *   <dt>Slots:</dt>
+ *      <dd>After phase 5.</dd>
  * </dl>
- *
- * @author msp
  */
 public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Comment post-processing", 1);
-        double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
+        
+        double commentCommentSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_COMMENT_COMMENT);
+        double commentNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_COMMENT_NODE);
         
         for (Layer layer : layeredGraph) {
             List<LNode> boxes = Lists.newArrayList();
             for (LNode node : layer) {
                 List<LNode> topBoxes = node.getProperty(InternalProperties.TOP_COMMENTS);
                 List<LNode> bottomBoxes = node.getProperty(InternalProperties.BOTTOM_COMMENTS);
+                
                 if (topBoxes != null || bottomBoxes != null) {
-                    process(node, topBoxes, bottomBoxes, spacing);
+                    process(node, topBoxes, bottomBoxes, commentCommentSpacing, commentNodeSpacing);
+                    
                     if (topBoxes != null) {
                         boxes.addAll(topBoxes);
                     }
+                    
                     if (bottomBoxes != null) {
                         boxes.addAll(bottomBoxes);
                     }
                 }
             }
+            
             layer.getNodes().addAll(boxes);
         }
         
@@ -78,10 +82,11 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
      * @param node a normal node
      * @param topBoxes a list of boxes to be placed on top, or {@code null}
      * @param bottomBoxes a list of boxes to be placed in the bottom, or {@code null}
-     * @param spacing the overall spacing value
+     * @param commentCommentSpacing spacing between adjacent comments
+     * @param commentNodeSpacing spacing between the node and its comments
      */
     private void process(final LNode node, final List<LNode> topBoxes,
-            final List<LNode> bottomBoxes, final double spacing) {
+            final List<LNode> bottomBoxes, final double commentCommentSpacing, final double commentNodeSpacing) {
         
         KVector nodePos = node.getPosition();
         KVector nodeSize = node.getSize();
@@ -89,7 +94,7 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
         
         if (topBoxes != null) {
             // determine the total width and maximal height of the top boxes
-            double boxesWidth = spacing / 2 * (topBoxes.size() - 1);
+            double boxesWidth = commentCommentSpacing * (topBoxes.size() - 1);
             double maxHeight = 0;
             for (LNode box : topBoxes) {
                 boxesWidth += box.getSize().x;
@@ -104,7 +109,7 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
             for (LNode box : topBoxes) {
                 box.getPosition().x = x;
                 box.getPosition().y = baseLine - box.getSize().y;
-                x += box.getSize().x + spacing / 2;
+                x += box.getSize().x + commentCommentSpacing;
                 // set source and target point for the connecting edge
                 LPort boxPort = getBoxPort(box);
                 boxPort.getPosition().x = box.getSize().x / 2 - boxPort.getAnchor().x;
@@ -121,12 +126,13 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
 
         if (bottomBoxes != null) {
             // determine the total width and maximal height of the bottom boxes
-            double boxesWidth = spacing / 2 * (bottomBoxes.size() - 1);
+            double boxesWidth = commentCommentSpacing * (bottomBoxes.size() - 1);
             double maxHeight = 0;
             for (LNode box : bottomBoxes) {
                 boxesWidth += box.getSize().x;
                 maxHeight = Math.max(maxHeight, box.getSize().y);
             }
+            
             // place the boxes in the bottom of the node, horizontally centered around the node itself
             double x = nodePos.x - (boxesWidth - nodeSize.x) / 2;
             double baseLine = nodePos.y + nodeSize.y + margin.bottom - maxHeight;
@@ -135,7 +141,7 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
             for (LNode box : bottomBoxes) {
                 box.getPosition().x = x;
                 box.getPosition().y = baseLine;
-                x += box.getSize().x + spacing / 2;
+                x += box.getSize().x + commentCommentSpacing;
                 // set source and target point for the connecting edge
                 LPort boxPort = getBoxPort(box);
                 boxPort.getPosition().x = box.getSize().x / 2 - boxPort.getAnchor().x;
