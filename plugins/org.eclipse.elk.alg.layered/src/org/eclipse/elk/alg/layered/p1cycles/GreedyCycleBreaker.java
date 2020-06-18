@@ -47,8 +47,7 @@ import com.google.common.collect.Lists;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>none</dd>
- *   <dt>Postcondition:</dt><dd>the graph has no cycles, but possibly
- *     new nodes and edges</dd>
+ *   <dt>Postcondition:</dt><dd>the graph has no cycles</dd>
  * </dl>
  * 
  * @see org.eclipse.elk.alg.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
