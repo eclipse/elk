@@ -587,9 +587,6 @@ public class CompactionTest {
             return hitbox.x;
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return ""; // dont spam the debug output
