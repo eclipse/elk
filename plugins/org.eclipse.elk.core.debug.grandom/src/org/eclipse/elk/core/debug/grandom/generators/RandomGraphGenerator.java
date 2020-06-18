@@ -1004,9 +1004,7 @@ public class RandomGraphGenerator {
      */
     private static class HeadComparator implements Comparator<HierarchyEdge> {
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final HierarchyEdge edge1, final HierarchyEdge edge2) {
             return edge1.getHead() < edge2.getHead() ? -1
                     : (edge1.getHead() > edge2.getHead() ? 1 : compareId(edge1, edge2));
@@ -1018,9 +1016,7 @@ public class RandomGraphGenerator {
      */
     private static class TailComparator implements Comparator<HierarchyEdge> {
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final HierarchyEdge edge1, final HierarchyEdge edge2) {
             return edge1.getTail() < edge2.getTail() ? -1
                     : (edge1.getTail() > edge2.getTail() ? 1 : compareId(edge1, edge2));

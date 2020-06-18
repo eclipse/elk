@@ -49,9 +49,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Odd port side processing", 1);
         

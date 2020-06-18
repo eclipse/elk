@@ -36,9 +36,6 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
     /** the main constant used for force calculations. */
     private double k;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
@@ -58,17 +55,11 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
         k = Math.sqrt(area / (2 * n)) * c;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean moreIterations(final int count) {
         return temperature > 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected KVector calcDisplacement(final FParticle forcer, final FParticle forcee) {
         avoidSamePosition(getRandom(), forcer, forcee);
@@ -93,9 +84,6 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
         return displacement;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void iterationDone() {
         super.iterationDone();

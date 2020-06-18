@@ -182,31 +182,23 @@ public class CubicSplineInterpolator implements ISplineInterpolator {
         return spline;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public BezierSpline interpolatePoints(final KVector[] points) {
         return calculateOpenBezierSpline(points);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public BezierSpline interpolatePoints(final LinkedList<KVector> points) {
         return calculateOpenBezierSpline(points.toArray(new KVector[points.size()]));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public BezierSpline interpolatePoints(final KVector[] points, final KVector startVec,
             final KVector endVec, final boolean tangendScale) {
         return calculateOpenBezierSpline(points, startVec, endVec, tangendScale);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public BezierSpline interpolatePoints(final LinkedList<KVector> points, final KVector startVec,
             final KVector endVec, final boolean tangendScale) {
         return calculateOpenBezierSpline(points.toArray(new KVector[points.size()]), startVec,

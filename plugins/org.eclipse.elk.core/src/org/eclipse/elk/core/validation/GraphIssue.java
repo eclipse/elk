@@ -88,9 +88,6 @@ public class GraphIssue {
         return severity;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof GraphIssue) {
@@ -102,17 +99,11 @@ public class GraphIssue {
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return element.hashCode() ^ message.hashCode() ^ severity.hashCode();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

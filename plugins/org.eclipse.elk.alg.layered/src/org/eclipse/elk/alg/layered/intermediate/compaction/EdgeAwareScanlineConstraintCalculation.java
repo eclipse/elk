@@ -45,9 +45,6 @@ public class EdgeAwareScanlineConstraintCalculation extends ScanlineConstraintCa
         this.edgeRouting = graph.getProperty(LayeredOptions.EDGE_ROUTING);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void calculateConstraints(final OneDimensionalCompactor theCompactor) {
         this.compactor = theCompactor;

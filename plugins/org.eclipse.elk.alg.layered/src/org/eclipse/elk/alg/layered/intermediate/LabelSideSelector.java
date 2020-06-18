@@ -58,9 +58,7 @@ import com.google.common.collect.Lists;
  */
 public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         EdgeLabelSideSelection mode = layeredGraph.getProperty(LayeredOptions.EDGE_LABELS_SIDE_SELECTION);
         monitor.begin("Label side selection (" + mode + ")", 1);

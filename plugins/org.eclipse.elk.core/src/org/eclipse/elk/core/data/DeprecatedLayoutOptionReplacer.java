@@ -58,9 +58,6 @@ public class DeprecatedLayoutOptionReplacer implements IGraphElementVisitor {
                 CoreOptions.NODE_SIZE_OPTIONS, SPACE_EFFICIENT
             );
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void visit(final ElkGraphElement element) {
         RULES.forEach((option, replacer) -> {

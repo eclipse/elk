@@ -708,9 +708,6 @@ public final class ElkGraphUtil {
         private static final long serialVersionUID = 1L;
 
 
-        /**
-         * {@inheritDoc}.
-         */
         PropertiesSkippingTreeIterator(final Object object, final boolean includeRoot) {
             super(object, includeRoot);
         }

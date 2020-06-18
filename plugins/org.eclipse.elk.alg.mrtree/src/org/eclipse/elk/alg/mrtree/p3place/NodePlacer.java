@@ -71,17 +71,12 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
     private double xTopAdjustment = 0d;
     private double yTopAdjustment = 0d;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor order nodes", 2);
 

@@ -73,16 +73,12 @@ public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGr
     /** list of sink nodes. */
     private final LinkedList<LNode> sinks = Lists.newLinkedList();
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Greedy cycle removal", 1);
         

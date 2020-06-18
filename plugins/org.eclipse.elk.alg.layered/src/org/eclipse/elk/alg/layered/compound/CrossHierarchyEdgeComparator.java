@@ -34,9 +34,7 @@ final class CrossHierarchyEdgeComparator implements Comparator<CrossHierarchyEdg
         this.graph = graph;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int compare(final CrossHierarchyEdge edge1, final CrossHierarchyEdge edge2) {
         if (edge1.getType() == PortType.OUTPUT
                 && edge2.getType() == PortType.INPUT) {

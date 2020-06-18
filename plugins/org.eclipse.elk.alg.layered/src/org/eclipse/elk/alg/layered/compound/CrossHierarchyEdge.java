@@ -47,9 +47,7 @@ public class CrossHierarchyEdge {
         this.type = type;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String toString() {
         return type.toString() + ":" + newEdge.toString();
     }

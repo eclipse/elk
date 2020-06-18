@@ -155,9 +155,6 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         this.obliqueRouting = theobliqueRouting;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     @Override
     protected CommandResult doExecuteWithResult(final IProgressMonitor monitor,
@@ -255,9 +252,6 @@ public class GmfLayoutCommand extends AbstractTransactionalCommand {
         return CommandResult.newOKCommandResult();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<?> getAffectedFiles() {
         if (diagramViewAdapter != null) {

@@ -30,9 +30,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
     /** Calculate the graph size to the new values. */
     GRAPH_SIZE_CALCULATION;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutProcessor<ElkNode> create() {
         switch (this) {
         case OVERLAP_REMOVAL:

@@ -37,9 +37,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
     // /////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> TGraph
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public TGraph importGraph(final ElkNode elkgraph) {
         TGraph tGraph = new TGraph();
 
@@ -141,9 +139,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
     // /////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void applyLayout(final TGraph tGraph) {
         // get the corresponding kGraph
         ElkNode elkgraph = (ElkNode) tGraph.getProperty(InternalProperties.ORIGIN);

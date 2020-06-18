@@ -55,9 +55,6 @@ public final class KVectorChain extends LinkedList<KVector> implements IDataObje
         addAll(vectors);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("(");
@@ -72,9 +69,6 @@ public final class KVectorChain extends LinkedList<KVector> implements IDataObje
         return builder.append(")").toString();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public KVector[] toArray() {
         int i = 0;
@@ -106,9 +100,7 @@ public final class KVectorChain extends LinkedList<KVector> implements IDataObje
         return result;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void parse(final String string) {
         String[] tokens = string.split(",|;|\\(|\\)|\\[|\\]|\\{|\\}| |\t|\n");
         // String::split may contain empty strings whenever two delimiters follow each other

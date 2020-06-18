@@ -36,9 +36,7 @@ public class FanProcessor implements ILayoutProcessor<TGraph> {
     /** this map temporarily contains the number of descendants of each node in the given graph. */
     private Map<String, Integer> gloDescMap = new HashMap<String, Integer>();
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor compute fanout", 1);
 

@@ -40,9 +40,7 @@ import com.google.common.collect.Iterables;
  */
 public class ElkLayoutProvider extends AbstractProvider implements ILayoutNodeProvider {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean provides(final IOperation operation) {
         return operation instanceof ILayoutNodeOperation;
     }
@@ -89,9 +87,7 @@ public class ElkLayoutProvider extends AbstractProvider implements ILayoutNodePr
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     @SuppressWarnings("rawtypes")
     public Runnable layoutLayoutNodes(final List layoutNodes, final boolean offsetFromBoundingBox,
             final IAdaptable layoutHint) {

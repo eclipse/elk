@@ -64,9 +64,6 @@ import com.google.common.collect.Sets;
  */
 public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Breaking Point Insertion", 1);
@@ -406,9 +403,6 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
             return false;
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();

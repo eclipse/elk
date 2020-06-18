@@ -52,9 +52,7 @@ import org.eclipse.elk.core.util.Pair;
  */
 public final class PortListSorter implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Port order processing", 1);
 

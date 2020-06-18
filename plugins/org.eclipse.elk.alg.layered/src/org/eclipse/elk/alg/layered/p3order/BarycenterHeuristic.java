@@ -64,9 +64,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         this.portDistributor = portDistributor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void minimizeCrossings(final List<LNode> layer, final boolean preOrdered,
             final boolean randomize, final boolean forward) {
 

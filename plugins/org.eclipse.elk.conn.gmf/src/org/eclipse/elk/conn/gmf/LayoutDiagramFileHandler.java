@@ -45,9 +45,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class LayoutDiagramFileHandler extends AbstractHandler {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object execute(final ExecutionEvent event) throws ExecutionException {
         ISelection selection = HandlerUtil.getCurrentSelection(event);
         if (selection instanceof IStructuredSelection) {

@@ -29,9 +29,6 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
     /** map of property identifiers to their values. */
     private HashMap<IProperty<?>, Object> propertyMap;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public <T> MapPropertyHolder setProperty(final IProperty<? super T> property, final T value) {
         if (value == null) {
@@ -43,9 +40,6 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
         return this;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(final IProperty<T> property) {
@@ -74,17 +68,11 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
         return defaultValue;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean hasProperty(final IProperty<?> property) {
         return propertyMap != null && propertyMap.containsKey(property);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public MapPropertyHolder copyProperties(final IPropertyHolder other) {
         if (other == null) {
@@ -103,9 +91,6 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
         return this;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<IProperty<?>, Object> getAllProperties() {
         if (propertyMap == null) {

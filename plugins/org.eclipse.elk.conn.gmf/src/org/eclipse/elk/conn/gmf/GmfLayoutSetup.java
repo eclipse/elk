@@ -29,9 +29,6 @@ import com.google.inject.util.Modules;
  */
 public class GmfLayoutSetup implements ILayoutSetup {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean supports(final Object object) {
         if (object instanceof Collection) {
@@ -47,9 +44,6 @@ public class GmfLayoutSetup implements ILayoutSetup {
                 || object instanceof IAdaptable && ((IAdaptable) object).getAdapter(DiagramEditor.class) != null;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Injector createInjector(final Module defaultModule) {
         return Guice.createInjector(Modules.override(defaultModule).with(new GmfLayoutModule()));

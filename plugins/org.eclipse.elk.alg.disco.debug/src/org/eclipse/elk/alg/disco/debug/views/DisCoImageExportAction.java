@@ -56,9 +56,6 @@ public class DisCoImageExportAction extends Action {
         setImageDescriptor(DisCoDebugPlugin.imageDescriptorFromPlugin(DisCoDebugPlugin.PLUGIN_ID, ICON_PATH));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void run() {
         final DisCoGraphRenderingCanvas canvas = view.getCanvas();

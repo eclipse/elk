@@ -107,9 +107,6 @@ public class TTriangle {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         // Note that the hash is independent of the vertex order to guarantee that equal triangles

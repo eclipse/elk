@@ -126,9 +126,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
     /** The strategy which is used for the node promotion. */
     private NodePromotionStrategy promotionStrategy;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Node promotion heuristic", 1);

@@ -30,17 +30,11 @@ public class GrowTreePhase implements ILayoutPhase<SPOrEPhases, Graph> {
     
     private boolean overlapsExisted;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<SPOrEPhases, Graph> getLayoutProcessorConfiguration(final Graph graph) {
         return LayoutProcessorConfiguration.<SPOrEPhases, Graph>create();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Graph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Grow Tree", 1);

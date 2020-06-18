@@ -26,17 +26,11 @@ import com.google.common.collect.Lists;
  */
 public class MSDCutIndexHeuristic implements ICutIndexCalculator {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean guaranteeValid() {
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Integer> getCutIndexes(final LGraph graph, final GraphStats gs) {
         

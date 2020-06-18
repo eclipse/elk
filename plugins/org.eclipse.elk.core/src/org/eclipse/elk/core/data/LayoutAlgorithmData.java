@@ -73,9 +73,7 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
         this.validatorClass = builder.validatorClass;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(final Object obj) {
         if (obj instanceof LayoutAlgorithmData) {
             return this.id.equals(((LayoutAlgorithmData) obj).id);
@@ -83,16 +81,11 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Layout Algorithm: " + id;
@@ -175,23 +168,17 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
         return supportedFeatures;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getId() {
         return id;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getName() {
         return name;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDescription() {
         return description;
     }

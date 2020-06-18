@@ -40,9 +40,7 @@ import com.google.common.collect.Lists;
  */
 public final class HypernodesProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Hypernodes processing", 1);
         

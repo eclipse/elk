@@ -63,9 +63,7 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
         this.mode = themode;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Graph transformation (" + mode + ")", 1);
         

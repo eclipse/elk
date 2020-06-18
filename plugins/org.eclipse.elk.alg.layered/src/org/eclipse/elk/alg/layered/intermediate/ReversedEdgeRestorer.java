@@ -37,9 +37,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class ReversedEdgeRestorer implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Restoring reversed edges", 1);
         

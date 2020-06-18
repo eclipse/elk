@@ -22,9 +22,6 @@ public enum OverlapRemovalStrategy implements ILayoutPhaseFactory<SPOrEPhases, G
     /** Overlap removal by growing a tree. */
     GROW_TREE;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ILayoutPhase<SPOrEPhases, Graph> create() {
         return new GrowTreePhase();

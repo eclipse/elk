@@ -50,18 +50,12 @@ public class ElkUiPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void initializeImageRegistry(final ImageRegistry reg) {
         for (String img : new String[] {IMG_CHOICE, IMG_DOUBLE, IMG_INT, IMG_TEXT, IMG_TRUE, IMG_FALSE}) {
@@ -69,9 +63,6 @@ public class ElkUiPlugin extends AbstractUIPlugin {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void stop(final BundleContext context) throws Exception {
         plugin = null;

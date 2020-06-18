@@ -28,9 +28,6 @@ import org.eclipse.ui.views.properties.PropertySheetEntry;
  */
 public class ValidatingPropertySheetEntry extends PropertySheetEntry {
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected PropertySheetEntry createChildEntry() {
         return new ValidatingPropertySheetEntry();
@@ -72,9 +69,6 @@ public class ValidatingPropertySheetEntry extends PropertySheetEntry {
         return Collections.emptyList();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Image getImage() {
         Image image = super.getImage();
@@ -95,9 +89,6 @@ public class ValidatingPropertySheetEntry extends PropertySheetEntry {
         return null;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getDescription() {
         String description =  super.getDescription();

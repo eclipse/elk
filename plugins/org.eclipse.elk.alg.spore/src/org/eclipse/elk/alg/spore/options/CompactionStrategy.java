@@ -22,9 +22,6 @@ public enum CompactionStrategy implements ILayoutPhaseFactory<SPOrEPhases, Graph
     /** Simple compaction strategy. */
     DEPTH_FIRST;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ILayoutPhase<SPOrEPhases, Graph> create() {
         switch (this) {

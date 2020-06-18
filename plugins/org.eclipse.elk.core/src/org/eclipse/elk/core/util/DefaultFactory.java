@@ -29,9 +29,7 @@ public final class DefaultFactory<T> implements IFactory<T> {
         this.clazz = theclazz;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public T create() {
         try {
             return clazz.newInstance();
@@ -42,9 +40,7 @@ public final class DefaultFactory<T> implements IFactory<T> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void destroy(final T obj) {
         // do nothing by default, override in subclasses
     }

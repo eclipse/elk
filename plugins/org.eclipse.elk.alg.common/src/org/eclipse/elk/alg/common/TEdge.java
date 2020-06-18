@@ -35,9 +35,6 @@ public class TEdge {
         this.v = v;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof TEdge) {
@@ -49,9 +46,6 @@ public class TEdge {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return Objects.hashCode(u) + Objects.hashCode(v);

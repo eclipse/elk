@@ -26,9 +26,7 @@ public enum RadialLayoutPhases implements ILayoutPhaseFactory<RadialLayoutPhases
     /** Route the edges of the graph. */
     P2_EDGE_ROUTING;
 
-   /**
-    * {@inheritDoc}
-    */
+   @Override
     public ILayoutPhase<RadialLayoutPhases, ElkNode> create() {
         switch (this) {
         case P1_NODE_PLACEMENT:

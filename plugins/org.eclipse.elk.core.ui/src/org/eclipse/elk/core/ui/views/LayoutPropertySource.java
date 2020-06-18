@@ -81,9 +81,7 @@ public class LayoutPropertySource implements IPropertySource {
         return layoutConfig;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
             Set<LayoutOptionData> optionData = configManager.getSupportedOptions(layoutConfig);
@@ -147,9 +145,7 @@ public class LayoutPropertySource implements IPropertySource {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getPropertyValue(final Object id) {
         LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
         LayoutOptionData optionData = layoutServices.getOptionData((String) id);
@@ -221,9 +217,7 @@ public class LayoutPropertySource implements IPropertySource {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void setPropertyValue(final Object id, final Object thevalue) {
         final LayoutOptionData optionData = LayoutMetaDataService.getInstance()
                 .getOptionData((String) id);
@@ -286,24 +280,18 @@ public class LayoutPropertySource implements IPropertySource {
         return layoutOptionValidator.checkProperty(optionData, value, null);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getEditableValue() {
         // this feature is currently not required (see interface documentation)
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isPropertySet(final Object id) {
         return layoutConfig.getOptionValue((String) id) != null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void resetPropertyValue(final Object id) {
         Runnable modelChange = new Runnable() {
             public void run() {

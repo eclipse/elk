@@ -114,10 +114,9 @@ public final class SwitchDecider {
     }
 
     /**
-     * {@inheritDoc}
+     * @return whether switching the nodes represented by the indices would reduce the number of crossings.
      */
-    public boolean doesSwitchReduceCrossings(final int upperNodeIndex,
-            final int lowerNodeIndex) {
+    public boolean doesSwitchReduceCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
         
         if (constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
             return false;
