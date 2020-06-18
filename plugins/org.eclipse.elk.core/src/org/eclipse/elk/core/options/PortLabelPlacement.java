@@ -88,6 +88,13 @@ public enum PortLabelPlacement {
     }
 
     /**
+     * @return a set of {@link PortLabelPlacement} enum values indicating default inside port label positions.
+     */
+    public static EnumSet<PortLabelPlacement> inside() {
+        return EnumSet.of(PortLabelPlacement.INSIDE);
+    }
+
+    /**
      * @return a set of {@link PortLabelPlacement} enum values indicating default outside port label positions.
      */
     public static EnumSet<PortLabelPlacement> outside() {
