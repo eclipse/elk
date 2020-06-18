@@ -19,7 +19,9 @@ import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Class to apply many graph element visitors on the same graph.
+ * Class to apply many graph element visitors to the same graph.
+ * This class is necessary to apply more than one graph visitor to a layout run executed by the
+ * {@link org.eclipse.elk.core.service.DiagramLayoutEngine}.
  */
 public class CompoundGraphElementVisitor implements IGraphElementVisitor {
     
@@ -46,7 +48,7 @@ public class CompoundGraphElementVisitor implements IGraphElementVisitor {
     /**
      * Creates a compound graph visitor using the given visitors.
      * 
-     * @param applyVisitorsDepthFirst Whether the first visitor is applied to all element first (true) or
+     * @param applyToFullGraphFirst Whether the first visitor is applied to all element first (true) or
      * all visitors first to the first element (false)
      * @param visitors The graph visitors
      */
@@ -60,14 +62,14 @@ public class CompoundGraphElementVisitor implements IGraphElementVisitor {
      */
     @Override
     public void visit(final ElkGraphElement element) {
-        if (element instanceof ElkNode) {
-            if (applyToFullGraphFirst) {
+        if (applyToFullGraphFirst) {
+            if (element.eContainer() == null && element instanceof ElkNode) {
                 ElkUtil.applyVisitors((ElkNode) element,
                         graphVisitors.toArray(new IGraphElementVisitor[graphVisitors.size()]));
-            } else {
-                for (IGraphElementVisitor graphVisitor : graphVisitors) {
-                    graphVisitor.visit(element);
-                }
+            }
+        } else {
+            for (IGraphElementVisitor graphVisitor : graphVisitors) {
+                graphVisitor.visit(element);
             }
         }
     }
@@ -87,20 +89,4 @@ public class CompoundGraphElementVisitor implements IGraphElementVisitor {
     public List<IGraphElementVisitor> getGraphVisitors() {
         return graphVisitors;
     }
-
-    /**
-     * @return true, if the graph visitors are applied depth-first
-     */
-    public boolean isApplyToFullGraphFirst() {
-        return applyToFullGraphFirst;
-    }
-
-    /**
-     * @param applyToFullGraphFirst Whether the first visitor is applied to all element first (true) or
-     * all visitors first to the first element (false)
-     */
-    public void setApplyToFullGraphFirst(boolean applyToFullGraphFirst) {
-        this.applyToFullGraphFirst = applyToFullGraphFirst;
-    }
-
 }
