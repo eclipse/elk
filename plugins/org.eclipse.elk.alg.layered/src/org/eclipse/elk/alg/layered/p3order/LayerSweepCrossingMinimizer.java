@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
@@ -179,7 +180,7 @@ public class LayerSweepCrossingMinimizer
         graphsWhoseNodeOrderChanged.clear();
 
         int bestCrossings = Integer.MAX_VALUE;
-        if (gData.lGraph().getProperty(LayeredOptions.PRESERVE_ORDER)) {
+        if (gData.lGraph().getProperty(LayeredOptions.PRESERVE_ORDER) != OrderingStrategy.NONE) {
             // Set the current order of nodes and ports as the currently best order.
             // If no unnecessary crossings are produced by this solution this order is preserved.
             bestCrossings = countCurrentNumberOfCrossings(gData);

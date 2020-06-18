@@ -17,6 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 
 /**
  * Orders {@link LNode}s in the same layer by {@link InternalProperties#MODEL_ORDER}
@@ -30,12 +31,19 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     private final Layer previousLayer;
     
     /**
+     * The ordering strategy.
+     */
+    private final OrderingStrategy orderingStrategy;
+    
+    /**
      * Creates a comparator to compare {@link LNode}s in the same layer.
      * 
      * @param previousLayer The previous layer
+     * @param orderingStrategy The ordering strategy
      */
-    public ModelOrderNodeComparator(final Layer previousLayer) {
+    public ModelOrderNodeComparator(final Layer previousLayer, final OrderingStrategy orderingStrategy) {
         this.previousLayer = previousLayer;
+        this.orderingStrategy = orderingStrategy;
     }
 
     /* (non-Javadoc)
@@ -45,7 +53,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     public int compare(final LNode n1, final LNode n2) {
         // If no model order is set, the one node is a dummy node and the nodes should be ordered
         // by the connected edges.
-        if (!n1.hasProperty(InternalProperties.MODEL_ORDER)
+        if (orderingStrategy == OrderingStrategy.PREFER_EDGES || !n1.hasProperty(InternalProperties.MODEL_ORDER)
                 || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // In this case the order of the connected nodes in the previous layer should be respected
             LNode p1Node = n1.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
@@ -75,6 +83,9 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                     return 1;
                 }
             }
+            // Fall through case.
+            // Both nodes are not connected to the previous layer. They henceforth must be normal nodes.
+            // Therefore the model order shall be used to order them.
         }
         // Order nodes by their order in the model.
         return Integer.compare(

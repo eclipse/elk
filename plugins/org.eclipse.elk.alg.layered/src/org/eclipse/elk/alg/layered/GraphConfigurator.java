@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
@@ -302,7 +303,7 @@ final class GraphConfigurator {
         default: // OFF
         }
         
-        if (lgraph.getProperty(LayeredOptions.PRESERVE_ORDER)) {
+        if (lgraph.getProperty(LayeredOptions.PRESERVE_ORDER) != OrderingStrategy.NONE) {
             configuration
                 .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.SORT_BY_INPUT_ORDER_OF_MODEL);
         }

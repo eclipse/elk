@@ -944,12 +944,12 @@ advanced option portSortingStrategy: PortSortingStrategy {
     targets parents
 }
 
-advanced option preserveOrder: boolean {
+advanced option preserveOrder: OrderingStrategy {
     label "Preserve Order"
     description
         "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
          conflicts between the ordering or edges and nodes."
-    default = false
+    default = OrderingStrategy.NONE
     targets parents
 }
 
