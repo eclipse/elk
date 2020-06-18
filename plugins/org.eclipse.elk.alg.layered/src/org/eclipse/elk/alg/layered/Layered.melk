@@ -51,7 +51,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.nodeNode
     supports org.eclipse.elk.spacing.nodeSelfLoop
     supports org.eclipse.elk.spacing.portPort
-    supports org.eclipse.elk.spacing.individualOverride
+    supports org.eclipse.elk.spacing.individual
     documentation "Most parts of the algorithm do not support this yet."
     // layer-based spacings
     supports org.eclipse.elk.alg.layered.spacing.baseValue
