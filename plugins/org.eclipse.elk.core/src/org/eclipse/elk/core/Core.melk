@@ -404,12 +404,21 @@ group spacing {
         targets parents, nodes
     }
 
-    advanced option individualOverride: IndividualSpacings {
-        label "Individual Spacing Override"
-        description
-            "In general spacing values apply to the children of the hierarchical node 
-            (possibly the root node) for which the values are actually specified. Hereby,
-            the children include ports, edges, and labels. "
+    advanced option individual: IndividualSpacings {
+        label "Individual Spacing"
+        description 
+            "Allows to specify individual spacing values for graph elements that shall be different from 
+            the value specified for the element's parent."
+        documentation
+            "In most cases, spacing values apply to the children of the hierarchical node 
+            (possibly the root node) for which the values are actually specified. 
+            Hereby, the children may include ports, edges, and labels.
+            This option allows to specify a different spacing for a certain element, 
+            thus overriding the parent's value. To give an example, a spacing.portPort of 5 configured 
+            on the graph would result in the ports of all of the graph's nodes to be spaced apart by 5px. 
+            A single node may desire a larger spacing and hence set an individual spacing.portPort of 10.
+            Note that not all algorithms (or concrete configurations of a specific algorithm)
+            support this behavior."
         targets nodes, edges, ports, labels
     }
 
