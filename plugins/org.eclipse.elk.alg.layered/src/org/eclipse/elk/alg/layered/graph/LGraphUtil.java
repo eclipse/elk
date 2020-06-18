@@ -1088,8 +1088,8 @@ public final class LGraphUtil {
     public static <T> T getIndividualOrInherited(final LNode node, final IProperty<T> property) {
         T result = null;
         
-        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
-            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL)) {
+            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL);
             if (individualSpacings.hasProperty(property)) {
                 result = individualSpacings.getProperty(property);
             }

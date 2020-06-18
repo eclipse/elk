@@ -18,7 +18,7 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
  * A property holder which can be used to define individual spacing overrides. The overrides are applied to the
- * element this object is set on, which is done through the {@link CoreOptions#SPACING_INDIVIDUAL_OVERRIDE} property.
+ * element this object is set on, which is done through the {@link CoreOptions#SPACING_INDIVIDUAL} property.
  */
 public class IndividualSpacings extends MapPropertyHolder {
 
@@ -40,8 +40,8 @@ public class IndividualSpacings extends MapPropertyHolder {
     public static <T> T getIndividualOrInherited(final ElkNode node, final IProperty<T> property) {
         T result = null;
         
-        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
-            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL)) {
+            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL);
             if (individualSpacings.hasProperty(property)) {
                 result = individualSpacings.getProperty(property);
             }
@@ -69,8 +69,8 @@ public class IndividualSpacings extends MapPropertyHolder {
     public static <T> T getIndividualOrInherited(final NodeAdapter<?> node, final IProperty<T> property) {
         T result = null;
         
-        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
-            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL)) {
+            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL);
             if (individualSpacings.hasProperty(property)) {
                 result = individualSpacings.getProperty(property);
             }
