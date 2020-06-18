@@ -85,7 +85,7 @@ public final class CuttingUtils {
             dummyNode.setProperty(InternalProperties.ORIGIN, edge);
             dummyNode.setProperty(LayeredOptions.PORT_CONSTRAINTS,
                     PortConstraints.FIXED_POS);
-            dummyNode.setProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE, is);
+            dummyNode.setProperty(LayeredOptions.SPACING_INDIVIDUAL, is);
             
             Layer nextLayer = layeredGraph.getLayers().get(i);
             if (i == srcIndex) {

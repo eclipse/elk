@@ -309,7 +309,7 @@ final class JsonExporter {
         parent.addJsonObj("layoutOptions", jsonProps)
         holder.getAllProperties.entrySet
             .filter[ key !== null ]
-            .filter[ key != CoreOptions.SPACING_INDIVIDUAL_OVERRIDE ]
+            .filter[ key != CoreOptions.SPACING_INDIVIDUAL ]
             .forEach [ p |
                 if (!omitUnknownLayoutOptions || p.key.isKnown) {
                     var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
@@ -320,10 +320,10 @@ final class JsonExporter {
     
     private def void transformIndividualSpacings(IPropertyHolder holder, Object parentA) {
         // skip if empty
-        if (holder === null || !holder.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+        if (holder === null || !holder.hasProperty(CoreOptions.SPACING_INDIVIDUAL)) {
             return
         }
-        val individualSpacings = holder.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)
+        val individualSpacings = holder.getProperty(CoreOptions.SPACING_INDIVIDUAL)
         if (individualSpacings.allProperties === null || individualSpacings.allProperties.empty) {
             return;
         }
