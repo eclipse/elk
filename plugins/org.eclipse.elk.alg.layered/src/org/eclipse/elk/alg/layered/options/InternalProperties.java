@@ -412,6 +412,12 @@ public final class InternalProperties {
      * Set for nodes and edges to preserve the order in the model file.
      */
     public static final IProperty<Integer> MODEL_ORDER = new Property<>("modelOrder");
+
+    /**
+     * Set on ports to save their (long edge) target node.
+     * Only used during port sorting if the node/edge order shall be preserved.
+     */
+    public static final IProperty<LNode> LONG_EDGE_TARGET_NODE = new Property<>("longEdgeTargetNode");
     
     /**
      * Hidden default constructor.

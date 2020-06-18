@@ -53,39 +53,59 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     public int compare(final LNode n1, final LNode n2) {
         // If no model order is set, the one node is a dummy node and the nodes should be ordered
         // by the connected edges.
+        // This kind of ordering should be preferred, if the order of the edges has priority.
         if (orderingStrategy == OrderingStrategy.PREFER_EDGES || !n1.hasProperty(InternalProperties.MODEL_ORDER)
                 || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // In this case the order of the connected nodes in the previous layer should be respected
-            LNode p1Node = n1.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
-                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource().getNode())
-                    .orElse(null);
-            LNode p2Node = n2.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
-                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource().getNode())
-                    .orElse(null);
-            // If the nodes are equal the incoming edges can be used to order the nodes.
-            // We assume one of the nodes p1Node and p2Node is not null.
-            // Otherwise both of them would have a model order set,
-            // since dummy nodes have at least one incoming edge.
-            // This means that dummy nodes are always ordered above nodes with no incoming edges.
-            if (p1Node != null && p1Node.equals(p2Node)) {
-                return Integer.compare(
-                      getModelOrderFromConnectedEdges(n1),
-                      getModelOrderFromConnectedEdges(n2));
-            }
+            LPort p1SourcePort = n1.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
+                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource()).orElse(null);
+            LPort p2SourcePort = n2.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
+                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource()).orElse(null);
             
-            // Else they are ordered by the nodes they connect to.
-            // One can disregard the model order here,
-            // since the ordering in the previous layer does already reflect it.
-            for (LNode previousNode : previousLayer) {
-                if (previousNode.equals(p1Node)) {
-                    return -1;
-                } else if (previousNode.equals(p2Node)) {
-                    return 1;
+            // Case both nodes have connections to the previous layer.
+            if (p1SourcePort != null && p2SourcePort != null) {
+                LNode p1Node = p1SourcePort.getNode();
+                LNode p2Node = p2SourcePort.getNode();
+                
+                // If both nodes connect to the same node the order of their corresponding ports in the previous
+                // layer should be used to order them.
+                if (p1Node != null && p1Node.equals(p2Node)) {
+                    // We are not allowed to look at the model order of the edges but we have to look at the actual
+                    // port ordering.
+                    for (LPort port : p1Node.getPorts()) {
+                        if (port.equals(p1SourcePort)) {
+                            return -1;
+                        } else if (port.equals(p2SourcePort)) {
+                            return 1;
+                        }
+                    }
+                    // Cannot happen, since both nodes have a connection to the previous layer.
+                    return Integer.compare(
+                            getModelOrderFromConnectedEdges(n1),
+                            getModelOrderFromConnectedEdges(n2));
+                }
+                
+                // Else the nodes are ordered by the nodes they connect to.
+                // One can disregard the model order here
+                // since the ordering in the previous layer does already reflect it.
+                for (LNode previousNode : previousLayer) {
+                    if (previousNode.equals(p1Node)) {
+                        return -1;
+                    } else if (previousNode.equals(p2Node)) {
+                        return 1;
+                    }
                 }
             }
+            
+            // One node has no source port
+            if (!n1.hasProperty(InternalProperties.MODEL_ORDER) || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
+                return Integer.compare(
+                        getModelOrderFromConnectedEdges(n1),
+                        getModelOrderFromConnectedEdges(n2));
+            }
             // Fall through case.
-            // Both nodes are not connected to the previous layer. They henceforth must be normal nodes.
-            // Therefore the model order shall be used to order them.
+            // Both nodes are not connected to the previous layer. Therefore, they must be normal nodes.
+            // The model order shall be used to order them.
         }
         // Order nodes by their order in the model.
         return Integer.compare(
@@ -97,7 +117,8 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
      * The {@link InternalProperties#MODEL_ORDER} of the first incoming edge of a node.
      * 
      * @param n The node
-     * @return The model order of the first incoming edge of the given node. Returns -1 if no such edge exists.
+     * @return The model order of the first incoming edge of the given node.
+     * Returns Integer.MAX_VALUE if no such edge exists.
      */
     private int getModelOrderFromConnectedEdges(final LNode n) {
         List<LPort> ports = n.getPorts();
@@ -110,10 +131,13 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 }
             }
             if (edge == null) {
-                return -1;
+                // Set to -1 to sort nodes without a connection to the previous layer over dummy nodes.
+                // One of this has to be chosen, since dummy nodes are not comparable with nodes
+                // that do not have a connection to the previous layer.
+                return Integer.MAX_VALUE;
             }
             return edge.getProperty(InternalProperties.MODEL_ORDER);
         }
-        return -1;
+        return Integer.MAX_VALUE;
     }
 }

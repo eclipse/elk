@@ -10,9 +10,14 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
@@ -48,13 +53,57 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             final int previousLayerIndex = layerIndex == 0 ? 0 : layerIndex - 1;
             Layer previousLayer = graph.getLayers().get(previousLayerIndex);
             for (LNode node : layer.getNodes()) {
-                Collections.sort(node.getPorts(), new ModelOrderPortComparator(previousLayer));
+                // Special case:
+                // If two edges (of the same node) have the same target node they should be next to each other.
+                // Therefore all ports that connect to the same node should have the same (their minimal) model order.
+                Map<LNode, Integer> targetNodeModelOrder = new HashMap<>();
+                // Get minimal model order for target node
+
+                node.getPorts().stream().filter(p -> !p.getOutgoingEdges().isEmpty()).forEach(p -> {
+                    LNode targetNode = getTargetNode(p);
+                    p.setProperty(InternalProperties.LONG_EDGE_TARGET_NODE, targetNode);
+                    if (targetNode != null) {
+                        int previousOrder = Integer.MAX_VALUE;
+                        if (targetNodeModelOrder.containsKey(targetNode)) {
+                            previousOrder = targetNodeModelOrder.get(targetNode);
+                        }
+                        targetNodeModelOrder.put(targetNode,
+                                Math.min(
+                                        p.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER),
+                                        previousOrder));
+                    }
+                });
+                Collections.sort(node.getPorts(), new ModelOrderPortComparator(previousLayer, targetNodeModelOrder));
             }
             // Sort nodes.
             Collections.sort(layer.getNodes(),
                     new ModelOrderNodeComparator(previousLayer, graph.getProperty(LayeredOptions.PRESERVE_ORDER)));
             layerIndex++;
         }
+    }
+
+    /**
+     * Returns the target node of a port considering long edges.
+     * @param port The port
+     * @return the target node of the long edge connecting to the port or null if none exist.
+     */
+    public static LNode getTargetNode(final LPort port) {
+        LNode node = null;
+        LEdge edge = port.getOutgoingEdges().get(0);
+        do {
+            node = edge.getTarget().getNode();
+            // If the dummy node has a target return it.
+            if (node.hasProperty(InternalProperties.LONG_EDGE_TARGET)) {
+                return node.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode();
+            }
+            // It not the current node might be the target node or one has to iterate manually through to it.
+            if (node.getType() != NodeType.NORMAL && node.getOutgoingEdges().iterator().hasNext()) {
+                edge = node.getOutgoingEdges().iterator().next();
+            } else if (node.getType() != NodeType.NORMAL) {
+                return null;
+            }
+        } while (node != null && node.getType() != NodeType.NORMAL);
+        return node;
     }
 }
 
