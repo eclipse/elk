@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -35,8 +35,6 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
  * </dl>
  *
  * @see LabelAndNodeSizeProcessor
- * @author cds
- * @author uru
  */
 public final class NodeMarginCalculator  {
 
@@ -210,12 +208,13 @@ public final class NodeMarginCalculator  {
                     node, null, null, labelSpacing);
         }
         
-        // Reset the margin
+        // Reset the margin (guard against very small double precision errors which can cause the results to be small
+        // negative values, which doesn't make sense -- see #616)
         ElkMargin margin = new ElkMargin(node.getMargin());
-        margin.top = node.getPosition().y - boundingBox.y;
-        margin.bottom = boundingBox.y + boundingBox.height - (node.getPosition().y + node.getSize().y);
-        margin.left = node.getPosition().x - boundingBox.x;
-        margin.right = boundingBox.x + boundingBox.width - (node.getPosition().x + node.getSize().x);
+        margin.top = Math.max(0, node.getPosition().y - boundingBox.y);
+        margin.bottom = Math.max(0, boundingBox.y + boundingBox.height - (node.getPosition().y + node.getSize().y));
+        margin.left = Math.max(0, node.getPosition().x - boundingBox.x);
+        margin.right = Math.max(0, boundingBox.x + boundingBox.width - (node.getPosition().x + node.getSize().x));
         node.setMargin(margin);
     }
     
