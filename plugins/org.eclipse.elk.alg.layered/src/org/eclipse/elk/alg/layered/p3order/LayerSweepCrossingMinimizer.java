@@ -188,6 +188,7 @@ public class LayerSweepCrossingMinimizer
             if (bestCrossings == 0) {
                 return;
             }
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, true);
         }
         int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
         for (int i = 0; i < thouroughness; i++) {
@@ -204,8 +205,14 @@ public class LayerSweepCrossingMinimizer
 
     private int minimizeCrossingsWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
-
-        gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
+        
+        if (!gData.lGraph().hasProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                || gData.lGraph().getProperty(LayeredOptions.PRESERVE_ORDER) == OrderingStrategy.NONE) {
+            gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
+        } else {
+            isForwardSweep = true;
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, null);
+        }
         sweepReducingCrossings(gData, isForwardSweep, true);
         int crossingsInGraph = countCurrentNumberOfCrossings(gData);
         int oldNumberOfCrossings;
