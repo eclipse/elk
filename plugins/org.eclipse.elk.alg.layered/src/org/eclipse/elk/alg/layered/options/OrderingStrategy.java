@@ -11,7 +11,6 @@ package org.eclipse.elk.alg.layered.options;
 
 /**
  * Strategy to order nodes and ports before crossing minimization.
- *
  */
 public enum OrderingStrategy {
     /**

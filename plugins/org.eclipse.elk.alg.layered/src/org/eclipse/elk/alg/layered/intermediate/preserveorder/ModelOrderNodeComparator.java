@@ -46,9 +46,6 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
         this.orderingStrategy = orderingStrategy;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(final LNode n1, final LNode n2) {
         // If no model order is set, the one node is a dummy node and the nodes should be ordered
@@ -121,23 +118,16 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
      * Returns Integer.MAX_VALUE if no such edge exists.
      */
     private int getModelOrderFromConnectedEdges(final LNode n) {
-        List<LPort> ports = n.getPorts();
-        if (ports.size() > 0) {
-            LEdge edge = null;
-            for (LPort lPort : ports) {
-                if (lPort.getIncomingEdges().size() > 0) {
-                    edge = lPort.getIncomingEdges().get(0);
-                    break;
-                }
+        LPort sourcePort = n.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty()).findFirst().orElse(null);
+        if (sourcePort != null) {
+            LEdge edge = sourcePort.getIncomingEdges().get(0);
+            if (edge != null) {
+                return edge.getProperty(InternalProperties.MODEL_ORDER);
             }
-            if (edge == null) {
-                // Set to -1 to sort nodes without a connection to the previous layer over dummy nodes.
-                // One of this has to be chosen, since dummy nodes are not comparable with nodes
-                // that do not have a connection to the previous layer.
-                return Integer.MAX_VALUE;
-            }
-            return edge.getProperty(InternalProperties.MODEL_ORDER);
         }
+        // Set to -1 to sort nodes without a connection to the previous layer over dummy nodes.
+        // One of this has to be chosen, since dummy nodes are not comparable with nodes
+        // that do not have a connection to the previous layer.
         return Integer.MAX_VALUE;
     }
 }

@@ -20,8 +20,9 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 
 /**
- * Orders {@link LPort}s in the same layer by the of their edges {@link InternalProperties#MODEL_ORDER}
+ * Orders {@link LPort}s in the same layer by their edges {@link InternalProperties#MODEL_ORDER}
  * or the order of the nodes they connect to in the previous layer.
+ * This takes into account that ports that connect to the same (long edge) target should be ordered next to each other.
  * Outgoing ports are ordered before incoming ports.
  * Incoming ports choose a position that does not create conflicts with the previous layer.
  */
@@ -48,15 +49,10 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         this.targetNodeModelOrder = targetNodeModelOrder;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(final LPort p1, final LPort p2) {
         // Sort incoming edges by sorting their ports by the order of the nodes they connect to.
-        if (p1.getOutgoingEdges().isEmpty() && p2.getOutgoingEdges().isEmpty()) {
+        if (!p1.getIncomingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
             LNode p1Node = p1.getIncomingEdges().get(0).getSource().getNode();
             LNode p2Node = p2.getIncomingEdges().get(0).getSource().getNode();
             if (p1Node.equals(p2Node)) {
@@ -74,7 +70,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         }
 
         // Sort outgoing edges by sorting their ports based on the model order of their edges.
-        if (p1.getIncomingEdges().isEmpty() && p2.getIncomingEdges().isEmpty()) {
+        if (!p1.getOutgoingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
             LNode p1TargetNode = p1.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
             LNode p2TargetNode = p2.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
             int p1Order = p1.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
@@ -94,7 +90,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             
         }
         // Sort outgoing ports before incoming ports.
-        if (p1.getOutgoingEdges().isEmpty() && p2.getIncomingEdges().isEmpty()) {
+        if (!p1.getIncomingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
             return 1;
         } else {
             return -1;
