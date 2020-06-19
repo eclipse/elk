@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p1cycles;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.LayeredPhases;
@@ -24,7 +24,6 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Cycle breaker implementation that uses a depth-first traversal of the graph. Described in
@@ -50,18 +49,22 @@ import com.google.common.collect.Lists;
  */
 public class DepthFirstCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
 
-    /** intermediate processing configuration. */
+    /** Intermediate processing configuration. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
 
-    /** list of source nodes. */
-    private final List<LNode> sources = Lists.newArrayList();
-
-    /** mark for the nodes, inducing an ordering of the nodes. */
-    private int[] mark;
-    /** node at which the dfs started. */
-    private int[] root;
+    /** List of source nodes. */
+    private List<LNode> sources;
+    /** Indicates whether a given node was already visited during DFS. */
+    private boolean[] visited;
+    /**
+     * A node is active during DFS if it is on our current DFS path. Any edge that leads back to an active node induces
+     * a cycle and needs to be reversed.
+     */
+    private boolean[] active;
+    /** The list of edges to be reversed at the end of our little algorithmic adventure. */
+    private List<LEdge> edgesToBeReversed;
     
     @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
@@ -75,77 +78,81 @@ public class DepthFirstCycleBreaker implements ILayoutPhase<LayeredPhases, LGrap
         List<LNode> nodes = graph.getLayerlessNodes();
 
         // initialize values for the algorithm 
-        int unprocessedNodeCount = nodes.size();
-        mark = new int[unprocessedNodeCount];
-        Arrays.fill(mark, -1);
-        root = new int[unprocessedNodeCount];
-        Arrays.fill(root, -1);
+        int nodeCount = nodes.size();
+        
+        sources = new ArrayList<>();
+        visited = new boolean[nodeCount];
+        active = new boolean[nodeCount];
+        edgesToBeReversed = new ArrayList<>();
         
         int index = 0;
         for (LNode node : nodes) {
-            // the node id is used as index for the indeg, outdeg, and mark arrays
+            // The node id is used as index into our arrays
             node.id = index;
             if (Iterables.isEmpty(node.getIncomingEdges())) {
                 sources.add(node);
             }
             index++;
         }
-
-        // from every source node start a dfs
+        
+        // From every source node start a DFS
         for (LNode source : sources) {
-            dfs(source, 0, source.id);
+            dfs(source);
         }
         
-        // check if every node has been visited, otherwise start another dfs
-        //  this can, for instance, happen if the graph is a circle 
-        for (int i = 0; i < mark.length; i++) {
-            if (mark[i] == -1) {
-                // this assumes that the nodes list is an array list and 
-                // that node ids are assigned in accordance to the nodes' indexes in this list
+        // Start more DFS runs for all nodes that have not been visited yet. These must be part of a cycle since they
+        // are not source nodes
+        for (int i = 0; i < nodeCount; i++) {
+            if (!visited[i]) {
                 LNode n = nodes.get(i);
                 assert n.id == i;
-                dfs(n, 0, n.id);
+                dfs(n);
             }
         }
         
-        // reverse "back edges"
-        for (LNode u : nodes) {
-            for (LEdge e : Lists.newArrayList(u.getOutgoingEdges())) {
-                if (e.isSelfLoop()) {
-                    continue;
-                }
-                LNode v = e.getOther(u);
-                if (root[u.id] == root[v.id] && mark[v.id] < mark[u.id]) {
-                    e.reverse(graph, true);
-                    graph.setProperty(InternalProperties.CYCLIC, true);
-                }
-            }
+        // Reverse "back edges"
+        for (LEdge edge : edgesToBeReversed) {
+            edge.reverse(graph, true);
+            graph.setProperty(InternalProperties.CYCLIC, true);
         }
         
-        // cleanup
-        this.mark = null;
-        this.root = null;
-        this.sources.clear();
+        // Cleanup
+        this.sources = null;
+        this.visited = null;
+        this.active = null;
+        this.edgesToBeReversed = null;
         
         monitor.done();
     }
     
-    private void dfs(final LNode n, final int index, final int rootId) {
-        if (mark[n.id] != -1) {
-            // already visited
+    private void dfs(final LNode n) {
+        if (visited[n.id]) {
             return;
         }
         
-        mark[n.id] = index;
-        root[n.id] = rootId;
+        // We're now visiting the node, and it's active
+        this.visited[n.id] = true;
+        this.active[n.id] = true;
         
         for (LEdge out : n.getOutgoingEdges()) {
+            // Ignore self loops
             if (out.isSelfLoop()) {
                 continue;
             }
+            
             LNode target = out.getTarget().getNode();
-            dfs(target, index + 1, rootId);
+            
+            // If the edge connects to an active node, we have found a path from said active node back to itself since
+            // active nodes are on our current path. That's a backward edge and needs to be reversed
+            if (this.active[target.id]) {
+                edgesToBeReversed.add(out);
+            } else {
+                dfs(target);
+            }
         }
+        
+        // We're leaving this node
+        this.active[n.id] = false;
     }
     
 }
