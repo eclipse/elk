@@ -76,10 +76,10 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     INVERTED_PORT_PROCESSOR,
     /** Orders the port lists of nodes with fixed port order. */
     PORT_LIST_SORTER,
-    /** Inserts dummy nodes to take care of northern and southern ports. */
-    NORTH_SOUTH_PORT_PREPROCESSOR,
     /** Sorts nodes and edges according to their order in the input model. */
     SORT_BY_INPUT_ORDER_OF_MODEL,
+    /** Inserts dummy nodes to take care of northern and southern ports. */
+    NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
     
