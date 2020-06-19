@@ -40,9 +40,12 @@ import org.eclipse.elk.graph.ElkPort;
 public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
 
     /**
-     * Since nodes should not overlap and the their width and height may not be final.
-     * Therefore, they are placed with the following spacing, which is hopefully enough to make up for size
+     * Since nodes should not overlap and their width and height are only the width and height of the previous
+     * layout run and therefore not reliable, we have to add additional spacing between them.
+     * Therefore, nodes are placed with the following spacing, which is hopefully enough to make up for size
      * changes caused by interactive layout.
+     * Of course one could construct a model for which this spacing is not enough, but we choose to disregard this.
+     * In all non constructed normal cases this spacing should be sufficient to ensure that nodes do not overlap.
      */
     public static final int PSEUDO_POSITION_SPACING = Integer.MAX_VALUE;
     
