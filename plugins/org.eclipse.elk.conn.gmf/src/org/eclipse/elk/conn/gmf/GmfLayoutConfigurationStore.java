@@ -93,9 +93,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         this.editPartFilter = filter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getOptionValue(final String optionId) {
         View view = editPart.getNotationView();
         if (view != null) {
@@ -133,9 +131,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public void setOptionValue(final String optionId, final String value) {
         View view = editPart.getNotationView();
@@ -176,9 +172,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Collection<String> getAffectedOptions() {
         Set<String> options = new HashSet<String>();
         View view = editPart.getNotationView();
@@ -200,16 +194,12 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         return options;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public EditingDomain getEditingDomain() {
         return editPart.getEditingDomain();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Set<Target> getOptionTargets() {
         if (editPart instanceof AbstractBorderItemEditPart) {
             // This is a border item, i.e. a port 
@@ -260,9 +250,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         return null;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutConfigurationStore getParent() {
         EditPart container = getContainer();
         if (container != null) {

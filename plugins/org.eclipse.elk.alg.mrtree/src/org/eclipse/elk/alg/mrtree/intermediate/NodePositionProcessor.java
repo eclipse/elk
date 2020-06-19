@@ -31,9 +31,7 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
     /** number of nodes in the graph. */
     private int numberOfNodes;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor set coordinates", 1);
 

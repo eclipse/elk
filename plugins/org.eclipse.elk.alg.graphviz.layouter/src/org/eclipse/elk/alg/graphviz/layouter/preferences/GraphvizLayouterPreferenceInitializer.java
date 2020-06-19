@@ -22,9 +22,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
  */
 public class GraphvizLayouterPreferenceInitializer extends AbstractPreferenceInitializer {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void initializeDefaultPreferences() {
         IPreferenceStore store = GraphvizLayouterPreferenceStore.getInstance().getPreferenceStore();

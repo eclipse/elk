@@ -21,9 +21,6 @@ import com.google.common.collect.Lists;
  */
 public class ARDCutIndexHeuristic implements ICutIndexCalculator {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Integer> getCutIndexes(final LGraph graph, final GraphStats gs) {
         int rows = getChunkCount(gs);
@@ -57,9 +54,6 @@ public class ARDCutIndexHeuristic implements ICutIndexCalculator {
         return rows;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean guaranteeValid() {
         return false;

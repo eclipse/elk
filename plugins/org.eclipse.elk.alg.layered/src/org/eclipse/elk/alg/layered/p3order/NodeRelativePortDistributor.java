@@ -37,9 +37,6 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
         super(numLayers);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();

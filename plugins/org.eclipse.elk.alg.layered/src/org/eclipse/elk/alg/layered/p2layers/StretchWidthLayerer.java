@@ -96,9 +96,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
     /** the size of the dummy nodes, that should be considered. */
     private double dummySize;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
@@ -106,9 +104,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
                 .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("StretchWidth layering", 1);
 

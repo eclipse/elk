@@ -175,9 +175,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutMapping buildLayoutGraph(final IWorkbenchPart workbenchPart, final Object diagramPart) {
         // get the diagram editor part
         DiagramEditor diagramEditor = getDiagramEditor(workbenchPart);
@@ -344,9 +342,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         return mapping;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void applyLayout(final LayoutMapping mapping, final IPropertyHolder settings) {
         boolean zoomToFit = settings.getProperty(CoreOptions.ZOOM_TO_FIT);
         IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();

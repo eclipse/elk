@@ -55,17 +55,12 @@ public class OrderBalance implements ILayoutPhase<TreeLayoutPhases, TGraph> {
      */
     private IProperty<Integer> weighting;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor arrange node", 1);
 

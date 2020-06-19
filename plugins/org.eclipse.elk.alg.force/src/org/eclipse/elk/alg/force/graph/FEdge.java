@@ -36,9 +36,6 @@ public final class FEdge extends MapPropertyHolder {
     /** the target node of the edge. */
     private FNode target;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (source != null && target != null) {

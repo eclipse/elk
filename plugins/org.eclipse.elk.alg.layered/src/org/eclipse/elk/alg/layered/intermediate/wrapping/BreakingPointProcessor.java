@@ -58,9 +58,6 @@ import com.google.common.collect.Lists;
  */
 public class BreakingPointProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Breaking Point Processor", 1);

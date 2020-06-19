@@ -65,9 +65,6 @@ public final class FNode extends FParticle {
         this.parent = theParent;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (label == null || label.length() == 0) {

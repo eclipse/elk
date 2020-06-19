@@ -80,9 +80,6 @@ public class SuccessorQuadrantsGeneric
         this.costFun = costFun;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Pair<Integer, Integer> apply(final Pair<Integer, Integer> coords, final Polyomino poly) {
         if (!poly.equals(lastPoly)) {

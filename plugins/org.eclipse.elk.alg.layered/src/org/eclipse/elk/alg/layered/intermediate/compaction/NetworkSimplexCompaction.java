@@ -48,9 +48,6 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
     private static final int SEPARATION_WEIGHT = 1;
     private static final int EDGE_WEIGHT = 100;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void compact(final OneDimensionalCompactor theCompactor) {
         

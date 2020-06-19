@@ -109,9 +109,6 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<GraphIssue> getIssues() {
         return issues;

@@ -54,9 +54,6 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         greedySwitchType = greedyType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
             final boolean forwardSweep, final boolean isFirstSweep) {
@@ -64,9 +61,6 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         return continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean setFirstLayerOrder(final LNode[][] currentOrder, final boolean isForwardSweep) {
         int startIndex = startIndex(isForwardSweep, currentOrder.length);

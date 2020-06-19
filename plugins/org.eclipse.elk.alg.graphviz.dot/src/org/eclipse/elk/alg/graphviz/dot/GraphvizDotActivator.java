@@ -51,18 +51,12 @@ public class GraphvizDotActivator extends Plugin {
         return injector;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         instance = this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void stop(final BundleContext context) throws Exception {
         injectors.clear();

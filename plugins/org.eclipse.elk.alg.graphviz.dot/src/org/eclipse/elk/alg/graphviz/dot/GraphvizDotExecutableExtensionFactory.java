@@ -36,9 +36,7 @@ public class GraphvizDotExecutableExtensionFactory implements IExecutableExtensi
     private String clazzName;
     private IConfigurationElement config;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     @SuppressWarnings({ "unchecked" })
     public void setInitializationData(final IConfigurationElement theconfig, final String propertyName,
             final Object data)
@@ -54,9 +52,7 @@ public class GraphvizDotExecutableExtensionFactory implements IExecutableExtensi
         this.config = theconfig;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object create() throws CoreException {
         Bundle bundle = GraphvizDotActivator.getInstance().getBundle();
         try {

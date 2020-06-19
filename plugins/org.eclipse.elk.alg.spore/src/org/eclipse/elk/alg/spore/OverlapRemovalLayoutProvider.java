@@ -48,9 +48,6 @@ public class OverlapRemovalLayoutProvider extends AbstractLayoutProvider {
             AlgorithmAssembler.<SPOrEPhases, Graph>create(SPOrEPhases.class);
     private List<ILayoutProcessor<Graph>> algorithm;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         // If desired, apply a layout algorithm

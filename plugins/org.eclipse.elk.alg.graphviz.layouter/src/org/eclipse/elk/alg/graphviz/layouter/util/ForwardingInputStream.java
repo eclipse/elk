@@ -37,9 +37,6 @@ public class ForwardingInputStream extends InputStream {
         this.outputStream = theoutputStream;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int read() throws IOException {
         int data = inputStream.read();
@@ -49,9 +46,6 @@ public class ForwardingInputStream extends InputStream {
         return data;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int read(final byte[] b) throws IOException {
         int count = inputStream.read(b);
@@ -61,9 +55,6 @@ public class ForwardingInputStream extends InputStream {
         return count;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int read(final byte[] b, final int off, final int len) throws IOException {
         int count = inputStream.read(b, off, len);
@@ -73,17 +64,11 @@ public class ForwardingInputStream extends InputStream {
         return count;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long skip(final long n) throws IOException {
         return inputStream.skip(n);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int available() throws IOException {
         return inputStream.available();
@@ -99,25 +84,16 @@ public class ForwardingInputStream extends InputStream {
         inputStream.close();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized void mark(final int readlimit) {
         inputStream.mark(readlimit);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized void reset() throws IOException {
         inputStream.reset();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean markSupported() {
         return inputStream.markSupported();

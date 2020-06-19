@@ -63,9 +63,6 @@ public class BreakingPointRemover implements ILayoutProcessor<LGraph> {
 
     private EdgeRouting edgeRouting;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Breaking Point Removing", 1);

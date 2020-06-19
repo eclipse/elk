@@ -93,9 +93,7 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(final Object obj) {
         if (obj instanceof IProperty<?>) {
             return this.id.equals(((IProperty<?>) obj).getId());
@@ -104,16 +102,12 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String toString() {
         return id;
     }
@@ -144,30 +138,22 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getId() {
         return id;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Comparable<? super T> getLowerBound() {
         return lowerBound;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Comparable<? super T> getUpperBound() {
         return upperBound;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int compareTo(final IProperty<?> other) {
         return id.compareTo((String) other.getId());
     }

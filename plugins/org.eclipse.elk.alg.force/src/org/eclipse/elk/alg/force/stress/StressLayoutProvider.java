@@ -33,9 +33,6 @@ public class StressLayoutProvider extends AbstractLayoutProvider {
     /** implementation of stress majorization. */
     private StressMajorization stressMajorization = new StressMajorization();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Stress", 1);

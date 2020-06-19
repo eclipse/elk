@@ -92,9 +92,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      */
     private double northernExtPortEdgeRoutingHeight;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Orthogonally routing hierarchical port edges", 1);
         northernExtPortEdgeRoutingHeight = 0.0;

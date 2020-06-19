@@ -44,9 +44,7 @@ public final class SimpleNodePlacer implements ILayoutPhase<LayeredPhases, LGrap
             .addBefore(LayeredPhases.P5_EDGE_ROUTING,
                     IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
@@ -55,9 +53,7 @@ public final class SimpleNodePlacer implements ILayoutPhase<LayeredPhases, LGrap
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Simple node placement", 1);
 

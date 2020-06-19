@@ -40,9 +40,6 @@ public class LayoutOptionLabelProvider extends LabelProvider {
         this.optionData = optionData;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Image getImage(final Object element) {
         ImageRegistry registry = ElkUiPlugin.getInstance().getImageRegistry();
@@ -74,9 +71,6 @@ public class LayoutOptionLabelProvider extends LabelProvider {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @SuppressWarnings("rawtypes")
     public String getText(final Object element) {

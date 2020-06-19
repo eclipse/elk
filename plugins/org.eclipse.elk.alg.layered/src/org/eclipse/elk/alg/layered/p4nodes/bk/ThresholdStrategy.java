@@ -137,9 +137,6 @@ public abstract class ThresholdStrategy {
      * It calculates a threshold value such that it has no effect.
      */
     public static class NullThresholdStrategy extends ThresholdStrategy {
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public double calculateThreshold(final double oldThresh, final LNode blockRoot,
                 final LNode currentNode) {
@@ -151,9 +148,6 @@ public abstract class ThresholdStrategy {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void postProcess() {
         }
@@ -167,9 +161,7 @@ public abstract class ThresholdStrategy {
      */
     public static class SimpleThresholdStrategy extends ThresholdStrategy {
         
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public double calculateThreshold(final double oldThresh,
                 final LNode blockRoot, final LNode currentNode) {
             
@@ -335,9 +327,6 @@ public abstract class ThresholdStrategy {
             return invalid;
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void postProcess() {
             

@@ -39,9 +39,6 @@ public class TGraph extends MapPropertyHolder {
         this.edges = new LinkedList<TEdge>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         String tmp = null;

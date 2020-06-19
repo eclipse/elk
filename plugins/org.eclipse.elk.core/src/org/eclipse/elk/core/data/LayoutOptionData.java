@@ -158,9 +158,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         return (IDataObject) instance;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(final Object obj) {
         if (obj instanceof LayoutOptionData) {
             return this.id.equals(((LayoutOptionData) obj).id);
@@ -171,23 +169,16 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int compareTo(final IProperty<?> other) {
         return id.compareTo(other.getId());
     }
 
-     /**
-      * {@inheritDoc}
-      */
      @Override
     public String toString() {
         return "Layout Option: " + id;
@@ -477,9 +468,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         return dependencies;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getId() {
         return id;
     }
@@ -543,9 +532,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public Comparable<? super Object> getLowerBound() {
         if (lowerBound instanceof Comparable<?>) {
@@ -563,9 +550,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         this.lowerBound = lowerBound;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     @SuppressWarnings("unchecked")
     public Comparable<? super Object> getUpperBound() {
         if (upperBound instanceof Comparable<?>) {

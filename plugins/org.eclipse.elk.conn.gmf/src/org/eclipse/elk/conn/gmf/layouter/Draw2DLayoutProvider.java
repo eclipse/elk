@@ -50,17 +50,11 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
     /** indicates whether the compound graph version of the algorithm shall be used. */
     private boolean compoundMode = false;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void initialize(final String parameter) {
         compoundMode = PARAM_COMPOUND.equals(parameter);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Draw2D Directed Graph layout", 1);

@@ -252,9 +252,7 @@ public final class SplineSegment implements Comparable<SplineSegment> {
         return edges.size() > 1;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int compareTo(final SplineSegment other) {
         return this.mark - other.mark;
     }

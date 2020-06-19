@@ -119,9 +119,7 @@ public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph
     private int[] inDegree;
     private int[] outDegree;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
@@ -129,9 +127,7 @@ public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph
                 .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("MinWidth layering", 1);
 
@@ -471,9 +467,7 @@ public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph
      */
     private class SelfLoopPredicate implements Predicate<LEdge> {
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public boolean apply(final LEdge input) {
             return input.getSource().getNode().equals(input.getTarget().getNode());
         }
@@ -488,9 +482,7 @@ public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph
      * @author mic
      */
     private class MinOutgoingEdgesComparator implements Comparator<LNode> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final LNode o1, final LNode o2) {
             int outs1 = outDegree[o1.id];
             int outs2 = outDegree[o2.id];

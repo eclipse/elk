@@ -45,9 +45,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public class HierarchicalNodeResizingProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Resize child graph to fit parent.", 1);

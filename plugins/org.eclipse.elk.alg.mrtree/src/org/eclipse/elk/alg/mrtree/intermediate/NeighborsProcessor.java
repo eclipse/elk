@@ -33,9 +33,7 @@ public class NeighborsProcessor implements ILayoutProcessor<TGraph> {
     /** the number of nodes in the given graph. */
     private int numberOfNodes;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor set neighbors", 1f);
 

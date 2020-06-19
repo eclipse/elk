@@ -40,9 +40,7 @@ public final class LayoutCategoryData implements ILayoutMetaData {
         this.description = builder.description;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean equals(final Object obj) {
         if (obj instanceof LayoutCategoryData) {
             return this.id.equals(((LayoutCategoryData) obj).id);
@@ -50,16 +48,11 @@ public final class LayoutCategoryData implements ILayoutMetaData {
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Layout Type: " + id;

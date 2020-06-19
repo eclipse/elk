@@ -39,9 +39,7 @@ public class LayoutHandler extends AbstractHandler {
     /** value for selection scope. */
     public static final String VAL_SELECTION = "selection";
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object execute(final ExecutionEvent event) throws ExecutionException {
         ISelection selection = null;
 

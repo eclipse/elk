@@ -1036,9 +1036,6 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
             target.incoming.add(this);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return source + " ->(" + weight + ") " + target;

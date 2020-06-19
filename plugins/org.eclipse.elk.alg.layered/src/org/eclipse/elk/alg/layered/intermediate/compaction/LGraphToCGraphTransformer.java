@@ -72,7 +72,7 @@ public final class LGraphToCGraphTransformer {
     private static final Function<CNode, String> VS_TO_STRING_DELEGATE = n -> ((VerticalSegment) n.origin).toString();
     
     /**
-     * {@inheritDoc}
+     * @return the input graph transformed into a corresponding constraint graph.
      */
     public CGraph transform(final LGraph inputGraph) {
         this.layeredGraph = inputGraph;
@@ -425,7 +425,7 @@ public final class LGraphToCGraphTransformer {
     }
 
     /**
-     * {@inheritDoc}
+     * Apply the layout from the internal constraint graph back to the original lgraph.
      */
     public void applyLayout() {
         

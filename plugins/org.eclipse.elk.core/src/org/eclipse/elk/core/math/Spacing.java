@@ -175,9 +175,6 @@ public abstract class Spacing implements IDataObject, Cloneable {
         return this.getTop() + this.getBottom(); 
     } 
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Spacing) {
@@ -189,9 +186,6 @@ public abstract class Spacing implements IDataObject, Cloneable {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         // I don't care very much to define explicit constants for this calculation.
@@ -208,17 +202,12 @@ public abstract class Spacing implements IDataObject, Cloneable {
         // CHECKSTYLEON MagicNumber
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "[top=" + top + ",left=" + left + ",bottom=" + bottom + ",right=" + right + "]";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void parse(final String string) {
         int start = 0;
         while (start < string.length() && isdelim(string.charAt(start), "([{\"' \t\r\n")) {

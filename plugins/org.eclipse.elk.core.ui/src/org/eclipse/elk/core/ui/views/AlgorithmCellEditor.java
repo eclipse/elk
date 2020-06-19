@@ -41,9 +41,6 @@ public class AlgorithmCellEditor extends DialogCellEditor {
         labelProvider = new LayoutOptionLabelProvider(algorithmOption);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void fireApplyEditorValue() {
         super.fireApplyEditorValue();
@@ -53,9 +50,6 @@ public class AlgorithmCellEditor extends DialogCellEditor {
         fireCancelEditor();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Control createContents(final Composite cell) {
         Control label = super.createContents(cell);
@@ -77,9 +71,6 @@ public class AlgorithmCellEditor extends DialogCellEditor {
         return label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void updateContents(final Object value) {
         if (value != null) {
@@ -87,9 +78,6 @@ public class AlgorithmCellEditor extends DialogCellEditor {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Object openDialogBox(final Control cellEditorWindow) {
         AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(cellEditorWindow.getShell(),

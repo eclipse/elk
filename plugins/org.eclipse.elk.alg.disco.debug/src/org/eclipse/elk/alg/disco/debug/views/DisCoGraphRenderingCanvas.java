@@ -80,9 +80,6 @@ public class DisCoGraphRenderingCanvas extends Canvas implements PaintListener {
         setBackground(backgroundColor);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void dispose() {
         graphRenderer.dispose();

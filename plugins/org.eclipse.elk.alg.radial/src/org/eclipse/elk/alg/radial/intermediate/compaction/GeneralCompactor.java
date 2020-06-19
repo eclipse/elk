@@ -19,9 +19,6 @@ import org.eclipse.elk.graph.ElkNode;
  */
 public class GeneralCompactor implements ILayoutProcessor<ElkNode> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         IRadialCompactor compactor = graph.getProperty(RadialOptions.COMPACTOR).create();

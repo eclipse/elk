@@ -77,9 +77,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         return optionData;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public CellEditor createPropertyEditor(final Composite parent) {
         switch (optionData.getType()) {
         case STRING:
@@ -168,9 +166,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         return choices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getCategory() {
         // Compute the intersection of the targets registered for the layout option
         // and those determined for the graph element currently in focus.
@@ -199,9 +195,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDescription() {
         // We only return the first sentence of the description. The longer description
         // can be retrieved by calling getLongDescription.
@@ -225,16 +219,12 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         return optionData.getDescription();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDisplayName() {
         return optionData.getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String[] getFilterFlags() {
         if (optionData.getVisibility() == LayoutOptionData.Visibility.ADVANCED) {
             return new String[] { IPropertySheetEntry.FILTER_ID_EXPERT };
@@ -242,23 +232,17 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getHelpContextIds() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getId() {
         return optionData.getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILabelProvider getLabelProvider() {
         if (labelProvider == null) {
             labelProvider = new LayoutOptionLabelProvider(optionData);
@@ -266,9 +250,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         return labelProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isCompatibleWith(final IPropertyDescriptor anotherProperty) {
         return anotherProperty instanceof LayoutPropertyDescriptor
                 && this.optionData.getId().equals(anotherProperty.getId());

@@ -78,9 +78,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      * @author cds
      */
     private static class NodeComparator implements Comparator<LNode> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final LNode node1, final LNode node2) {
             NodeType nodeType1 = node1.getType();
             double nodePos1 = node1.getProperty(InternalProperties.PORT_RATIO_OR_POSITION);
@@ -114,9 +112,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
     private static final int DUMMY_OUTPUT_PORT = 1;
     
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Hierarchical port constraint processing", 1);
         

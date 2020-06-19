@@ -35,9 +35,6 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Force", 1);

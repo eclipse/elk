@@ -63,16 +63,11 @@ public class DepthFirstCycleBreaker implements ILayoutPhase<LayeredPhases, LGrap
     /** node at which the dfs started. */
     private int[] root;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor monitor) {
         monitor.begin("Depth-first cycle removal", 1);

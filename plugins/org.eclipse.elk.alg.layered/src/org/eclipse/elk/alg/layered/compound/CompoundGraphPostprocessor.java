@@ -66,9 +66,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor<LGraph> {
     };
     
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph graph, final IElkProgressMonitor monitor) {
         monitor.begin("Compound graph postprocessor", 1);
         

@@ -89,9 +89,7 @@ public final class Pair<F, S> implements Iterable<Object> {
             Serializable {
         private static final long serialVersionUID = 1;
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
             return o1.first.compareTo(o2.first);
         }
@@ -107,9 +105,7 @@ public final class Pair<F, S> implements Iterable<Object> {
             Serializable {
         private static final long serialVersionUID = 1;
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Pair<F, S> o1, final Pair<F, S> o2) {
             return o1.second.compareTo(o2.second);
         }
@@ -147,9 +143,6 @@ public final class Pair<F, S> implements Iterable<Object> {
         this.second = entry.getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Pair<?, ?>) {
@@ -168,9 +161,6 @@ public final class Pair<F, S> implements Iterable<Object> {
     private static final int MASK1 = (1 << HALF_WORD) - 1;
     private static final int MASK2 = ~MASK1;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         int firstCode = first == null ? 0 : first.hashCode();
@@ -183,9 +173,6 @@ public final class Pair<F, S> implements Iterable<Object> {
                 | (first2 ^ (second1 << HALF_WORD));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (first == null && second == null) {
@@ -235,9 +222,7 @@ public final class Pair<F, S> implements Iterable<Object> {
         return second;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Iterator<Object> iterator() {
         return new Iterator<Object>() {
             private boolean visitedFirst = false;
