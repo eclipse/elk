@@ -179,8 +179,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports layering.layerChoiceConstraint
     supports crossingMinimization.positionChoiceConstraint
     supports org.eclipse.elk.interactiveLayout
-    supports layering.layerID
-    supports crossingMinimization.positionID
+    supports layering.layerId
+    supports crossingMinimization.positionId
 }
 
 /* ------------------------
@@ -234,7 +234,7 @@ group layering {
         targets nodes
     }
 
-    output option layerID: int {
+    output option layerId: int {
         label "Layer ID"
         description
             "Layer identifier that was calculated by ELK Layered for a node"
@@ -378,7 +378,7 @@ group crossingMinimization {
         targets nodes
     }
 
-    output option positionID: int {
+    output option positionId: int {
         label "Position ID"
         description
             "Position within a layer that was determined by ELK Layered for a node."
