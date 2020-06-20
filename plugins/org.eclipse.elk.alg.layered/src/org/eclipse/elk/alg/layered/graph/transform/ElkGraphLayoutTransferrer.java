@@ -155,10 +155,10 @@ class ElkGraphLayoutTransferrer {
         
         
         // Apply the nodeID and layerId that were set on the LGraph on the ElkGraph
-        final int nodeID = lnode.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_I_D);
-        final int layerID = lnode.getProperty(LayeredOptions.LAYERING_LAYER_I_D);
-        elknode.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_I_D, nodeID);
-        elknode.setProperty(LayeredOptions.LAYERING_LAYER_I_D, layerID);
+        final int nodeID = lnode.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_ID);
+        final int layerID = lnode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
+        elknode.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_ID, nodeID);
+        elknode.setProperty(LayeredOptions.LAYERING_LAYER_ID, layerID);
         
         // Set the node position
         elknode.setX(lnode.getPosition().x + offset.x);
