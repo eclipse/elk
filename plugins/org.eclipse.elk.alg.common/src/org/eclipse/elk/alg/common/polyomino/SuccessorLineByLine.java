@@ -66,9 +66,6 @@ import org.eclipse.elk.core.util.Pair;
  */
 public class SuccessorLineByLine implements BiFunction<Pair<Integer, Integer>, Polyomino, Pair<Integer, Integer>> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Pair<Integer, Integer> apply(final Pair<Integer, Integer> coords, final Polyomino poly) {
         int x = coords.getFirst();

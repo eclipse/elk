@@ -93,9 +93,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
     ////////////////////////////////////////////////////////////////////////////////////////////
     // Processing
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph graph, final IElkProgressMonitor monitor) {
         monitor.begin("Compound graph preprocessor", 1);
         
@@ -169,8 +167,8 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                     // We need the port constraints to position external ports (Issues KIPRA-1528, ELK-48) 
                     PortConstraints portConstraints = node.getProperty(LayeredOptions.PORT_CONSTRAINTS);
                     boolean insidePortLabels =
-                            node.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.INSIDE;
-                    
+                            node.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT).contains(PortLabelPlacement.INSIDE);
+
                     for (LPort port : node.getPorts()) {
                         // Make sure that every port has a dummy node created for it
                         LNode dummyNode = dummyNodeMap.get(port);

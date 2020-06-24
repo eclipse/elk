@@ -71,9 +71,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
     
     private LGraph lGraph;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
 
         GraphCompactionStrategy strategy = layeredGraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_STRATEGY);
@@ -194,9 +192,6 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
      */
     private final ISpacingsHandler specialSpacingsHandler = new ISpacingsHandler() {
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public double getHorizontalSpacing(final CNode cNode1, final CNode cNode2) {
                         
@@ -229,9 +224,6 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
                     node2 != null ? node2.getType() : NodeType.LONG_EDGE);
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public double getVerticalSpacing(final CNode cNode1, final CNode cNode2) {
 

@@ -223,6 +223,8 @@ public final class ElkGraphJson {
 
             // configure the gson builder
             GsonBuilder builder = new GsonBuilder();
+            // no need to perform html escaping in our case, hence deactivate it:
+            builder.disableHtmlEscaping();
             if (prettyPrint) {
                 builder.setPrettyPrinting();
             }

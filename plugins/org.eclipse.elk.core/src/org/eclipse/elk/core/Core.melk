@@ -287,6 +287,24 @@ advanced option interactiveLayout: boolean {
 
 // --- SPACING
 group spacing {
+    
+    option commentComment: double {
+        label "Comment Comment Spacing"
+        description
+            "Spacing to be preserved between a comment box and other comment boxes connected to the same node."
+        default = 10
+        lowerBound = 0.0
+        targets parents
+    }
+    
+    option commentNode: double {
+        label "Comment Node Spacing"
+        description
+            "Spacing to be preserved between a node and its connected comment boxes."
+        default = 10
+        lowerBound = 0.0
+        targets parents
+    }
 
     option componentComponent: double {
         label "Components Spacing"
@@ -687,7 +705,7 @@ group port {
         targets ports
     }
 
-    programmatic option index: int {
+    option index: int {
         label "Port Index"
         description
             "The index of a port in the fixed order around a node. The order is assumed as clockwise,
@@ -725,22 +743,19 @@ group port {
 // --- PORT LABELS
 group portLabels {
 
-    option placement: PortLabelPlacement {
+    option placement: EnumSet<PortLabelPlacement> {
         label "Port Label Placement"
         description
-            "Decides on a placement method for port labels."
-        default = PortLabelPlacement.OUTSIDE
+            "Decides on a placement method for port labels; if empty, the node label's position is not
+            modified."
+        default = PortLabelPlacement.outside
         targets nodes
     }
 
-    option nextToPortIfPossible: boolean {
+    deprecated option nextToPortIfPossible: boolean {
         label "Port Labels Next to Port"
         description
-            "Usually, inside port labels of hierarchical nodes are placed not next to their port,
-           but with an offset to avoid edge-label crossings. The offset is not necessary if the
-           port has no connections that would cross the label, but is usually applied anyway to
-           keep things uniform. Setting this option to true places labels next to their ports if
-           they won't be crossed by edges."
+            "Use 'portLabels.placement': NEXT_TO_PORT_OF_POSSIBLE."
         default = false
         targets nodes
     }

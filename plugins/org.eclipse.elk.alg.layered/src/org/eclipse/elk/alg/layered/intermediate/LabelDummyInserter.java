@@ -56,9 +56,7 @@ public final class LabelDummyInserter implements ILayoutProcessor<LGraph> {
         }
     };
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy insertions", 1);
         

@@ -28,17 +28,11 @@ import com.google.common.collect.Lists;
  */
 public class DelaunayTriangulationPhase implements ILayoutPhase<SPOrEPhases, Graph> {
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<SPOrEPhases, Graph> getLayoutProcessorConfiguration(final Graph graph) {
         return LayoutProcessorConfiguration.<SPOrEPhases, Graph>create();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Graph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Delaunay triangulation", 1);

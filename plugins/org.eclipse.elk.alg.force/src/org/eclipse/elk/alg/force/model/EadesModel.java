@@ -31,9 +31,6 @@ public final class EadesModel extends AbstractForceModel {
     /** additional factor for repulsive forces. */
     private double repulsionFactor = ForceOptions.REPULSION.getDefault();
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
@@ -42,17 +39,11 @@ public final class EadesModel extends AbstractForceModel {
         repulsionFactor = graph.getProperty(ForceOptions.REPULSION).doubleValue();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean moreIterations(final int count) {
         return count < maxIterations;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected KVector calcDisplacement(final FParticle forcer, final FParticle forcee) {
         avoidSamePosition(getRandom(), forcer, forcee);

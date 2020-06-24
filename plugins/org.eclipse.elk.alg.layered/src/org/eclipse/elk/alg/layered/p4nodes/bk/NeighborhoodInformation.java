@@ -189,9 +189,7 @@ public final class NeighborhoodInformation {
     
     // SUPPRESS CHECKSTYLE NEXT 1 Javadoc
     private final class NeighborComparator implements Comparator<Pair<LNode, LEdge>> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Pair<LNode, LEdge> o1, final Pair<LNode, LEdge> o2) {
             int cmp = nodeIndex[o1.getFirst().id] - nodeIndex[o2.getFirst().id];
             return (int) Math.signum(cmp);

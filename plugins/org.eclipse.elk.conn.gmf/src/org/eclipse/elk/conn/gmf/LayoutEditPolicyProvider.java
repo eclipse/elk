@@ -27,9 +27,7 @@ public class LayoutEditPolicyProvider extends AbstractProvider implements
     /** the key used to install an <i>apply layout</i> edit policy. */
     public static final String APPLY_LAYOUT_ROLE = "ApplyLayoutEditPolicy";
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void createEditPolicies(final EditPart editPart) {
         if (editPart instanceof DiagramEditPart) {
             editPart.installEditPolicy(APPLY_LAYOUT_ROLE,
@@ -37,9 +35,7 @@ public class LayoutEditPolicyProvider extends AbstractProvider implements
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean provides(final IOperation operation) {
         return operation instanceof CreateEditPoliciesOperation;
     }

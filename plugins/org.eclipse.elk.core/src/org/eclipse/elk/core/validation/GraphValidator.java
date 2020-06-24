@@ -139,9 +139,6 @@ public class GraphValidator implements IValidatingGraphElementVisitor {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<GraphIssue> getIssues() {
         if (algorithmSpecificValidators.isEmpty()) {

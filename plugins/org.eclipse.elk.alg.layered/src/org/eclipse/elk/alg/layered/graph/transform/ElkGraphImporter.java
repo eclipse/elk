@@ -545,8 +545,8 @@ class ElkGraphImporter {
      */
     private void checkExternalPorts(final ElkNode elkgraph, final Set<GraphProperties> graphProperties) {
         final boolean enableSelfLoops = elkgraph.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
-        final PortLabelPlacement portLabelPlacement = elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
-        
+        final Set<PortLabelPlacement> portLabelPlacement = elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
+
         // We're iterating over the ports until we've determined that we have both external ports and
         // hyperedges, or if there are no more ports left
         boolean hasExternalPorts = false;
@@ -578,7 +578,7 @@ class ElkGraphImporter {
             // External ports?
             if (externalPortEdges > 0) {
                 hasExternalPorts = true;
-            } else if (portLabelPlacement == PortLabelPlacement.INSIDE && elkport.getLabels().size() > 0) {
+            } else if (portLabelPlacement.contains(PortLabelPlacement.INSIDE) && elkport.getLabels().size() > 0) {
                 hasExternalPorts = true;
             }
             
@@ -643,7 +643,7 @@ class ElkGraphImporter {
         // The dummy only has one port
         LPort dummyPort = dummy.getPorts().get(0);
         dummyPort.setConnectedToExternalNodes(isConnectedToExternalNodes(elkport));
-        dummy.setProperty(LayeredOptions.PORT_LABELS_PLACEMENT, PortLabelPlacement.OUTSIDE);
+        dummy.setProperty(LayeredOptions.PORT_LABELS_PLACEMENT, PortLabelPlacement.outside());
         
         // If the compound node wants to have its port labels placed on the inside, we need to leave
         // enough space for them by creating an LLabel for the KLabels. If the compound node wants to
@@ -652,8 +652,8 @@ class ElkGraphImporter {
         // space inside. Thus, for east and west ports, we reduce the label width to zero, otherwise
         // we reduce the label height to zero
         boolean insidePortLabels =
-                elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.INSIDE;
-        
+                elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT).contains(PortLabelPlacement.INSIDE);
+
         // Transform all of the port's labels
         for (ElkLabel elklabel : elkport.getLabels()) {
             if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT) && !Strings.isNullOrEmpty(elklabel.getText())) {

@@ -122,9 +122,6 @@ public class ComponentsToCGraphTransformer<N, E> implements
      *                    Graph Transformation
      * ----------------------------------------------------------- */
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public CGraph transform(final IConnectedComponents<N, E> ccs) {
 
@@ -242,9 +239,6 @@ public class ComponentsToCGraphTransformer<N, E> implements
      *                    Layout Application 
      * ----------------------------------------------------------- */
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void applyLayout() {
 
@@ -299,42 +293,27 @@ public class ComponentsToCGraphTransformer<N, E> implements
             this.individualSpacing = spacing;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public double getHorizontalSpacing() {
             return individualSpacing != null ? individualSpacing : spacing;
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public double getVerticalSpacing() {
            return individualSpacing != null ? individualSpacing : spacing;
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void applyElementPosition() {
             rect.x = hitbox.x;
             rect.y = hitbox.y;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public double getElementPosition() {
             return rect.x;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             // for debug output be quiet! :)

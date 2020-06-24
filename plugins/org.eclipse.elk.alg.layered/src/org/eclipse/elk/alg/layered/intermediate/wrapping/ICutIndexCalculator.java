@@ -43,9 +43,6 @@ public interface ICutIndexCalculator {
      * from the layout option {@link LayeredOptions#WRAPPING_CUTTING_CUTS}.
      */
     public static class ManualCutIndexCalculator implements ICutIndexCalculator {
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public List<Integer> getCutIndexes(final LGraph graph, final GraphStats gs) {
             List<Integer> cuts = graph.getProperty(LayeredOptions.WRAPPING_CUTTING_CUTS);
@@ -55,9 +52,6 @@ public interface ICutIndexCalculator {
                 return Collections.emptyList();
             }
         }
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public boolean guaranteeValid() {
             return false;

@@ -22,9 +22,6 @@ public enum StructureExtractionStrategy implements ILayoutPhaseFactory<SPOrEPhas
     /** A Delaunay triangulation. */
     DELAUNAY_TRIANGULATION;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ILayoutPhase<SPOrEPhases, Graph> create() {
         switch (this) {

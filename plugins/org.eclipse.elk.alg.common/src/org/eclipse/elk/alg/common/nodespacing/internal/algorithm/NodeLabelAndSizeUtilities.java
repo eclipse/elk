@@ -18,6 +18,7 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -203,8 +204,11 @@ public final class NodeLabelAndSizeUtilities {
      * Outside ports usually have their labels placed below or to the right. The first port, however, may have its label
      * placed on the other side. This is true if several conditions apply:
      * <ul>
-     *   <li>The port actually wants its label to be placed next to it.</li>
-     *   <li>There are only two ports or space-efficient port label placement is turned on.</li>
+     *   <li>The port does <b>not</b> want its label to be placed next to it (see
+     *       {@link PortLabelPlacement#NEXT_TO_PORT_IF_POSSIBLE}.</li>
+     *   <li>{@link PortLabelPlacement#ALWAYS_SAME_SIDE} is <b>not</b> set.</li>
+     *   <li>There are only two ports or space-efficient port label placement is turned on (see
+     *       {@link PortLabelPlacement#SPACE_EFFICIENT}).</li>
      * </ul>
      */
     public static boolean isFirstOutsidePortLabelPlacedDifferently(final NodeContext nodeContext,
@@ -214,8 +218,12 @@ public final class NodeLabelAndSizeUtilities {
         if (portContexts.size() >= 2) {
             PortContext firstPort = portContexts.iterator().next();
             
-            return !firstPort.labelsNextToPort && (portContexts.size() == 2
-                    || nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS));
+            final boolean alwaysSameSide =
+                    nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
+            final boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
+
+            return !firstPort.labelsNextToPort && !alwaysSameSide 
+                    && (portContexts.size() == 2 || spaceEfficient);
         } else {
             return false;
         }

@@ -45,9 +45,6 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
                 + "its path must be entered here.");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void createFieldEditors() {
         // Process group
@@ -69,16 +66,11 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         addField(restartGraphvizProcessCheckbox);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void init(final IWorkbench workbench) {
         setPreferenceStore(GraphvizLayouterPreferenceStore.getInstance().getPreferenceStore());
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean performOk() {
         // dispose all cached Graphviz instances to ensure creation of new processes

@@ -158,9 +158,6 @@ public class LayoutViewPart extends ViewPart {
     /** position for bottom attachment. */
     private static final int FORM_BOTTOM = 100;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void createPartControl(final Composite parent) {
         // GUI code needs magic numbers
@@ -227,9 +224,6 @@ public class LayoutViewPart extends ViewPart {
         workbenchWindow.getPartService().addPartListener(partListener);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setFocus() {
         page.setFocus();
@@ -244,9 +238,6 @@ public class LayoutViewPart extends ViewPart {
         return page.getControl();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void dispose() {
         // Store the current status of the categories button

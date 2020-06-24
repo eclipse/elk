@@ -25,9 +25,6 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
     
     // CHECKSTYLEOFF MethodName
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void emit_AttributeStatement_CommaKeyword_2_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
@@ -35,9 +32,6 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
                 ",", null);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void emit_EdgeStatement_CommaKeyword_2_1_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
@@ -45,9 +39,6 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
                 ",", null);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void emit_NodeStatement_CommaKeyword_1_1_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
@@ -55,9 +46,6 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
                 ",", null);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void emit_Statement_SemicolonKeyword_1_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {
@@ -65,9 +53,6 @@ public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticS
                 ";", null);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void emit_Subgraph_SubgraphKeyword_1_0_q(final EObject semanticObject,
             final ISynNavigable transition, final List<INode> nodes) {

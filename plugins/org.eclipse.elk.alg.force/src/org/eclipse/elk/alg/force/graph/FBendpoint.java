@@ -35,9 +35,6 @@ public final class FBendpoint extends FParticle {
         edge.getBendpoints().add(this);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (edge != null) {

@@ -43,9 +43,7 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory<LayeredP
     INTERACTIVE;
     
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (this) {
         case LAYER_SWEEP:

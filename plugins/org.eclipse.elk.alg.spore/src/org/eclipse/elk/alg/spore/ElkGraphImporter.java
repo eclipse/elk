@@ -97,9 +97,6 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         return -(Utils.overlap(r1, r2) - 1) * s;
     };
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Graph importGraph(final ElkNode inputGraph) {
         
@@ -221,9 +218,6 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         return graph;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void updateGraph(final Graph g) {
         Map<KVector, Pair<Node, ElkNode>> updatedNodeMap = Maps.newHashMap();
@@ -240,9 +234,6 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         nodeMap = updatedNodeMap;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void applyPositions(final Graph g) {
         // set new node positions

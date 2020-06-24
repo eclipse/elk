@@ -41,9 +41,6 @@ public final class FLabel extends FParticle {
         edge.getLabels().add(this);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (text == null || text.length() == 0) {

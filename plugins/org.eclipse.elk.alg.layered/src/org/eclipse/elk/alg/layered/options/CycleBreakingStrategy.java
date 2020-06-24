@@ -43,9 +43,7 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
     INTERACTIVE;
     
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (this) {
         case GREEDY:

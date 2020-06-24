@@ -58,9 +58,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class HyperedgeDummyMerger implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Hyperedge merging", 1);
         

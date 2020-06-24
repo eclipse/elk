@@ -24,9 +24,6 @@ import com.google.common.collect.Lists;
  */
 public class LongestPathCompaction implements ICompactionAlgorithm {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void compact(final OneDimensionalCompactor compactor) {
 

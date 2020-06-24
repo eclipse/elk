@@ -73,9 +73,6 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
     /** Multiplier used to determine the curvature of certain sloppy splines (for {@link SplineRoutingMode#SLOPPY}). */
     private static final double SLOPPY_CENTER_CP_MULTIPLIER = 0.4;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         this.edgeEdgeSpacing = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);

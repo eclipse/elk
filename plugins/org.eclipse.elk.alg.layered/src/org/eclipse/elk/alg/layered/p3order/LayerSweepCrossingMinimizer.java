@@ -442,9 +442,6 @@ public class LayerSweepCrossingMinimizer
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =

@@ -41,9 +41,7 @@ public class AlgorithmFactory implements IFactory<AbstractLayoutProvider> {
         this.parameter = theparameter;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public AbstractLayoutProvider create() {
         try {
             AbstractLayoutProvider algorithm = clazz.newInstance();
@@ -56,9 +54,7 @@ public class AlgorithmFactory implements IFactory<AbstractLayoutProvider> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void destroy(final AbstractLayoutProvider obj) {
         obj.dispose();
     }

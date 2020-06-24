@@ -43,9 +43,7 @@ import com.google.common.collect.Lists;
  */
 public final class InLayerConstraintProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Layer constraint edge reversal", 1);
         

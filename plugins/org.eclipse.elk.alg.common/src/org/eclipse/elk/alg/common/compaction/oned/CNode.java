@@ -82,9 +82,6 @@ public final class CNode {
         return sb.toString();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (toStringDelegate != null) {

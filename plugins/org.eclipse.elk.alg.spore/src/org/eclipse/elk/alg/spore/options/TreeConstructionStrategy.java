@@ -25,9 +25,6 @@ public enum TreeConstructionStrategy implements ILayoutPhaseFactory<SPOrEPhases,
     /** Maximum spanning tree construction. */
     MAXIMUM_SPANNING_TREE;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public ILayoutPhase<SPOrEPhases, Graph> create() {
         switch (this) {

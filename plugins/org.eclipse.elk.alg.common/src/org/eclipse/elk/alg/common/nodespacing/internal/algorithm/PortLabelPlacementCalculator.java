@@ -24,6 +24,7 @@ import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -66,26 +67,21 @@ public final class PortLabelPlacementCalculator {
         // fixed positions, we don't have an arbitrary amount of freedom to place our labels
         boolean constrainedPlacement = !nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS)
                 || nodeContext.portConstraints == PortConstraints.FIXED_POS;
-        
-        switch (nodeContext.portLabelsPlacement) {
-        case INSIDE:
+
+        if (nodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE)) {
             if (constrainedPlacement) {
                 constrainedInsidePortLabelPlacement(nodeContext, portSide);
             } else {
                 simpleInsidePortLabelPlacement(nodeContext, portSide);
             }
-            break;
-            
-        case OUTSIDE:
+        } else if (nodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE)) {
             if (constrainedPlacement) {
                 constrainedOutsidePortLabelPlacement(nodeContext, portSide);
             } else {
                 simpleOutsidePortLabelPlacement(nodeContext, portSide);
             }
-            break;
         }
     }
-    
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Simple Inside Port Labels
@@ -463,8 +459,8 @@ public final class PortLabelPlacementCalculator {
         
         // If space-efficient port labels are active, the leftmost / topmost port's label must be placed to its left /
         // above it
-        boolean portWithSpecialNeeds = nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS);
-        
+        boolean portWithSpecialNeeds = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
+
         // Prepare things
         OverlapRemovalDirection overlapRemovalDirection = portSide == PortSide.NORTH
                 ? OverlapRemovalDirection.UP

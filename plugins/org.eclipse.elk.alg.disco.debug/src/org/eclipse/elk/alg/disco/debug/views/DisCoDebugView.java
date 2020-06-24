@@ -90,9 +90,6 @@ public class DisCoDebugView extends ViewPart {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void createPartControl(final Composite parent) {
         // create actions in the view toolbar
@@ -131,9 +128,6 @@ public class DisCoDebugView extends ViewPart {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setFocus() {
         scrolledComposite.setFocus();

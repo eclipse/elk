@@ -41,9 +41,6 @@ public class SuccessorCombination implements BiFunction<Pair<Integer, Integer>, 
         this.externalFun = externalFun;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Pair<Integer, Integer> apply(final Pair<Integer, Integer> coords, final Polyomino poly) {
         if (poly.getPolyominoExtensions().size() > 0) {

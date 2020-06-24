@@ -42,9 +42,6 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
     /** The surrounding compactor object. */
     protected OneDimensionalCompactor compactor;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void calculateConstraints(final OneDimensionalCompactor theCompactor) {
         this.compactor = theCompactor;

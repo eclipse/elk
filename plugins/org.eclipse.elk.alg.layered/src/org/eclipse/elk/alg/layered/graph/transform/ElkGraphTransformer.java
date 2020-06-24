@@ -30,16 +30,12 @@ import com.google.common.base.Strings;
  */
 public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LGraph importGraph(final ElkNode graph) {
         return new ElkGraphImporter().importGraph(graph);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void applyLayout(final LGraph layeredGraph) {
         new ElkGraphLayoutTransferrer().applyLayout(layeredGraph);
     }

@@ -58,9 +58,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class HierarchicalPortPositionProcessor implements ILayoutProcessor<LGraph> {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Hierarchical port position processing", 1);
         

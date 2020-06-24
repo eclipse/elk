@@ -145,9 +145,7 @@ public class PolyominoCompactor {
      * boxes.
      */
     private class MinPerimeterComparator implements Comparator<PlanarGrid> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final PlanarGrid o1, final PlanarGrid o2) {
             int halfPeri1 = o1.getWidth() + o1.getHeight();
             int halfPeri2 = o2.getWidth() + o2.getHeight();
@@ -167,9 +165,7 @@ public class PolyominoCompactor {
      * boxes, but preferring polyominoes with the shortest short sides.
      */
     private class MinPerimeterComparatorWithShape implements Comparator<PlanarGrid> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final PlanarGrid o1, final PlanarGrid o2) {
             int width = o1.getWidth();
             int height = o1.getHeight();
@@ -207,9 +203,7 @@ public class PolyominoCompactor {
      * Comparator for sorting {@link Polyomino polyominoes} based on the minimum number of their extensions.
      */
     private class MinNumOfExtensionsComparator implements Comparator<Polyomino> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Polyomino o1, final Polyomino o2) {
             int numExt1 = o1.getPolyominoExtensions().size();
             int numExt2 = o2.getPolyominoExtensions().size();
@@ -228,9 +222,7 @@ public class PolyominoCompactor {
      * Comparator for sorting {@link Polyomino polyominoes} based on the minimum number of their extension directions.
      */
     private class MinNumOfExtensionDirectionsComparator implements Comparator<Polyomino> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Polyomino o1, final Polyomino o2) {
             Function<UniqueTriple<Direction, Integer, Integer>, Direction> detectDirections =
                     (UniqueTriple<Direction, Integer, Integer> polyExt) -> polyExt.getFirst();
@@ -257,9 +249,7 @@ public class PolyominoCompactor {
      * direction (greater) and all other cases (less).
      */
     private class SingleExtensionSideGreaterThanRestComparator implements Comparator<Polyomino> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Polyomino o1, final Polyomino o2) {
             Function<UniqueTriple<Direction, Integer, Integer>, Direction> detectDirections =
                     (UniqueTriple<Direction, Integer, Integer> polyExt) -> polyExt.getFirst();
@@ -290,9 +280,7 @@ public class PolyominoCompactor {
      * orthogonal directions (one horizontally, one vertically -- greater) and all other cases (less).
      */
     private class CornerCasesGreaterThanRestComparator implements Comparator<Polyomino> {
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final Polyomino o1, final Polyomino o2) {
             Function<UniqueTriple<Direction, Integer, Integer>, Direction> detectDirections =
                     (UniqueTriple<Direction, Integer, Integer> polyExt) -> polyExt.getFirst();

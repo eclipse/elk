@@ -85,9 +85,6 @@ public final class Maybe<T> implements Iterable<T> {
         this.object = theobject;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof Maybe<?>) {
@@ -99,9 +96,6 @@ public final class Maybe<T> implements Iterable<T> {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         if (object == null) {
@@ -111,9 +105,6 @@ public final class Maybe<T> implements Iterable<T> {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (object == null) {
@@ -141,9 +132,7 @@ public final class Maybe<T> implements Iterable<T> {
         return object;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private boolean visited = false;

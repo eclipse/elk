@@ -477,9 +477,6 @@ public class GraphvizTool {
             this.stream = thestream;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int read() throws IOException {
             if (buf >= 0) {
@@ -515,9 +512,6 @@ public class GraphvizTool {
             return c;
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int available() throws IOException {
             return stream.available();
@@ -533,9 +527,6 @@ public class GraphvizTool {
      */
     private class Watchdog extends Thread {
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void run() {
             do {

@@ -92,9 +92,7 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         return configManager;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public IPropertySource getPropertySource(final Object object) {
         if (configurationStoreProvider != null) {
             ILayoutConfigurationStore config = configurationStoreProvider.get(workbenchPart, object);

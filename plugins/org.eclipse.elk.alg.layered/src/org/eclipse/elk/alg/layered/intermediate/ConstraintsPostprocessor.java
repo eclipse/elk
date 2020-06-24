@@ -10,7 +10,6 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.DebugUtil;
-import org.eclipse.elk.alg.layered.JsonDebugUtil;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -18,7 +17,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.LoggedGraph;
 
 /**
  * Adds to each LNode the layerID and positionID that has been computed by ELK Layered.
@@ -43,8 +41,8 @@ public final class ConstraintsPostprocessor implements ILayoutProcessor<LGraph> 
 
             for (LNode currentNode : layer.getNodes()) {
                 if (currentNode.getType() == NodeType.NORMAL) {
-                    currentNode.setProperty(LayeredOptions.LAYERING_LAYER_I_D, layerIndex);
-                    currentNode.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_I_D, posIndex);
+                    currentNode.setProperty(LayeredOptions.LAYERING_LAYER_ID, layerIndex);
+                    currentNode.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_ID, posIndex);
                     posIndex++;
                 }
             }
