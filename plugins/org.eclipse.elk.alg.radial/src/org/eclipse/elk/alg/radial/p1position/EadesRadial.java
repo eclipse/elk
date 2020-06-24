@@ -39,9 +39,6 @@ public class EadesRadial implements ILayoutPhase<RadialLayoutPhases, ElkNode> {
     private IEvaluation optimizer;
     private ElkNode root;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         root = graph.getProperty(InternalProperties.ROOT_NODE);
@@ -123,9 +120,6 @@ public class EadesRadial implements ILayoutPhase<RadialLayoutPhases, ElkNode> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<RadialLayoutPhases, ElkNode> getLayoutProcessorConfiguration(
             final ElkNode graph) {

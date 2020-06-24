@@ -103,17 +103,11 @@ public final class KVector implements IDataObject, Cloneable {
         return new KVector(x, y);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "(" + x + "," + y + ")";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof KVector) {
@@ -151,9 +145,6 @@ public final class KVector implements IDataObject, Cloneable {
                 && Math.abs(this.y - other.y) <= fuzzyness;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return Double.valueOf(x).hashCode() + Integer.reverse(Double.valueOf(y).hashCode());
@@ -489,9 +480,7 @@ public final class KVector implements IDataObject, Cloneable {
         return Double.isInfinite(x) || Double.isInfinite(y);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void parse(final String string) {
         int start = 0;
         while (start < string.length() && isdelim(string.charAt(start), "([{\"' \t\r\n")) {

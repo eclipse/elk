@@ -32,17 +32,12 @@ public class EdgeRouter implements ILayoutPhase<TreeLayoutPhases, TGraph> {
     private static final LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> INTERMEDIATE_PROCESSING_CONFIG =
             LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Dull edge routing", 1);
 

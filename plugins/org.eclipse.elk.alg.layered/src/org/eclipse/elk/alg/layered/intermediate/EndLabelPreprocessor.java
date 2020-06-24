@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Kiel University and others.
+ * Copyright (c) 2012, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -38,7 +38,6 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 
 /**
  * <p>Puts all end labels into {@link LabelCell label cells} stored for each node using the
@@ -86,10 +85,6 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
     
     private void processNode(final LNode node, final double edgeLabelSpacing, final double labelLabelSpacing,
             final boolean verticalLayout) {
-        
-        // At this stage, the port list should be sorted (once this line stops compiling with newer Guava versions,
-        // use the Comparators class instead of Ordering, which is scheduled to be deleted sometime > Guava 21)
-        assert Ordering.from(PortListSorter.CMP_COMBINED).isOrdered(node.getPorts());
 
         // Iterate over all ports and collect their labels in label cells
         int portCount = node.getPorts().size(); 

@@ -55,9 +55,7 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory<LayeredPhases, 
      */
     NETWORK_SIMPLEX;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (this) {
         case SIMPLE:

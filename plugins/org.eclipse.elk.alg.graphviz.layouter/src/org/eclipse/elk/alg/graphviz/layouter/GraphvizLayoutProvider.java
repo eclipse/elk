@@ -68,9 +68,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** lazily created injector for creating required resource set creators. */
     private Injector injector;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void initialize(final String parameter) {
         command = Command.valueOf(parameter);
@@ -82,9 +79,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         dotResourceSetProvider = getInjector().getInstance(DotResourceSetProvider.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void dispose() {
         graphvizTool.cleanup(Cleanup.STOP);
@@ -103,9 +97,6 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         return injector;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         if (command == Command.INVALID) {

@@ -25,9 +25,6 @@ public class ShrinkTreeLayoutProvider extends AbstractLayoutProvider {
     /** the compaction algorithm. */
     private ShrinkTree shrinktree = new ShrinkTree();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         

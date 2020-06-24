@@ -21,9 +21,6 @@ import com.google.inject.Module;
  */
 public class DefaultModule implements Module {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void configure(final Binder binder) {
         binder.bind(IGraphLayoutEngine.class).to(RecursiveGraphLayoutEngine.class);

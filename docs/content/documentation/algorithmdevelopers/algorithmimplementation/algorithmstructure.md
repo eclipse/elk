@@ -184,9 +184,7 @@ public enum NodeOrderStrategy implements ILayoutPhaseFactory<LayoutPhases, ElkNo
     NODE_ORDERER,
     ORDER_BALANCER;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutPhase<LayoutPhases, ElkNode> create() {
         switch (this) {
         case NODE_ORDERER:

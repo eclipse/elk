@@ -40,9 +40,6 @@ import com.google.common.collect.Iterables;
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Random Layout", 1);

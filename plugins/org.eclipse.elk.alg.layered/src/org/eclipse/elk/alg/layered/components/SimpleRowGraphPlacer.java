@@ -34,9 +34,7 @@ import org.eclipse.elk.core.math.KVector;
  */
 final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void combine(final List<LGraph> components, final LGraph target) {
         if (components.size() == 1) {
             LGraph source = components.get(0);

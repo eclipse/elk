@@ -66,17 +66,11 @@ public class Point {
         return new Point(v.x, v.y);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "(" + x + ", " + y + (convex ? "cx" : "") + quadrant + ")";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -90,9 +84,6 @@ public class Point {
         return Objects.equals(x, p2.x) && Objects.equals(y, p2.y);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return Objects.hash(x, y);

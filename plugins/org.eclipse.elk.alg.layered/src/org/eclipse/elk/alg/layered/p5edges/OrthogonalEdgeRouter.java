@@ -165,9 +165,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.END_LABEL_PREPROCESSOR)
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         
@@ -214,9 +212,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
         return configuration;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Orthogonal edge routing", 1);
         

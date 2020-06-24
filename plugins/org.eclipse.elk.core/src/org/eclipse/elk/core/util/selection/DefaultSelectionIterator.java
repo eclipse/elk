@@ -55,9 +55,6 @@ public class DefaultSelectionIterator extends SelectionIterator {
         this.followEdgeDirection = followEdgeDirection;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Iterator<? extends ElkGraphElement> getChildren(final Object object) {
         // Ensure that the visited set is properly initialized

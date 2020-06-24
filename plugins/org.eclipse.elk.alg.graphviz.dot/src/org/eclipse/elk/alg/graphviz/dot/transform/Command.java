@@ -44,9 +44,6 @@ public enum Command {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return super.toString().toLowerCase();

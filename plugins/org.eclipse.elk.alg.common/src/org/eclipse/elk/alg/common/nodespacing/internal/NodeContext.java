@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.common.nodespacing.cellsystem.GridContainerCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell.Strip;
+import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
@@ -64,9 +65,7 @@ public final class NodeContext {
     /** Port constraints set on the node. */
     public final PortConstraints portConstraints;
     /** Whether port labels are placed inside or outside. */
-    public final PortLabelPlacement portLabelsPlacement;
-    /** Whether port labels are to be placed next to their port, if possible. */
-    public final boolean portLabelsNextToPort;
+    public final Set<PortLabelPlacement> portLabelsPlacement;
     /** Whether to treat port labels as a group when centering them next to eastern or western ports. */
     public final boolean portLabelsTreatAsGroup;
     /** Where node labels are placed by default. */
@@ -138,9 +137,15 @@ public final class NodeContext {
         sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
         portConstraints = node.getProperty(CoreOptions.PORT_CONSTRAINTS);
         portLabelsPlacement = node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT);
-        portLabelsNextToPort = node.getProperty(CoreOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE);
+        if (!PortLabelPlacement.isValid(portLabelsPlacement)) {
+            throw new UnsupportedConfigurationException("Invalid port label placement: " + portLabelsPlacement);
+        }
+
         portLabelsTreatAsGroup = node.getProperty(CoreOptions.PORT_LABELS_TREAT_AS_GROUP);
         nodeLabelPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        if (!NodeLabelPlacement.isValid(nodeLabelPlacement)) {
+            throw new UnsupportedConfigurationException("Invalid node label placement: " + nodeLabelPlacement);
+        }
         
         // Copy spacings for convenience
         nodeLabelsPadding = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_PADDING);

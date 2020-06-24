@@ -38,9 +38,6 @@ import com.google.common.collect.Iterables;
  */
 public class LayoutDotExporter extends DotExporter {
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void transform(final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         ElkNode sourceGraph = transData.getSourceGraph();
@@ -60,9 +57,6 @@ public class LayoutDotExporter extends DotExporter {
     /** Base factor for setting {@link Attributes#SIMPLEX_LIMIT} from the iterations limit. */
     private static final float NSLIMIT_BASE = 100.0f;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setGraphAttributes(final List<Statement> statements, final ElkNode parentNode,
             final IDotTransformationData<ElkNode, GraphvizModel> transData) {
@@ -209,9 +203,6 @@ public class LayoutDotExporter extends DotExporter {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setEdgeLabels(final ElkEdge kedge, final List<Attribute> attributes, final boolean isVertical) {
         super.setEdgeLabels(kedge, attributes, isVertical);

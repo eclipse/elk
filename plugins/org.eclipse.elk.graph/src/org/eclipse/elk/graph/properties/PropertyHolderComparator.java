@@ -44,9 +44,7 @@ public final class PropertyHolderComparator<T extends Comparable<T>>
         this.property = property;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int compare(final IPropertyHolder ph1, final IPropertyHolder ph2) {
         T p1 = ph1.getProperty(property);
         T p2 = ph2.getProperty(property);

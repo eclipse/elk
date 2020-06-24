@@ -42,17 +42,12 @@ public class NodeOrderer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
                         .add(IntermediateProcessorStrategy.ROOT_PROC)
                         .add(IntermediateProcessorStrategy.FAN_PROC);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Processor arrange node", 1);

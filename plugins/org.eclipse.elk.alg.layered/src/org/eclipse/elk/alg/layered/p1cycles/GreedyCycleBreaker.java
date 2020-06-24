@@ -47,8 +47,7 @@ import com.google.common.collect.Lists;
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>none</dd>
- *   <dt>Postcondition:</dt><dd>the graph has no cycles, but possibly
- *     new nodes and edges</dd>
+ *   <dt>Postcondition:</dt><dd>the graph has no cycles</dd>
  * </dl>
  * 
  * @see org.eclipse.elk.alg.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
@@ -73,16 +72,12 @@ public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGr
     /** list of sink nodes. */
     private final LinkedList<LNode> sinks = Lists.newLinkedList();
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Greedy cycle removal", 1);
         

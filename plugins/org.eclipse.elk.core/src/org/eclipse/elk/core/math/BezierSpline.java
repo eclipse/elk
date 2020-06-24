@@ -174,9 +174,6 @@ public class BezierSpline {
         return curves;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

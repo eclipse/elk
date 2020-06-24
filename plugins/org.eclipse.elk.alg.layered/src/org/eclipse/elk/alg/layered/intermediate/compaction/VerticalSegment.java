@@ -160,9 +160,6 @@ public final class VerticalSegment implements Comparable<VerticalSegment> {
                         || CompareFuzzy.lt(o.hitbox.getBottomLeft().y, this.hitbox.y));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int compareTo(final VerticalSegment o) {
         int d = DoubleMath.fuzzyCompare(hitbox.x, o.hitbox.x, CompareFuzzy.TOLERANCE);
@@ -172,9 +169,6 @@ public final class VerticalSegment implements Comparable<VerticalSegment> {
         return d;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

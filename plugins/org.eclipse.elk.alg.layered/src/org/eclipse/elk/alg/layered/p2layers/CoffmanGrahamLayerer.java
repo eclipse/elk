@@ -290,9 +290,6 @@ public class CoffmanGrahamLayerer implements ILayoutPhase<LayeredPhases, LGraph>
                     IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
             .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);    
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return BASELINE_PROCESSING_CONFIGURATION;

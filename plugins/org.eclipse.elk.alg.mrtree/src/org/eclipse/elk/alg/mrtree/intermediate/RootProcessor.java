@@ -28,9 +28,7 @@ public class RootProcessor implements ILayoutProcessor<TGraph> {
 
     private ArrayList<TNode> roots = new ArrayList<TNode>();
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
 
         /** clear list of roots if processor is reused */

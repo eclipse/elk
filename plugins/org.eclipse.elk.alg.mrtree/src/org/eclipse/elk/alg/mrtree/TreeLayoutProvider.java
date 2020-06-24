@@ -36,9 +36,6 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
     // /////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
         // build tGraph

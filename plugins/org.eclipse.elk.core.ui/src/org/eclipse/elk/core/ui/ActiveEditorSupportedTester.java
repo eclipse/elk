@@ -20,9 +20,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ActiveEditorSupportedTester extends PropertyTester {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean test(final Object receiver, final String property,
             final Object[] args, final Object expectedValue) {
         if (receiver instanceof IWorkbenchPart) {

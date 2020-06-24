@@ -27,9 +27,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public class Untreeifyer implements ILayoutProcessor<TGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         List<TEdge>  edges = tGraph.getProperty(InternalProperties.REMOVABLE_EDGES);
 

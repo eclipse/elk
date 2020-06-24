@@ -40,7 +40,10 @@ algorithm layered(LayeredLayoutProvider) {
     category org.eclipse.elk.layered
     features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
     preview images/layered_layout.png
+    
     // general spacings
+    supports org.eclipse.elk.spacing.commentComment
+    supports org.eclipse.elk.spacing.commentNode
     supports org.eclipse.elk.spacing.componentComponent
     supports org.eclipse.elk.spacing.edgeEdge
     supports org.eclipse.elk.spacing.edgeLabel
@@ -53,11 +56,13 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.portPort
     supports org.eclipse.elk.spacing.individualOverride
     documentation "Most parts of the algorithm do not support this yet."
+    
     // layer-based spacings
     supports org.eclipse.elk.alg.layered.spacing.baseValue
     supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
+    
     // layer-based priorities
     supports org.eclipse.elk.priority = 0
     documentation "Used by the 'simple row graph placer' to decide which connected components to place first.
@@ -68,6 +73,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports priority.shortness
     documentation "Currently only supported by the network simplex layerer."
     supports priority.straightness
+    
     // wrapping related
     supports wrapping.strategy
     supports wrapping.additionalEdgeSpacing
@@ -80,12 +86,15 @@ algorithm layered(LayeredLayoutProvider) {
     supports wrapping.multiEdge.improveCuts
     supports wrapping.multiEdge.distancePenalty
     supports wrapping.multiEdge.improveWrappedEdges
+    
     // flexible nodes during node placement
     supports nodePlacement.networkSimplex.nodeFlexibility
     supports nodePlacement.networkSimplex.nodeFlexibility.^default
+    
     // splines
     supports edgeRouting.splines.mode
     supports edgeRouting.splines.sloppy.layerSpacingFactor
+    
     // other options
     supports org.eclipse.elk.padding = new ElkPadding(12)
     supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
@@ -170,8 +179,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports layering.layerChoiceConstraint
     supports crossingMinimization.positionChoiceConstraint
     supports org.eclipse.elk.interactiveLayout
-    supports layering.layerID
-    supports crossingMinimization.positionID
+    supports layering.layerId
+    supports crossingMinimization.positionId
 }
 
 /* ------------------------
@@ -225,7 +234,7 @@ group layering {
         targets nodes
     }
 
-    output option layerID: int {
+    output option layerId: int {
         label "Layer ID"
         description
             "Layer identifier that was calculated by ELK Layered for a node"
@@ -369,7 +378,7 @@ group crossingMinimization {
         targets nodes
     }
 
-    output option positionID: int {
+    output option positionId: int {
         label "Position ID"
         description
             "Position within a layer that was determined by ELK Layered for a node."

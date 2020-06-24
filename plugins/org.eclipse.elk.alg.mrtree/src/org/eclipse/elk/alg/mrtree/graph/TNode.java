@@ -70,9 +70,6 @@ public class TNode extends TShape {
 
     // GETTERS
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (label == null || label.length() == 0) {

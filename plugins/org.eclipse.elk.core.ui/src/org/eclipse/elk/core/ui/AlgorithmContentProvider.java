@@ -35,15 +35,11 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
     /** the current best filter match. */
     private ILayoutMetaData bestFilterMatch;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object[] getElements(final Object inputElement) {
         if (inputElement instanceof LayoutMetaDataService) {
             layoutDataService = (LayoutMetaDataService) inputElement;
@@ -51,9 +47,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
         return layoutDataService.getCategoryData().toArray();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object[] getChildren(final Object parentElement) {
         if (parentElement instanceof LayoutCategoryData) {
             LayoutCategoryData typeData = (LayoutCategoryData) parentElement;
@@ -62,9 +56,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object getParent(final Object element) {
         if (element instanceof LayoutAlgorithmData) {
             LayoutAlgorithmData layouterData = (LayoutAlgorithmData) element;
@@ -73,9 +65,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean hasChildren(final Object element) {
         if (element instanceof LayoutCategoryData) {
             return ((LayoutCategoryData) element).getLayouters().size() > 0;
@@ -83,9 +73,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void dispose() {
     }
     

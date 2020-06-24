@@ -63,16 +63,13 @@ public enum SizeOptions {
      * between every pair of ports to the largest amount of space between any pair of ports.
      */
     UNIFORM_PORT_SPACING,
-    
+
     /**
-     * Unless there are exactly two ports at a given port side, outside port labels are usually all placed to the same
-     * side of their port. For example, if there are three northern ports, all of their labels will be placed to the
-     * right of their ports. If this option is active, the leftmost label will be placed to the left of its port while
-     * the others stay on the right side (and similar for the other port sides). This allows the node to be smaller
-     * because the node size doesn't have to accommodate as many port labels, but it breaks symmetry.
+     * @deprecated Use {@link PortLabelPlacement#SPACE_EFFICIENT}.
      */
+    @Deprecated
     SPACE_EFFICIENT_PORT_LABELS,
-    
+
     /**
      * By default, inside node labels will be laid out in three rows of three cells, with no relation between the
      * width of cells in different rows. If this option is enabled, the cells will be treated as cells of a table,

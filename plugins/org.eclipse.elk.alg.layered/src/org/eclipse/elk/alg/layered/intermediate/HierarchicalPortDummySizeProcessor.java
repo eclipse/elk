@@ -51,9 +51,7 @@ import com.google.common.collect.Lists;
  */
 public final class HierarchicalPortDummySizeProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Hierarchical port dummy size processing", 1);
 

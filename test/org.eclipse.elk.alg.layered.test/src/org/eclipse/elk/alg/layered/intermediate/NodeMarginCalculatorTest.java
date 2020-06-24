@@ -44,22 +44,38 @@ public class NodeMarginCalculatorTest {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
-                new ModelResourcePath("realworld/ptolemy/flattened/**/").withFilter(new FileExtensionFilter("elkg")));
+                new ModelResourcePath("realworld/ptolemy/**/").withFilter(new FileExtensionFilter("elkg")));
     }
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tests
     
-    /**
-     * This method could be split into several, one for each processor. We could then check whether the margins are
-     * correct.
-     */
+    // There is one method for each intermediate processor that computes node margins. The idea is to make it
+    // clear which processor failed the test. Another way to solve this would be to extend the test framework
+    // to list a method triggered after several processors once for each such processor.
+    
     @TestAfterProcessor(InnermostNodeMarginCalculator.class)
+    public void testNodeMarginsAfterInnermostNodeMarginCalculator(final Object graph) {
+        testNodeMargins(graph);
+    }
+    
     @TestAfterProcessor(SelfLoopRouter.class)
+    public void testNodeMarginsAfterSelfLoopRouter(final Object graph) {
+        testNodeMargins(graph);
+    }
+    
     @TestAfterProcessor(CommentNodeMarginCalculator.class)
+    public void testNodeMarginsAfterCommentNodeMarginCalculator(final Object graph) {
+        testNodeMargins(graph);
+    }
+    
     @TestAfterProcessor(EndLabelPreprocessor.class)
-    public void testNodeMargins(final Object graph) {
+    public void testNodeMarginsAfterEndLabelPreprocessor(final Object graph) {
+        testNodeMargins(graph);
+    }
+    
+    private void testNodeMargins(final Object graph) {
         LGraph lGraph = (LGraph) graph;
         
         for (Layer layer : lGraph) {

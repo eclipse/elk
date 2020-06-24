@@ -60,9 +60,6 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor<LGraph>
     /** The maximum height of a tree to be considered. Trees with larger height are neglected. */
     private int treeHeightThreshold;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
   

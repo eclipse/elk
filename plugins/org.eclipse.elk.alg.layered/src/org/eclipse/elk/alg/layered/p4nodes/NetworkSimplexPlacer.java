@@ -202,9 +202,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
     /** Epsilon for double equality testing. */
     private static final double EPSILON = 0.00001d;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
                 .contains(GraphProperties.EXTERNAL_PORTS)) {
@@ -214,9 +212,6 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Network simplex node placement", 1);

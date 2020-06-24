@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import java.util.Set;
+
 import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
@@ -67,8 +69,8 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
         // If the graph has external ports, we need to treat labels of external port dummies a bit differently,
         // which is the reason why we haven't handed them to the label and node size processing code
         if (layeredGraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
-            PortLabelPlacement portLabelPlacement = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
-            boolean placeNextToPort = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE);
+            Set<PortLabelPlacement> portLabelPlacement = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
+            boolean placeNextToPort = portLabelPlacement.contains(PortLabelPlacement.NEXT_TO_PORT_IF_POSSIBLE);
             boolean treatAsGroup = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_TREAT_AS_GROUP);
             
             for (Layer layer : layeredGraph.getLayers()) {
@@ -86,9 +88,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
      * Places the labels of the given external port dummy such that it results in correct node margins later on that
      * will reserve enough space for the labels to be placed once label and node placement is called on the graph.
      */
-    private void placeExternalPortDummyLabels(final LNode dummy, final PortLabelPlacement graphPortLabelPlacement,
+    private void placeExternalPortDummyLabels(final LNode dummy, final Set<PortLabelPlacement> graphPortLabelPlacement,
             final boolean placeNextToPortIfPossible, final boolean treatAsGroup) {
-        
+    
         double labelPortSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT);
         double labelLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
         
@@ -105,7 +107,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
         
         // Determine the position of the box
         // TODO We could handle FIXED here as well
-        if (graphPortLabelPlacement == PortLabelPlacement.INSIDE) {
+        if (graphPortLabelPlacement.contains(PortLabelPlacement.INSIDE)) {
             // (port label placement has to support this case first, though)
             switch (dummy.getProperty(InternalProperties.EXT_PORT_SIDE)) {
             case NORTH:
@@ -142,7 +144,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                 portLabelBox.x = labelPortSpacing;
                 break;
             }
-        } else if (graphPortLabelPlacement == PortLabelPlacement.OUTSIDE) {
+        } else if (graphPortLabelPlacement.contains(PortLabelPlacement.OUTSIDE)) {
             switch (dummy.getProperty(InternalProperties.EXT_PORT_SIDE)) {
             case NORTH:
             case SOUTH:

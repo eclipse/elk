@@ -996,9 +996,7 @@ public class NubSpline {
         return new KVector(xVal + xVal - original.x, original.y);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String toString() {
         return controlPoints.toString();
     }
@@ -1122,9 +1120,7 @@ public class NubSpline {
         }
 
         // elkjs-exclude-start
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public String toString() {
             return polarCoordinate + " " + SplinesMath.convertKVectorToString(cp);
         }

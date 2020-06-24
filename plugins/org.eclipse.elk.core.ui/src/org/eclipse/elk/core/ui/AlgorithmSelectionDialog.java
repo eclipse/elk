@@ -92,9 +92,6 @@ public class AlgorithmSelectionDialog extends Dialog {
         this.layouterHint = currentHint;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void configureShell(final Shell shell) {
         super.configureShell(shell);
@@ -127,9 +124,6 @@ public class AlgorithmSelectionDialog extends Dialog {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean close() {
         imageLabel.setImage(null);
@@ -241,9 +235,6 @@ public class AlgorithmSelectionDialog extends Dialog {
         return scaled;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Control createDialogArea(final Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);

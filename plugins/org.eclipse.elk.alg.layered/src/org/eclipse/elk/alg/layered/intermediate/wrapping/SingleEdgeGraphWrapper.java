@@ -59,9 +59,7 @@ import com.google.common.collect.Lists;
  */
 public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Path-Like Graph Wrapping", 1);
 

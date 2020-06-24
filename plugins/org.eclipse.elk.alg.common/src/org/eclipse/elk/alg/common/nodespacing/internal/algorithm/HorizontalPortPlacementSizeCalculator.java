@@ -112,7 +112,7 @@ public final class HorizontalPortPlacementSizeCalculator {
             return;
         }
 
-        boolean portLabelsInside = nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE;
+        boolean portLabelsInside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE);
         double minWidth = 0;
         
         // Go over all pairs of consecutive ports
@@ -259,11 +259,13 @@ public final class HorizontalPortPlacementSizeCalculator {
     private static void setupPortMargins(final NodeContext nodeContext, final PortSide portSide) {
         Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
         
-        boolean portLabelsOutside = nodeContext.portLabelsPlacement == PortLabelPlacement.OUTSIDE;
-        boolean spaceEfficientPortLabels = nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS)
-                || portContexts.size() == 2;
+        boolean portLabelsOutside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE);
+        boolean alwaysSameSide = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
+        boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
         boolean uniformPortSpacing = nodeContext.sizeOptions.contains(SizeOptions.UNIFORM_PORT_SPACING);
         
+        boolean spaceEfficientPortLabels = !alwaysSameSide && (spaceEfficient || portContexts.size() == 2);
+
         // Set the horizontal port margins of all ports according to how their labels will be placed. We'll be
         // modifying the margins soon enough.
         computeHorizontalPortMargins(nodeContext, portSide, portLabelsOutside);

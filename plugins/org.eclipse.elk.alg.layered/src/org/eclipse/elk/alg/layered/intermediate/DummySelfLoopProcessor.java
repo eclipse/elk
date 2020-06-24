@@ -61,9 +61,7 @@ import com.google.common.collect.Lists;
  */
 public final class DummySelfLoopProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Self-loop processing", 1);
         

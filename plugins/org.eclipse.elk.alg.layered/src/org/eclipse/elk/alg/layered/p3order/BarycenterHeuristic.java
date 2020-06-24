@@ -65,7 +65,8 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     }
 
     /**
-     * {@inheritDoc}
+     * Don't use!
+     * Only public to be accessible by a test.
      */
     public void minimizeCrossings(final List<LNode> layer, final boolean preOrdered,
             final boolean randomize, final boolean forward) {

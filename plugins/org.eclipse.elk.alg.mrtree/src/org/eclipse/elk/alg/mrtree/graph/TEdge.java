@@ -50,9 +50,6 @@ public class TEdge extends TGraphElement {
         this.target = target;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         if (source != null && target != null) {

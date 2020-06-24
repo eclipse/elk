@@ -27,9 +27,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public class ShowLayoutViewHandler extends AbstractHandler {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public Object execute(final ExecutionEvent event) throws ExecutionException {
         IWorkbenchWindow workbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
         if (workbenchWindow != null) {

@@ -73,17 +73,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     /** map of edge layouts to existing point lists. */
     private Map<ElkEdgeSection, PointList> pointListMap = new HashMap<>();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean understandsRequest(final Request req) {
         return (ApplyLayoutRequest.REQ_APPLY_LAYOUT.equals(req.getType()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Command getCommand(final Request request) {
         if (ApplyLayoutRequest.REQ_APPLY_LAYOUT.equals(request.getType())) {

@@ -55,9 +55,6 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor<LGrap
     private double minX = Double.POSITIVE_INFINITY, maxX = Double.NEGATIVE_INFINITY;
     private double minY = Double.POSITIVE_INFINITY, maxY = Double.NEGATIVE_INFINITY;
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
      

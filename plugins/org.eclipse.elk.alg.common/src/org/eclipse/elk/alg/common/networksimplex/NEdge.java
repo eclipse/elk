@@ -106,9 +106,6 @@ public class NEdge {
         return this;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "NEdge[id=" + id + " w=" + weight + " d=" + delta + "]";

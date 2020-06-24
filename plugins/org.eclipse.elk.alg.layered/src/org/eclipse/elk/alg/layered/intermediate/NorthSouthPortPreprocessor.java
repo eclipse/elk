@@ -141,9 +141,6 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph
      */
     private static final boolean USE_NEW_APPROACH = true;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Odd port side processing", 1);

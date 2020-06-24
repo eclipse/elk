@@ -73,9 +73,7 @@ public class HyperedgeCrossingsCounter {
         private int upperRight;
         private int lowerRight;
         
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compareTo(final Hyperedge other) {
             if (this.upperLeft < other.upperLeft) {
                 return -1;
@@ -112,9 +110,7 @@ public class HyperedgeCrossingsCounter {
             UPPER, LOWER;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compareTo(final HyperedgeCorner other) {
             if (this.position < other.position) {
                 return -1;

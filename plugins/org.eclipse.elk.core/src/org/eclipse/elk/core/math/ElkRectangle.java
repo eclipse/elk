@@ -172,17 +172,11 @@ public class ElkRectangle {
         y += offset.y;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return "Rect[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof ElkRectangle)) {
@@ -193,9 +187,6 @@ public class ElkRectangle {
                 && Objects.equals(width, other.width) && Objects.equals(height, other.height);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return Objects.hash(x, y, width, height);

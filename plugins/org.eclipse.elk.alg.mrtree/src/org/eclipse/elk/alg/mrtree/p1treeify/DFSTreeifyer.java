@@ -43,9 +43,7 @@ public class DFSTreeifyer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
             LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create()
                     .addAfter(TreeLayoutPhases.P4_EDGE_ROUTING, IntermediateProcessorStrategy.DETREEIFYING_PROC);
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("DFS Treeifying phase", 1);
 
@@ -57,9 +55,6 @@ public class DFSTreeifyer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
         progressMonitor.done();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;

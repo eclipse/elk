@@ -49,9 +49,7 @@ public final class EdgeRouterFactory implements ILayoutPhaseFactory<LayeredPhase
         return factoryCache.get(edgeRoutingStrategy);
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (edgeRoutingStrategy) {
         case POLYLINE:

@@ -110,7 +110,7 @@ public final class VerticalPortPlacementSizeCalculator {
             return;
         }
 
-        boolean portLabelsInside = nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE;
+        boolean portLabelsInside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.INSIDE);
         double minHeight = 0;
         
         // If port labels are to be respected, we need to calculate the port's margins to do so (we ignore the
@@ -230,12 +230,14 @@ public final class VerticalPortPlacementSizeCalculator {
      */
     private static void setupPortMargins(final NodeContext nodeContext, final PortSide portSide) {
         Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
-        
-        boolean portLabelsOutside = nodeContext.portLabelsPlacement == PortLabelPlacement.OUTSIDE;
-        boolean spaceEfficientPortLabels = nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS)
-                || portContexts.size() == 2;
+
+        boolean portLabelsOutside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE);
+        boolean alwaysSameSide = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
+        boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
         boolean uniformPortSpacing = nodeContext.sizeOptions.contains(SizeOptions.UNIFORM_PORT_SPACING);
-        
+
+        boolean spaceEfficientPortLabels = !alwaysSameSide && (spaceEfficient || portContexts.size() == 2);
+
         // Set the vertical port margins of all ports according to how their labels will be placed. We'll be
         // modifying the margins soon enough.
         computeVerticalPortMargins(nodeContext, portSide, portLabelsOutside);

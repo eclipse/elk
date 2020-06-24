@@ -62,9 +62,7 @@ public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGrap
     @ExperimentalPropertyValue
     MIN_WIDTH;
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (this) {
         case NETWORK_SIMPLEX:

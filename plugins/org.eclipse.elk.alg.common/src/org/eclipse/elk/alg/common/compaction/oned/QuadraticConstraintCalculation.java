@@ -15,9 +15,6 @@ package org.eclipse.elk.alg.common.compaction.oned;
  */
 public class QuadraticConstraintCalculation implements IConstraintCalculationAlgorithm {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void calculateConstraints(final OneDimensionalCompactor compactor) {
 

@@ -63,7 +63,7 @@ public class NextToPortLabelPlacementTest {
             nodeQueue.addAll(currentNode.getChildren());
             
             boolean insideLabelPlacement =
-                    currentNode.getProperty(CoreOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.INSIDE;
+                    currentNode.getProperty(CoreOptions.PORT_LABELS_PLACEMENT).contains(PortLabelPlacement.INSIDE);
             for (ElkPort port : currentNode.getPorts()) {
                 testPortLabel(port, insideLabelPlacement);
             }

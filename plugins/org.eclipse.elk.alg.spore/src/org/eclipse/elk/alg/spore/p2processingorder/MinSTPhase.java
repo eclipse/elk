@@ -33,17 +33,11 @@ public class MinSTPhase implements ILayoutPhase<SPOrEPhases, Graph> {
     
     private Map<KVector, Node> nodeMap = Maps.newHashMap();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<SPOrEPhases, Graph> getLayoutProcessorConfiguration(final Graph graph) {
         return LayoutProcessorConfiguration.<SPOrEPhases, Graph>create();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Graph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Minimum spanning tree construction", 1);

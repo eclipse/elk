@@ -23,9 +23,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * specified root {@link Graph#preferredRoot}.
  */
 public class MaxSTPhase extends MinSTPhase {
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Graph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Maximum spanning tree construction", 1);

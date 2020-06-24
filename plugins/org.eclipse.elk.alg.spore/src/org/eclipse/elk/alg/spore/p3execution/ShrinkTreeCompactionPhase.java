@@ -28,17 +28,11 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public class ShrinkTreeCompactionPhase implements ILayoutPhase<SPOrEPhases, Graph> {
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LayoutProcessorConfiguration<SPOrEPhases, Graph> getLayoutProcessorConfiguration(final Graph graph) {
         return LayoutProcessorConfiguration.<SPOrEPhases, Graph>create();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(final Graph graph, final IElkProgressMonitor progressMonitor) {
         

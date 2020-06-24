@@ -42,9 +42,6 @@ public class ForkedOutputStream extends OutputStream {
         this.outputStreams = Arrays.asList(streams);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void write(final int b) throws IOException {
         for (OutputStream stream : outputStreams) {
@@ -52,9 +49,6 @@ public class ForkedOutputStream extends OutputStream {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void flush() throws IOException {
         for (OutputStream stream : outputStreams) {
@@ -62,9 +56,6 @@ public class ForkedOutputStream extends OutputStream {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void close() throws IOException {
         for (OutputStream stream : outputStreams) {

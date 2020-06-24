@@ -44,16 +44,12 @@ public final class InteractiveCycleBreaker implements ILayoutPhase<LayeredPhases
                     IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive cycle breaking", 1);
         
