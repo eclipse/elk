@@ -283,7 +283,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
     private List<List<ElkNode>> initialLayers(final ArrayList<ElkNode> nodes) {
         // Sort by layerID.
         nodes.sort((ElkNode a, ElkNode b) -> {
-            return a.getProperty(LayeredOptions.LAYERING_LAYER_I_D) - b.getProperty(LayeredOptions.LAYERING_LAYER_I_D);
+            return a.getProperty(LayeredOptions.LAYERING_LAYER_ID) - b.getProperty(LayeredOptions.LAYERING_LAYER_ID);
         });
 
         List<List<ElkNode>> layerNodes = new ArrayList<List<ElkNode>>();
@@ -291,7 +291,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         int currentLayer = -1;
         // Assign nodes to layers.
         for (ElkNode node : nodes) {
-            int layer = node.getProperty(LayeredOptions.LAYERING_LAYER_I_D);
+            int layer = node.getProperty(LayeredOptions.LAYERING_LAYER_ID);
             if (layer > currentLayer) {
                 // Check if a node is added to a new layer.
                 if (!nodesOfLayer.isEmpty()) {
