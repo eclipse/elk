@@ -36,6 +36,17 @@ import org.eclipse.elk.graph.ElkPort;
  * node based on their last position and the desired layer and position in the layer expressed by the
  * {@code LayerChoiceConstraint} and {@code PositionChoiceConstraint}.
  * The pseudo position have to represent layers and the ordering in the layer.
+ * <br>
+ * This class is used by adding it as an additional graph visitor to configure a layout run
+ * in the {@link DiagramLayoutEngine}.
+ * <pre>
+ * DiagramLayoutEngine.Parameters params = new DiagramLayoutEngine.Parameters();
+ * params.addLayoutRun(InteractiveLayeredGraphVisitor);
+ * DiagramLayoutEngine.invokeLayout(workbenchPart, diagramPart, params);
+ * </pre>
+ * 
+ * This graph visitor is added after the normal layered layout configurator since it needs previous layers, positions,
+ * sizes, and coordinates to work with.
  */
 public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
 
