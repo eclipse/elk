@@ -992,7 +992,10 @@ class ElkGraphImporter {
         // If either the source or the target of the edge wasn't properly transformed for whatever
         // reason, we back out
         if (sourceLNode == null || targetLNode == null) {
-            return null;
+            throw new UnsupportedGraphException("The source or the target of edge " + elkedge + " could not be found. "
+                    + "This usually happens when an edge connects a node laid out by ELK Layered to a node in "
+                    + "another level of hierarchy laid out by either another instance of ELK Layered or another "
+                    + "layout algorithm alltogether.");
         }
         
         // Create a layered edge
