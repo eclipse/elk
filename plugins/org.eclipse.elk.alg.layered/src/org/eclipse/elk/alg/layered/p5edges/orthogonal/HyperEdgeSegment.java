@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -16,14 +16,28 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.direction.BaseRoutingDirectionStrategy;
 
 import com.google.common.collect.Lists;
 
 /**
  * Instances of this class represent the "trunk" of a hyper edge. In left-to-right layouts, this will be the vertical
- * segment of a hyperedge between each pair of adjacent ports. Such a segment has a list of port positions for each of
- * its two sides. The range of coordinates spanned by it determines its extent, which can be requested by calling
- * {@link #getStartPos()} and {@link #getEndPos()}.
+ * segment of a hyperedge. Such a segment has a list of coordinates for each of its two sides that specifies where
+ * incoming or outgoing connections enter and leave the segment, respectively (for horizontal layouts, this will be
+ * horizontal edge segments that usually connect to ports). The range of coordinates spanned by a hyper edge segment
+ * determines its extent, which can be requested by calling {@link #getStartCoordinate()} and
+ * {@link #getEndCoordinate()}.
+ * 
+ * <p>
+ * Whether coordinates refer to the x or y axis depends on the edge routing direction: for horizontal layouts, the edge
+ * segment is vertical, which means that the coordinates are y coordinates.
+ * </p>
+ * 
+ * <p>
+ * Instances of this class are comparable based on the value of {@link #mark}. {@link #hashCode()} and
+ * {@link #equals(Object)} are implemented based on that value as well. That means, of course, that all of those methods
+ * only start making sense once {@link #mark} has a meaningful value.
+ * </p>
  */
 public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
 
@@ -31,29 +45,35 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     // Properties
 
     /** Routing strategy which will ultimately decide how edges will be routed. */
-    private final AbstractRoutingDirectionStrategy routingStrategy;
+    private final BaseRoutingDirectionStrategy routingStrategy;
     /** ports represented by this hypernode. */
     private final List<LPort> ports = Lists.newArrayList();
-    /** mark value used for cycle breaking. */
-    private int mark;
-    /** the rank determines the horizontal distance to the preceding layer. */
+    
+    /** mark value used for cycle breaking (to be accessed directly). */
+    // SUPPRESS CHECKSTYLE NEXT Visibility 
+    int mark;
+    
+    /** the routing slot determines the horizontal distance to the preceding layer. */
     private int routingSlot;
-    /** vertical starting position of this hypernode. */
-    private double start = Double.NaN;
-    /** vertical ending position of this hypernode. */
-    private double end = Double.NaN;
-    /** positions of line segments going to the preceding layer. */
-    private final LinkedList<Double> sourcePosis = Lists.newLinkedList();
-    /** positions of line segments going to the next layer. */
-    private final LinkedList<Double> targetPosis = Lists.newLinkedList();
-    /** list of outgoing dependencies. */
-    private final List<SegmentDependency> outgoingDependencies = Lists.newArrayList();
-    /** sum of the weights of outgoing dependencies. */
-    private int outWeight;
-    /** list of incoming dependencies. */
-    private final List<SegmentDependency> incomingDependencies = Lists.newArrayList();
-    /** sum of the weights of incoming depencencies. */
-    private int inWeight;
+    
+    /** start position of this edge segment (in horizontal layouts, this is the topmost y coordinate). */
+    private double startPosition = Double.NaN;
+    /** end position of this edge segment (in horizontal layouts, this is the bottommost y coordinate). */
+    private double endPosition = Double.NaN;
+    
+    /** sorted list of coordinates where incoming connections enter this segment. */
+    private final LinkedList<Double> incomingConnectionCoordinates = Lists.newLinkedList();
+    /** sorted list of coordinates where outgoing connections leave this segment. */
+    private final LinkedList<Double> outgoingConnectionCoordinates = Lists.newLinkedList();
+    
+    /** list of outgoing dependencies to other edge segments. */
+    private final List<HyperEdgeSegmentDependency> outgoingSegmentDependencies = Lists.newArrayList();
+    /** combined weight of outgoing dependencies. */
+    private int outDepWeight;
+    /** list of incoming dependencies from other edge segments. */
+    private final List<HyperEdgeSegmentDependency> incomingSegmentDependencies = Lists.newArrayList();
+    /** combined weight of incoming dependencies. */
+    private int inDepWeight;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Initialization
@@ -65,7 +85,7 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
      *            the routing strategy. Only required if {@link #addPortPositions(LPort, Map)} will be called to set
      *            this thing up.
      */
-    public HyperEdgeSegment(final AbstractRoutingDirectionStrategy routingStrategy) {
+    public HyperEdgeSegment(final BaseRoutingDirectionStrategy routingStrategy) {
         this.routingStrategy = routingStrategy;
     }
 
@@ -73,40 +93,40 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
      * Adds the positions of the given port and all connected ports.
      *
      * @param port
-     *            a port
-     * @param hyperNodeMap
-     *            map of ports to existing hypernodes
+     *            a port.
+     * @param hyperEdgeSegmentMap
+     *            map of ports to existing hyperedge segments.
      */
-    public void addPortPositions(final LPort port, final Map<LPort, HyperEdgeSegment> hyperNodeMap) {
-        hyperNodeMap.put(port, this);
+    public void addPortPositions(final LPort port, final Map<LPort, HyperEdgeSegment> hyperEdgeSegmentMap) {
+        hyperEdgeSegmentMap.put(port, this);
         ports.add(port);
-        double pos = routingStrategy.getPortPositionOnHyperNode(port);
+        double portPos = routingStrategy.getPortPositionOnHyperNode(port);
 
         // set new start position
-        if (Double.isNaN(start)) {
-            start = pos;
+        if (Double.isNaN(startPosition)) {
+            startPosition = portPos;
         } else {
-            start = Math.min(start, pos);
+            startPosition = Math.min(startPosition, portPos);
         }
 
         // set new end position
-        if (Double.isNaN(end)) {
-            end = pos;
+        if (Double.isNaN(endPosition)) {
+            endPosition = portPos;
         } else {
-            end = Math.max(end, pos);
+            endPosition = Math.max(endPosition, portPos);
         }
 
         // add the new port position to the respective list
         if (port.getSide() == routingStrategy.getSourcePortSide()) {
-            insertSorted(sourcePosis, pos);
+            insertSorted(incomingConnectionCoordinates, portPos);
         } else {
-            insertSorted(targetPosis, pos);
+            insertSorted(outgoingConnectionCoordinates, portPos);
         }
 
         // add connected ports
         for (LPort otherPort : port.getConnectedPorts()) {
-            if (!hyperNodeMap.containsKey(otherPort)) {
-                addPortPositions(otherPort, hyperNodeMap);
+            if (!hyperEdgeSegmentMap.containsKey(otherPort)) {
+                addPortPositions(otherPort, hyperEdgeSegmentMap);
             }
         }
     }
@@ -137,20 +157,6 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     }
 
     /**
-     * Returns the segment's mark. Used by cycle breaking algorithms.
-     */
-    int getMark() {
-        return mark;
-    }
-
-    /**
-     * Sets the segment's mark to the given value. Used by cycle breaking algorithms.
-     */
-    void setMark(final int mark) {
-        this.mark = mark;
-    }
-
-    /**
      * Returns this segment's routing slot.
      */
     public int getRoutingSlot() {
@@ -165,75 +171,73 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     }
 
     /**
-     * Returns the coordinate where this segment begins. Whether this is an x or a y coordinate depends on the routing
-     * strategy.
+     * Returns the coordinate where this segment begins.
      */
-    public double getStartPos() {
-        return start;
+    public double getStartCoordinate() {
+        return startPosition;
     }
 
     /**
-     * Returns the coordinate where this segment ends. Whether this is an x or a y coordinate depends on the routing
-     * strategy.
+     * Returns the coordinate where this segment ends.
      */
-    public double getEndPos() {
-        return end;
+    public double getEndCoordinate() {
+        return endPosition;
     }
 
     /**
-     * @return the sourcePosis
+     * Returns the (sorted) list of coordinates where incoming connections enter this segment.
      */
-    public LinkedList<Double> getSourcePosis() {
-        return sourcePosis;
+    public LinkedList<Double> getIncomingConnectionCoordinates() {
+        return incomingConnectionCoordinates;
     }
 
     /**
-     * @return the targetPosis
+     * Returns the (sorted) list of coordinates where outgoing connections leave this segment.
      */
-    public LinkedList<Double> getTargetPosis() {
-        return targetPosis;
+    public LinkedList<Double> getOutgoingConnectionCoordinates() {
+        return outgoingConnectionCoordinates;
     }
 
     /**
-     * Return the outgoing dependencies.
+     * Return the outgoing dependencies to other hyper edge segments.
      */
-    public List<SegmentDependency> getOutgoingDependencies() {
-        return outgoingDependencies;
+    public List<HyperEdgeSegmentDependency> getOutgoingSegmentDependencies() {
+        return outgoingSegmentDependencies;
     }
 
     /**
-     * Returns the weight of outgoing dependencies.
+     * Returns the combined weight of outgoing dependencies.
      */
     public int getOutWeight() {
-        return outWeight;
+        return outDepWeight;
     }
 
     /**
-     * Sets the weight of outgoing dependencies.
+     * Sets the combined weight of outgoing dependencies.
      */
     public void setOutWeight(final int outWeight) {
-        this.outWeight = outWeight;
+        this.outDepWeight = outWeight;
     }
 
     /**
-     * Return the incoming dependencies.
+     * Return the incoming dependencies from other hyper edge segments..
      */
-    public List<SegmentDependency> getIncomingDependencies() {
-        return incomingDependencies;
+    public List<HyperEdgeSegmentDependency> getIncomingSegmentDependencies() {
+        return incomingSegmentDependencies;
     }
 
     /**
      * Returns the weight of incoming dependencies.
      */
     public int getInWeight() {
-        return inWeight;
+        return inDepWeight;
     }
 
     /**
      * Sets the weight of incoming dependencies.
      */
     public void setInWeight(final int inWeight) {
-        this.inWeight = inWeight;
+        this.inDepWeight = inWeight;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

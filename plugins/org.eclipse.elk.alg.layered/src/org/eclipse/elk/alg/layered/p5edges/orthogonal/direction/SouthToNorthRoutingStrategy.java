@@ -7,17 +7,19 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p5edges.orthogonal;
+package org.eclipse.elk.alg.layered.p5edges.orthogonal.direction;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Routing strategy for routing layers from north to south.
+ * Routing strategy for routing layers from south to north.
  */
-class NorthToSouthRoutingStrategy extends AbstractRoutingDirectionStrategy {
+class SouthToNorthRoutingStrategy extends BaseRoutingDirectionStrategy {
 
     @Override
     public double getPortPositionOnHyperNode(final LPort port) {
@@ -26,23 +28,24 @@ class NorthToSouthRoutingStrategy extends AbstractRoutingDirectionStrategy {
 
     @Override
     public PortSide getSourcePortSide() {
-        return PortSide.SOUTH;
+        return PortSide.NORTH;
     }
 
     @Override
     public PortSide getTargetPortSide() {
-        return PortSide.NORTH;
+        return PortSide.SOUTH;
     }
 
     @Override
     public void calculateBendPoints(final HyperEdgeSegment hyperNode, final double startPos, final double edgeSpacing) {
         // Calculate coordinates for each port's bend points
-        double y = startPos + hyperNode.getRoutingSlot() * edgeSpacing;
+        double y = startPos - hyperNode.getRoutingSlot() * edgeSpacing;
 
         for (LPort port : hyperNode.getPorts()) {
             double sourcex = port.getAbsoluteAnchor().x;
 
             for (LEdge edge : port.getOutgoingEdges()) {
+
                 if (!edge.isSelfLoop()) {
                     LPort target = edge.getTarget();
                     double targetx = target.getAbsoluteAnchor().x;
@@ -59,4 +62,5 @@ class NorthToSouthRoutingStrategy extends AbstractRoutingDirectionStrategy {
             }
         }
     }
+    
 }
