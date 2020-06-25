@@ -291,7 +291,8 @@ group spacing {
     option commentComment: double {
         label "Comment Comment Spacing"
         description
-            "Spacing to be preserved between a comment box and other comment boxes connected to the same node."
+            "Spacing to be preserved between a comment box and other comment boxes connected to the same node.
+            The space left between comment boxes of different nodes is controlled by the node-node spacing."
         default = 10
         lowerBound = 0.0
         targets parents
@@ -300,7 +301,8 @@ group spacing {
     option commentNode: double {
         label "Comment Node Spacing"
         description
-            "Spacing to be preserved between a node and its connected comment boxes."
+            "Spacing to be preserved between a node and its connected comment boxes. The space left between a node
+            and the comments of another node is controlled by the node-node spacing."
         default = 10
         lowerBound = 0.0
         targets parents
