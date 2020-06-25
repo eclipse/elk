@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -20,8 +20,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Breaks cycles in the conflict graph of {@link HyperEdgeSegment}s and {@link SegmentDependency}s by removing
+ * Breaks cycles in the conflict graph of {@link HyperEdgeSegment}s and {@link HyperEdgeSegmentDependency}s by removing
  * dependencies. The hope is to remove the minimum-weight set of dependencies such that the graph becomes acyclic.
+ * Inspired by:
+ * <ul>
+ *   <li>Eades, Lin, Smyth. A fast and effective heuristic for the feedback arc set problem. In <i>Information
+ *     Processing Letters</i>, 1993.</li>
+ * </ul>
  */
 public final class HyperEdgeCycleBreaker {
     
@@ -33,112 +38,139 @@ public final class HyperEdgeCycleBreaker {
     }
 
     /**
-     * Breaks all cycles in the given hypernode structure by reversing or removing some dependencies. This
-     * implementation assumes that the dependencies of zero weight are exactly the two-cycles of the hypernode
+     * Breaks all cycles in the given hyper edge segment structure by reversing or removing some dependencies. This
+     * implementation assumes that the dependencies of zero weight are exactly the two-cycles of the hyper edge segment
      * structure.
      *
-     * @param nodes
-     *            list of hypernodes
+     * @param segments
+     *            list of hyper edge segments
      * @param random
      *            random number generator
      */
-    public static void breakCycles(final List<HyperEdgeSegment> nodes, final Random random) {
+    public static void breakCycles(final List<HyperEdgeSegment> segments, final Random random) {
         LinkedList<HyperEdgeSegment> sources = Lists.newLinkedList();
         LinkedList<HyperEdgeSegment> sinks = Lists.newLinkedList();
 
         // initialize values for the algorithm
-        int nextMark = -1;
-        for (HyperEdgeSegment node : nodes) {
-            node.setMark(nextMark--);
-            int inweight = 0, outweight = 0;
+        initialize(segments, sources, sinks);
 
-            for (SegmentDependency dependency : node.getOutgoingDependencies()) {
-                outweight += dependency.getWeight();
-            }
+        // assign marks to all nodes
+        computeLinearOrderingMarks(segments, sources, sinks, random);
 
-            for (SegmentDependency dependency : node.getIncomingDependencies()) {
-                inweight += dependency.getWeight();
-            }
+        // process edges that point left: remove those of zero weight, reverse the others
+        for (HyperEdgeSegment source : segments) {
+            ListIterator<HyperEdgeSegmentDependency> depIter = source.getOutgoingSegmentDependencies().listIterator();
+            while (depIter.hasNext()) {
+                HyperEdgeSegmentDependency dependency = depIter.next();
+                HyperEdgeSegment target = dependency.getTarget();
 
-            node.setInWeight(inweight);
-            node.setOutWeight(outweight);
+                if (source.mark > target.mark) {
+                    depIter.remove();
+                    target.getIncomingSegmentDependencies().remove(dependency);
 
-            if (outweight == 0) {
-                sinks.add(node);
-            } else if (inweight == 0) {
-                sources.add(node);
+                    if (dependency.getWeight() > 0) {
+                        dependency.setSource(target);
+                        target.getOutgoingSegmentDependencies().add(dependency);
+                        dependency.setTarget(source);
+                        source.getIncomingSegmentDependencies().add(dependency);
+                    }
+                }
             }
         }
+    }
 
-        // assign marks to all nodes, ignore dependencies of weight zero
-        Set<HyperEdgeSegment> unprocessed = Sets.newTreeSet(nodes);
-        int markBase = nodes.size();
-        int nextRight = markBase - 1, nextLeft = markBase + 1;
-        List<HyperEdgeSegment> maxNodes = new ArrayList<HyperEdgeSegment>();
+    /**
+     * Initializes the mark, in weight and out weight of each hyper edge segment. Also adds all sources (segments
+     * without incoming weight 0) and sinks (segments with outgoing weight 0) to their respective lists. Once this is
+     * complete, all segments are marked from {@code -1} to {@code -segments.size()}.
+     */
+    private static void initialize(final List<HyperEdgeSegment> segments, final List<HyperEdgeSegment> sources,
+            final List<HyperEdgeSegment> sinks) {
+        
+        int nextMark = -1;
+        for (HyperEdgeSegment segment : segments) {
+            segment.mark = nextMark--;
+            int inWeight = 0;
+            int outWeight = 0;
+
+            for (HyperEdgeSegmentDependency dependency : segment.getOutgoingSegmentDependencies()) {
+                outWeight += dependency.getWeight();
+            }
+
+            for (HyperEdgeSegmentDependency dependency : segment.getIncomingSegmentDependencies()) {
+                inWeight += dependency.getWeight();
+            }
+
+            segment.setInWeight(inWeight);
+            segment.setOutWeight(outWeight);
+
+            if (outWeight == 0) {
+                sinks.add(segment);
+            } else if (inWeight == 0) {
+                sources.add(segment);
+            }
+        }
+    }
+
+    /**
+     * Computes marks for all segments based on a linear ordering or the segments. Marks will be mutually different, and
+     * sinks will have higher marks than sources.
+     */
+    private static void computeLinearOrderingMarks(final List<HyperEdgeSegment> segments,
+            final LinkedList<HyperEdgeSegment> sources, final LinkedList<HyperEdgeSegment> sinks, final Random random) {
+        
+        Set<HyperEdgeSegment> unprocessed = Sets.newTreeSet(segments);
+        List<HyperEdgeSegment> maxSegments = new ArrayList<HyperEdgeSegment>();
+        
+        // We'll mark sinks with marks < markBase and sources with marks > markBase.
+        int markBase = segments.size();
+        int nextRight = markBase - 1;
+        int nextLeft = markBase + 1;
 
         while (!unprocessed.isEmpty()) {
             while (!sinks.isEmpty()) {
                 HyperEdgeSegment sink = sinks.removeFirst();
                 unprocessed.remove(sink);
-                sink.setMark(nextRight--);
+                sink.mark = nextRight--;
                 updateNeighbors(sink, sources, sinks);
             }
 
             while (!sources.isEmpty()) {
                 HyperEdgeSegment source = sources.removeFirst();
                 unprocessed.remove(source);
-                source.setMark(nextLeft++);
+                source.mark = nextLeft++;
                 updateNeighbors(source, sources, sinks);
             }
 
+            // If any segments are still unprocessed, they are neither source nor sink. Assemble the list of segments
+            // with the highest out flow (out weight - in weight).
             int maxOutflow = Integer.MIN_VALUE;
-            for (HyperEdgeSegment node : unprocessed) {
-                int outflow = node.getOutWeight() - node.getInWeight();
+            for (HyperEdgeSegment segment : unprocessed) {
+                int outflow = segment.getOutWeight() - segment.getInWeight();
                 if (outflow >= maxOutflow) {
                     if (outflow > maxOutflow) {
-                        maxNodes.clear();
+                        maxSegments.clear();
                         maxOutflow = outflow;
                     }
-                    maxNodes.add(node);
+                    maxSegments.add(segment);
                 }
             }
 
-            if (!maxNodes.isEmpty()) {
-                // if there are multiple hypernodes with maximal outflow, select one randomly
-                HyperEdgeSegment maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
+            // If there are segments with maximal out flow, select one randomly; this might yield new sources and sinks
+            if (!maxSegments.isEmpty()) {
+                HyperEdgeSegment maxNode = maxSegments.get(random.nextInt(maxSegments.size()));
                 unprocessed.remove(maxNode);
-                maxNode.setMark(nextLeft++);
+                maxNode.mark = nextLeft++;
                 updateNeighbors(maxNode, sources, sinks);
-                maxNodes.clear();
+                maxSegments.clear();
             }
         }
 
-        // shift ranks that are left of the mark base
-        int shiftBase = nodes.size() + 1;
-        for (HyperEdgeSegment node : nodes) {
-            if (node.getMark() < markBase) {
-                node.setMark(node.getMark() + shiftBase);
-            }
-        }
-
-        // process edges that point left: remove those of zero weight, reverse the others
-        for (HyperEdgeSegment source : nodes) {
-            ListIterator<SegmentDependency> depIter = source.getOutgoingDependencies().listIterator();
-            while (depIter.hasNext()) {
-                SegmentDependency dependency = depIter.next();
-                HyperEdgeSegment target = dependency.getTarget();
-
-                if (source.getMark() > target.getMark()) {
-                    depIter.remove();
-                    target.getIncomingDependencies().remove(dependency);
-
-                    if (dependency.getWeight() > 0) {
-                        dependency.setSource(target);
-                        target.getOutgoingDependencies().add(dependency);
-                        dependency.setTarget(source);
-                        source.getIncomingDependencies().add(dependency);
-                    }
-                }
+        // shift ranks that are left of the mark base so that sinks now have higher marks than sources
+        int shiftBase = segments.size() + 1;
+        for (HyperEdgeSegment node : segments) {
+            if (node.mark < markBase) {
+                node.mark = node.mark + shiftBase;
             }
         }
     }
@@ -158,9 +190,9 @@ public final class HyperEdgeCycleBreaker {
             final List<HyperEdgeSegment> sinks) {
 
         // process following nodes
-        for (SegmentDependency dep : node.getOutgoingDependencies()) {
+        for (HyperEdgeSegmentDependency dep : node.getOutgoingSegmentDependencies()) {
             HyperEdgeSegment target = dep.getTarget();
-            if (target.getMark() < 0 && dep.getWeight() > 0) {
+            if (target.mark < 0 && dep.getWeight() > 0) {
                 target.setInWeight(target.getInWeight() - dep.getWeight());
                 if (target.getInWeight() <= 0 && target.getOutWeight() > 0) {
                     sources.add(target);
@@ -169,9 +201,9 @@ public final class HyperEdgeCycleBreaker {
         }
 
         // process preceding nodes
-        for (SegmentDependency dep : node.getIncomingDependencies()) {
+        for (HyperEdgeSegmentDependency dep : node.getIncomingSegmentDependencies()) {
             HyperEdgeSegment source = dep.getSource();
-            if (source.getMark() < 0 && dep.getWeight() > 0) {
+            if (source.mark < 0 && dep.getWeight() > 0) {
                 source.setOutWeight(source.getOutWeight() - dep.getWeight());
                 if (source.getOutWeight() <= 0 && source.getInWeight() > 0) {
                     sinks.add(source);

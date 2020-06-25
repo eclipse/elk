@@ -7,54 +7,55 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p5edges.orthogonal;
+package org.eclipse.elk.alg.layered.p5edges.orthogonal.direction;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Routing strategy for routing layers from south to north.
+ * Routing strategy for routing layers from west to east.
  */
-class SouthToNorthRoutingStrategy extends AbstractRoutingDirectionStrategy {
-
+class WestToEastRoutingStrategy extends BaseRoutingDirectionStrategy {
+    
     @Override
     public double getPortPositionOnHyperNode(final LPort port) {
-        return port.getNode().getPosition().x + port.getPosition().x + port.getAnchor().x;
+        return port.getNode().getPosition().y + port.getPosition().y + port.getAnchor().y;
     }
 
     @Override
     public PortSide getSourcePortSide() {
-        return PortSide.NORTH;
+        return PortSide.EAST;
     }
 
     @Override
     public PortSide getTargetPortSide() {
-        return PortSide.SOUTH;
+        return PortSide.WEST;
     }
 
     @Override
     public void calculateBendPoints(final HyperEdgeSegment hyperNode, final double startPos, final double edgeSpacing) {
         // Calculate coordinates for each port's bend points
-        double y = startPos - hyperNode.getRoutingSlot() * edgeSpacing;
+        double x = startPos + hyperNode.getRoutingSlot() * edgeSpacing;
 
         for (LPort port : hyperNode.getPorts()) {
-            double sourcex = port.getAbsoluteAnchor().x;
+            double sourcey = port.getAbsoluteAnchor().y;
 
             for (LEdge edge : port.getOutgoingEdges()) {
-
                 if (!edge.isSelfLoop()) {
                     LPort target = edge.getTarget();
-                    double targetx = target.getAbsoluteAnchor().x;
-                    if (Math.abs(sourcex - targetx) > OrthogonalRoutingGenerator.TOLERANCE) {
-                        KVector point1 = new KVector(sourcex, y);
+                    double targety = target.getAbsoluteAnchor().y;
+                    if (Math.abs(sourcey - targety) > OrthogonalRoutingGenerator.TOLERANCE) {
+                        KVector point1 = new KVector(x, sourcey);
                         edge.getBendPoints().add(point1);
-                        addJunctionPointIfNecessary(edge, hyperNode, point1, false);
+                        addJunctionPointIfNecessary(edge, hyperNode, point1, true);
 
-                        KVector point2 = new KVector(targetx, y);
+                        KVector point2 = new KVector(x, targety);
                         edge.getBendPoints().add(point2);
-                        addJunctionPointIfNecessary(edge, hyperNode, point2, false);
+                        addJunctionPointIfNecessary(edge, hyperNode, point2, true);
                     }
                 }
             }

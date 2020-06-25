@@ -101,7 +101,8 @@ public final class DebugUtil {
      * @see {@link JsonDebugUtil#createDebugGraph(LGraph, int, List, String, String)}
      */
     public static void logDebugGraph(final IElkProgressMonitor monitor, final LGraph layeredGraph,
-            final int layerIndex, final List<HyperEdgeSegment> hypernodes, final String debugPrefix, final String label) {
+            final int layerIndex, final List<HyperEdgeSegment> hypernodes, final String debugPrefix,
+            final String label) {
 
         String tag = debugPrefix + " - " + label;
         monitor.logGraph(

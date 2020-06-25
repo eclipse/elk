@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -7,13 +7,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p5edges.orthogonal;
+package org.eclipse.elk.alg.layered.p5edges.orthogonal.direction;
 
 import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
@@ -21,15 +23,45 @@ import org.eclipse.elk.core.options.PortSide;
 import com.google.common.collect.Sets;
 
 /**
- * Base class for all routing strategies. Provides junction point management.
+ * A routing direction strategy adapts the {@link OrthogonalRoutingGenerator} to different routing directions. Commonly,
+ * edges are routed from a left source layer to a right target layer. However, with northern and southern external
+ * ports, this can be different. Routing direction strategies abstract from the actual direction.
+ * 
+ * <p>Use {@link #forRoutingDirection(RoutingDirection)} to obtain a routing direction strategy for a given
+ * {@link RoutingDirection}.</p>
  */
-public abstract class AbstractRoutingDirectionStrategy {
+public abstract class BaseRoutingDirectionStrategy {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Properties
 
     /** set of already created junction points, to avoid multiple points at the same position. */
     private final Set<KVector> createdJunctionPoints = Sets.newHashSet();
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Creation
+    
+    /**
+     * Returns an implementation suitable for the given routing direction.
+     * 
+     * @param direction
+     *            the direction to return a routing direction strategy for.
+     * @return a suitable strategy.
+     */
+    public static BaseRoutingDirectionStrategy forRoutingDirection(final RoutingDirection direction) {
+        switch (direction) {
+        case WEST_TO_EAST:
+            return new WestToEastRoutingStrategy();
+        case NORTH_TO_SOUTH:
+            return new NorthToSouthRoutingStrategy();
+        case SOUTH_TO_NORTH:
+            return new SouthToNorthRoutingStrategy();
+        default:
+            throw new IllegalArgumentException();
+        }
+    }
+    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Accessors
@@ -58,20 +90,20 @@ public abstract class AbstractRoutingDirectionStrategy {
         }
         
         // Whether the point lies somewhere inside the edge segment (without boundaries)
-        boolean pointInsideEdgeSegment = p > hyperNode.getStartPos() && p < hyperNode.getEndPos();
+        boolean pointInsideEdgeSegment = p > hyperNode.getStartCoordinate() && p < hyperNode.getEndCoordinate();
         
         // Check if the point lies somewhere at the segment's boundary
         boolean pointAtSegmentBoundary = false;
-        if (!hyperNode.getSourcePosis().isEmpty() && !hyperNode.getTargetPosis().isEmpty()) {
+        if (!hyperNode.getIncomingConnectionCoordinates().isEmpty() && !hyperNode.getOutgoingConnectionCoordinates().isEmpty()) {
             // Is the bend point at the start and joins another edge at the same position?
             pointAtSegmentBoundary |=
-                    Math.abs(p - hyperNode.getSourcePosis().getFirst()) < OrthogonalRoutingGenerator.TOLERANCE
-                    && Math.abs(p - hyperNode.getTargetPosis().getFirst()) < OrthogonalRoutingGenerator.TOLERANCE;
+                    Math.abs(p - hyperNode.getIncomingConnectionCoordinates().getFirst()) < OrthogonalRoutingGenerator.TOLERANCE
+                    && Math.abs(p - hyperNode.getOutgoingConnectionCoordinates().getFirst()) < OrthogonalRoutingGenerator.TOLERANCE;
             
             // Is the bend point at the end and joins another edge at the same position?
             pointAtSegmentBoundary |= 
-                    Math.abs(p - hyperNode.getSourcePosis().getLast()) < OrthogonalRoutingGenerator.TOLERANCE
-                    && Math.abs(p - hyperNode.getTargetPosis().getLast()) < OrthogonalRoutingGenerator.TOLERANCE;
+                    Math.abs(p - hyperNode.getIncomingConnectionCoordinates().getLast()) < OrthogonalRoutingGenerator.TOLERANCE
+                    && Math.abs(p - hyperNode.getOutgoingConnectionCoordinates().getLast()) < OrthogonalRoutingGenerator.TOLERANCE;
         }
         
         if (pointInsideEdgeSegment || pointAtSegmentBoundary) {

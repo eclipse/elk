@@ -21,7 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.SegmentDependency;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
 
 /**
@@ -133,7 +133,7 @@ public final class DotDebugUtil {
         
         // Write dependency information
         for (HyperEdgeSegment hypernode : hypernodes) {
-            for (SegmentDependency dependency : hypernode.getOutgoingDependencies()) {
+            for (HyperEdgeSegmentDependency dependency : hypernode.getOutgoingSegmentDependencies()) {
                 writer.write("  " + hypernode.hashCode() + "->" + dependency.getTarget().hashCode()
                         + "[label=\"" + dependency.getWeight() + "\"]\n");
             }

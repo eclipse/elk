@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,10 +12,10 @@ package org.eclipse.elk.alg.layered.p5edges.orthogonal;
 /**
  * A dependency between two {@link HyperEdgeSegment}s. The dependency is to be interpreted like this: the source segment
  * wants to be in lower routing slot than the target segment. Otherwise, this will cause the result to deteriorate by
- * the dependency's weight (which is, for example, the number of additional edge crossings caused by not honoring this
+ * the dependency's weight (which is, for example, the number of additional edge crossings caused by not honouring this
  * dependency).
  */
-public final class SegmentDependency {
+public final class HyperEdgeSegmentDependency {
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Properties
@@ -28,19 +28,19 @@ public final class SegmentDependency {
     private final int weight;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Initialization
-
+    // Initialisation
+    
     /**
      * Creates a dependency from the given source to the given target and adds it to the dependency lists of those
      * segments.
      */
-    public SegmentDependency(final HyperEdgeSegment thesource, final HyperEdgeSegment thetarget, final int theweight) {
-        this.target = thetarget;
-        this.source = thesource;
-        this.weight = theweight;
+    public HyperEdgeSegmentDependency(final HyperEdgeSegment source, final HyperEdgeSegment target, final int weight) {
+        this.source = source;
+        this.target = target;
+        this.weight = weight;
         
-        source.getOutgoingDependencies().add(this);
-        target.getIncomingDependencies().add(this);
+        source.getOutgoingSegmentDependencies().add(this);
+        target.getIncomingSegmentDependencies().add(this);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
