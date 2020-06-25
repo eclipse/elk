@@ -995,7 +995,8 @@ class ElkGraphImporter {
             throw new UnsupportedGraphException("The source or the target of edge " + elkedge + " could not be found. "
                     + "This usually happens when an edge connects a node laid out by ELK Layered to a node in "
                     + "another level of hierarchy laid out by either another instance of ELK Layered or another "
-                    + "layout algorithm alltogether.");
+                    + "layout algorithm alltogether. The former can be solved by setting the hierarchyHandling "
+                    + "option to INCLUDE_CHILDREN.");
         }
         
         // Create a layered edge
