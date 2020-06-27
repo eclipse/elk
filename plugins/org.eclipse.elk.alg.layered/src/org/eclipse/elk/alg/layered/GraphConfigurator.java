@@ -277,12 +277,19 @@ final class GraphConfigurator {
         }
 
         // Configure greedy switch
+        //  Note that in the case of hierarchical layout, the configuration may further be adjusted by
+        //  ElkLayered#reviewAndCorrectHierarchicalProcessors(...)
         if (activateGreedySwitchFor(lgraph)) {
-            GreedySwitchType greedySwitchType =
-                    lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+            final GreedySwitchType greedySwitchType;
+            if (isHierarchicalLayout(lgraph)) {
+                greedySwitchType =
+                        lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE);
+            } else {
+                greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+            }
             IntermediateProcessorStrategy internalGreedyType = (greedySwitchType == GreedySwitchType.ONE_SIDED)
-                        ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
-                        : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
+                    ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
+                    : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
             configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT, internalGreedyType);
         }
 
@@ -307,14 +314,35 @@ final class GraphConfigurator {
     
     /**
      * Greedy switch may be activated if the following holds.
+     * 
+     * <h3>Hierarchical layout</h3>
+     * <ol>
+     *  <li>the {@link LayeredOptions#CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE} is set to something 
+     *      different than OFF</li>
+     * </ol>
+     * 
+     * <h3>Non-hierarchical layout</h3>
      * <ol>
      *  <li>no interactive crossing minimization is performed</li>
-     *  <li>the greedy switch type is set to something different than OFF</li>
+     *  <li>the {@link LayeredOptions#CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE} option is set to something different 
+     *      than OFF</li>
      *  <li>the activationThreshold is larger than or equal to the graph's number of nodes (or '0')</li>
      * </ol>
      * @return {@code true} if above condition holds, {@code false} otherwise.
      */
     public static boolean activateGreedySwitchFor(final LGraph lgraph) {
+        
+        // First, check the hierarchical case
+        if (isHierarchicalLayout(lgraph)) {
+            // Note that we only activate it for the root in the hierarchical case and rely on
+            // ElkLayered#reviewAndCorrectHierarchicalProcessors(...) to properly set it for the whole hierarchy.
+            // Also, interactive crossing minimization is not allowed/applicable for hierarchical layout
+            // (and thus doesn't have to be checked here).
+            return lgraph.getParentNode() == null && lgraph.getProperty(
+                    LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE) != GreedySwitchType.OFF;
+        }
+
+        // Second, if not hierarchical, check the slightly more complex non-hierarchical case
         GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
         boolean interactiveCrossMin =
                 lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE) 
@@ -328,4 +356,9 @@ final class GraphConfigurator {
                 && greedySwitchType != GreedySwitchType.OFF 
                 && (activationThreshold == 0 || activationThreshold > graphSize);
     }
+
+    private static boolean isHierarchicalLayout(final LGraph lgraph) {
+        return lgraph.getProperty(LayeredOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN;
+    }
+
 }

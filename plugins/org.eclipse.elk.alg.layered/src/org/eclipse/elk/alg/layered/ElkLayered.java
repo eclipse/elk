@@ -341,12 +341,11 @@ public final class ElkLayered {
             });
         }
         
-        // Greedy switch
-        //  simply turn it off for children
-        if (!GraphConfigurator.activateGreedySwitchFor(root)) {
-            graphs.forEach(
-                    g -> g.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF));
-        }
+        // Greedy switch (simply copy the behavior of the root to all children)
+        final GreedySwitchType rootType =
+                root.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE);
+        graphs.forEach(
+                g -> g.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_HIERARCHICAL_TYPE, rootType));
     }
 
     private Iterator<ILayoutProcessor<LGraph>> getProcessorsForRootGraph(

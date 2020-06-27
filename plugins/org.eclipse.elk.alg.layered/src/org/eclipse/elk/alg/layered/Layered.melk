@@ -132,6 +132,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
+    supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitchHierarchical.type
     supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
     supports mergeEdges
     supports mergeHierarchyEdges
@@ -345,13 +346,34 @@ group crossingMinimization {
 
         advanced option type: GreedySwitchType {
             label "Greedy Switch Crossing Minimization"
-            description
+            description 
                 "Greedy Switch strategy for crossing minimization. The greedy switch heuristic is executed 
-                 after the regular layer sweep as a post-processor."
+                 after the regular crossing minimization as a post-processor. 
+                 Note that if 'hierarchyHandling' is set to 'INCLUDE_CHILDREN', the 'greedySwitchHierarchical.type' 
+                 option must be used."
             default = GreedySwitchType.TWO_SIDED
             targets parents
+            requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
         }
 
+    }
+    
+    group greedySwitchHierarchical {
+        
+        advanced option type: GreedySwitchType {
+            label "Greedy Switch Crossing Minimization (hierarchical)"
+            description
+                "Activates the greedy switch heuristic in case hierarchical layout is used. 
+                 The differences to the non-hierarchical case (see 'greedySwitch.type') are:
+                    1) greedy switch is inactive by default,
+                    3) only the option value set on the node at which hierarchical layout starts is relevant, and
+                    2) if it's activated by the user, it properly addresses hierarchy-crossing edges."
+            default = GreedySwitchType.OFF
+            targets parents
+            requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
+            requires org.eclipse.elk.hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN 
+        }
+        
     }
 
     advanced option semiInteractive: boolean {
