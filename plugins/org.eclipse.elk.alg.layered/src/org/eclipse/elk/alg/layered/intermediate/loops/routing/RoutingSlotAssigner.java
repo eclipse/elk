@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
+ * Copyright (c) 2019, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -26,10 +26,9 @@ import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeCycleBreaker;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -56,7 +55,7 @@ public class RoutingSlotAssigner {
         
         // We're using the orthogonal edge router's cycle breaker for this, so create the crossing graph for our loops
         createCrossingGraph(slHolder, labelCrossingMatrix);
-        HyperEdgeCycleBreaker.breakCycles(hyperEdgeSegments,
+        OrthogonalRoutingGenerator.breakNonCriticalCycles(hyperEdgeSegments,
                 slHolder.getLNode().getGraph().getProperty(InternalProperties.RANDOM));
         
         // Assign routing slots based on the graph

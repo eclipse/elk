@@ -65,12 +65,32 @@ public final class HyperEdgeSegmentDependency {
             final HyperEdgeSegment target, final int weight) {
         
         this.type = type;
-        this.source = source;
-        this.target = target;
         this.weight = weight;
         
-        source.getOutgoingSegmentDependencies().add(this);
-        target.getIncomingSegmentDependencies().add(this);
+        setSource(source);
+        setTarget(target);
+    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Manipulation
+    
+    /**
+     * Removes this dependency.
+     */
+    public void remove() {
+        setSource(null);
+        setTarget(null);
+    }
+    
+    /**
+     * Reverses this dependency.
+     */
+    public void reverse() {
+        HyperEdgeSegment oldSource = source;
+        HyperEdgeSegment oldTarget = target;
+        
+        setSource(oldTarget);
+        setTarget(oldSource);
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +114,15 @@ public final class HyperEdgeSegmentDependency {
      * Sets the source segment, but does not modify that segment's list of outgoing dependencies.
      */
     public void setSource(final HyperEdgeSegment source) {
+        if (source != null) {
+            source.getOutgoingSegmentDependencies().remove(this);
+        }
+        
         this.source = source;
+        
+        if (source != null) {
+            source.getOutgoingSegmentDependencies().add(this);
+        }
     }
 
     /**
@@ -108,7 +136,15 @@ public final class HyperEdgeSegmentDependency {
      * Sets the target segment, but does not modify that segment's list of incoming dependencies.
      */
     public void setTarget(final HyperEdgeSegment target) {
+        if (target != null) {
+            target.getIncomingSegmentDependencies().remove(this);
+        }
+        
         this.target = target;
+        
+        if (target != null) {
+            target.getIncomingSegmentDependencies().add(this);
+        }
     }
 
     /**
