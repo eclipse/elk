@@ -63,6 +63,8 @@ public final class OrthogonalRoutingGenerator {
     
     /** a special return value used by the conflict counting method. */
     private static final int CRITICAL_CONFLICTS_DETECTED = -1;
+    /** non-zero weight used for critical dependencies. */
+    private static final int CRITICAL_DEPENDENCY_WEIGHT = 1;
 
     /** factor for edge spacing used to determine the {@link #conflictThreshold}. */
     private static final double CONFLICT_THRESHOLD_FACTOR = 0.5;
@@ -195,7 +197,7 @@ public final class OrthogonalRoutingGenerator {
         
         // if there are at least two critical dependencies, there may be critical cycles that need to be broken
         if (criticalDependencyCount >= 2) {
-            // TODO break critical cycles
+            breakCriticalCycles(edgeSegments, random);
         }
 
         // break non-critical cycles
@@ -336,13 +338,13 @@ public final class OrthogonalRoutingGenerator {
             // Check which critical dependencies have to be added
             if (conflicts1 == CRITICAL_CONFLICTS_DETECTED) {
                 // hyperedge 1 MUST NOT be left of hyperedge 2, since that would cause critical conflicts
-                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he2, he1, 0);
+                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he2, he1, CRITICAL_DEPENDENCY_WEIGHT);
                 criticalDependencyCount++;
             }
             
             if (conflicts2 == CRITICAL_CONFLICTS_DETECTED) {
                 // hyperedge 2 MUST NOT be left of hyperedge 1, since that would cause critical conflicts
-                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he1, he2, 0);
+                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he1, he2, CRITICAL_DEPENDENCY_WEIGHT);
                 criticalDependencyCount++;
             }
             
@@ -442,11 +444,23 @@ public final class OrthogonalRoutingGenerator {
     // Cycle Breaking
 
     /**
+     * Finds and breaks critical cycles to avoid edge overlaps. The critical cycles we find will be handled by splitting
+     * an edge segment into two.
+     */
+    private void breakCriticalCycles(final List<HyperEdgeSegment> edgeSegments, final Random random) {
+        List<HyperEdgeSegmentDependency> cycleDependencies =
+                HyperEdgeCycleDetector.detectCycles(edgeSegments, true, random);
+        
+        // TODO Split segments!
+    }
+
+    /**
      * Finds and breaks non-critical cycles by removing and reversing non-critical dependencies. This method is used by
      * the self loop routing code as well.
      */
     public static void breakNonCriticalCycles(final List<HyperEdgeSegment> edgeSegments, final Random random) {
-        List<HyperEdgeSegmentDependency> cycleDependencies = HyperEdgeCycleDetector.detectCycles(edgeSegments, random);
+        List<HyperEdgeSegmentDependency> cycleDependencies =
+                HyperEdgeCycleDetector.detectCycles(edgeSegments, false, random);
         
         for (HyperEdgeSegmentDependency cycleDependency : cycleDependencies) {
             if (cycleDependency.getWeight() == 0) {

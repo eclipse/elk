@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency.DependencyType;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -38,16 +40,22 @@ public final class HyperEdgeCycleDetector {
     }
 
     /**
-     * Finds a set of dependencies whose reversal or removal will make the graph acyclic.
+     * Finds a set of dependencies whose reversal or removal will make the graph acyclic. The method can concentrate on
+     * critical dependencies only, or detect cycles among all dependencies. The latter assumes that there are no cycles
+     * among critical dependencies left and will never return a critical dependency in the result. (doing so would cause
+     * clients to reverse or remove critical dependencies, which is a big no-no, to put it eloquently!) This code also
+     * assumes that only dependencies involved in non-critical two-cycles will have a weight of zero.
      *
      * @param segments
      *            list of hyper edge segments.
+     * param criticalOnly
+     *            {@code true} if we should only detect cycles among critical dependencies.
      * @param random
      *            random number generator.
      * @return list of dependencies whose removal or reversal will make the graph acyclic.
      */
     public static List<HyperEdgeSegmentDependency> detectCycles(final List<HyperEdgeSegment> segments,
-            final Random random) {
+            final boolean criticalOnly, final Random random) {
         
         List<HyperEdgeSegmentDependency> result = new ArrayList<>();
         
@@ -55,10 +63,10 @@ public final class HyperEdgeCycleDetector {
         LinkedList<HyperEdgeSegment> sinks = Lists.newLinkedList();
 
         // initialize values for the algorithm
-        initialize(segments, sources, sinks);
+        initialize(segments, sources, sinks, criticalOnly);
 
         // assign marks to all nodes
-        computeLinearOrderingMarks(segments, sources, sinks, random);
+        computeLinearOrderingMarks(segments, sources, sinks, criticalOnly, random);
 
         // process edges that point left: remove those of zero weight, reverse the others
         for (HyperEdgeSegment source : segments) {
@@ -78,25 +86,56 @@ public final class HyperEdgeCycleDetector {
      * complete, all segments are marked from {@code -1} to {@code -segments.size()}.
      */
     private static void initialize(final List<HyperEdgeSegment> segments, final List<HyperEdgeSegment> sources,
-            final List<HyperEdgeSegment> sinks) {
+            final List<HyperEdgeSegment> sinks, final boolean criticalOnly) {
         
         int nextMark = -1;
         for (HyperEdgeSegment segment : segments) {
             segment.mark = nextMark--;
+            
             int inWeight = 0;
             int outWeight = 0;
+            
+            int criticalInWeight = 0;
+            int criticalOutWeight = 0;
 
+            // Sum up the weight of incoming and outgoing dependencies, possibly only regarding critical dependencies
             for (HyperEdgeSegmentDependency dependency : segment.getOutgoingSegmentDependencies()) {
-                outWeight += dependency.getWeight();
+                switch (dependency.getType()) {
+                case CRITICAL:
+                    assert dependency.getWeight() > 0;
+                    outWeight += dependency.getWeight();
+                    criticalOutWeight += dependency.getWeight();
+                    break;
+                    
+                default:
+                    if (!criticalOnly) {
+                        outWeight += dependency.getWeight();
+                    }
+                }
             }
 
             for (HyperEdgeSegmentDependency dependency : segment.getIncomingSegmentDependencies()) {
-                inWeight += dependency.getWeight();
+                switch (dependency.getType()) {
+                case CRITICAL:
+                    assert dependency.getWeight() > 0;
+                    inWeight += dependency.getWeight();
+                    criticalInWeight += dependency.getWeight();
+                    break;
+                    
+                default:
+                    if (!criticalOnly) {
+                        inWeight += dependency.getWeight();
+                    }
+                }
             }
 
+            // Apply the weight
             segment.setInWeight(inWeight);
+            segment.setCriticalInWeight(criticalInWeight);
             segment.setOutWeight(outWeight);
+            segment.setCriticalOutWeight(criticalOutWeight);
 
+            // Add the segment to either sources or sinks if the corresponding weight is zero
             if (outWeight == 0) {
                 sinks.add(segment);
             } else if (inWeight == 0) {
@@ -110,12 +149,15 @@ public final class HyperEdgeCycleDetector {
      * sinks will have higher marks than sources.
      */
     private static void computeLinearOrderingMarks(final List<HyperEdgeSegment> segments,
-            final LinkedList<HyperEdgeSegment> sources, final LinkedList<HyperEdgeSegment> sinks, final Random random) {
+            final LinkedList<HyperEdgeSegment> sources, final LinkedList<HyperEdgeSegment> sinks,
+            final boolean criticalOnly, final Random random) {
         
         Set<HyperEdgeSegment> unprocessed = Sets.newTreeSet(segments);
         List<HyperEdgeSegment> maxSegments = new ArrayList<HyperEdgeSegment>();
         
-        // We'll mark sinks with marks < markBase and sources with marks > markBase.
+        // We'll mark sinks with marks < markBase and sources with marks > markBase. Sink marks will later be offset to
+        // be higher than the source marks, but this way, the sink marks will reflect the order in which the sinks were
+        // discovered and added.
         int markBase = segments.size();
         int nextRight = markBase - 1;
         int nextLeft = markBase + 1;
@@ -125,20 +167,32 @@ public final class HyperEdgeCycleDetector {
                 HyperEdgeSegment sink = sinks.removeFirst();
                 unprocessed.remove(sink);
                 sink.mark = nextRight--;
-                updateNeighbors(sink, sources, sinks);
+                updateNeighbors(sink, sources, sinks, criticalOnly);
             }
 
             while (!sources.isEmpty()) {
                 HyperEdgeSegment source = sources.removeFirst();
                 unprocessed.remove(source);
                 source.mark = nextLeft++;
-                updateNeighbors(source, sources, sinks);
+                updateNeighbors(source, sources, sinks, criticalOnly);
             }
 
             // If any segments are still unprocessed, they are neither source nor sink. Assemble the list of segments
-            // with the highest out flow (out weight - in weight).
+            // with the highest out flow (out weight - in weight), to be placed among the sources. If we're looking at
+            // both, critical and non-critical dependencies, we must be sure that critical dependencies will always
+            // point rightwards; we thus stop immediately once we find one
             int maxOutflow = Integer.MIN_VALUE;
             for (HyperEdgeSegment segment : unprocessed) {
+                // If we're not only regarding critical dependencies, we must ensure that critical dependencies will
+                // always point to the right to prevent them from being reversed later on. Thus, once we find a single
+                // segment that still has an outgoing critical dependency and no incoming ones, we'll take that and
+                // leave!
+                if (!criticalOnly && segment.getCriticalOutWeight() > 0 && segment.getCriticalInWeight() <= 0) {
+                    maxSegments.clear();
+                    maxSegments.add(segment);
+                    break;
+                }
+                
                 int outflow = segment.getOutWeight() - segment.getInWeight();
                 if (outflow >= maxOutflow) {
                     if (outflow > maxOutflow) {
@@ -154,7 +208,7 @@ public final class HyperEdgeCycleDetector {
                 HyperEdgeSegment maxNode = maxSegments.get(random.nextInt(maxSegments.size()));
                 unprocessed.remove(maxNode);
                 maxNode.mark = nextLeft++;
-                updateNeighbors(maxNode, sources, sinks);
+                updateNeighbors(maxNode, sources, sinks, criticalOnly);
                 maxSegments.clear();
             }
         }
@@ -178,28 +232,44 @@ public final class HyperEdgeCycleDetector {
      *            list of sources
      * @param sinks
      *            list of sinks
+     * @param criticalOnly
+     *            {@code true} if only critical dependencies should be taken into account.
      */
     private static void updateNeighbors(final HyperEdgeSegment node, final List<HyperEdgeSegment> sources,
-            final List<HyperEdgeSegment> sinks) {
+            final List<HyperEdgeSegment> sinks, final boolean criticalOnly) {
 
         // process following nodes
         for (HyperEdgeSegmentDependency dep : node.getOutgoingSegmentDependencies()) {
-            HyperEdgeSegment target = dep.getTarget();
-            if (target.mark < 0 && dep.getWeight() > 0) {
-                target.setInWeight(target.getInWeight() - dep.getWeight());
-                if (target.getInWeight() <= 0 && target.getOutWeight() > 0) {
-                    sources.add(target);
+            if (!criticalOnly || dep.getType() == DependencyType.CRITICAL) {
+                HyperEdgeSegment target = dep.getTarget();
+                if (target.mark < 0 && dep.getWeight() > 0) {
+                    // Remove weight (and possibly critical weight) from the target
+                    target.setInWeight(target.getInWeight() - dep.getWeight());
+                    if (dep.getType() == DependencyType.CRITICAL) {
+                        target.setCriticalInWeight(target.getCriticalInWeight() - dep.getWeight());
+                    }
+                    
+                    if (target.getInWeight() <= 0 && target.getOutWeight() > 0) {
+                        sources.add(target);
+                    }
                 }
             }
         }
 
         // process preceding nodes
         for (HyperEdgeSegmentDependency dep : node.getIncomingSegmentDependencies()) {
-            HyperEdgeSegment source = dep.getSource();
-            if (source.mark < 0 && dep.getWeight() > 0) {
-                source.setOutWeight(source.getOutWeight() - dep.getWeight());
-                if (source.getOutWeight() <= 0 && source.getInWeight() > 0) {
-                    sinks.add(source);
+            if (!criticalOnly || dep.getType() == DependencyType.CRITICAL) {
+                HyperEdgeSegment source = dep.getSource();
+                if (source.mark < 0 && dep.getWeight() > 0) {
+                    // Remove weight (and possibly critical weight) from the source
+                    source.setOutWeight(source.getOutWeight() - dep.getWeight());
+                    if (dep.getType() == DependencyType.CRITICAL) {
+                        source.setCriticalOutWeight(source.getCriticalOutWeight() - dep.getWeight());
+                    }
+                    
+                    if (source.getOutWeight() <= 0 && source.getInWeight() > 0) {
+                        sinks.add(source);
+                    }
                 }
             }
         }

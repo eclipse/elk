@@ -68,12 +68,16 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     
     /** list of outgoing dependencies to other edge segments. */
     private final List<HyperEdgeSegmentDependency> outgoingSegmentDependencies = Lists.newArrayList();
-    /** combined weight of outgoing dependencies. */
+    /** combined weight of all outgoing dependencies. */
     private int outDepWeight;
+    /** combined weight of critical outgoing dependencies. */
+    private int criticalOutDepWeight;
     /** list of incoming dependencies from other edge segments. */
     private final List<HyperEdgeSegmentDependency> incomingSegmentDependencies = Lists.newArrayList();
-    /** combined weight of incoming dependencies. */
+    /** combined weight of all incoming dependencies. */
     private int inDepWeight;
+    /** combined weight of critical incoming dependencies. */
+    private int criticalInDepWeight;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Initialization
@@ -206,17 +210,31 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     }
 
     /**
-     * Returns the combined weight of outgoing dependencies.
+     * Returns the combined weight of all outgoing dependencies.
      */
     public int getOutWeight() {
         return outDepWeight;
     }
 
     /**
-     * Sets the combined weight of outgoing dependencies.
+     * Sets the combined weight of all outgoing dependencies.
      */
     public void setOutWeight(final int outWeight) {
         this.outDepWeight = outWeight;
+    }
+
+    /**
+     * Returns the combined weight of critical outgoing dependencies.
+     */
+    public int getCriticalOutWeight() {
+        return criticalOutDepWeight;
+    }
+
+    /**
+     * Sets the combined weight of critical outgoing dependencies.
+     */
+    public void setCriticalOutWeight(final int outWeight) {
+        this.criticalOutDepWeight = outWeight;
     }
 
     /**
@@ -238,6 +256,20 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
      */
     public void setInWeight(final int inWeight) {
         this.inDepWeight = inWeight;
+    }
+
+    /**
+     * Returns the combined weight of critical incoming dependencies.
+     */
+    public int getCriticalInWeight() {
+        return criticalInDepWeight;
+    }
+
+    /**
+     * Sets the combined weight of critical incoming dependencies.
+     */
+    public void setCriticalInWeight(final int inWeight) {
+        this.criticalInDepWeight = inWeight;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
