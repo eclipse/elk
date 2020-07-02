@@ -12,6 +12,8 @@ package org.eclipse.elk.alg.layered.p5edges.orthogonal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.elk.alg.layered.DebugUtil;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -19,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency.DependencyType;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.direction.BaseRoutingDirectionStrategy;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.direction.RoutingDirection;
 import org.eclipse.elk.core.options.PortSide;
@@ -56,18 +59,47 @@ public final class OrthogonalRoutingGenerator {
 
     /** differences below this tolerance value are treated as zero. */
     public static final double TOLERANCE = 1e-3;
+    
+    /** a special return value used by the conflict counting method. */
+    private static final int CRITICAL_CONFLICTS_DETECTED = -1;
 
     /** factor for edge spacing used to determine the {@link #conflictThreshold}. */
     private static final double CONFLICT_THRESHOLD_FACTOR = 0.5;
-    /** weight penalty for conflicts of horizontal line segments. */
-    private static final int CONFLICT_PENALTY = 16;
+    /** factor to compute {@link #criticalConflictThreshold}. */
+    private static final double CRITICAL_CONFLICT_THRESHOLD_FACTOR = 0.2;
+    
+    /** weight penalty for (non-critical) conflicts. */
+    private static final int CONFLICT_PENALTY = 1;
+    /** weight penalty for crossings. */
+    private static final int CROSSING_PENALTY = 16;
 
     /** routing direction strategy. */
     private final BaseRoutingDirectionStrategy routingStrategy;
     /** spacing between edges. */
     private final double edgeSpacing;
-    /** threshold at which conflicts of horizontal line segments are detected. */
+    
+    /**
+     * Threshold at which horizontal line segments are considered to be too close to one another. A conflict will cause
+     * the involved hyperedges to be assigned to different routing slots in order to resolve the conflict.
+     * 
+     * <p>
+     * This value is a constant fraction of the edge spacing.
+     * </p>
+     */
     private final double conflictThreshold;
+    /**
+     * Threshold at which horizontal line segments are considered to overlap. A critical conflict will cause the
+     * involved hyperedges to be assigned to different routing slots in order to resolve the critical conflict. If there
+     * is a cycle of critical conflicts, there is no assignment that will resolve all overlaps. This will result in one
+     * of the involved hyperedges to be split into two vertical segments.
+     * 
+     * <p>
+     * This value depends on how close edges from the source layer and edges from the target layer come to each other,
+     * respectively. We cannot change that. The critical conflict threshold is thus a fraction of that minimum
+     * proximity and is different for each pair of layers. Hence, this is not a constant.
+     * </p>
+     */
+    private double criticalConflictThreshold;
     
     /** prefix of debug output files. */
     private final String debugPrefix;
@@ -120,6 +152,7 @@ public final class OrthogonalRoutingGenerator {
             final Iterable<LNode> sourceLayerNodes, final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes,
             final double startPos) {
 
+        // Keep track of our hyperedge segements, and which ports they were created for
         Map<LPort, HyperEdgeSegment> portToEdgeSegmentMap = Maps.newHashMap();
         List<HyperEdgeSegment> edgeSegments = Lists.newArrayList();
 
@@ -130,11 +163,17 @@ public final class OrthogonalRoutingGenerator {
         createHyperEdgeSegments(
                 targetLayerNodes, routingStrategy.getTargetPortSide(), edgeSegments, portToEdgeSegmentMap);
 
-        // create dependencies for the hyperedge segment ordering graph
+        // Our critical conflict threshold is a fraction of the minimum distance between two horizontal hyperedge
+        // segments
+        criticalConflictThreshold = CRITICAL_CONFLICT_THRESHOLD_FACTOR * minimumHorizontalSegmentDistance(edgeSegments);
+        
+        // create dependencies for the hyperedge segment ordering graph and note how many critical dependencies have
+        // been created
+        int criticalDependencyCount = 0;
         for (int firstIdx = 0; firstIdx < edgeSegments.size() - 1; firstIdx++) {
             HyperEdgeSegment firstSegment = edgeSegments.get(firstIdx);
             for (int secondIdx = firstIdx + 1; secondIdx < edgeSegments.size(); secondIdx++) {
-                createDependency(firstSegment, edgeSegments.get(secondIdx));
+                criticalDependencyCount += createDependencyIfNecessary(firstSegment, edgeSegments.get(secondIdx));
             }
         }
 
@@ -147,11 +186,16 @@ public final class OrthogonalRoutingGenerator {
                     sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
                     edgeSegments,
                     debugPrefix,
-                    "full");
+                    sourceLayerIndex + "-full");
         }
         // elkjs-exclude-end
+        
+        // if there are at least two critical dependencies, there may be critical cycles that need to be broken
+        if (criticalDependencyCount >= 2) {
+            // TODO break critical cycles
+        }
 
-        // break cycles
+        // break non-critical cycles
         HyperEdgeCycleBreaker.breakCycles(edgeSegments, layeredGraph.getProperty(InternalProperties.RANDOM));
 
         // write the acyclic dependency graph to an output file
@@ -163,7 +207,7 @@ public final class OrthogonalRoutingGenerator {
                     sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
                     edgeSegments,
                     debugPrefix,
-                    "acyclic");
+                    sourceLayerIndex + "-acyclic");
         }
         // elkjs-exclude-end
 
@@ -186,6 +230,44 @@ public final class OrthogonalRoutingGenerator {
         // release the created resources
         routingStrategy.clearCreatedJunctionPoints();
         return rankCount + 1;
+    }
+
+    /**
+     * Computes and returns the minimum distance between any two adjacent source connections and any two adjacent target
+     * connections.
+     */
+    private double minimumHorizontalSegmentDistance(final List<HyperEdgeSegment> edgeSegments) {
+        double minIncomingDistance = minimumDifference(
+                edgeSegments.stream().flatMap(segment -> segment.getIncomingConnectionCoordinates().stream()));
+        double minOutgoingDistance = minimumDifference(
+                edgeSegments.stream().flatMap(segment -> segment.getOutgoingConnectionCoordinates().stream()));
+        
+        return Math.min(minIncomingDistance, minOutgoingDistance);
+    }
+    
+    /**
+     * Returns the smallest difference between any two numbers in the given stream of numbers. If there are less than
+     * two numbers, we return {@link Double#MAX_VALUE}.
+     */
+    private double minimumDifference(final Stream<Double> numberStream) {
+        List<Double> numbers = numberStream.sorted().distinct().collect(Collectors.toList());
+        
+        double minDifference = Double.MAX_VALUE;
+        
+        if (numbers.size() >= 2) {
+            Iterator<Double> iter = numbers.iterator();
+            Double currentNumber = iter.next();
+            
+            while (iter.hasNext()) {
+                Double previousNumber = currentNumber;
+                currentNumber = iter.next();
+                
+                // This relies on the fact that the numbers are distinct and sorted ascendingly
+                minDifference = Math.min(minDifference, currentNumber.doubleValue() - previousNumber.doubleValue());
+            }
+        }
+        
+        return minDifference;
     }
 
 
@@ -222,49 +304,74 @@ public final class OrthogonalRoutingGenerator {
     }
 
     /**
-     * Create a dependency between the two given hyperedge segments, if one is needed.
+     * Create dependencies between the two given hyperedge segments, if one is needed.
      *
      * @param he1
      *            first hyperedge segments
      * @param he2
      *            second hyperedge segments
+     * @return the number of critical dependencies that were added
      */
-    private void createDependency(final HyperEdgeSegment he1, final HyperEdgeSegment he2) {
+    private int createDependencyIfNecessary(final HyperEdgeSegment he1, final HyperEdgeSegment he2) {
         // check if at least one of the two nodes is just a straight line; those don't
         // create dependencies since they don't take up a slot
         if (Math.abs(he1.getStartCoordinate() - he1.getEndCoordinate()) < TOLERANCE
                 || Math.abs(he2.getStartCoordinate() - he2.getEndCoordinate()) < TOLERANCE) {
-            return;
+            
+            return 0;
         }
 
         // compare number of conflicts for both variants
         int conflicts1 = countConflicts(he1.getOutgoingConnectionCoordinates(), he2.getIncomingConnectionCoordinates());
         int conflicts2 = countConflicts(he2.getOutgoingConnectionCoordinates(), he1.getIncomingConnectionCoordinates());
-
-        // compare number of crossings for both variants
-        int crossings1 = countCrossings(
-                he1.getOutgoingConnectionCoordinates(), he2.getStartCoordinate(), he2.getEndCoordinate());
-        crossings1 += countCrossings(
-                he2.getIncomingConnectionCoordinates(), he1.getStartCoordinate(), he1.getEndCoordinate());
-        int crossings2 = countCrossings(
-                he2.getOutgoingConnectionCoordinates(), he1.getStartCoordinate(), he1.getEndCoordinate());
-        crossings2 += countCrossings(
-                he1.getIncomingConnectionCoordinates(), he2.getStartCoordinate(), he2.getEndCoordinate());
-
-        int depValue1 = CONFLICT_PENALTY * conflicts1 + crossings1;
-        int depValue2 = CONFLICT_PENALTY * conflicts2 + crossings2;
-
-        if (depValue1 < depValue2) {
-            // create dependency from first hypernode to second one
-            new HyperEdgeSegmentDependency(he1, he2, depValue2 - depValue1);
-        } else if (depValue1 > depValue2) {
-            // create dependency from second hypernode to first one
-            new HyperEdgeSegmentDependency(he2, he1, depValue1 - depValue2);
-        } else if (depValue1 > 0 && depValue2 > 0) {
-            // create two dependencies with zero weight
-            new HyperEdgeSegmentDependency(he1, he2, 0);
-            new HyperEdgeSegmentDependency(he2, he1, 0);
+        
+        boolean criticalConflictsDetected =
+                conflicts1 == CRITICAL_CONFLICTS_DETECTED || conflicts2 == CRITICAL_CONFLICTS_DETECTED;
+        int criticalDependencyCount = 0;
+        
+        if (criticalConflictsDetected) {
+            // Check which critical dependencies have to be added
+            if (conflicts1 == CRITICAL_CONFLICTS_DETECTED) {
+                // hyperedge 1 MUST NOT be left of hyperedge 2, since that would cause critical conflicts
+                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he2, he1, 0);
+                criticalDependencyCount++;
+            }
+            
+            if (conflicts2 == CRITICAL_CONFLICTS_DETECTED) {
+                // hyperedge 2 MUST NOT be left of hyperedge 1, since that would cause critical conflicts
+                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he1, he2, 0);
+                criticalDependencyCount++;
+            }
+            
+        } else {
+            // we did not detect critical conflicts, so count the number of crossings for both variants
+            int crossings1 = countCrossings(
+                    he1.getOutgoingConnectionCoordinates(), he2.getStartCoordinate(), he2.getEndCoordinate());
+            crossings1 += countCrossings(
+                    he2.getIncomingConnectionCoordinates(), he1.getStartCoordinate(), he1.getEndCoordinate());
+            int crossings2 = countCrossings(
+                    he2.getOutgoingConnectionCoordinates(), he1.getStartCoordinate(), he1.getEndCoordinate());
+            crossings2 += countCrossings(
+                    he1.getIncomingConnectionCoordinates(), he2.getStartCoordinate(), he2.getEndCoordinate());
+            
+            // compute the penalty; crossings are deemed worse than (non-critical) conflicts
+            int depValue1 = CONFLICT_PENALTY * conflicts1 + CROSSING_PENALTY * crossings1;
+            int depValue2 = CONFLICT_PENALTY * conflicts2 + CROSSING_PENALTY * crossings2;
+            
+            if (depValue1 < depValue2) {
+                // hyperedge 1 wants to be left of hyperedge 2
+                new HyperEdgeSegmentDependency(he1, he2, depValue2 - depValue1);
+            } else if (depValue1 > depValue2) {
+                // hyperedge 2 wants to be left of hyperedge 1
+                new HyperEdgeSegmentDependency(he2, he1, depValue1 - depValue2);
+            } else if (depValue1 > 0 && depValue2 > 0) {
+                // create two dependencies with zero weight
+                new HyperEdgeSegmentDependency(he1, he2, 0);
+                new HyperEdgeSegmentDependency(he2, he1, 0);
+            }
         }
+        
+        return criticalDependencyCount;
     }
 
     /**
@@ -274,7 +381,8 @@ public final class OrthogonalRoutingGenerator {
      *            sorted list of positions
      * @param posis2
      *            sorted list of positions
-     * @return number of positions that overlap
+     * @return number of positions that overlap, or {@link #CRITICAL_CONFLICTS_DETECTED} if a critical conflict was
+     *         detected.
      */
     private int countConflicts(final List<Double> posis1, final List<Double> posis2) {
         int conflicts = 0;
@@ -287,7 +395,10 @@ public final class OrthogonalRoutingGenerator {
             boolean hasMore = true;
 
             do {
-                if (pos1 > pos2 - minDiff && pos1 < pos2 + minDiff) {
+                if (pos1 > pos2 - criticalConflictThreshold && pos1 < pos2 + criticalConflictThreshold) {
+                    // We're done as soon as we find a single critical conflict
+                    return -1;
+                } else if (pos1 > pos2 - conflictThreshold && pos1 < pos2 + conflictThreshold) {
                     conflicts++;
                 }
 
