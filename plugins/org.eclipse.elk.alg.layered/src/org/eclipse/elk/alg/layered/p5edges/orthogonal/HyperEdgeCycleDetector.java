@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.p5edges.orthogonal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Random;
 import java.util.Set;
 
@@ -20,34 +19,38 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Breaks cycles in the conflict graph of {@link HyperEdgeSegment}s and {@link HyperEdgeSegmentDependency}s by removing
- * dependencies. The hope is to remove the minimum-weight set of dependencies such that the graph becomes acyclic.
+ * Finds a set of dependencies to remove or reverse to break cycles in the conflict graph of {@link HyperEdgeSegment}s
+ * and {@link HyperEdgeSegmentDependency}s. What clients will do with these, exactly, will be up to them. The hope is to
+ * return the minimum-weight set of dependencies such that their reversal or removal causes the graph to become acyclic.
  * Inspired by:
  * <ul>
  *   <li>Eades, Lin, Smyth. A fast and effective heuristic for the feedback arc set problem. In <i>Information
  *     Processing Letters</i>, 1993.</li>
  * </ul>
  */
-public final class HyperEdgeCycleBreaker {
+public final class HyperEdgeCycleDetector {
     
     /**
      * No instance required.
      */
-    private HyperEdgeCycleBreaker() {
+    private HyperEdgeCycleDetector() {
         assert false;
     }
 
     /**
-     * Breaks all cycles in the given hyper edge segment structure by reversing or removing some dependencies. This
-     * implementation assumes that the dependencies of zero weight are exactly the two-cycles of the hyper edge segment
-     * structure.
+     * Finds a set of dependencies whose reversal or removal will make the graph acyclic.
      *
      * @param segments
-     *            list of hyper edge segments
+     *            list of hyper edge segments.
      * @param random
-     *            random number generator
+     *            random number generator.
+     * @return list of dependencies whose removal or reversal will make the graph acyclic.
      */
-    public static void breakCycles(final List<HyperEdgeSegment> segments, final Random random) {
+    public static List<HyperEdgeSegmentDependency> detectCycles(final List<HyperEdgeSegment> segments,
+            final Random random) {
+        
+        List<HyperEdgeSegmentDependency> result = new ArrayList<>();
+        
         LinkedList<HyperEdgeSegment> sources = Lists.newLinkedList();
         LinkedList<HyperEdgeSegment> sinks = Lists.newLinkedList();
 
@@ -59,24 +62,14 @@ public final class HyperEdgeCycleBreaker {
 
         // process edges that point left: remove those of zero weight, reverse the others
         for (HyperEdgeSegment source : segments) {
-            ListIterator<HyperEdgeSegmentDependency> depIter = source.getOutgoingSegmentDependencies().listIterator();
-            while (depIter.hasNext()) {
-                HyperEdgeSegmentDependency dependency = depIter.next();
-                HyperEdgeSegment target = dependency.getTarget();
-
-                if (source.mark > target.mark) {
-                    depIter.remove();
-                    target.getIncomingSegmentDependencies().remove(dependency);
-
-                    if (dependency.getWeight() > 0) {
-                        dependency.setSource(target);
-                        target.getOutgoingSegmentDependencies().add(dependency);
-                        dependency.setTarget(source);
-                        source.getIncomingSegmentDependencies().add(dependency);
-                    }
+            for (HyperEdgeSegmentDependency outDependency : source.getOutgoingSegmentDependencies()) {
+                if (source.mark > outDependency.getTarget().mark) {
+                    result.add(outDependency);
                 }
             }
         }
+        
+        return result;
     }
 
     /**

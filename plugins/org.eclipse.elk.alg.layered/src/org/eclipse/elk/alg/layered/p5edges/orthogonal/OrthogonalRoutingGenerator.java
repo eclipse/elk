@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.p5edges.orthogonal;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -151,6 +152,8 @@ public final class OrthogonalRoutingGenerator {
     public int routeEdges(final IElkProgressMonitor monitor, final LGraph layeredGraph,
             final Iterable<LNode> sourceLayerNodes, final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes,
             final double startPos) {
+        
+        Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
 
         // Keep track of our hyperedge segements, and which ports they were created for
         Map<LPort, HyperEdgeSegment> portToEdgeSegmentMap = Maps.newHashMap();
@@ -196,7 +199,7 @@ public final class OrthogonalRoutingGenerator {
         }
 
         // break non-critical cycles
-        HyperEdgeCycleBreaker.breakCycles(edgeSegments, layeredGraph.getProperty(InternalProperties.RANDOM));
+        breakNonCriticalCycles(edgeSegments, random);
 
         // write the acyclic dependency graph to an output file
         // elkjs-exclude-start
@@ -435,6 +438,25 @@ public final class OrthogonalRoutingGenerator {
         return crossings;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // Cycle Breaking
+
+    /**
+     * Finds and breaks non-critical cycles by removing and reversing non-critical dependencies. This method is used by
+     * the self loop routing code as well.
+     */
+    public static void breakNonCriticalCycles(final List<HyperEdgeSegment> edgeSegments, final Random random) {
+        List<HyperEdgeSegmentDependency> cycleDependencies = HyperEdgeCycleDetector.detectCycles(edgeSegments, random);
+        
+        for (HyperEdgeSegmentDependency cycleDependency : cycleDependencies) {
+            if (cycleDependency.getWeight() == 0) {
+                // Simply remove this dependency. This assumes that only two-cycles will have dependency weight 0
+                cycleDependency.remove();
+            } else {
+                cycleDependency.reverse();
+            }
+        }
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     // Topological Ordering
