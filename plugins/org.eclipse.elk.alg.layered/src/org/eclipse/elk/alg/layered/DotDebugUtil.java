@@ -135,7 +135,7 @@ public final class DotDebugUtil {
         for (HyperEdgeSegment hypernode : hypernodes) {
             for (HyperEdgeSegmentDependency dependency : hypernode.getOutgoingSegmentDependencies()) {
                 writer.write("  " + hypernode.hashCode() + "->" + dependency.getTarget().hashCode()
-                        + "[label=\"" + dependency.getWeight() + "\"]\n");
+                        + "[label=\"" + dependency.getType().name() + " (" + dependency.getWeight() + ")\"]\n");
             }
         }
         
