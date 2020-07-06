@@ -432,7 +432,7 @@ public final class OrthogonalRoutingGenerator {
      * @param end end of the critical area
      * @return number of positions in the critical area
      */
-    private static int countCrossings(final List<Double> posis, final double start, final double end) {
+    static int countCrossings(final List<Double> posis, final double start, final double end) {
         int crossings = 0;
         for (double pos : posis) {
             if (pos > end) {
