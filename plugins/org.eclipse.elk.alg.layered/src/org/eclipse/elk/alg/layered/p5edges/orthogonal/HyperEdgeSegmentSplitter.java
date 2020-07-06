@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency.DependencyType;
+import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Streams;
 
@@ -64,7 +65,7 @@ public final class HyperEdgeSegmentSplitter {
         // have fewer options for where to put their horizontal connecting segments.
         segmentsToSplit.stream()
             .sorted((hes1, hes2) -> Double.compare(hes1.getSize(), hes2.getSize()))
-            .forEach(segment -> split(segment, segments, freeAreas));
+            .forEach(segment -> split(segment, segments, freeAreas, criticalConflictThreshold));
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,25 +154,14 @@ public final class HyperEdgeSegmentSplitter {
      * Splits the given segment at the optimal position.
      */
     private void split(final HyperEdgeSegment segment, final List<HyperEdgeSegment> segments,
-            final List<FreeArea> freeAreas) {
+            final List<FreeArea> freeAreas, final double criticalConflictThreshold) {
         
         // Split the segment at the best position and add the new segment to our list
-        double splitPosition = computePositionToSplitAndUpdateFreeAreas(segment, freeAreas);
+        double splitPosition = computePositionToSplitAndUpdateFreeAreas(segment, freeAreas, criticalConflictThreshold);
         segments.add(segment.splitAt(splitPosition));
         
         // Update the dependencies to reflect the new situation
         updateDependencies(segment, segments);
-    }
-
-    /**
-     * Returns a hopefully good position to split the given segment at, and updates the list of free areas since an area
-     * now either disappears or is split into two smaller areas.
-     */
-    private static double computePositionToSplitAndUpdateFreeAreas(final HyperEdgeSegment segment,
-            final List<FreeArea> freeAreas) {
-        
-        // TODO Return a proper position here
-        return (segment.getStartCoordinate() + segment.getEndCoordinate()) / 2;
     }
 
     /**
@@ -204,6 +194,224 @@ public final class HyperEdgeSegmentSplitter {
             }
         }
     }
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Split Position Computation
+
+    /**
+     * Returns a hopefully good position to split the given segment at, and updates the list of free areas since an area
+     * now either disappears or is split into two smaller areas.
+     */
+    private double computePositionToSplitAndUpdateFreeAreas(final HyperEdgeSegment segment,
+            final List<FreeArea> freeAreas, final double criticalConflictThreshold) {
+        
+        // We shall iterate over the available areas (which are sorted by ascending positions) and find the index of the
+        // first and the last area we could use since they are in our segment's reach
+        int firstPossibleAreaIndex = -1;
+        int lastPossibleAreaIndex = -1;
+        
+        for (int i = 0; i < freeAreas.size(); i++) {
+            FreeArea currArea = freeAreas.get(i);
+            
+            if (currArea.startPosition > segment.getEndCoordinate()) {
+                // We're past the possible areas, so stop
+                break;
+            } else if (currArea.endPosition >= segment.getStartCoordinate()) {
+                // We've found a possible area; it might be the first
+                if (firstPossibleAreaIndex < 0) {
+                    firstPossibleAreaIndex = i;
+                }
+                
+                lastPossibleAreaIndex = i;
+            }
+        }
+        
+        // Determine the position to split the segment at
+        double splitPosition = centre(segment);
+        
+        if (firstPossibleAreaIndex >= 0) {
+            // There are areas we can use
+            int bestAreaIndex = chooseBestAreaIndex(segment, freeAreas, firstPossibleAreaIndex, lastPossibleAreaIndex);
+            
+            // We'll use the best area's centre and update the area list
+            splitPosition = centre(freeAreas.get(bestAreaIndex));
+            useArea(freeAreas, bestAreaIndex, criticalConflictThreshold);
+        }
+        
+        return splitPosition;
+    }
+    
+    /**
+     * Finds the best area to use for splitting the given segment between the given two area indices (both inclusive).
+     */
+    private int chooseBestAreaIndex(final HyperEdgeSegment segment, final List<FreeArea> freeAreas,
+            final int fromIndex, final int toIndex) {
+        
+        int bestAreaIndex = fromIndex;
+        
+        if (fromIndex < toIndex) {
+            // We have more areas to choose from, so rate them and find the best one. We need to simulate splitting the
+            // segment so that we can count potential crossings
+            Pair<HyperEdgeSegment, HyperEdgeSegment> splitSegments = segment.simulateSplit();
+            HyperEdgeSegment splitSegment = splitSegments.getFirst();
+            HyperEdgeSegment splitPartner = splitSegments.getSecond();
+            
+            FreeArea bestArea = freeAreas.get(bestAreaIndex);
+            AreaRating bestRating = rateArea(segment, splitSegment, splitPartner, bestArea);
+            
+            for (int i = fromIndex + 1; i <= toIndex; i++) {
+                // Determine how good our current area is
+                FreeArea currArea = freeAreas.get(i);
+                AreaRating currRating = rateArea(segment, splitSegment, splitPartner, currArea);
+                
+                if (isBetter(currArea, currRating, bestArea, bestRating)) {
+                    bestArea = currArea;
+                    bestRating = currRating;
+                }
+            }
+        }
+        
+        return bestAreaIndex;
+    }
+
+    /**
+     * Rates what would happen if the given split segments were connected through the given area.
+     */
+    private AreaRating rateArea(final HyperEdgeSegment segment, final HyperEdgeSegment splitSegment,
+            final HyperEdgeSegment splitPartner, final FreeArea area) {
+        
+        // The area's centre would be used to link the two split segments, so we need to add that to their incident
+        // connections
+        double areaCentre = centre(area);
+        
+        splitSegment.getOutgoingConnectionCoordinates().clear();
+        splitSegment.getOutgoingConnectionCoordinates().add(areaCentre);
+        
+        splitPartner.getIncomingConnectionCoordinates().clear();
+        splitPartner.getIncomingConnectionCoordinates().add(areaCentre);
+        
+        // We need to count the dependencies and crossings that the split partners would cause with the original
+        // segments incident dependencies
+        AreaRating rating = new AreaRating(0, 0);
+        
+        for (HyperEdgeSegmentDependency dependency : segment.getIncomingSegmentDependencies()) {
+            HyperEdgeSegment otherSegment = dependency.getSource();
+            
+            updateConsideringBothOrderings(rating, splitSegment, otherSegment);
+            updateConsideringBothOrderings(rating, splitPartner, otherSegment);
+        }
+        
+        for (HyperEdgeSegmentDependency dependency : segment.getOutgoingSegmentDependencies()) {
+            HyperEdgeSegment otherSegment = dependency.getTarget();
+            
+            updateConsideringBothOrderings(rating, splitSegment, otherSegment);
+            updateConsideringBothOrderings(rating, splitPartner, otherSegment);
+        }
+        
+        // There will be two additional dependencies: splitSegment --> splitBySegment --> splitPartner. The order
+        // between the three will not change, so we only have to count crossings for this concrete order
+        rating.dependencies += 2;
+        
+        rating.crossings += countCrossingsForSingleOrdering(splitSegment, segment.getSplitBy());
+        rating.crossings += countCrossingsForSingleOrdering(segment.getSplitBy(), splitPartner);
+        
+        return rating;
+    }
+    
+    /**
+     * Considers both orderings (s1 left of s2, and vice versa) and considers the number of crossings that would ensue.
+     * Based on the crossings, determines the minimum number of dependencies and crossings we'd have to expect.
+     */
+    private void updateConsideringBothOrderings(final AreaRating rating, final HyperEdgeSegment s1,
+            final HyperEdgeSegment s2) {
+        
+        int crossingsS1LeftOfS2 = countCrossingsForSingleOrdering(s1, s2);
+        int crossingsS2LeftOfS1 = countCrossingsForSingleOrdering(s2, s1);
+        
+        if (crossingsS1LeftOfS2 == crossingsS2LeftOfS1) {
+            // If the crossings are the same, we're only interested if there are more than 0
+            if (crossingsS1LeftOfS2 > 0) {
+                // Both orderings generate the same number of crossings (more than 0), so we have a two-cycle
+                rating.dependencies += 2;
+                rating.crossings += crossingsS1LeftOfS2;
+            }
+        } else {
+            // One order is better than the other, so there will be a single dependency
+            rating.dependencies += 1;
+            rating.crossings += Math.min(crossingsS1LeftOfS2, crossingsS2LeftOfS1);
+        }
+    }
+    
+    /**
+     * Counts the number of crossings that would ensue between a left and a right segment.
+     */
+    private int countCrossingsForSingleOrdering(final HyperEdgeSegment left, final HyperEdgeSegment right) {
+        return OrthogonalRoutingGenerator.countCrossings(
+                left.getOutgoingConnectionCoordinates(), right.getStartCoordinate(), right.getEndCoordinate())
+            + OrthogonalRoutingGenerator.countCrossings(
+                right.getIncomingConnectionCoordinates(), left.getStartCoordinate(), left.getEndCoordinate());
+    }
+    
+    /**
+     * Determines whether the given area with the given rating is better than another.
+     */
+    private boolean isBetter(final FreeArea currArea, final AreaRating currRating, final FreeArea bestArea,
+            final AreaRating bestRating) {
+        
+        if (currRating.crossings < bestRating.crossings) {
+            // First criterion: number of crossings
+            return true;
+            
+        } else if (currRating.crossings == bestRating.crossings) {
+            if (currRating.dependencies < bestRating.dependencies) {
+                // Second criterion: number of dependencies
+                return true;
+            
+            } else if (currRating.dependencies == bestRating.dependencies) {
+                if (currArea.size > bestArea.size) {
+                    // Third criterion: size
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * When the given area is being used, it falls into two parts which may be usable themselves. This method does the
+     * necessary bookkeeping.
+     */
+    private void useArea(final List<FreeArea> freeAreas, final int usedAreaIndex,
+            final double criticalConflictThreshold) {
+        
+        FreeArea oldArea = freeAreas.get(usedAreaIndex);
+        if (oldArea.size / 2 >= criticalConflictThreshold) {
+            // This area is large enough to split and still have enough space to the position we're now using for our
+            // latest segment
+            double oldAreaCentre = centre(oldArea);
+            
+            // Create the two new areas...
+            FreeArea newArea1 = new FreeArea(oldArea.startPosition, oldAreaCentre - criticalConflictThreshold);
+            FreeArea newArea2 = new FreeArea(oldAreaCentre + criticalConflictThreshold, oldArea.endPosition);
+            
+            // ...and place them where the old area used to be
+            freeAreas.set(usedAreaIndex, newArea1);
+            freeAreas.add(usedAreaIndex + 1, newArea2);
+        }
+    }
+
+    private static double centre(final HyperEdgeSegment s) {
+        return centre(s.getStartCoordinate(), s.getEndCoordinate());
+    }
+    
+    private static double centre(final FreeArea a) {
+        return centre(a.startPosition, a.endPosition);
+    }
+    
+    private static double centre(final double p1, final double p2) {
+        return (p1 + p2) / 2;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Data Holders
@@ -227,6 +435,23 @@ public final class HyperEdgeSegmentSplitter {
             this.startPosition = startPosition;
             this.endPosition = endPosition;
             this.size = endPosition - startPosition;
+        }
+        
+    }
+    
+    /**
+     * An indication of what would happen if a given segment was connected to its split partner through this area.
+     */
+    private static final class AreaRating {
+        
+        /** The number of dependencies caused by using this area. */
+        private int dependencies;
+        /** The number of crossings using this area would cause. */
+        private int crossings;
+        
+        private AreaRating(final int dependencies, final int crossings) {
+            this.dependencies = dependencies;
+            this.crossings = crossings;
         }
         
     }

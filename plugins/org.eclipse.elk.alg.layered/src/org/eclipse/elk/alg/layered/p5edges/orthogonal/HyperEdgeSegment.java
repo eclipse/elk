@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.direction.BaseRoutingDirectionStrategy;
+import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Lists;
 
@@ -332,7 +333,7 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     /**
      * Recomputes the start and end coordinate based on incoming and outgoing connection coordinates.
      */
-    private void recomputeExtent() {
+    public void recomputeExtent() {
         recomputeExtent(incomingConnectionCoordinates);
         recomputeExtent(outgoingConnectionCoordinates);
     }
@@ -358,6 +359,28 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Splitting
+    
+    /**
+     * Simulates what would happen during a split. The returned pair contains two new {@link HyperEdgeSegment}s: the
+     * first simulates what would happen to this instance, and the second simulates the split partner. They are set up
+     * with the appropriate incoming and outgoing connection coordinates, except for the linking segment. The split
+     * partners are set  
+     */
+    public Pair<HyperEdgeSegment, HyperEdgeSegment> simulateSplit() {
+        HyperEdgeSegment newSplit = new HyperEdgeSegment(routingStrategy);
+        HyperEdgeSegment newSplitPartner = new HyperEdgeSegment(routingStrategy);
+        
+        newSplit.incomingConnectionCoordinates.addAll(incomingConnectionCoordinates);
+        newSplit.splitBy = splitBy;
+        newSplit.splitPartner = newSplitPartner;
+        newSplit.recomputeExtent();
+        
+        newSplitPartner.outgoingConnectionCoordinates.addAll(outgoingConnectionCoordinates);
+        newSplitPartner.splitPartner = newSplit;
+        newSplitPartner.recomputeExtent();
+        
+        return Pair.of(newSplit, newSplitPartner);
+    }
     
     /**
      * Splits this segment into two and returns the new segment. The segments will be linked at the given position. This
