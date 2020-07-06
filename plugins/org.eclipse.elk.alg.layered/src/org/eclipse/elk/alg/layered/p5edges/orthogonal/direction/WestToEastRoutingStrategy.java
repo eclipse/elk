@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -37,25 +37,53 @@ class WestToEastRoutingStrategy extends BaseRoutingDirectionStrategy {
     }
 
     @Override
-    public void calculateBendPoints(final HyperEdgeSegment hyperNode, final double startPos, final double edgeSpacing) {
+    public void calculateBendPoints(final HyperEdgeSegment segment, final double startPos, final double edgeSpacing) {
+        // We don't do anything with dummy segments; they are dealt with when their partner is processed
+        if (segment.isDummy()) {
+            return;
+        }
+        
         // Calculate coordinates for each port's bend points
-        double x = startPos + hyperNode.getRoutingSlot() * edgeSpacing;
+        double segmentX = startPos + segment.getRoutingSlot() * edgeSpacing;
 
-        for (LPort port : hyperNode.getPorts()) {
-            double sourcey = port.getAbsoluteAnchor().y;
+        for (LPort port : segment.getPorts()) {
+            double sourceY = port.getAbsoluteAnchor().y;
 
             for (LEdge edge : port.getOutgoingEdges()) {
                 if (!edge.isSelfLoop()) {
                     LPort target = edge.getTarget();
-                    double targety = target.getAbsoluteAnchor().y;
-                    if (Math.abs(sourcey - targety) > OrthogonalRoutingGenerator.TOLERANCE) {
-                        KVector point1 = new KVector(x, sourcey);
-                        edge.getBendPoints().add(point1);
-                        addJunctionPointIfNecessary(edge, hyperNode, point1, true);
+                    double targetY = target.getAbsoluteAnchor().y;
+                    
+                    if (Math.abs(sourceY - targetY) > OrthogonalRoutingGenerator.TOLERANCE) {
+                        // We'll update these if we find that the segment was split
+                        double currentX = segmentX;
+                        HyperEdgeSegment currentSegment = segment;
+                        
+                        KVector bend = new KVector(currentX, sourceY);
+                        edge.getBendPoints().add(bend);
+                        addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                        
+                        // If this segment was split, we need two additional bend points
+                        HyperEdgeSegment splitPartner = segment.getSplitPartner();
+                        if (splitPartner != null) {
+                            double splitY = splitPartner.getIncomingConnectionCoordinates().get(0);
+                            
+                            bend = new KVector(currentX, splitY);
+                            edge.getBendPoints().add(bend);
+                            addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                            
+                            // Advance to the split partner's routing slot
+                            currentX = startPos + splitPartner.getRoutingSlot() * edgeSpacing;
+                            currentSegment = splitPartner;
+                            
+                            bend = new KVector(currentX, splitY);
+                            edge.getBendPoints().add(bend);
+                            addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                        }
 
-                        KVector point2 = new KVector(x, targety);
-                        edge.getBendPoints().add(point2);
-                        addJunctionPointIfNecessary(edge, hyperNode, point2, true);
+                        bend = new KVector(currentX, targetY);
+                        edge.getBendPoints().add(bend);
+                        addJunctionPointIfNecessary(edge, currentSegment, bend, false);
                     }
                 }
             }
