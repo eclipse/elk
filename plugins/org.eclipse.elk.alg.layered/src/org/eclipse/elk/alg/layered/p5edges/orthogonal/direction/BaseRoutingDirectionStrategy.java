@@ -68,18 +68,18 @@ public abstract class BaseRoutingDirectionStrategy {
 
     /**
      * Add a junction point to the given edge if necessary. It is necessary to add a junction point if the bend point is
-     * not at one of the two end positions of the hypernode.
+     * not at one of the two end positions of the hyperedge segment.
      *
      * @param edge
      *            an edge
-     * @param hyperNode
-     *            the corresponding hypernode
+     * @param segment
+     *            the corresponding hyperedge segment
      * @param pos
      *            the bend point position
      * @param vertical
      *            {@code true} if the connecting segment is vertical, {@code false} if it is horizontal
      */
-    protected void addJunctionPointIfNecessary(final LEdge edge, final HyperEdgeSegment hyperNode, final KVector pos,
+    protected void addJunctionPointIfNecessary(final LEdge edge, final HyperEdgeSegment segment, final KVector pos,
             final boolean vertical) {
 
         double p = vertical ? pos.y : pos.x;
@@ -90,20 +90,26 @@ public abstract class BaseRoutingDirectionStrategy {
         }
         
         // Whether the point lies somewhere inside the edge segment (without boundaries)
-        boolean pointInsideEdgeSegment = p > hyperNode.getStartCoordinate() && p < hyperNode.getEndCoordinate();
+        boolean pointInsideEdgeSegment = p > segment.getStartCoordinate() && p < segment.getEndCoordinate();
         
         // Check if the point lies somewhere at the segment's boundary
         boolean pointAtSegmentBoundary = false;
-        if (!hyperNode.getIncomingConnectionCoordinates().isEmpty() && !hyperNode.getOutgoingConnectionCoordinates().isEmpty()) {
+        if (!segment.getIncomingConnectionCoordinates().isEmpty()
+                && !segment.getOutgoingConnectionCoordinates().isEmpty()) {
+            
             // Is the bend point at the start and joins another edge at the same position?
             pointAtSegmentBoundary |=
-                    Math.abs(p - hyperNode.getIncomingConnectionCoordinates().getFirst()) < OrthogonalRoutingGenerator.TOLERANCE
-                    && Math.abs(p - hyperNode.getOutgoingConnectionCoordinates().getFirst()) < OrthogonalRoutingGenerator.TOLERANCE;
+                    Math.abs(p - segment.getIncomingConnectionCoordinates().getFirst())
+                        < OrthogonalRoutingGenerator.TOLERANCE
+                    && Math.abs(p - segment.getOutgoingConnectionCoordinates().getFirst())
+                        < OrthogonalRoutingGenerator.TOLERANCE;
             
             // Is the bend point at the end and joins another edge at the same position?
             pointAtSegmentBoundary |= 
-                    Math.abs(p - hyperNode.getIncomingConnectionCoordinates().getLast()) < OrthogonalRoutingGenerator.TOLERANCE
-                    && Math.abs(p - hyperNode.getOutgoingConnectionCoordinates().getLast()) < OrthogonalRoutingGenerator.TOLERANCE;
+                    Math.abs(p - segment.getIncomingConnectionCoordinates().getLast())
+                        < OrthogonalRoutingGenerator.TOLERANCE
+                    && Math.abs(p - segment.getOutgoingConnectionCoordinates().getLast())
+                        < OrthogonalRoutingGenerator.TOLERANCE;
         }
         
         if (pointInsideEdgeSegment || pointAtSegmentBoundary) {

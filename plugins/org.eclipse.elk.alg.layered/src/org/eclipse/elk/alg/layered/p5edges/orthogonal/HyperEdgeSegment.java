@@ -34,6 +34,14 @@ import com.google.common.collect.Lists;
  * </p>
  * 
  * <p>
+ * Hyperedge segments can be split by the {@link HyperEdgeSegmentSplitter} if they are part of a cyclic critical
+ * dependency (that is, a sequence of edge segments that will cause edge overlaps with each other). Splitting an edge
+ * segment will cause involved edges to take a longer detour, but will resolve edge overlaps. The segment keeps two
+ * pieces of information about split segments: the new segment introduced to split the segment, and the segment that
+ * originally caused the split.
+ * </p>
+ * 
+ * <p>
  * Instances of this class are comparable based on the value of {@link #mark}. {@link #hashCode()} and
  * {@link #equals(Object)} are implemented based on that value as well. That means, of course, that all of those methods
  * only start making sense once {@link #mark} has a meaningful value.
@@ -78,6 +86,11 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     private int inDepWeight;
     /** combined weight of critical incoming dependencies. */
     private int criticalInDepWeight;
+    
+    /** if this segment is the result of a split segment, this is the other segment. */
+    private HyperEdgeSegment splitPartner;
+    /** the segment that caused this segment to be split, if any (only set on one of the split partners). */
+    private HyperEdgeSegment splitBy;
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Initialization
@@ -106,26 +119,15 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
         ports.add(port);
         double portPos = routingStrategy.getPortPositionOnHyperNode(port);
 
-        // set new start position
-        if (Double.isNaN(startPosition)) {
-            startPosition = portPos;
-        } else {
-            startPosition = Math.min(startPosition, portPos);
-        }
-
-        // set new end position
-        if (Double.isNaN(endPosition)) {
-            endPosition = portPos;
-        } else {
-            endPosition = Math.max(endPosition, portPos);
-        }
-
         // add the new port position to the respective list
         if (port.getSide() == routingStrategy.getSourcePortSide()) {
             insertSorted(incomingConnectionCoordinates, portPos);
         } else {
             insertSorted(outgoingConnectionCoordinates, portPos);
         }
+        
+        // update start and end coordinates
+        recomputeExtent();
 
         // add connected ports
         for (LPort otherPort : port.getConnectedPorts()) {
@@ -152,7 +154,7 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Getters and Setters
-
+    
     /**
      * Returns the ports incident to this segment.
      */
@@ -270,6 +272,130 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
      */
     public void setCriticalInWeight(final int inWeight) {
         this.criticalInDepWeight = inWeight;
+    }
+    
+    /**
+     * Returns the split partner, that is, the other segment involved in splitting a segment into two, or {@code null}
+     * if this segment was not split. The actual edge routing code will have to know about split partners to route
+     * edges accordingly.
+     */
+    public HyperEdgeSegment getSplitPartner() {
+        return splitPartner;
+    }
+    
+    /**
+     * Sets the split partner, that is, the other segment involved in splitting a segment into two.
+     */
+    public void setSplitPartner(final HyperEdgeSegment splitPartner) {
+        this.splitPartner = splitPartner;
+    }
+    
+    /**
+     * Returns the segment that caused this one to be split, if any. This is only set on one of the split partners.
+     */
+    public HyperEdgeSegment getSplitBy() {
+        return splitBy;
+    }
+    
+    /**
+     * Sets the segment that caused this one to be split, if any.
+     */
+    public void setSplitBy(final HyperEdgeSegment splitBy) {
+        this.splitBy = splitBy;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+    
+    /**
+     * Convernience method which returns the size of this segment, which is its end coordinate minus its start
+     * coordinate.
+     */
+    public double getSize() {
+        return getEndCoordinate() - getStartCoordinate();
+    }
+    
+    /**
+     * Checks whether this segment connects two or more ports.
+     */
+    public boolean representsHyperedge() {
+        return getIncomingConnectionCoordinates().size() + getOutgoingConnectionCoordinates().size() > 2;
+    }
+    
+    /**
+     * Checks whether this segment was introduced while splitting another segment.
+     */
+    public boolean isDummy() {
+        return splitPartner != null && splitBy == null;
+    }
+    
+    /**
+     * Recomputes the start and end coordinate based on incoming and outgoing connection coordinates.
+     */
+    private void recomputeExtent() {
+        recomputeExtent(incomingConnectionCoordinates);
+        recomputeExtent(outgoingConnectionCoordinates);
+    }
+    
+    private void recomputeExtent(final LinkedList<Double> positions) {
+        // this code assumes that the positions are sorted ascendingly
+        if (!positions.isEmpty()) {
+            // set new start position
+            if (Double.isNaN(startPosition)) {
+                startPosition = positions.getFirst();
+            } else {
+                startPosition = Math.min(startPosition, positions.getFirst());
+            }
+            
+            // set new end position
+            if (Double.isNaN(endPosition)) {
+                endPosition = positions.getLast();
+            } else {
+                endPosition = Math.max(endPosition, positions.getLast());
+            }
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Splitting
+    
+    /**
+     * Splits this segment into two and returns the new segment. The segments will be linked at the given position. This
+     * segment will retain all incoming connection coordinates, but all of its outgoing connection coordinates will move
+     * over to the new segment, to be replaced by the link between the two. This will completely clear all dependencies
+     * since they may have become obsolete.
+     * 
+     * @param splitPosition
+     *            position to split the two segments.
+     * @return the new segment for convenience, although the two will be linked as split partners.
+     */
+    public HyperEdgeSegment splitAt(final double splitPosition) {
+        splitPartner = new HyperEdgeSegment(routingStrategy);
+        splitPartner.setSplitPartner(this);
+        
+        // Move all target positions over to the new segment
+        splitPartner.outgoingConnectionCoordinates.addAll(outgoingConnectionCoordinates);
+        this.outgoingConnectionCoordinates.clear();
+        
+        // Link the two
+        this.outgoingConnectionCoordinates.add(splitPosition);
+        splitPartner.incomingConnectionCoordinates.add(splitPosition);
+        
+        // Recompute their outer coordinates
+        this.recomputeExtent();
+        splitPartner.recomputeExtent();
+        
+        // Clear dependencies so they can be regenerated later. We could try to be smart about updating them, but that
+        // would be more complicated code, so this will do just fine
+        while (!incomingSegmentDependencies.isEmpty()) {
+            incomingSegmentDependencies.get(0).remove();
+        }
+        
+        while (!outgoingSegmentDependencies.isEmpty()) {
+            outgoingSegmentDependencies.get(0).remove();
+        }
+        
+        return splitPartner;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
