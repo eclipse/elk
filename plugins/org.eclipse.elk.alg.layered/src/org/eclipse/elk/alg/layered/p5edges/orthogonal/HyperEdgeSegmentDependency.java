@@ -113,12 +113,12 @@ public final class HyperEdgeSegmentDependency {
     /**
      * Sets the source segment, but does not modify that segment's list of outgoing dependencies.
      */
-    public void setSource(final HyperEdgeSegment source) {
+    public void setSource(final HyperEdgeSegment newSource) {
         if (source != null) {
             source.getOutgoingSegmentDependencies().remove(this);
         }
         
-        this.source = source;
+        source = newSource;
         
         if (source != null) {
             source.getOutgoingSegmentDependencies().add(this);
@@ -135,12 +135,12 @@ public final class HyperEdgeSegmentDependency {
     /**
      * Sets the target segment, but does not modify that segment's list of incoming dependencies.
      */
-    public void setTarget(final HyperEdgeSegment target) {
+    public void setTarget(final HyperEdgeSegment newTarget) {
         if (target != null) {
             target.getIncomingSegmentDependencies().remove(this);
         }
         
-        this.target = target;
+        target = newTarget;
         
         if (target != null) {
             target.getIncomingSegmentDependencies().add(this);
