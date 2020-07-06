@@ -64,7 +64,7 @@ public final class OrthogonalRoutingGenerator {
     /** a special return value used by the conflict counting method. */
     private static final int CRITICAL_CONFLICTS_DETECTED = -1;
     /** non-zero weight used for critical dependencies. */
-    private static final int CRITICAL_DEPENDENCY_WEIGHT = 1;
+    public static final int CRITICAL_DEPENDENCY_WEIGHT = 1;
 
     /** factor for edge spacing used to determine the {@link #conflictThreshold}. */
     private static final double CONFLICT_THRESHOLD_FACTOR = 0.5;
@@ -75,6 +75,9 @@ public final class OrthogonalRoutingGenerator {
     private static final int CONFLICT_PENALTY = 1;
     /** weight penalty for crossings. */
     private static final int CROSSING_PENALTY = 16;
+    
+    /** we'll be using this thing to split hyper edge segments, if necessary. */
+    private HyperEdgeSegmentSplitter segmentSplitter;
 
     /** routing direction strategy. */
     private final BaseRoutingDirectionStrategy routingStrategy;
@@ -215,7 +218,7 @@ public final class OrthogonalRoutingGenerator {
                     sourceLayerIndex + "-acyclic");
         }
         // elkjs-exclude-end
-
+        
         // assign ranks to the edge segments
         topologicalNumbering(edgeSegments);
 
@@ -309,7 +312,8 @@ public final class OrthogonalRoutingGenerator {
     }
 
     /**
-     * Create dependencies between the two given hyperedge segments, if one is needed.
+     * Create dependencies between the two given hyperedge segments, if one is needed. This method is used not just
+     * here, but also by {@link HyperEdgeSegmentSplitter}.
      *
      * @param he1
      *            first hyperedge segments
@@ -317,7 +321,7 @@ public final class OrthogonalRoutingGenerator {
      *            second hyperedge segments
      * @return the number of critical dependencies that were added
      */
-    private int createDependencyIfNecessary(final HyperEdgeSegment he1, final HyperEdgeSegment he2) {
+    int createDependencyIfNecessary(final HyperEdgeSegment he1, final HyperEdgeSegment he2) {
         // check if at least one of the two nodes is just a straight line; those don't
         // create dependencies since they don't take up a slot
         if (Math.abs(he1.getStartCoordinate() - he1.getEndCoordinate()) < TOLERANCE
@@ -451,7 +455,12 @@ public final class OrthogonalRoutingGenerator {
         List<HyperEdgeSegmentDependency> cycleDependencies =
                 HyperEdgeCycleDetector.detectCycles(edgeSegments, true, random);
         
-        // TODO Split segments!
+        // Lazy initialisation
+        if (segmentSplitter == null) {
+            segmentSplitter = new HyperEdgeSegmentSplitter(this);
+        }
+        
+        segmentSplitter.splitSegments(cycleDependencies, edgeSegments, criticalConflictThreshold);
     }
 
     /**
