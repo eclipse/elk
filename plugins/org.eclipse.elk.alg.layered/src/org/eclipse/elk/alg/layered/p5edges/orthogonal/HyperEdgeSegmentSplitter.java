@@ -386,18 +386,28 @@ public final class HyperEdgeSegmentSplitter {
             final double criticalConflictThreshold) {
         
         FreeArea oldArea = freeAreas.get(usedAreaIndex);
+        freeAreas.remove(usedAreaIndex);
+        
         if (oldArea.size / 2 >= criticalConflictThreshold) {
+            // We will probably insert new areas. Keep track of where to insert them
+            int insertIndex = usedAreaIndex;
+            
             // This area is large enough to split and still have enough space to the position we're now using for our
             // latest segment
             double oldAreaCentre = centre(oldArea);
             
-            // Create the two new areas...
-            FreeArea newArea1 = new FreeArea(oldArea.startPosition, oldAreaCentre - criticalConflictThreshold);
-            FreeArea newArea2 = new FreeArea(oldAreaCentre + criticalConflictThreshold, oldArea.endPosition);
+            // Create the two new areas (and be doubly sure that double precision does not bite us)
+            double newEnd1 = oldAreaCentre - criticalConflictThreshold;
+            if (oldArea.startPosition <= oldAreaCentre - criticalConflictThreshold) {
+                FreeArea newArea1 = new FreeArea(oldArea.startPosition, newEnd1);
+                freeAreas.add(insertIndex++, newArea1);
+            }
             
-            // ...and place them where the old area used to be
-            freeAreas.set(usedAreaIndex, newArea1);
-            freeAreas.add(usedAreaIndex + 1, newArea2);
+            double newStart2 = oldAreaCentre + criticalConflictThreshold;
+            if (newStart2 <= oldArea.endPosition) {
+                FreeArea newArea2 = new FreeArea(newStart2, oldArea.endPosition);
+                freeAreas.add(insertIndex, newArea2);
+            }
         }
     }
 
@@ -430,7 +440,7 @@ public final class HyperEdgeSegmentSplitter {
         private final double size;
         
         private FreeArea(final double startPosition, final double endPosition) {
-            assert endPosition > startPosition;
+            assert endPosition >= startPosition;
             
             this.startPosition = startPosition;
             this.endPosition = endPosition;
