@@ -61,7 +61,7 @@ class WestToEastRoutingStrategy extends BaseRoutingDirectionStrategy {
                         
                         KVector bend = new KVector(currentX, sourceY);
                         edge.getBendPoints().add(bend);
-                        addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                        addJunctionPointIfNecessary(edge, currentSegment, bend, true);
                         
                         // If this segment was split, we need two additional bend points
                         HyperEdgeSegment splitPartner = segment.getSplitPartner();
@@ -70,7 +70,7 @@ class WestToEastRoutingStrategy extends BaseRoutingDirectionStrategy {
                             
                             bend = new KVector(currentX, splitY);
                             edge.getBendPoints().add(bend);
-                            addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                            addJunctionPointIfNecessary(edge, currentSegment, bend, true);
                             
                             // Advance to the split partner's routing slot
                             currentX = startPos + splitPartner.getRoutingSlot() * edgeSpacing;
@@ -78,12 +78,12 @@ class WestToEastRoutingStrategy extends BaseRoutingDirectionStrategy {
                             
                             bend = new KVector(currentX, splitY);
                             edge.getBendPoints().add(bend);
-                            addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                            addJunctionPointIfNecessary(edge, currentSegment, bend, true);
                         }
 
                         bend = new KVector(currentX, targetY);
                         edge.getBendPoints().add(bend);
-                        addJunctionPointIfNecessary(edge, currentSegment, bend, false);
+                        addJunctionPointIfNecessary(edge, currentSegment, bend, true);
                     }
                 }
             }

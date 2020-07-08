@@ -334,6 +334,9 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
      * Recomputes the start and end coordinate based on incoming and outgoing connection coordinates.
      */
     public void recomputeExtent() {
+        startPosition = Double.NaN;
+        endPosition = Double.NaN;
+        
         recomputeExtent(incomingConnectionCoordinates);
         recomputeExtent(outgoingConnectionCoordinates);
     }
