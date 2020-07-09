@@ -76,6 +76,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                             return 1;
                         }
                     }
+                    assert (false);
                     // Cannot happen, since both nodes have a connection to the previous layer.
                     return Integer.compare(
                             getModelOrderFromConnectedEdges(n1),
