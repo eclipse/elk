@@ -36,6 +36,7 @@ Here's a list of the most noteworthy changes. Head over to GitHub for [the full 
 * [#626](https://github.com/eclipse/elk/issues/626), [#634](https://github.com/eclipse/elk/pull/634): We changed the way port label placement is configured. Previously, there was a choice between inside and outside port labels, with other details configured in other options. We have now made the option an `EnumSet` to move port label options out of the `SizeOptions` enumeration and the `nextToPortIfPossible` option.
 * [#646](https://github.com/eclipse/elk/issues/646), [#647](https://github.com/eclipse/elk/pull/647): _ELK Layered_'s layout options `layering.layerID` and `crossingMinimization.positionID` were renamed to `layering.layerId` and `crossingMinimization.positionId`, respectively. This also impacts the associated layout option constants.
 * [#605](https://github.com/eclipse/elk/issues/605), [#619](https://github.com/eclipse/elk/pull/619): Since _ELK Layered_'s `northOrSouthPort` option caused some confusion with vertical layout directions, it was renamed to `allowNonFlowPortsToSwitchSides`, which incidentally also does a better job of describing what the option actually does.
+* [#402](https://github.com/eclipse/elk/issues/402): We changed the way how developers can contribute to the layout meta data service. Previously, this was done through extension points, which only worked in an Eclipse context and required manual registrations otherwise. We have now switched to Java service loaders, which should always work. Magic!
 * [#516](https://github.com/eclipse/elk/pull/516): Our `ELKServicePlugin` class had its super class changed from `AbstractUIPlugin` to `Plugin`.
 
 
@@ -43,6 +44,7 @@ Here's a list of the most noteworthy changes. Head over to GitHub for [the full 
 
 * [#577](https://github.com/eclipse/elk/issues/577), [#581](https://github.com/eclipse/elk/pull/581): We finally removed the legacy IDs of a whole number of layout options that were renamed over the years. If you relied on those exact IDs, it's high time to transition to their new IDs.
 * [#536](https://github.com/eclipse/elk/issues/536), [#571](https://github.com/eclipse/elk/pull/571): We removed the Graphiti layout connector, which was buggy and did not seem to be used a lot.
+* [#523](https://github.com/eclipse/elk/issues/523): _ELK Layered_ does not provide special handling for particularly wide nodes anymore. In particular, the `wideNodesOnMultipleLayers` option is not supported anymore.
 
 
 ### Bugfixes
@@ -51,5 +53,8 @@ Here's a list of the most noteworthy changes. Head over to GitHub for [the full 
 * [#515](https://github.com/eclipse/elk/issues/515), [#569](https://github.com/eclipse/elk/pull/569): Under certain conditions, _ELK Layered_'s polyline edge router could end up routing edges through nodes.
 * [#552](https://github.com/eclipse/elk/issues/552), [#561](https://github.com/eclipse/elk/pull/561): _ELK Layered_ would not always place self loop ports of hierarchical nodes properly.
 * [#528](https://github.com/eclipse/elk/issues/528): _ELK Layered_'s semi-interactive crossing minimisation could end up yielding wrong node orders.
+* [#525](https://github.com/eclipse/elk/issues/525), [#623](https://github.com/eclipse/elk/issues/623), [#655](https://github.com/eclipse/elk/pull/655): _ELK Layered_'s support for layer constraints tended to produce strange results with `FIRST_SEPARATE` and `LAST_SEPARATE` nodes (which are usually generated internally by the algorithm to represent external ports).
+* [#143](https://github.com/eclipse/elk/issues/143), [#318](https://github.com/eclipse/elk/issues/318), [#653](https://github.com/eclipse/elk/pull/653): Under certain conditions, _ELK Layered_ could allow edges to come really close to or even overlap each other.
 * [#583](https://github.com/eclipse/elk/issues/583), [#584](https://github.com/eclipse/elk/pull/584): _ELK Rectangle Packing_ sometimes left compound nodes larger than necessary.
 * [#559](https://github.com/eclipse/elk/issues/559), [#567](https://github.com/eclipse/elk/issues/567), [#568](https://github.com/eclipse/elk/pull/568), [#633](https://github.com/eclipse/elk/pull/633): The JSON exporter has seen some love in the form of several smaller bug fixes.
+* [#518](https://github.com/eclipse/elk/issues/518) [#519](https://github.com/eclipse/elk/issues/519): Fixes to our unit testing framework allow us to better test our algorithms!
