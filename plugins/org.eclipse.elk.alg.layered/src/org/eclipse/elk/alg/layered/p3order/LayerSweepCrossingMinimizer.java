@@ -206,9 +206,9 @@ public class LayerSweepCrossingMinimizer
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
             isForwardSweep = true;
-            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
+        gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
         int crossingsInGraph = countCurrentNumberOfCrossings(gData);
         int oldNumberOfCrossings;
         do {
@@ -260,7 +260,8 @@ public class LayerSweepCrossingMinimizer
         LNode[] firstLayer = nodes[firstIndex(forward, length)];
         improved |= sweepInHierarchicalNodes(firstLayer, forward, firstSweep);
         for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
-            improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward, firstSweep);
+            improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward,
+                    firstSweep && !graph.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER));
             improved |= graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
             improved |= sweepInHierarchicalNodes(nodes[i], forward, firstSweep);
         }

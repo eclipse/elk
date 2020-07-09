@@ -84,7 +84,8 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             }
             // Sort nodes.
             Collections.sort(layer.getNodes(),
-                    new ModelOrderNodeComparator(previousLayer, graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER)));
+                    new ModelOrderNodeComparator(previousLayer,
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER)));
             layerIndex++;
         }
     }
