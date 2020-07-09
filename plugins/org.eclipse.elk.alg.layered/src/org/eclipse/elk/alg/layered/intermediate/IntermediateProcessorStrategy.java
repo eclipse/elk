@@ -51,6 +51,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     LABEL_DUMMY_INSERTER,
     /** Takes care of self loop preprocessing. */
     SELF_LOOP_PREPROCESSOR,
+    /** Hides {@code FIRST_SEPARATE} and {@code LAST_SEPARATE} nodes. */
+    LAYER_CONSTRAINT_PREPROCESSOR,
 
     // Before Phase 3
     
@@ -58,8 +60,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     HIGH_DEGREE_NODE_LAYER_PROCESSOR,
     /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
     NODE_PROMOTION,
-    /** Makes sure that layer constraints are taken care of. */
-    LAYER_CONSTRAINT_PROCESSOR,
+    /** Restores {@code FIRST_SEPARATE} and {@code LAST_SEPARATE} nodes and enforces layer constraints. */
+    LAYER_CONSTRAINT_POSTPROCESSOR,
     /** Remove partition constraint edges. */
     PARTITION_POSTPROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -271,9 +273,12 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case END_LABEL_SORTER:
             return new EndLabelSorter();
 
-        case LAYER_CONSTRAINT_PROCESSOR:
-            return new LayerConstraintProcessor();
+        case LAYER_CONSTRAINT_POSTPROCESSOR:
+            return new LayerConstraintPostprocessor();
 
+        case LAYER_CONSTRAINT_PREPROCESSOR:
+            return new LayerConstraintPreprocessor();
+            
         case LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR:
             return new LayerSizeAndGraphHeightCalculator();
 

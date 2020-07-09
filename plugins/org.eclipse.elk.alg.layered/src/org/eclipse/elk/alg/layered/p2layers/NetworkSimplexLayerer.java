@@ -57,7 +57,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
                     IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+            .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PREPROCESSOR)
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_POSTPROCESSOR);
 
 
     // ================================== Attributes ==============================================
