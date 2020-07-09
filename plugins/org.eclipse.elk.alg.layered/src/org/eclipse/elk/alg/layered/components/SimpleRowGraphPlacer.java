@@ -71,7 +71,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             public int compare(final LGraph graph1, final LGraph graph2) {
                 int prio = graph2.id - graph1.id;
                 if (prio == 0) {
-                    if (graph1.getProperty(LayeredOptions.PRESERVE_ORDER) == OrderingStrategy.NONE) {
+                    if (graph1.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
                         double size1 = graph1.getSize().x * graph1.getSize().y;
                         double size2 = graph2.getSize().x * graph2.getSize().y;
                         return Double.compare(size1, size2);

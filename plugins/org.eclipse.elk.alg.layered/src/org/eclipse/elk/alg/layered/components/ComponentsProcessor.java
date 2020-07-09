@@ -142,7 +142,7 @@ public final class ComponentsProcessor {
         }
         // If model order should be preserved the connected components should be ordered by their elements.
         // The component with the node with the smallest order should be first.
-        if (graph.getProperty(LayeredOptions.PRESERVE_ORDER) != OrderingStrategy.NONE) {
+        if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
             Collections.sort(result, (g1, g2) -> {
                 int g1Order = Integer.MAX_VALUE;
                 for (LNode node : g1.getLayerlessNodes()) {

@@ -180,7 +180,7 @@ public class LayerSweepCrossingMinimizer
         graphsWhoseNodeOrderChanged.clear();
 
         int bestCrossings = Integer.MAX_VALUE;
-        if (gData.lGraph().getProperty(LayeredOptions.PRESERVE_ORDER) != OrderingStrategy.NONE) {
+        if (gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
             // Set the current order of nodes and ports as the currently best order.
             // If no unnecessary crossings are produced by this solution this order is preserved.
             bestCrossings = countCurrentNumberOfCrossings(gData);
@@ -207,7 +207,7 @@ public class LayerSweepCrossingMinimizer
         boolean isForwardSweep = random.nextBoolean();
         
         if (!gData.lGraph().hasProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
-                || gData.lGraph().getProperty(LayeredOptions.PRESERVE_ORDER) == OrderingStrategy.NONE) {
+                || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
             isForwardSweep = true;

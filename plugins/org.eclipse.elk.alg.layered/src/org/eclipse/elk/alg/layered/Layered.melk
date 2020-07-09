@@ -181,7 +181,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.interactiveLayout
     supports layering.layerId
     supports crossingMinimization.positionId
-    supports preserveOrder
+    supports considerModelOrder
 }
 
 /* ------------------------
@@ -880,6 +880,15 @@ group edgeLabels {
 /* ------------------------
  *    miscellaneous
  * ------------------------*/
+advanced option considerModelOrder: OrderingStrategy {
+    label "Consider model order"
+    description
+        "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
+         conflicts between the ordering or edges and nodes."
+    default = OrderingStrategy.NONE
+    targets parents
+}
+
 advanced option directionCongruency: DirectionCongruency {
     label "Direction Congruency"
     description
@@ -950,15 +959,6 @@ advanced option portSortingStrategy: PortSortingStrategy {
         "Only relevant for nodes with FIXED_SIDE port constraints. Determines the way a node's ports are 
          distributed on the sides of a node if their order is not prescribed. The option is set on parent nodes."
     default = PortSortingStrategy.INPUT_ORDER
-    targets parents
-}
-
-advanced option preserveOrder: OrderingStrategy {
-    label "Preserve Order"
-    description
-        "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
-         conflicts between the ordering or edges and nodes."
-    default = OrderingStrategy.NONE
     targets parents
 }
 
