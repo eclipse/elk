@@ -55,7 +55,7 @@ public class LayerConstraintProcessorTest {
      * {@link LayerConstraint#FIRST} constraints must be in the next layer. Similar for
      * {@link LayerConstraint#LAST_SEPARATE} and {@link LayerConstraint#LAST}.
      */
-    @TestAfterProcessor(LayerConstraintProcessor.class)
+    @TestAfterProcessor(LayerConstraintPostprocessor.class)
     public void testLayerConstraints(final Object graph) {
         LGraph lGraph = (LGraph) graph;
         
@@ -119,7 +119,7 @@ public class LayerConstraintProcessorTest {
     /**
      * All labels on ports and edges have an assigned {@link LabelSide}.
      */
-    @TestAfterProcessor(LayerConstraintProcessor.class)
+    @TestAfterProcessor(LayerConstraintPostprocessor.class)
     public void noEmptyLayers(Object graph) {
         LGraph lGraph = (LGraph) graph;
         
