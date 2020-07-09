@@ -423,7 +423,8 @@ public final class InternalProperties {
      * Set during crossing minimization on a graph to signal that crossing minization should not shuffle the free nodes.
      * This also fixes the initial sweep direction to forward.
      */
-    public static final IProperty<Boolean> FIRST_TRY_WITH_INITIAL_ORDER = new Property<>("firstTryWithInitialOrder");
+    public static final IProperty<Boolean> FIRST_TRY_WITH_INITIAL_ORDER =
+            new Property<>("firstTryWithInitialOrder", false);
     
     /**
      * Hidden default constructor.

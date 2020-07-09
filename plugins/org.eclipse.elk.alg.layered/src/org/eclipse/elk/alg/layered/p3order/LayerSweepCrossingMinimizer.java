@@ -181,13 +181,8 @@ public class LayerSweepCrossingMinimizer
 
         int bestCrossings = Integer.MAX_VALUE;
         if (gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
-            // Set the current order of nodes and ports as the currently best order.
-            // If no unnecessary crossings are produced by this solution this order is preserved.
-            bestCrossings = countCurrentNumberOfCrossings(gData);
-            gData.setBestNodeNPortOrder(new SweepCopy(gData.lGraph().toNodeArray()));
-            if (bestCrossings == 0) {
-                return;
-            }
+            // The first run should begin with a forward sweep.
+            // If the order causes no additional crossings this preserves the current order.
             gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, true);
         }
         int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
@@ -206,12 +201,12 @@ public class LayerSweepCrossingMinimizer
     private int minimizeCrossingsWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
         
-        if (!gData.lGraph().hasProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+        if (!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
                 || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
             isForwardSweep = true;
-            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, null);
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
         int crossingsInGraph = countCurrentNumberOfCrossings(gData);
