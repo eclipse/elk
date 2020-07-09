@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -48,9 +49,6 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Comment post-processing", 1);
         
-        double commentCommentSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_COMMENT_COMMENT);
-        double commentNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_COMMENT_NODE);
-        
         for (Layer layer : layeredGraph) {
             List<LNode> boxes = Lists.newArrayList();
             for (LNode node : layer) {
@@ -58,7 +56,7 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
                 List<LNode> bottomBoxes = node.getProperty(InternalProperties.BOTTOM_COMMENTS);
                 
                 if (topBoxes != null || bottomBoxes != null) {
-                    process(node, topBoxes, bottomBoxes, commentCommentSpacing, commentNodeSpacing);
+                    process(node, topBoxes, bottomBoxes);
                     
                     if (topBoxes != null) {
                         boxes.addAll(topBoxes);
@@ -82,15 +80,13 @@ public final class CommentPostprocessor implements ILayoutProcessor<LGraph> {
      * @param node a normal node
      * @param topBoxes a list of boxes to be placed on top, or {@code null}
      * @param bottomBoxes a list of boxes to be placed in the bottom, or {@code null}
-     * @param commentCommentSpacing spacing between adjacent comments
-     * @param commentNodeSpacing spacing between the node and its comments
      */
-    private void process(final LNode node, final List<LNode> topBoxes,
-            final List<LNode> bottomBoxes, final double commentCommentSpacing, final double commentNodeSpacing) {
-        
+    private void process(final LNode node, final List<LNode> topBoxes, final List<LNode> bottomBoxes) {
         KVector nodePos = node.getPosition();
         KVector nodeSize = node.getSize();
         LMargin margin = node.getMargin();
+
+        double commentCommentSpacing = Spacings.getIndividualOrDefault(node, LayeredOptions.SPACING_COMMENT_COMMENT);
         
         if (topBoxes != null) {
             // determine the total width and maximal height of the top boxes

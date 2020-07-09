@@ -291,7 +291,8 @@ group spacing {
     option commentComment: double {
         label "Comment Comment Spacing"
         description
-            "Spacing to be preserved between a comment box and other comment boxes connected to the same node."
+            "Spacing to be preserved between a comment box and other comment boxes connected to the same node.
+            The space left between comment boxes of different nodes is controlled by the node-node spacing."
         default = 10
         lowerBound = 0.0
         targets parents
@@ -300,7 +301,8 @@ group spacing {
     option commentNode: double {
         label "Comment Node Spacing"
         description
-            "Spacing to be preserved between a node and its connected comment boxes."
+            "Spacing to be preserved between a node and its connected comment boxes. The space left between a node
+            and the comments of another node is controlled by the node-node spacing."
         default = 10
         lowerBound = 0.0
         targets parents
@@ -402,12 +404,24 @@ group spacing {
         targets parents, nodes
     }
 
-    advanced option individualOverride: IndividualSpacings {
-        label "Individual Spacing Override"
-        description
-            "In general spacing values apply to the children of the hierarchical node 
-            (possibly the root node) for which the values are actually specified. Hereby,
-            the children include ports, edges, and labels. "
+    advanced option individual: IndividualSpacings {
+        label "Individual Spacing"
+        description 
+            "Allows to specify individual spacing values for graph elements that shall be different from 
+            the value specified for the element's parent."
+        documentation
+            "In most cases, spacing values apply to the children of the hierarchical node 
+            (possibly the root node) for which the values are actually specified. 
+            Hereby, the children may include ports, edges, and labels.
+            This option allows to specify a different spacing for a certain element, 
+            thus overriding the parent's value. To give an example, a spacing.portPort of 5 configured 
+            on the graph would result in the ports of all of the graph's nodes to be spaced apart by 5px. 
+            A single node may desire a larger spacing and hence set an individual spacing.portPort of 10.
+            Note that not all algorithms (or concrete configurations of a specific algorithm)
+            support this behavior.
+
+            When specified as a string (in elkg or elkt) the individual options must be separated by ';,;'.
+            Example: \"spacing.portPort:5;,;spacing.nodeNode:10\""
         targets nodes, edges, ports, labels
     }
 
