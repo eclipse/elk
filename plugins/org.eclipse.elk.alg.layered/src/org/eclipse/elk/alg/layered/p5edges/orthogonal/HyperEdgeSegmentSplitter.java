@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency.DependencyType;
 import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Streams;
@@ -64,7 +63,7 @@ public final class HyperEdgeSegmentSplitter {
         // Split the segments in order from smalles to largest. The smallest ones need to be split first since they
         // have fewer options for where to put their horizontal connecting segments.
         segmentsToSplit.stream()
-            .sorted((hes1, hes2) -> Double.compare(hes1.getSize(), hes2.getSize()))
+            .sorted((hes1, hes2) -> Double.compare(hes1.getLength(), hes2.getLength()))
             .forEach(segment -> split(segment, segments, freeAreas, criticalConflictThreshold));
     }
     
@@ -174,17 +173,9 @@ public final class HyperEdgeSegmentSplitter {
         
         // The segment currently has no dependencies at all. We first need for the segments to be ordered like this:
         //    segment ---> split-causing segment ---> split partner
-        new HyperEdgeSegmentDependency(
-                DependencyType.CRITICAL,
-                segment,
-                splitCausingSegment,
-                OrthogonalRoutingGenerator.CRITICAL_DEPENDENCY_WEIGHT);
-        new HyperEdgeSegmentDependency(
-                DependencyType.CRITICAL,
-                splitCausingSegment,
-                splitPartner,
-                OrthogonalRoutingGenerator.CRITICAL_DEPENDENCY_WEIGHT);
-        
+        HyperEdgeSegmentDependency.createAndAddCritical(segment, splitCausingSegment);
+        HyperEdgeSegmentDependency.createAndAddCritical(splitCausingSegment, splitPartner);
+
         // Now we just need to re-introduce dependencies to other segments
         for (HyperEdgeSegment otherSegment : segments) {
             // We already have our dependencies between our three segments involved in the conflict settled
@@ -227,14 +218,14 @@ public final class HyperEdgeSegmentSplitter {
         }
         
         // Determine the position to split the segment at
-        double splitPosition = centre(segment);
-        
+        double splitPosition = center(segment);
+
         if (firstPossibleAreaIndex >= 0) {
             // There are areas we can use
             int bestAreaIndex = chooseBestAreaIndex(segment, freeAreas, firstPossibleAreaIndex, lastPossibleAreaIndex);
             
             // We'll use the best area's centre and update the area list
-            splitPosition = centre(freeAreas.get(bestAreaIndex));
+            splitPosition = center(freeAreas.get(bestAreaIndex));
             useArea(freeAreas, bestAreaIndex, criticalConflictThreshold);
         }
         
@@ -282,8 +273,8 @@ public final class HyperEdgeSegmentSplitter {
         
         // The area's centre would be used to link the two split segments, so we need to add that to their incident
         // connections
-        double areaCentre = centre(area);
-        
+        double areaCentre = center(area);
+
         splitSegment.getOutgoingConnectionCoordinates().clear();
         splitSegment.getOutgoingConnectionCoordinates().add(areaCentre);
         
@@ -394,8 +385,8 @@ public final class HyperEdgeSegmentSplitter {
             
             // This area is large enough to split and still have enough space to the position we're now using for our
             // latest segment
-            double oldAreaCentre = centre(oldArea);
-            
+            double oldAreaCentre = center(oldArea);
+
             // Create the two new areas (and be doubly sure that double precision does not bite us)
             double newEnd1 = oldAreaCentre - criticalConflictThreshold;
             if (oldArea.startPosition <= oldAreaCentre - criticalConflictThreshold) {
@@ -411,15 +402,15 @@ public final class HyperEdgeSegmentSplitter {
         }
     }
 
-    private static double centre(final HyperEdgeSegment s) {
-        return centre(s.getStartCoordinate(), s.getEndCoordinate());
+    private static double center(final HyperEdgeSegment s) {
+        return center(s.getStartCoordinate(), s.getEndCoordinate());
     }
-    
-    private static double centre(final FreeArea a) {
-        return centre(a.startPosition, a.endPosition);
+
+    private static double center(final FreeArea a) {
+        return center(a.startPosition, a.endPosition);
     }
-    
-    private static double centre(final double p1, final double p2) {
+
+    private static double center(final double p1, final double p2) {
         return (p1 + p2) / 2;
     }
 

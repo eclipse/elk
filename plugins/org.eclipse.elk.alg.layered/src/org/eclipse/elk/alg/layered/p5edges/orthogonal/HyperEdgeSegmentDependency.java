@@ -16,7 +16,7 @@ package org.eclipse.elk.alg.layered.p5edges.orthogonal;
  * 
  * <ul>
  *   <li>For {@link DependencyType#REGULAR} dependencies, ignoring it will cause the result to deteriorate by the
- *     dependency's weight (which is, for example, the number of additional edge crossings caused by not honouring this
+ *     dependency's weight (which is, for example, the number of additional edge crossings caused by not honoring this
  *     dependency).</li>
  *   <li>For {@link DependencyType#CRITICAL} dependencies, ignoring it will cause edge overlaps, which should be avoided
  *     at all cost.</li>
@@ -33,7 +33,10 @@ public final class HyperEdgeSegmentDependency {
         /** Critical depencies are ones that, if ignored, result in edge overlaps. */
         CRITICAL;
     }
-    
+
+    /** non-zero weight used for critical dependencies. */
+    public static final int CRITICAL_DEPENDENCY_WEIGHT = 1;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Properties
     
@@ -47,21 +50,13 @@ public final class HyperEdgeSegmentDependency {
     private final int weight;
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Initialisation
-    
-    /**
-     * Creates a regular dependency from the given source to the given target and adds it to the dependency lists of
-     * those segments.
-     */
-    public HyperEdgeSegmentDependency(final HyperEdgeSegment source, final HyperEdgeSegment target, final int weight) {
-        this(DependencyType.REGULAR, source, target, weight);
-    }
-    
+    // Creation
+
     /**
      * Creates a dependency of the given type from the given source to the given target and adds it to the dependency
      * lists of those segments.
      */
-    public HyperEdgeSegmentDependency(final DependencyType type, final HyperEdgeSegment source,
+    private HyperEdgeSegmentDependency(final DependencyType type, final HyperEdgeSegment source,
             final HyperEdgeSegment target, final int weight) {
         
         this.type = type;
@@ -70,7 +65,27 @@ public final class HyperEdgeSegmentDependency {
         setSource(source);
         setTarget(target);
     }
-    
+
+    /**
+     * Creates a regular dependency between the given segments with the given weight, and adds it to the segments' list
+     * of incident dependencies.
+     */
+    public static HyperEdgeSegmentDependency createAndAddRegular(final HyperEdgeSegment source,
+            final HyperEdgeSegment target, final int weight) {
+
+        return new HyperEdgeSegmentDependency(DependencyType.REGULAR, source, target, weight);
+    }
+
+    /**
+     * Creates a critical dependency between the given segments with a weight of {@link #CRITICAL_DEPENDENCY_WEIGHT},
+     * and adds it to the segments' list of incident dependencies.
+     */
+    public static HyperEdgeSegmentDependency createAndAddCritical(final HyperEdgeSegment source,
+            final HyperEdgeSegment target) {
+
+        return new HyperEdgeSegmentDependency(DependencyType.CRITICAL, source, target, CRITICAL_DEPENDENCY_WEIGHT);
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Manipulation
     

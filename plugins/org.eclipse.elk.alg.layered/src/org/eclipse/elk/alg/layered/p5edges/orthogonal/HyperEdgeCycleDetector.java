@@ -91,42 +91,31 @@ public final class HyperEdgeCycleDetector {
         int nextMark = -1;
         for (HyperEdgeSegment segment : segments) {
             segment.mark = nextMark--;
-            
-            int inWeight = 0;
-            int outWeight = 0;
-            
-            int criticalInWeight = 0;
-            int criticalOutWeight = 0;
 
-            // Sum up the weight of incoming and outgoing dependencies, possibly only regarding critical dependencies
-            for (HyperEdgeSegmentDependency dependency : segment.getOutgoingSegmentDependencies()) {
-                switch (dependency.getType()) {
-                case CRITICAL:
-                    assert dependency.getWeight() > 0;
-                    outWeight += dependency.getWeight();
-                    criticalOutWeight += dependency.getWeight();
-                    break;
-                    
-                default:
-                    if (!criticalOnly) {
-                        outWeight += dependency.getWeight();
-                    }
-                }
-            }
+            // Sum up the weights of our critical dependencies
+            int criticalInWeight = segment.getIncomingSegmentDependencies().stream()
+                    .filter(dep -> dep.getType() == DependencyType.CRITICAL)
+                    .mapToInt(dep -> dep.getWeight())
+                    .sum();
 
-            for (HyperEdgeSegmentDependency dependency : segment.getIncomingSegmentDependencies()) {
-                switch (dependency.getType()) {
-                case CRITICAL:
-                    assert dependency.getWeight() > 0;
-                    inWeight += dependency.getWeight();
-                    criticalInWeight += dependency.getWeight();
-                    break;
-                    
-                default:
-                    if (!criticalOnly) {
-                        inWeight += dependency.getWeight();
-                    }
-                }
+            int criticalOutWeight = segment.getOutgoingSegmentDependencies().stream()
+                    .filter(dep -> dep.getType() == DependencyType.CRITICAL)
+                    .mapToInt(dep -> dep.getWeight())
+                    .sum();
+
+            // If we're only considering critical dependencies, we'll ignore the others
+            int inWeight = criticalInWeight;
+            int outWeight = criticalOutWeight;
+
+            if (!criticalOnly) {
+                // Just sum up everything
+                inWeight = segment.getIncomingSegmentDependencies().stream()
+                        .mapToInt(dep -> dep.getWeight())
+                        .sum();
+
+                outWeight = segment.getOutgoingSegmentDependencies().stream()
+                        .mapToInt(dep -> dep.getWeight())
+                        .sum();
             }
 
             // Apply the weight
@@ -159,21 +148,21 @@ public final class HyperEdgeCycleDetector {
         // be higher than the source marks, but this way, the sink marks will reflect the order in which the sinks were
         // discovered and added.
         int markBase = segments.size();
-        int nextRight = markBase - 1;
-        int nextLeft = markBase + 1;
+        int nextSinkMark = markBase - 1;
+        int nextSourceMark = markBase + 1;
 
         while (!unprocessed.isEmpty()) {
             while (!sinks.isEmpty()) {
                 HyperEdgeSegment sink = sinks.removeFirst();
                 unprocessed.remove(sink);
-                sink.mark = nextRight--;
+                sink.mark = nextSinkMark--;
                 updateNeighbors(sink, sources, sinks, criticalOnly);
             }
 
             while (!sources.isEmpty()) {
                 HyperEdgeSegment source = sources.removeFirst();
                 unprocessed.remove(source);
-                source.mark = nextLeft++;
+                source.mark = nextSourceMark++;
                 updateNeighbors(source, sources, sinks, criticalOnly);
             }
 
@@ -207,7 +196,7 @@ public final class HyperEdgeCycleDetector {
             if (!maxSegments.isEmpty()) {
                 HyperEdgeSegment maxNode = maxSegments.get(random.nextInt(maxSegments.size()));
                 unprocessed.remove(maxNode);
-                maxNode.mark = nextLeft++;
+                maxNode.mark = nextSourceMark++;
                 updateNeighbors(maxNode, sources, sinks, criticalOnly);
                 maxSegments.clear();
             }

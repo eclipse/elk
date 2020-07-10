@@ -22,7 +22,6 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.PortType;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency.DependencyType;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.direction.BaseRoutingDirectionStrategy;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.direction.RoutingDirection;
 import org.eclipse.elk.core.options.PortSide;
@@ -63,12 +62,10 @@ public final class OrthogonalRoutingGenerator {
     
     /** a special return value used by the conflict counting method. */
     private static final int CRITICAL_CONFLICTS_DETECTED = -1;
-    /** non-zero weight used for critical dependencies. */
-    public static final int CRITICAL_DEPENDENCY_WEIGHT = 1;
 
-    /** factor for edge spacing used to determine the {@link #conflictThreshold}. */
+    /** factor for edge spacing used to determine the {@link #conflictThreshold} (determined experimentally). */
     private static final double CONFLICT_THRESHOLD_FACTOR = 0.5;
-    /** factor to compute {@link #criticalConflictThreshold}. */
+    /** factor to compute {@link #criticalConflictThreshold} (determined experimentally). */
     private static final double CRITICAL_CONFLICT_THRESHOLD_FACTOR = 0.2;
     
     /** weight penalty for (non-critical) conflicts. */
@@ -157,8 +154,6 @@ public final class OrthogonalRoutingGenerator {
     public int routeEdges(final IElkProgressMonitor monitor, final LGraph layeredGraph,
             final Iterable<LNode> sourceLayerNodes, final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes,
             final double startPos) {
-        
-        Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
 
         // Keep track of our hyperedge segements, and which ports they were created for
         Map<LPort, HyperEdgeSegment> portToEdgeSegmentMap = Maps.newHashMap();
@@ -199,6 +194,7 @@ public final class OrthogonalRoutingGenerator {
         // elkjs-exclude-end
         
         // if there are at least two critical dependencies, there may be critical cycles that need to be broken
+        Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
         if (criticalDependencyCount >= 2) {
             breakCriticalCycles(edgeSegments, random);
         }
@@ -342,13 +338,13 @@ public final class OrthogonalRoutingGenerator {
             // Check which critical dependencies have to be added
             if (conflicts1 == CRITICAL_CONFLICTS_DETECTED) {
                 // hyperedge 1 MUST NOT be left of hyperedge 2, since that would cause critical conflicts
-                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he2, he1, CRITICAL_DEPENDENCY_WEIGHT);
+                HyperEdgeSegmentDependency.createAndAddCritical(he2, he1);
                 criticalDependencyCount++;
             }
             
             if (conflicts2 == CRITICAL_CONFLICTS_DETECTED) {
                 // hyperedge 2 MUST NOT be left of hyperedge 1, since that would cause critical conflicts
-                new HyperEdgeSegmentDependency(DependencyType.CRITICAL, he1, he2, CRITICAL_DEPENDENCY_WEIGHT);
+                HyperEdgeSegmentDependency.createAndAddCritical(he1, he2);
                 criticalDependencyCount++;
             }
             
@@ -369,14 +365,14 @@ public final class OrthogonalRoutingGenerator {
             
             if (depValue1 < depValue2) {
                 // hyperedge 1 wants to be left of hyperedge 2
-                new HyperEdgeSegmentDependency(he1, he2, depValue2 - depValue1);
+                HyperEdgeSegmentDependency.createAndAddRegular(he1, he2, depValue2 - depValue1);
             } else if (depValue1 > depValue2) {
                 // hyperedge 2 wants to be left of hyperedge 1
-                new HyperEdgeSegmentDependency(he2, he1, depValue1 - depValue2);
+                HyperEdgeSegmentDependency.createAndAddRegular(he2, he1, depValue1 - depValue2);
             } else if (depValue1 > 0 && depValue2 > 0) {
                 // create two dependencies with zero weight
-                new HyperEdgeSegmentDependency(he1, he2, 0);
-                new HyperEdgeSegmentDependency(he2, he1, 0);
+                HyperEdgeSegmentDependency.createAndAddRegular(he1, he2, 0);
+                HyperEdgeSegmentDependency.createAndAddRegular(he2, he1, 0);
             }
         }
         
