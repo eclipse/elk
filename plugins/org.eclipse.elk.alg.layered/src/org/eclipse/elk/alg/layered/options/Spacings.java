@@ -234,8 +234,8 @@ public final class Spacings {
     public static <T> T getIndividualOrDefault(final LNode node, final IProperty<T> property) {
         T result = null;
         // check for individual value
-        if (node.hasProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
-            IPropertyHolder individualSpacings = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);
+        if (node.hasProperty(LayeredOptions.SPACING_INDIVIDUAL)) {
+            IPropertyHolder individualSpacings = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL);
             if (individualSpacings.hasProperty(property)) {
                 result = individualSpacings.getProperty(property);
             }

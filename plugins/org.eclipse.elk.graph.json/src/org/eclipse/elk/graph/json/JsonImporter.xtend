@@ -425,10 +425,10 @@ final class JsonImporter {
         
         val jsonIndividualSpacings = jsonObj.optJSONObject("individualSpacings")
         if (jsonIndividualSpacings !== null) {
-            if (!layoutData.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
-                layoutData.setProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE, new IndividualSpacings())   
+            if (!layoutData.hasProperty(CoreOptions.SPACING_INDIVIDUAL)) {
+                layoutData.setProperty(CoreOptions.SPACING_INDIVIDUAL, new IndividualSpacings())   
             }
-            val individualSpacings = layoutData.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            val individualSpacings = layoutData.getProperty(CoreOptions.SPACING_INDIVIDUAL);
             val opts = jsonIndividualSpacings
             opts?.keysJsonObj?.forEach[ k |
                 val value = opts.getJsonObj(k)?.stringVal

@@ -44,8 +44,10 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
         return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
                         IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
+                .addBefore(LayeredPhases.P2_LAYERING,
+                        IntermediateProcessorStrategy.LAYER_CONSTRAINT_PREPROCESSOR)
                 .addBefore(LayeredPhases.P3_NODE_ORDERING,
-                        IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+                        IntermediateProcessorStrategy.LAYER_CONSTRAINT_POSTPROCESSOR);
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */

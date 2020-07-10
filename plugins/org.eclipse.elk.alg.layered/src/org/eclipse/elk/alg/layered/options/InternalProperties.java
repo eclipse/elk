@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
+import org.eclipse.elk.alg.layered.intermediate.LayerConstraintPreprocessor;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
@@ -425,6 +426,17 @@ public final class InternalProperties {
      */
     public static final IProperty<Boolean> FIRST_TRY_WITH_INITIAL_ORDER =
             new Property<>("firstTryWithInitialOrder", false);
+
+    /**
+     * List of nodes hidden by the {@link LayerConstraintPreprocessor}. Set on graphs.
+     */
+    public static final IProperty<List<LNode>> HIDDEN_NODES = new Property<>("layerConstraints.hiddenNodes");
+    
+    /**
+     * The port a hidden edge was originally connected to before {@link LayerConstraintPreprocessor} temporarily
+     * disconnected it. Set on edges.
+     */
+    public static final IProperty<LPort> ORIGINAL_OPPOSITE_PORT = new Property<>("layerConstraints.opposidePort");
     
     /**
      * Hidden default constructor.

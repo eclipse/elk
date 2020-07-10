@@ -85,8 +85,8 @@ class IndividualSpacingsTest {
         val i1 = outer.children.findFirst[ identifier == "i1" ]
         val i2 = outer.children.findFirst[ identifier == "i2" ]        
         
-        assertFalse(i1.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE))
-        assertTrue(i2.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE))
+        assertFalse(i1.hasProperty(CoreOptions.SPACING_INDIVIDUAL))
+        assertTrue(i2.hasProperty(CoreOptions.SPACING_INDIVIDUAL))
         
         PlainJavaInitialization.initializePlainJavaLayout    
         new RecursiveGraphLayoutEngine().layout(root, new NullElkProgressMonitor())
@@ -105,7 +105,7 @@ class IndividualSpacingsTest {
 
         val individualSpacings = new IndividualSpacings()
         individualSpacings.setProperty(CoreOptions.SPACING_NODE_NODE, 20.0)
-        graph.setProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE, individualSpacings)
+        graph.setProperty(CoreOptions.SPACING_INDIVIDUAL, individualSpacings)
 
         val json = ElkGraphJson.forGraph(graph)
                                .omitUnknownLayoutOptions(true)

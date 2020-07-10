@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -124,7 +124,10 @@ public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph
         return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
                         IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+                .addBefore(LayeredPhases.P2_LAYERING,
+                        IntermediateProcessorStrategy.LAYER_CONSTRAINT_PREPROCESSOR)
+                .addBefore(LayeredPhases.P3_NODE_ORDERING,
+                        IntermediateProcessorStrategy.LAYER_CONSTRAINT_POSTPROCESSOR);
     }
 
     @Override
