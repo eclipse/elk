@@ -221,17 +221,19 @@ public class RoutingSlotAssigner {
         
         if (firstAboveSecondCrossings < secondAboveFirstCrossings) {
             // The first loop should be above the second loop
-            new HyperEdgeSegmentDependency(segment1, segment2, secondAboveFirstCrossings - firstAboveSecondCrossings);
+            HyperEdgeSegmentDependency.createAndAddRegular(
+                    segment1, segment2, secondAboveFirstCrossings - firstAboveSecondCrossings);
             
         } else if (secondAboveFirstCrossings < firstAboveSecondCrossings) {
             // The second loop should be above the first loop
-            new HyperEdgeSegmentDependency(segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
+            HyperEdgeSegmentDependency.createAndAddRegular(
+                    segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
             
         } else if (firstAboveSecondCrossings != 0 || labelsOverlap(slLoop1, slLoop2, labelCrossingMatrix)) {
             // Either both orders cause the same number of crossings (and at least one), or the labels of the two loops
             // overlap and the loops must thus be forced onto different slots
-            new HyperEdgeSegmentDependency(segment1, segment2, 0);
-            new HyperEdgeSegmentDependency(segment2, segment1, 0);
+            HyperEdgeSegmentDependency.createAndAddRegular(segment1, segment2, 0);
+            HyperEdgeSegmentDependency.createAndAddRegular(segment2, segment1, 0);
         }
     }
 

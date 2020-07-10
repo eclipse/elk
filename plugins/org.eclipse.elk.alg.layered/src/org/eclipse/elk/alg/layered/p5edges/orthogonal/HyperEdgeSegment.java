@@ -53,7 +53,7 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Properties
 
-    /** Routing strategy which will ultimately decide how edges will be routed. */
+    /** routing strategy which will ultimately decide how edges will be routed. */
     private final BaseRoutingDirectionStrategy routingStrategy;
     /** ports represented by this hypernode. */
     private final List<LPort> ports = Lists.newArrayList();
@@ -87,8 +87,8 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     private int inDepWeight;
     /** combined weight of critical incoming dependencies. */
     private int criticalInDepWeight;
-    
-    /** if this segment is the result of a split segment, this is the other segment. */
+
+    /** if this segment is the result of a split segment, this is the other segment; otherwise it is {@code null}. */
     private HyperEdgeSegment splitPartner;
     /** the segment that caused this segment to be split, if any (only set on one of the split partners). */
     private HyperEdgeSegment splitBy;
@@ -312,7 +312,7 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
      * Convernience method which returns the size of this segment, which is its end coordinate minus its start
      * coordinate.
      */
-    public double getSize() {
+    public double getLength() {
         return getEndCoordinate() - getStartCoordinate();
     }
     
@@ -366,8 +366,8 @@ public class HyperEdgeSegment implements Comparable<HyperEdgeSegment> {
     /**
      * Simulates what would happen during a split. The returned pair contains two new {@link HyperEdgeSegment}s: the
      * first simulates what would happen to this instance, and the second simulates the split partner. They are set up
-     * with the appropriate incoming and outgoing connection coordinates, except for the linking segment. The split
-     * partners are set  
+     * with the appropriate incoming and outgoing connection coordinates, except for the linking segment, which this
+     * method does not know about. The split partner property of each segment points to the other segment.
      */
     public Pair<HyperEdgeSegment, HyperEdgeSegment> simulateSplit() {
         HyperEdgeSegment newSplit = new HyperEdgeSegment(routingStrategy);
