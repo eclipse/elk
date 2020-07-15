@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.SegmentDependency;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
@@ -163,10 +163,11 @@ public final class JsonDebugUtil {
                 writer.write(",");
             }
 
-            Iterator<SegmentDependency> dependencyIterator = hypernode.getOutgoingDependencies().iterator();
+            Iterator<HyperEdgeSegmentDependency> dependencyIterator =
+                    hypernode.getOutgoingSegmentDependencies().iterator();
             
             while (dependencyIterator.hasNext()) {
-                SegmentDependency dependency = dependencyIterator.next();
+                HyperEdgeSegmentDependency dependency = dependencyIterator.next();
                 edges.append("\n" + indent1 + "{\n"
                     + indent2 + "\"id\": \"e" + edgeId++ + "\",\n"
                     + indent2 + "\"source\": \"n" + System.identityHashCode(hypernode) + "\",\n"

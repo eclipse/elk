@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
+ * Copyright (c) 2019, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -26,10 +26,9 @@ import org.eclipse.elk.alg.layered.intermediate.loops.SelfHyperLoopLabels;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
 import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeCycleBreaker;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegment;
+import org.eclipse.elk.alg.layered.p5edges.orthogonal.HyperEdgeSegmentDependency;
 import org.eclipse.elk.alg.layered.p5edges.orthogonal.OrthogonalRoutingGenerator;
-import org.eclipse.elk.alg.layered.p5edges.orthogonal.SegmentDependency;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -56,7 +55,7 @@ public class RoutingSlotAssigner {
         
         // We're using the orthogonal edge router's cycle breaker for this, so create the crossing graph for our loops
         createCrossingGraph(slHolder, labelCrossingMatrix);
-        HyperEdgeCycleBreaker.breakCycles(hyperEdgeSegments,
+        OrthogonalRoutingGenerator.breakNonCriticalCycles(hyperEdgeSegments,
                 slHolder.getLNode().getGraph().getProperty(InternalProperties.RANDOM));
         
         // Assign routing slots based on the graph
@@ -222,17 +221,19 @@ public class RoutingSlotAssigner {
         
         if (firstAboveSecondCrossings < secondAboveFirstCrossings) {
             // The first loop should be above the second loop
-            new SegmentDependency(segment1, segment2, secondAboveFirstCrossings - firstAboveSecondCrossings);
+            HyperEdgeSegmentDependency.createAndAddRegular(
+                    segment1, segment2, secondAboveFirstCrossings - firstAboveSecondCrossings);
             
         } else if (secondAboveFirstCrossings < firstAboveSecondCrossings) {
             // The second loop should be above the first loop
-            new SegmentDependency(segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
+            HyperEdgeSegmentDependency.createAndAddRegular(
+                    segment2, segment1, firstAboveSecondCrossings - secondAboveFirstCrossings);
             
         } else if (firstAboveSecondCrossings != 0 || labelsOverlap(slLoop1, slLoop2, labelCrossingMatrix)) {
             // Either both orders cause the same number of crossings (and at least one), or the labels of the two loops
             // overlap and the loops must thus be forced onto different slots
-            new SegmentDependency(segment1, segment2, 0);
-            new SegmentDependency(segment2, segment1, 0);
+            HyperEdgeSegmentDependency.createAndAddRegular(segment1, segment2, 0);
+            HyperEdgeSegmentDependency.createAndAddRegular(segment2, segment1, 0);
         }
     }
 
@@ -295,8 +296,8 @@ public class RoutingSlotAssigner {
         // Fill our queue of sinks, which will ultimately end up being routed nearest to the node. While we go through
         // these, we also reset the in- and out weights to the number of incoming and outgoing dependencies
         for (HyperEdgeSegment segment : hyperEdgeSegments) {
-            segment.setInWeight(segment.getIncomingDependencies().size());
-            segment.setOutWeight(segment.getOutgoingDependencies().size());
+            segment.setInWeight(segment.getIncomingSegmentDependencies().size());
+            segment.setOutWeight(segment.getOutgoingSegmentDependencies().size());
             
             if (segment.getOutWeight() == 0) {
                 segment.setRoutingSlot(0);
@@ -309,7 +310,7 @@ public class RoutingSlotAssigner {
             HyperEdgeSegment segment = sinks.poll();
             int nextRoutingSlot = segment.getRoutingSlot() + 1;
             
-            for (SegmentDependency inDependency : segment.getIncomingDependencies()) {
+            for (HyperEdgeSegmentDependency inDependency : segment.getIncomingSegmentDependencies()) {
                 HyperEdgeSegment sourceSegment = inDependency.getSource();
                 sourceSegment.setRoutingSlot(Math.max(sourceSegment.getRoutingSlot(), nextRoutingSlot));
                 
