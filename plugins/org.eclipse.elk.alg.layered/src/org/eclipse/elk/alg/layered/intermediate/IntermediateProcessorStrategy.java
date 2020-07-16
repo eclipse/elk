@@ -42,7 +42,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     /** If one of the phases is set to interactive mode, this processor positions external ports. */
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
-    /** Add constraint edges to respect partitioning of nodes. */
+    /** Reverse edges that run contrary to layout partitions. */
     PARTITION_PREPROCESSOR,
     
     // Before Phase 2
@@ -53,6 +53,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     SELF_LOOP_PREPROCESSOR,
     /** Hides {@code FIRST_SEPARATE} and {@code LAST_SEPARATE} nodes. */
     LAYER_CONSTRAINT_PREPROCESSOR,
+    /** Adds edges that force layering algorithms to respect layout partitions. */
+    PARTITION_MIDPROCESSOR,
 
     // Before Phase 3
     
@@ -299,6 +301,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case ONE_SIDED_GREEDY_SWITCH:
             return new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+            
+        case PARTITION_MIDPROCESSOR:
+            return new PartitionMidprocessor();
 
         case PARTITION_POSTPROCESSOR:
             return new PartitionPostprocessor();
