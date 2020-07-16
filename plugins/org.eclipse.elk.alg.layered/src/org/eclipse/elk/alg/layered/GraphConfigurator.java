@@ -254,6 +254,8 @@ final class GraphConfigurator {
         if (graphProperties.contains(GraphProperties.PARTITIONS)) {
             configuration.addBefore(LayeredPhases.P1_CYCLE_BREAKING,
                     IntermediateProcessorStrategy.PARTITION_PREPROCESSOR);
+            configuration.addBefore(LayeredPhases.P2_LAYERING,
+                    IntermediateProcessorStrategy.PARTITION_MIDPROCESSOR);
             configuration.addBefore(LayeredPhases.P3_NODE_ORDERING,
                     IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
         }

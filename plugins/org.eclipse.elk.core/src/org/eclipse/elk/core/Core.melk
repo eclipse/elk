@@ -444,9 +444,11 @@ group partitioning {
     advanced option partition: Integer {
         label "Layout Partition"
         description
-            "Partition to which the node belongs to. If 'layoutPartitions' is true,
-             a pair of nodes with different partition indices is placed such that 
-             the node with lower index is placed to the left of the other node (with left-to-right layout direction)."
+            "Partition to which the node belongs to. If Layout Partitioning is true, a pair of nodes with different
+            partition indices is placed such that the node with lower index is placed to the left of the other node
+            (with left-to-right layout direction). Depending on the layout algorithm, this may only be guaranteed to
+            work if all nodes have a layout partition configured, or at least if edges that cross partitions are not
+            part of a partition-crossing cycle."
         targets parents, nodes
     }
 

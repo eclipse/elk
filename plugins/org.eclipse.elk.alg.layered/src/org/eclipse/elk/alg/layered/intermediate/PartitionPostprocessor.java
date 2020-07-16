@@ -36,6 +36,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * </dl>
  *
  * @see PartitionPreprocessor
+ * @see PartitionMidprocessor
  */
 public class PartitionPostprocessor implements ILayoutProcessor<LGraph> {
 

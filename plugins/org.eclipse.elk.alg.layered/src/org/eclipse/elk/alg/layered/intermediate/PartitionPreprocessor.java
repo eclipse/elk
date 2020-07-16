@@ -9,107 +9,84 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Streams;
 
 /**
- * Add constraint edges between partitions. </br>
- * In partitioned graphs, nodes may have an assigned partition. For every such node holds, that every other node
- * with a smaller partition is placed left to it. This is accomplished by adding partition constraint
- * edges. For each node, we add an edge to every node in the next greater partition. These edges get a
- * high priority assigned such that during cycle breaking, none of these constraint edges gets reversed.
- * During layering, the constraint edges assure the aforementioned condition.
- * The constraint edges are removed later by the {@link PartitionPostprocessor}.
+ * Reverses edges that run contrary to layout partitions. More specifically, an edge (a, b) is reversed if a is
+ * configured for a higher layout partition than b. If all nodes have a partition set, the result is a graph that can
+ * only contain cycles among nodes in the same partition, and no edge reversed by this processor can be part of a cycle.
+ * Thus, the cycle breaker should not restore any such edge.
+ * 
+ * <p>
+ * If there are nodes that do not have a partition configured, that's another story. Since there can be arbitrarily
+ * many such nodes connected in arbitrary ways, any edge we reverse here could be part of a cycle and thus be restored
+ * again during cycle breaking. We try to avoid this by imposing a high direction priority on them, but we cannot
+ * guarantee success.
+ * </p>
  *
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>an unlayered graph.</dd>
  *   <dt>Postcondition:</dt>
- *     <dd>unlayered graph with partition constraint edges.</dd>
+ *     <dd>edges that contradict layout partitions are reversed.</dd>
  *   <dt>Slots:</dt>
  *     <dd>Before phase 1.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>None.</dd>
  * </dl>
+ * 
+ * @see PartitionMidprocessor
+ * @see PartitionPostprocessor
  */
 public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
 
     /** The priority to set on added constraint edges. */
-    private static final int PARTITION_CONSTRAINT_EDGE_PRIORITY = 20;
+    private static final int PARTITION_CONSTRAINT_EDGE_PRIORITY = 50;
 
     @Override
     public void process(final LGraph lGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Partition preprocessing", 1);
         
-        // Collect nodes which have a partition set
-        Multimap<Integer, LNode> partitionToNodesMap = HashMultimap.create();
-        
-        // Go through all layerless nodes and collect all partition IDs in use
+        // Find all edges that must be reversed, and then reverse them (this needs to be a two-step process to avoid
+        // ConcurrentModificationExceptions)
         lGraph.getLayerlessNodes().stream()
-            .filter(node -> node.hasProperty(LayeredOptions.PARTITIONING_PARTITION))
-            .forEach(node -> partitionToNodesMap.put(node.getProperty(LayeredOptions.PARTITIONING_PARTITION), node));
-        
-        if (partitionToNodesMap.isEmpty()) {
-            // This shouldn't happen, but if it does, there's nothing to do
-            return;
-        }
-        
-        // Collect a sorted list of partition IDs
-        List<Integer> sortedPartitionIDs = partitionToNodesMap.keySet().stream()
-            .sorted()
-            .collect(Collectors.toList());
-        
-        // For each pair of consecutive partition IDs (a, b), connect all nodes from partition a to partition b
-        Iterator<Integer> idIterator = sortedPartitionIDs.iterator();
-        
-        Integer firstId = idIterator.next();
-        while (idIterator.hasNext()) {
-            Integer secondId = idIterator.next();
-            connectNodes(partitionToNodesMap.get(firstId), partitionToNodesMap.get(secondId));
-            firstId = secondId;
-        }
+            .filter(lNode -> lNode.hasProperty(LayeredOptions.PARTITIONING_PARTITION))
+            .flatMap(lNode -> Streams.stream(lNode.getOutgoingEdges()))
+            .filter(lEdge -> mustBeReversed(lEdge))
+            .collect(Collectors.toList())
+            
+            .stream()
+            .forEach(lEdge -> reverse(lEdge, lGraph));
         
         monitor.done();
     }
 
-    /**
-     * Connects all nodes from the first collection to all nodes from the second collection.
-     */
-    private void connectNodes(final Collection<LNode> firstPartition, final Collection<LNode> secondPartition) {
-        for (LNode node : firstPartition) {
-            LPort sourcePort = new LPort();
-            sourcePort.setNode(node);
-            sourcePort.setSide(PortSide.EAST);
-            sourcePort.setProperty(InternalProperties.PARTITION_DUMMY, true);
+    private boolean mustBeReversed(final LEdge lEdge) {
+        assert lEdge.getSource().getNode().hasProperty(LayeredOptions.PARTITIONING_PARTITION);
+        
+        if (lEdge.getTarget().getNode().hasProperty(LayeredOptions.PARTITIONING_PARTITION)) {
+            Integer sourcePartition = lEdge.getSource().getNode().getProperty(LayeredOptions.PARTITIONING_PARTITION);
+            Integer targetPartition = lEdge.getTarget().getNode().getProperty(LayeredOptions.PARTITIONING_PARTITION);
             
-            for (LNode otherNode : secondPartition) {
-                LPort targetPort = new LPort();
-                targetPort.setNode(otherNode);
-                targetPort.setSide(PortSide.WEST);
-                targetPort.setProperty(InternalProperties.PARTITION_DUMMY, true);
-                
-                LEdge edge = new LEdge();
-                edge.setProperty(InternalProperties.PARTITION_DUMMY, true);
-                edge.setProperty(LayeredOptions.PRIORITY_DIRECTION, PARTITION_CONSTRAINT_EDGE_PRIORITY);
-                edge.setSource(sourcePort);
-                edge.setTarget(targetPort);
-            }
+            // We need to reverse an edge if sourcePartition > targetPartition
+            return sourcePartition.compareTo(targetPartition) > 0;
+            
+        } else {
+            return false;
         }
+    }
+
+    private void reverse(final LEdge lEdge, final LGraph lGraph) {
+        lEdge.reverse(lGraph, true);
+        lEdge.setProperty(LayeredOptions.PRIORITY_DIRECTION, PARTITION_CONSTRAINT_EDGE_PRIORITY);
     }
 
 }

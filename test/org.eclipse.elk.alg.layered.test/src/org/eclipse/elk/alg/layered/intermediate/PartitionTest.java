@@ -45,7 +45,8 @@ public class PartitionTest {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
-                new ModelResourcePath("tests/layered/partitioning/**/"));
+                new ModelResourcePath("tests/layered/partitioning/**/"),
+                new ModelResourcePath("tickets/layered/656_brokenLayoutPartitions.elkt"));
     }
 
 
