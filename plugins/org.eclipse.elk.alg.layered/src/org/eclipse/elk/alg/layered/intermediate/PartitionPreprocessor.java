@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -20,10 +21,10 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import com.google.common.collect.Streams;
 
 /**
- * Reverses edges that run contrary to layout partitions. More specifically, an edge (a, b) is reversed if a is
- * configured for a higher layout partition than b. If all nodes have a partition set, the result is a graph that can
- * only contain cycles among nodes in the same partition, and no edge reversed by this processor can be part of a cycle.
- * Thus, the cycle breaker should not restore any such edge.
+ * Reverses edges that connect higher-index to lower-index partitions. If all nodes have a partition set, the result is
+ * a graph that can only contain cycles among nodes in the same partition, and no edge reversed by this processor can be
+ * part of a cycle. Thus, the cycle breaker should not reverse any such edge again, resulting in an invalid
+ * partitioning.
  * 
  * <p>
  * If there are nodes that do not have a partition configured, that's another story. Since there can be arbitrarily
@@ -48,8 +49,8 @@ import com.google.common.collect.Streams;
  */
 public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
 
-    /** The priority to set on added constraint edges. */
-    private static final int PARTITION_CONSTRAINT_EDGE_PRIORITY = 50;
+    /** The priority to set on added constraint edges (arbitrary, large value). */
+    private static final int PARTITION_CONSTRAINT_EDGE_PRIORITY = 1_000;
 
     @Override
     public void process(final LGraph lGraph, final IElkProgressMonitor monitor) {
@@ -57,13 +58,13 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
         
         // Find all edges that must be reversed, and then reverse them (this needs to be a two-step process to avoid
         // ConcurrentModificationExceptions)
-        lGraph.getLayerlessNodes().stream()
+        List<LEdge> edgesToBeReversed = lGraph.getLayerlessNodes().stream()
             .filter(lNode -> lNode.hasProperty(LayeredOptions.PARTITIONING_PARTITION))
             .flatMap(lNode -> Streams.stream(lNode.getOutgoingEdges()))
             .filter(lEdge -> mustBeReversed(lEdge))
-            .collect(Collectors.toList())
+            .collect(Collectors.toList());
             
-            .stream()
+        edgesToBeReversed.stream()
             .forEach(lEdge -> reverse(lEdge, lGraph));
         
         monitor.done();
@@ -73,6 +74,7 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
         assert lEdge.getSource().getNode().hasProperty(LayeredOptions.PARTITIONING_PARTITION);
         
         if (lEdge.getTarget().getNode().hasProperty(LayeredOptions.PARTITIONING_PARTITION)) {
+            // Avoid the performance overhead unboxing would incur since we're only comparing the two values
             Integer sourcePartition = lEdge.getSource().getNode().getProperty(LayeredOptions.PARTITIONING_PARTITION);
             Integer targetPartition = lEdge.getTarget().getNode().getProperty(LayeredOptions.PARTITIONING_PARTITION);
             
@@ -86,7 +88,11 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
 
     private void reverse(final LEdge lEdge, final LGraph lGraph) {
         lEdge.reverse(lGraph, true);
-        lEdge.setProperty(LayeredOptions.PRIORITY_DIRECTION, PARTITION_CONSTRAINT_EDGE_PRIORITY);
+        
+        // Don't overwrite user-set priorities to allow them to influence this process if things go wrong
+        if (!lEdge.hasProperty(LayeredOptions.PRIORITY_DIRECTION)) {
+            lEdge.setProperty(LayeredOptions.PRIORITY_DIRECTION, PARTITION_CONSTRAINT_EDGE_PRIORITY);
+        }
     }
 
 }
