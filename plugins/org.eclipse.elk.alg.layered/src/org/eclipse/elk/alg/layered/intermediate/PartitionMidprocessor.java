@@ -75,7 +75,8 @@ public class PartitionMidprocessor implements ILayoutProcessor<LGraph> {
             .sorted()
             .collect(Collectors.toList());
         
-        // For each pair of consecutive partition IDs (a, b), connect all nodes from partition a to partition b
+        // For each pair of consecutive partition IDs (a, b), connect all nodes from partition a to partition b; we use
+        // Integer here to avoid unnecessary unboxing.
         Iterator<Integer> idIterator = sortedPartitionIDs.iterator();
         
         Integer firstId = idIterator.next();

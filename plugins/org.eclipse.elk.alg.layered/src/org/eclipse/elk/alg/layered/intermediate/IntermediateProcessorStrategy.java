@@ -42,7 +42,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     /** If one of the phases is set to interactive mode, this processor positions external ports. */
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
-    /** Reverse edges that run contrary to layout partitions. */
+    /** Reverse edges that run from higher-index to lower-index partitions. */
     PARTITION_PREPROCESSOR,
     
     // Before Phase 2
