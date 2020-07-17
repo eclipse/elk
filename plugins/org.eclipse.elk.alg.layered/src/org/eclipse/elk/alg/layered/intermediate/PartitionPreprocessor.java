@@ -89,10 +89,15 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
     private void reverse(final LEdge lEdge, final LGraph lGraph) {
         lEdge.reverse(lGraph, true);
         
-        // Don't overwrite user-set priorities to allow them to influence this process if things go wrong
-        if (!lEdge.hasProperty(LayeredOptions.PRIORITY_DIRECTION)) {
-            lEdge.setProperty(LayeredOptions.PRIORITY_DIRECTION, PARTITION_CONSTRAINT_EDGE_PRIORITY);
+        // If the user has set a priority, add that to our base priority to allow them to fix issues where an edge is
+        // still being reversed
+        int priority = PARTITION_CONSTRAINT_EDGE_PRIORITY;
+        
+        if (lEdge.hasProperty(LayeredOptions.PRIORITY_DIRECTION)) {
+            priority += lEdge.getProperty(LayeredOptions.PRIORITY_DIRECTION);
         }
+        
+        lEdge.setProperty(LayeredOptions.PRIORITY_DIRECTION, priority);
     }
 
 }
