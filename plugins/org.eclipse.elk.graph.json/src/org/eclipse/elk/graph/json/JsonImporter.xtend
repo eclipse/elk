@@ -462,11 +462,6 @@ final class JsonImporter {
                         
                         jsonLabel.transformProperties(label)
                         jsonLabel.transformShapeLayout(label)
-                        
-                        // by default center the label
-                        if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.UNDEFINED) {
-                            label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER)
-                        }
                     }
                 }
             }
