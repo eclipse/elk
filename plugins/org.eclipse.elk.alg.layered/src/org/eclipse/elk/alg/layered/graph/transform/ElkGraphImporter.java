@@ -30,6 +30,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.LayeredSpacings;
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
@@ -219,15 +220,25 @@ class ElkGraphImporter {
      */
     private void importFlatGraph(final ElkNode elkgraph, final LGraph lgraph) {
         // Transform the node's children, unless we're told not to
+        int index = 0;
         for (ElkNode child : elkgraph.getChildren()) {
             if (!child.getProperty(LayeredOptions.NO_LAYOUT)) {
+                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+                    child.setProperty(InternalProperties.MODEL_ORDER, index);
+                    index++;
+                }
                 transformNode(child, lgraph);
             }
         }
 
         // iterate the list of contained edges to preserve the 'input order' of the edges
         // (this is not part of the previous loop since all children must have already been transformed)
+        index = 0;
         for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
+            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+                elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
+                index++;
+            }
             ElkNode source = ElkGraphUtil.getSourceNode(elkedge);
             ElkNode target = ElkGraphUtil.getTargetNode(elkedge);
             

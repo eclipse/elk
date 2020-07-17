@@ -410,6 +410,24 @@ public final class InternalProperties {
     public static final IProperty<Double> SPLINE_NS_PORT_Y_COORD = new Property<>("splines.nsPortY");
     
     /**
+     * Set for nodes and edges to preserve the order in the model file.
+     */
+    public static final IProperty<Integer> MODEL_ORDER = new Property<>("modelOrder");
+
+    /**
+     * Set on ports to save their (long edge) target node.
+     * Only used during port sorting if the node/edge order shall be preserved.
+     */
+    public static final IProperty<LNode> LONG_EDGE_TARGET_NODE = new Property<>("longEdgeTargetNode");
+    
+    /**
+     * Set during crossing minimization on a graph to signal that crossing minization should not shuffle the free nodes.
+     * This also fixes the initial sweep direction to forward.
+     */
+    public static final IProperty<Boolean> FIRST_TRY_WITH_INITIAL_ORDER =
+            new Property<>("firstTryWithInitialOrder", false);
+
+    /**
      * List of nodes hidden by the {@link LayerConstraintPreprocessor}. Set on graphs.
      */
     public static final IProperty<List<LNode>> HIDDEN_NODES = new Property<>("layerConstraints.hiddenNodes");

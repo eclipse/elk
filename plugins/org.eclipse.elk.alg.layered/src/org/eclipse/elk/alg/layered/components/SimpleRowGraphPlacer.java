@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Kiel University and others.
+ * Copyright (c) 2012, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -64,14 +65,17 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             graph.id = priority;
         }
 
-        // sort the components by their priority and size
+        // sort the components by their priority and size.
+        // If preserve order is set, we do not consider the size.
         Collections.sort(components, new Comparator<LGraph>() {
             public int compare(final LGraph graph1, final LGraph graph2) {
                 int prio = graph2.id - graph1.id;
                 if (prio == 0) {
-                    double size1 = graph1.getSize().x * graph1.getSize().y;
-                    double size2 = graph2.getSize().x * graph2.getSize().y;
-                    return Double.compare(size1, size2);
+                    if (graph1.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
+                        double size1 = graph1.getSize().x * graph1.getSize().y;
+                        double size2 = graph2.getSize().x * graph2.getSize().y;
+                        return Double.compare(size1, size2);
+                    }
                 }
                 return prio;
             }

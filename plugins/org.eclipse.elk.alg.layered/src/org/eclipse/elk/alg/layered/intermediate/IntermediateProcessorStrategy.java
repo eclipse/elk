@@ -80,6 +80,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     INVERTED_PORT_PROCESSOR,
     /** Orders the port lists of nodes with fixed port order. */
     PORT_LIST_SORTER,
+    /** Sorts nodes and edges according to their order in the input model. */
+    SORT_BY_INPUT_ORDER_OF_MODEL,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
@@ -337,6 +339,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case SINGLE_EDGE_GRAPH_WRAPPER:
             return new SingleEdgeGraphWrapper();
+            
+        case SORT_BY_INPUT_ORDER_OF_MODEL:
+            return new SortByInputModelProcessor();
             
         case TWO_SIDED_GREEDY_SWITCH:
             return new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);

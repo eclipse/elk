@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.layered.components;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -17,10 +18,11 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
@@ -137,6 +139,25 @@ public final class ComponentsProcessor {
             }
         } else {
             result = Arrays.asList(graph);
+        }
+        // If model order should be preserved the connected components should be ordered by their elements.
+        // The component with the node with the smallest order should be first.
+        if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+            Collections.sort(result, (g1, g2) -> {
+                int g1Order = Integer.MAX_VALUE;
+                for (LNode node : g1.getLayerlessNodes()) {
+                    if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                        g1Order = Math.min(g1Order, node.getProperty(InternalProperties.MODEL_ORDER));
+                    }
+                }
+                int g2Order = Integer.MAX_VALUE;
+                for (LNode node : g2.getLayerlessNodes()) {
+                    if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                        g2Order = Math.min(g2Order, node.getProperty(InternalProperties.MODEL_ORDER));
+                    }
+                }
+                return Integer.compare(g1Order, g2Order);
+            });
         }
         
         return result;
