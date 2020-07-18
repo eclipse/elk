@@ -15,6 +15,7 @@ jobs:
         # 8  - LTS 
         # 11 - LTS
         java-version: [ 8, 11 ]
+        node-version: [ 12.x ]
 
     steps:
     # Checkout the repository of both elk and elkjs, place them next to each other. 
@@ -45,10 +46,10 @@ jobs:
         java-version: ${{ matrix.java-version }}
     - name: Grant execute permission for gradlew
       run: chmod +x $GITHUB_WORKSPACE/elkjs/gradlew
-    - name: Use Node.js 10.x
+    - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: 10.x
+        node-version: ${{ matrix.node-version }}
     # Finally build elkjs and run its tests
     - name: npm install, build, and test
       run: |
