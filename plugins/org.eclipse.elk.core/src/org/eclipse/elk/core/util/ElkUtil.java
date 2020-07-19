@@ -54,9 +54,6 @@ import com.google.common.collect.Maps;
 
 /**
  * Utility methods for layout-related things.
- *
- * @author msp
- * @author uru
  */
 public final class ElkUtil {
 
@@ -895,8 +892,7 @@ public final class ElkUtil {
      *            an edge of a graph
      */
     public static void configureWithDefaultValues(final ElkEdge edge) {
-        EdgeLabelPlacement elp = edge.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-        if (elp == EdgeLabelPlacement.UNDEFINED) {
+        if (!edge.hasProperty(CoreOptions.EDGE_LABELS_PLACEMENT)) {
             edge.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
         }
     }

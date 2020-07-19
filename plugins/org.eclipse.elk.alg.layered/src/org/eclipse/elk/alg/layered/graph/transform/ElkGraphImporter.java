@@ -1089,7 +1089,6 @@ class ElkGraphImporter {
                     break;
                     
                 case CENTER:
-                case UNDEFINED:
                     graphProperties.add(GraphProperties.CENTER_LABELS);
                     llabel.setProperty(LayeredOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
                 }
