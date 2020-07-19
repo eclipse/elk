@@ -640,7 +640,7 @@ group edgeLabels {
         label "Edge Label Placement"
         description
             "Gives a hint on where to put edge labels."
-        default = EdgeLabelPlacement.UNDEFINED
+        default = EdgeLabelPlacement.CENTER
         targets labels
     }
 
