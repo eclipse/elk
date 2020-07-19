@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 Kiel University and others.
+ * Copyright (c) 2009, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -14,8 +14,6 @@ package org.eclipse.elk.core.options;
  */
 public enum EdgeLabelPlacement {
 
-    /** undefined label placement. */
-    UNDEFINED,
     /** label is centered on the edge. */
     CENTER,
     /** label is at the head (target) of the edge. */
