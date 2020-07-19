@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -58,9 +58,6 @@ import com.google.common.collect.HashBiMap;
  * This class implements a transformation from the KGraph metamodel to the Dot metamodel.
  * Furthermore it contains functionality to apply layout information attached to a Dot model to a
  * KGraph model.
- * 
- * @author msp
- * @author mri
  */
 public class DotExporter {
 
@@ -891,7 +888,7 @@ public class DotExporter {
         double combinedHeight = 0.0;
         for (ElkLabel label : elkedge.getLabels()) {
             EdgeLabelPlacement elp = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-            if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED && placement == EdgeLabelPlacement.CENTER) {
+            if (elp == placement) {
                 combinedWidth = Math.max(combinedWidth, label.getWidth());
                 combinedHeight += label.getHeight();
             }
@@ -905,7 +902,7 @@ public class DotExporter {
             
             for (ElkLabel label : elkedge.getLabels()) {
                 EdgeLabelPlacement elp = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-                if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED && placement == EdgeLabelPlacement.CENTER) {
+                if (elp == placement) {
                     double xoffset = (combinedWidth - label.getWidth()) / 2;
                     label.setX(xpos + xoffset);
                     label.setY(ypos);

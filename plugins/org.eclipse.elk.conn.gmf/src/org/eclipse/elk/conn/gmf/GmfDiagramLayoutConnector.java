@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Kiel University and others.
+ * Copyright (c) 2009, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.Animation;
@@ -82,9 +83,6 @@ import com.google.inject.Singleton;
  * is applied to the diagram using {@link GmfLayoutEditPolicy}, which creates a
  * {@link GmfLayoutCommand} to directly manipulate data in the GMF notation model, where layout
  * information is stored persistently.
- * 
- * @author ars
- * @author msp
  */
 @Singleton
 public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
@@ -885,7 +883,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         
         for (ConnectionEditPart connection : mapping.getProperty(CONNECTIONS)) {
             boolean isOppositeEdge = false;
-            EdgeLabelPlacement edgeLabelPlacement = EdgeLabelPlacement.UNDEFINED;
+            Optional<EdgeLabelPlacement> edgeLabelPlacement = Optional.empty();
             ElkEdge edge;
 
             // Check whether the edge belongs to an Ecore reference, which may have opposites.
@@ -896,7 +894,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                 EReference reference = (EReference) modelObject;
                 edge = reference2EdgeMap.get(reference.getEOpposite());
                 if (edge != null) {
-                    edgeLabelPlacement = EdgeLabelPlacement.TAIL;
+                    edgeLabelPlacement = Optional.of(EdgeLabelPlacement.TAIL);
                     isOppositeEdge = true;
                 } else {
                     edge = ElkGraphUtil.createEdge(null);
@@ -1031,13 +1029,13 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param edge
      *            the layout edge
      * @param placement
-     *            predefined placement for all labels, or {@code UNDEFINED} if the placement shall
-     *            be derived from the edit part
+     *            predefined placement for all labels, or {@code Optional#empty()} if the placement shall be derived
+     *            from the edit part
      * @param offset
      *            the offset for coordinates
      */
     protected void processEdgeLabels(final LayoutMapping mapping, final ConnectionEditPart connection,
-            final ElkEdge edge, final EdgeLabelPlacement placement, final KVector offset) {
+            final ElkEdge edge, final Optional<EdgeLabelPlacement> placement, final KVector offset) {
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets
          * a label to be placed as target on a connection, then the label will show up next to the
@@ -1083,7 +1081,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                 
                 if (labelText != null && labelText.length() > 0) {
                     ElkLabel label = ElkGraphUtil.createLabel(edge);
-                    if (placement == EdgeLabelPlacement.UNDEFINED) {
+                    if (!placement.isPresent()) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
                             label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
@@ -1096,7 +1094,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                             break;
                         }
                     } else {
-                        label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, placement);
+                        label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, placement.get());
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
