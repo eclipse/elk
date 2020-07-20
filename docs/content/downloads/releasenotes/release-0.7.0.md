@@ -28,6 +28,7 @@ Here's a list of the most noteworthy changes. Head over to GitHub for [the full 
 * [#533](https://github.com/eclipse/elk/issues/533), [#535](https://github.com/eclipse/elk/pull/535): _ELK Box_ and _ELK Rectangle Packing_ now support [content alignment](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-contentalignment.html).
 * [#593](https://github.com/eclipse/elk/pull/593): _ELK Rectangle Packing_ now supports a configurable target width that the algorithm will try to achieve.
 * [#344](https://github.com/eclipse/elk/issues/344): ELK's JSON support nur supports a more relaxed JSON style.
+* [#608](https://github.com/eclipse/elk/issues/608)  _ELK Layered_ can be configured to consider the [model order](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-layered-considermodelorder.html)  to order the nodes and edges as in the model if this does not cause additional crossings.
 
 
 ### Changes
