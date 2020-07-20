@@ -37,6 +37,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.HierarchyHandling;
@@ -298,15 +299,17 @@ class ElkGraphImporter {
             boolean isNodeToBeLaidOut = !elknode.getProperty(LayeredOptions.NO_LAYOUT);
             if (isNodeToBeLaidOut) {
                 
-                // Check if there has to be an LGraph for this node (which is the case if it has
-                // children or inside self-loops)
+                // Check if there has to be an LGraph for this node (which is the case if it has children or inside
+                // self-loops, and if it does not have another layout algorithm configured)
                 boolean hasChildren = !elknode.getChildren().isEmpty();
                 boolean hasInsideSelfLoops = hasInsideSelfLoops(elknode);
                 boolean hasHierarchyHandlingEnabled = elknode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
                         == HierarchyHandling.INCLUDE_CHILDREN;
+                boolean usesElkLayered = !elknode.hasProperty(CoreOptions.ALGORITHM)
+                        || elknode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
 
                 LGraph nestedGraph = null;
-                if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
+                if (usesElkLayered && hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
                     nestedGraph = createLGraph(elknode);
                     nestedGraph.setProperty(LayeredOptions.DIRECTION, parentGraphDirection);
                     
@@ -392,7 +395,22 @@ class ElkGraphImporter {
                     }
                 }
                 
-                elknodeQueue.addAll(elknode.getChildren());
+                // We add the current node's children if two conditions are met: first, the current node's parent is
+                // null or set to INCLUDE_CHILDREN, and second, the child does not have another layout algorithm
+                // configured
+                HierarchyHandling parentHierarchyHandling = elknode.getParent() == null
+                        ? HierarchyHandling.INCLUDE_CHILDREN
+                        : elknode.getParent().getProperty(LayeredOptions.HIERARCHY_HANDLING);
+                if (parentHierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN) {
+                    for (ElkNode child : elknode.getChildren()) {
+                        boolean usesElkLayered = !child.hasProperty(CoreOptions.ALGORITHM)
+                                || child.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                        
+                        if (usesElkLayered) {
+                            elknodeQueue.add(child);
+                        }
+                    }
+                }
             }
         }
     }
