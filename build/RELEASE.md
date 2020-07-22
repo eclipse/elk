@@ -37,7 +37,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 1. Update the version numbers on `master`. Tycho can help:
 
     ```
-    mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=NEW_VERSION_NUMBER
+    mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=NEW_VERSION_NUMBER.qualifier
     ```
 
 
