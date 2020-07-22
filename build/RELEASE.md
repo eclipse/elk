@@ -33,7 +33,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
     `META_PUBLISH_URL`    | `file:///shared/modeling/elk/maven/meta/VERSION/`
     `ELK_TARGET_DIR`      | `/shared/modeling/elk/updates/VERSION/`
     
-1. Update the _ReleaseNightly_ build with the same default values for the build variables and run it.
+1. Update the _ReleaseNightly_ build with the same default values for the build variables. Also remember to update the repository branch the build will check out. Run it.
 1. Update the version numbers on `master`. Tycho can help:
 
     ```
