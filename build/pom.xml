@@ -122,45 +122,6 @@
       </distributionManagement>
       <build>
         <plugins>
-          <!-- Create Javadoc jars. -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.4</version>
-            <configuration>
-              <failOnError>false</failOnError>
-              <tags>
-                <tag>
-                  <name>model</name>
-                  <placement>a</placement>
-                  <head>Model</head>
-                </tag>
-                <tag>
-                  <name>generated</name>
-                  <placement>a</placement>
-                  <head>Generated</head>
-                </tag>
-                <tag>
-                  <name>ordered</name>
-                  <placement>a</placement>
-                  <head>Ordered</head>
-                </tag>
-                <tag>
-                  <name>implSpec</name>
-                  <placement>a</placement>
-                  <head>Implementation Specification</head>
-                </tag>
-              </tags>
-            </configuration>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
           <!-- Create GPG signatures. -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
