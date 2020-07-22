@@ -15,7 +15,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 
 1. Ensure that all bundles to be built and released are in fact built and are part of the update site.
 1. Create a release branch `releases/VERSION`.
-1. Remove `-SNAPSHOT` and `.qualifier` from any version numbers. This is necessary for Maven to push the build to the proper Maven Central release staging area.
+1. Remove `-SNAPSHOT` and `.qualifier` from any version numbers. This is necessary for Maven to push the build to the proper Maven Central release staging area. Be careful not to change anything in source code; this should mainly affect `category.xml`, `pom.xml`s, `feature.xml`s and `MANIFEST.MF`s.
 1. Open `build/org.eclipse.elk.repository/category.xml` and update its description like this:
     
     ```xml
@@ -23,7 +23,16 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
       Update site for the Eclipse Layout Kernel, version VERSION_NUMBER.
     </description>
     ```
-1. Remove the `DeployWebsite` stage from the release build's `Jenkinsfile` and update the build variables at the top of the `Jenkinsfile`.
+1. Remove the `DeployWebsite` stage from the release build's `Jenkinsfile` and update the build variables at the top of the `Jenkinsfile`:
+    
+    Variable              | New value
+    --------------------- | -----------------------------------------------------------
+    `BRANCH`              | `releases/VERSION`
+    `VERSION`             | Well... the version number...
+    `META_REPOSITORY_URL` | `http://build.eclipse.org/modeling/elk/maven/meta/VERSION`
+    `META_PUBLISH_URL`    | `file:///shared/modeling/elk/maven/meta/VERSION/`
+    `ELK_TARGET_DIR`      | `/shared/modeling/elk/updates/VERSION/`
+    
 1. Update the _ReleaseNightly_ build with the same default values for the build variables and run it.
 1. Update the version numbers on `master`. Tycho can help:
 
