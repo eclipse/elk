@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Copyright (c) 2019 Kiel University and others.
-// 
+//
 // This program and the accompanying materials are made available under the
 // terms of the Eclipse Public License 2.0 which is available at
 // http://www.eclipse.org/legal/epl-2.0.
@@ -177,6 +177,7 @@ pipeline {
       steps {
         sh "ant -f elk/build/org.eclipse.elk.repository/publish.xml" +
            " -DtargetDir=${params.ELK_TARGET_DIR}" +
+           " -Dversion=${params.VERSION}" +
            " -Dhugo=/shared/common/hugo/latest/hugo" +
            " docs zipIt publish"
       }
