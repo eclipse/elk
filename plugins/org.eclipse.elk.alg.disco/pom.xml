@@ -48,25 +48,6 @@
       <plugin>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>xtext-maven-plugin</artifactId>
-        <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
-        <dependencies>
-          <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.13.102</version>
-          </dependency>
-          <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>org.eclipse.jdt.compiler.apt</artifactId>
-            <version>1.3.110</version>
-          </dependency>
-          <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>org.eclipse.jdt.compiler.tool</artifactId>
-            <version>1.2.101</version>
-          </dependency>
-        </dependencies>
-        <!-- End Workaround -->
       </plugin>
     </plugins>
   </build>
