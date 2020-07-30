@@ -7,7 +7,7 @@ menu:
 ---
 
 * [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.7.0)
-* [Documentation](https://download.eclipse.org/elk/updates/releases/0.6.1/elk-0.7.0-docs.zip)
+* [Documentation](https://download.eclipse.org/elk/updates/releases/0.7.0/elk-0.7.0-docs.zip)
 * [Update site](https://download.eclipse.org/elk/updates/releases/0.7.0/)
 * [Zipped update site](https://download.eclipse.org/elk/updates/releases/0.7.0/elk-0.7.0.zip) (for offline use)
 * [Maven central](https://repo.maven.apache.org/maven2/org/eclipse/elk/) (for building pure Java projects that use ELK)
