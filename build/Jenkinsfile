@@ -51,7 +51,7 @@ pipeline {
     string(
       name: 'ELK_TARGET_DIR',
       description: 'Path to the directory the build will copy all downloadable artifacts to.',
-      defaultValue: '/shared/modeling/elk/updates/nightly/'
+      defaultValue: '/home/data/httpd/download.eclipse.org/elk/updates/nightly/'
     )
   }
 
