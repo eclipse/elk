@@ -4,7 +4,7 @@
   This program and the accompanying materials are made available under the
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0.
-  
+
   SPDX-License-Identifier: EPL-2.0
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -66,19 +66,6 @@
         <module>../plugins/org.eclipse.elk.graph</module>
         <module>../plugins/org.eclipse.elk.core.meta</module>
       </modules>
-
-      <!-- The meta data language compiler gets pushed to a Maven repository. -->
-      <distributionManagement>
-        <repository>
-          <id>elk-meta-repository</id>
-          <name>ELK Meta Data Language Compiler Repository</name>
-          <url>${elkMeta.publishUrl}</url>
-          <layout>default</layout>
-          <uniqueVersion>false</uniqueVersion>
-        </repository>
-
-        <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
-      </distributionManagement>
     </profile>
 
     <!-- Activate to have the generated artifacts signed by Eclipse. -->
@@ -334,7 +321,7 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
         </plugin>
-    
+
         <!-- Configure Eclipse m2e to ignore certain plugin goals when integrating Maven build
              settings into Eclipse. -->
         <plugin>
@@ -404,7 +391,7 @@
       <url>https://repo.maven.apache.org/maven2</url>
       <layout>default</layout>
       <snapshots>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
 
@@ -412,12 +399,6 @@
       <id>eclipse-cbi</id>
       <name>Eclipse Common Build Infrastructure Maven Repository</name>
       <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-    </pluginRepository>
-
-    <pluginRepository>
-      <id>eclipse-elk-meta</id>
-      <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <url>${elkMeta.repositoryUrl}</url>
     </pluginRepository>
   </pluginRepositories>
 

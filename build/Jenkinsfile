@@ -34,19 +34,6 @@ pipeline {
       defaultValue: 'nightly'
     )
 
-    // Regarding the meta-data compiler...
-    string(
-      name: 'META_REPOSITORY_URL',
-      description: 'URL of the repository the meta data compiler will be published at.',
-      defaultValue: 'http://build.eclipse.org/modeling/elk/maven/meta/nightly'
-    )
-
-    string(
-      name: 'META_PUBLISH_URL',
-      description: 'Path to the repository the meta data compiler will be published at.',
-      defaultValue: 'file:///shared/modeling/elk/maven/meta/nightly/'
-    )
-
     // Regarding ELK proper...
     string(
       name: 'ELK_TARGET_DIR',
@@ -134,9 +121,7 @@ pipeline {
       steps {
         sh "mvn -f elk/build/pom.xml" +
            " -Pelk-meta" +
-           " --define elkMeta.repositoryUrl=${params.META_REPOSITORY_URL}" +
-           " --define elkMeta.publishUrl=${params.META_PUBLISH_URL}" +
-           " clean deploy"
+           " clean install"
       }
     }
 
@@ -149,7 +134,6 @@ pipeline {
         sh "mvn -f elk/build/pom.xml" +
            " -Pelk-update-site" +
            " -s /opt/public/hipp/homes/genie.elk/.m2/settings-deploy-ossrh.xml" +
-           " --define elkMeta.repositoryUrl=${params.META_REPOSITORY_URL}" +
            " --define elk.metadata.documentation.outputPath=elk/docs/" +
            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
@@ -164,7 +148,6 @@ pipeline {
         sh "mvn -f elk/build/pom.xml" +
            " -Pelk-update-site -Pmaven-publish -Psign" +
            " -s /opt/public/hipp/homes/genie.elk/.m2/settings-deploy-ossrh.xml" +
-           " --define elkMeta.repositoryUrl=${params.META_REPOSITORY_URL}" +
            " --define elk.metadata.documentation.outputPath=elk/docs/" +
            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
