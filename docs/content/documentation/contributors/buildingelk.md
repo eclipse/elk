@@ -16,7 +16,6 @@ Execute Maven using the following command line (note that the command line is sp
 
 ```bash
 mvn
-    --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly
     --define elk.metadata.documentation.outputPath=/ELK_FOLDER/docs
     -Dmaven.repo.local=./mvnrepo
     clean
@@ -25,7 +24,6 @@ mvn
 
 A few notes:
 
-* The build needs the metadata compiler to be available. You can either compile it yourself and point this build to where it ended up (see below), or use the metadata compiler we provide for the release you're trying to compile (see download pages).
 * The `maven.repo.local` property is not required, but can be helpful to keep builds self-contained. Once built, the `-o` option is helpful to keep Maven from accessing online repositories.
 
 
@@ -35,11 +33,10 @@ A few notes:
 Due to some tycho/surefire issue the unit tests cannot be executed with Java 9 and 10.
 {{% /note %}}
 
-The unit tests require our [models repository](https://github.com/eclipse/elk-models) to be checked out as well. If it is, the following command line will run the tests:
+The unit tests require our [models repository](https://github.com/eclipse/elk-models) to be checked out as well. If it is, the following command line will run the tests (note that the command line is split in order to improve readability):
 
 ```bash
 mvn
-    --define elkMeta.repositoryUrl=http://build.eclipse.org/modeling/elk/maven/meta/nightly
     --define elk.metadata.documentation.outputPath=/ELK_FOLDER/docs
     --define tests.paths.elk-repo=/ELK_FOLDER
     --define tests.paths.models-repo=/ELK_MODELS_FOLDER
@@ -58,11 +55,9 @@ Execute Maven using the following command line to build the metadata compiler lo
 ```bash
 mvn
     -P elk-meta
-    --define elkMeta.repositoryUrl=file:///home/user/elkmetarepository
-    --define elkMeta.publishUrl=file:///home/user/elkmetarepository
     -Dmaven.repo.local=./mvnrepo
     clean
-    deploy
+    install
 ```
 
 ## Building the Website and Documentation
