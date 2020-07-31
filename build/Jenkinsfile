@@ -158,7 +158,7 @@ pipeline {
     stage('GenerateDownloads') {
       // Generates and publishes our downloads
       steps {
-        sh "ant -f elk/build/org.eclipse.elk.repository/publish.xml" +
+        sh "ant -f elk/build/releng/publish.xml" +
            " -DtargetDir=${params.ELK_TARGET_DIR}" +
            " -Dversion=${params.VERSION}" +
            " -Dhugo=/shared/common/hugo/latest/hugo" +
@@ -169,7 +169,7 @@ pipeline {
     stage('DeployWebsite') {
       // Deploys the previously built website
       steps {
-        dir ('elk/build/org.eclipse.elk.repository') {
+        dir ('elk/build/releng') {
           sshagent(['git.eclipse.org-bot-ssh']) {
             sh "./publish-website.sh"
           }
