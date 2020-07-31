@@ -5,9 +5,6 @@ on:
   pull_request:
     branches:
       - master
-  push:
-    branches: 
-      - master
 
 jobs:
   build:
@@ -18,7 +15,7 @@ jobs:
         # 8  - LTS
         # 11 - LTS
         # 14 - latest
-        java-version: [ 8, 11 ]
+        java-version: [ 8, 11, 14 ]
 
     steps:
     # Checkout the reposity of both elk and elk-models (the latter is required for the tests)
