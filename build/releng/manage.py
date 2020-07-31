@@ -5,6 +5,14 @@
 #
 # SPDX-License-Identifier: EPL-2.0
 
+"""Helper script to manage our downloads area.
+
+This script currently only lists files and directories in our downloads area on the
+Eclipse download servers. Future versions could support removing files and directories
+as well. If someone adds such functionality, it should default to printing what it
+would do first, and require an explicit command line switch to make it actually do it.
+"""
+
 import argparse
 from pathlib import Path
 
