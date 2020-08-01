@@ -51,11 +51,23 @@ public final class PlainJavaInitialization {
     private PlainJavaInitialization() {
     }
     
+    /**
+     * Avoid registering layout options and EMF stuff multiple times.
+     * <p>
+     * Note that the {@link #initializePlainJavaLayout()} method is likely to be called from several JUnit tests for
+     * them to be self-contained (i.e., for them to be run individually). As soon as all tests of a test plugin are
+     * executed, during the CI build, for instance, the registration would thus be invoked many times.
+     */
+    private static boolean initialized = false;
 
     /**
      * Setup everything to work outside of Eclipse.
      */
     public static void initializePlainJavaLayout() {
+        if (initialized) {
+            return;
+        }
+        
         // Register all meta data providers with the layout meta data service. This should usually happen automatically,
         // but the tycho-surefire test harness seems to interfere.
         LayoutMetaDataService service = LayoutMetaDataService.getInstance();
@@ -67,6 +79,8 @@ public final class PlainJavaInitialization {
         ElkGraphStandaloneSetup.doSetup();
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("elkg", new ElkGraphResourceFactory());
         ElkGraphPackage.eINSTANCE.eClass();
+        
+        initialized = true;
     }
 
 }
