@@ -15,7 +15,7 @@ import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.graph.json.ElkGraphJson
 import org.eclipse.elk.graph.json.JsonImportException
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
@@ -24,10 +24,10 @@ import static org.junit.Assert.*
  */
 class GraphTest {
     
-    @Before
-    def void init() {
+    @BeforeClass
+    static def void init() {
         PlainJavaInitialization.initializePlainJavaLayout
-    } 
+    }
     
     @Test 
     def void graphMustBeObjectTest() {

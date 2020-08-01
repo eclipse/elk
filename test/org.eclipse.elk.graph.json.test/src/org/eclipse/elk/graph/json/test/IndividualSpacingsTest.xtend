@@ -15,6 +15,7 @@ import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.util.IndividualSpacings
 import org.eclipse.elk.core.util.NullElkProgressMonitor
 import org.eclipse.elk.graph.json.ElkGraphJson
+import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.eclipse.elk.graph.util.ElkGraphUtil.*
@@ -27,6 +28,11 @@ class IndividualSpacingsTest {
     
     static val DOUBLE_EQ = 0.001d
         
+    @BeforeClass
+    static def void init() {
+        PlainJavaInitialization.initializePlainJavaLayout
+    }
+    
     @Test
     def void importIndividualSpacingsTest() {
         val graph = '''
@@ -88,7 +94,6 @@ class IndividualSpacingsTest {
         assertFalse(i1.hasProperty(CoreOptions.SPACING_INDIVIDUAL))
         assertTrue(i2.hasProperty(CoreOptions.SPACING_INDIVIDUAL))
         
-        PlainJavaInitialization.initializePlainJavaLayout    
         new RecursiveGraphLayoutEngine().layout(root, new NullElkProgressMonitor())
         val l1 = i1.labels.head
         val l2 = i2.labels.head
