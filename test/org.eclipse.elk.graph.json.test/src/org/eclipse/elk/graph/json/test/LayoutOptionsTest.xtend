@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,23 +9,23 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.json.test
 
+import com.google.common.base.CharMatcher
+import org.eclipse.elk.alg.test.PlainJavaInitialization
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.graph.json.ElkGraphJson
+import org.eclipse.elk.graph.util.ElkGraphUtil
+import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
-import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.options.Direction
-import org.eclipse.elk.graph.util.ElkGraphUtil
-import com.google.common.base.CharMatcher
-import org.junit.Before
-import org.eclipse.elk.alg.test.PlainJavaInitialization
 
 /**
  */
 class LayoutOptionsTest {
     
-    @Before
-    def void init() {
+    @BeforeClass
+    static def void init() {
         PlainJavaInitialization.initializePlainJavaLayout
     }
     
