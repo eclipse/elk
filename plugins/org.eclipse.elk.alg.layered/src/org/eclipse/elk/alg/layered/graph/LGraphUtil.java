@@ -804,8 +804,8 @@ public final class LGraphUtil {
         dummy.setType(NodeType.EXTERNAL_PORT);
         dummy.setProperty(InternalProperties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        dummy.setProperty(LayeredOptions.PORT_BORDER_OFFSET,
-                propertyHolder.getProperty(LayeredOptions.PORT_BORDER_OFFSET));
+        double portBorderOffset = propertyHolder.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
+        dummy.setProperty(LayeredOptions.PORT_BORDER_OFFSET, portBorderOffset);
         
         LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
@@ -841,6 +841,9 @@ public final class LGraphUtil {
             dummy.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
             dummy.setProperty(InternalProperties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
             dummy.getSize().y = portSize.y;
+            if (portBorderOffset < 0) {
+                dummy.getSize().x = -portBorderOffset;
+            }
             dummyPort.setSide(PortSide.EAST);
             if (!explicitAnchor) {
                 anchor.x = portSize.x;
@@ -857,6 +860,9 @@ public final class LGraphUtil {
             dummy.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             dummy.setProperty(InternalProperties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().y = portSize.y;
+            if (portBorderOffset < 0) {
+                dummy.getSize().x = -portBorderOffset;
+            }
             dummyPort.setSide(PortSide.WEST);
             if (!explicitAnchor) {
                 anchor.x = 0;
@@ -866,15 +872,25 @@ public final class LGraphUtil {
         case NORTH:
             dummy.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
             dummy.getSize().x = portSize.x;
+            if (portBorderOffset < 0) {
+                dummy.getSize().y = -portBorderOffset;
+            }
             dummyPort.setSide(PortSide.SOUTH);
             if (!explicitAnchor) {
                 anchor.y = portSize.y;
             }
+            
+            // See comments in case WEST. This partly fixes #680.
+            anchor.y -= portSize.y;
+            
             break;
         
         case SOUTH:
             dummy.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
             dummy.getSize().x = portSize.x;
+            if (portBorderOffset < 0) {
+                dummy.getSize().y = -portBorderOffset;
+            }
             dummyPort.setSide(PortSide.NORTH);
             if (!explicitAnchor) {
                 anchor.y = 0;
