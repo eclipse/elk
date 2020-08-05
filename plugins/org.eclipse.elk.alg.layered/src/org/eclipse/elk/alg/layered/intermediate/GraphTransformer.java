@@ -18,7 +18,6 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -31,6 +30,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.math.Spacing;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
@@ -152,11 +152,13 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
     private void mirrorAllX(final LGraph layeredGraph, final List<LNode> nodes) {
         mirrorX(nodes, layeredGraph);
         mirrorX(layeredGraph.getPadding());
+        mirrorX(layeredGraph.getProperty(LayeredOptions.NODE_LABELS_PADDING));
     }
     
     private void mirrorAllY(final LGraph layeredGraph, final List<LNode> nodes) {
         mirrorY(nodes, layeredGraph);
         mirrorY(layeredGraph.getPadding());
+        mirrorY(layeredGraph.getProperty(LayeredOptions.NODE_LABELS_PADDING));
     }
     
     private void transposeAll(final LGraph layeredGraph, final List<LNode> nodes) {
@@ -165,6 +167,7 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
         transpose(layeredGraph.getOffset());
         transpose(layeredGraph.getSize());
         transpose(layeredGraph.getPadding());
+        transpose(layeredGraph.getProperty(LayeredOptions.NODE_LABELS_PADDING));
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -282,16 +285,16 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
     }
     
     /**
-     * Mirrors the given padding in X direction.
+     * Mirrors the given spacing in X direction.
      * 
-     * @param padding the padding to mirror.
+     * @param spacing the spacing to mirror.
      */
-    private void mirrorX(final LPadding padding) {
-        double oldLeft = padding.left;
-        double oldRight = padding.right;
+    private void mirrorX(final Spacing spacing) {
+        double oldLeft = spacing.left;
+        double oldRight = spacing.right;
         
-        padding.left = oldRight;
-        padding.right = oldLeft;
+        spacing.left = oldRight;
+        spacing.right = oldLeft;
     }
     
     /**
@@ -481,16 +484,16 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
     }
     
     /**
-     * Mirrors the given padding in Y direction.
+     * Mirrors the given spacing in Y direction.
      * 
-     * @param padding the padding to mirror.
+     * @param spacing the spacing to mirror.
      */
-    private void mirrorY(final LPadding padding) {
-        double oldTop = padding.top;
-        double oldBottom = padding.bottom;
+    private void mirrorY(final Spacing spacing) {
+        double oldTop = spacing.top;
+        double oldBottom = spacing.bottom;
         
-        padding.top = oldBottom;
-        padding.bottom = oldTop;
+        spacing.top = oldBottom;
+        spacing.bottom = oldTop;
     }
     
     /**
@@ -651,20 +654,20 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
     }
     
     /**
-     * Transposes the given padding.
+     * Transposes the given spacing.
      * 
-     * @param padding the padding to transpose, I guess...
+     * @param spacing the spacing to transpose, I guess...
      */
-    private void transpose(final LPadding padding) {
-        double oldTop = padding.top;
-        double oldBottom = padding.bottom;
-        double oldLeft = padding.left;
-        double oldRight = padding.right;
+    private void transpose(final Spacing spacing) {
+        double oldTop = spacing.top;
+        double oldBottom = spacing.bottom;
+        double oldLeft = spacing.left;
+        double oldRight = spacing.right;
         
-        padding.top = oldLeft;
-        padding.bottom = oldRight;
-        padding.left = oldTop;
-        padding.right = oldBottom;
+        spacing.top = oldLeft;
+        spacing.bottom = oldRight;
+        spacing.left = oldTop;
+        spacing.right = oldBottom;
     }
     
     /**
