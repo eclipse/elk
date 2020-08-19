@@ -392,10 +392,13 @@ group crossingMinimization {
         label "Position Choice Constraint"
         description
             "Allows to set a constraint regarding the position placement of a node in a layer. 
-                     Assumed the layer in which the node placed includes n other nodes and i < n.
-                     If set to i, it expresses that the node should be placed at the i-th position.
-                     Should i>=n be true then the node is placed at the last position in the layer.
-                    "
+             Assumed the layer in which the node placed includes n other nodes and i < n.
+             If set to i, it expresses that the node should be placed at the i-th position.
+             Should i>=n be true then the node is placed at the last position in the layer.
+             
+             Note that this option is not part of any of ELK Layered's default configurations 
+             but is only evaluated as part of the `InteractiveLayeredGraphVisitor`,
+             which must be applied manually or used via the `DiagramLayoutEngine. "
         default = -1
         lowerBound = -1
         targets nodes
