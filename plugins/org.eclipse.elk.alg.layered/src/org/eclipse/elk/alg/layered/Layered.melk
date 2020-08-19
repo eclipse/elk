@@ -228,9 +228,13 @@ group layering {
         label "Layer Choice Constraint"
         description
             "Allows to set a constraint regarding the layer placement of a node. 
-                     Let i be the value of teh constraint. Assumed the drawing has n layers and i < n.
-                     If set to i, it expresses that the node should be placed in i-th layer.
-                     Should i>=n be true then the node is placed in the last layer of the drawing."
+             Let i be the value of teh constraint. Assumed the drawing has n layers and i < n.
+             If set to i, it expresses that the node should be placed in i-th layer.
+             Should i>=n be true then the node is placed in the last layer of the drawing.
+                     
+             Note that this option is not part of any of ELK Layered's default configurations 
+             but is only evaluated as part of the `InteractiveLayeredGraphVisitor`,
+             which must be applied manually or used via the `DiagramLayoutEngine."
         default = -1
         lowerBound = -1
         targets nodes
