@@ -17,7 +17,6 @@ import com.google.common.collect.Multimap
 import java.util.Map
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.options.EdgeLabelPlacement
 import org.eclipse.elk.core.util.IndividualSpacings
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
