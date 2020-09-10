@@ -288,6 +288,18 @@ advanced option interactiveLayout: boolean {
     targets parents
 }
 
+advanced option omitNodeMicroLayout: boolean {
+    label "Omit Node Micro Layout"
+    description
+        "Node micro layout comprises the computation of node dimensions (if requested), the placement of ports 
+         and their labels, and the placement of node labels. 
+         The functionality is implemented independent of any specific layout algorithm and shouldn't have any 
+         negative impact on the layout algorithm's performance itself. Yet, if any unforeseen behavior occurs,
+         this option allows to deactivate the micro layout."
+    default = false
+    targets parents
+}
+
 // --- SPACING
 group spacing {
     
