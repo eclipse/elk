@@ -40,10 +40,11 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.debugMode
     // Common node micro layout
-    supports org.eclipse.elk.omitNodeMicroLayout
-    supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.minimum
+    supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.omitNodeMicroLayout
     supports org.eclipse.elk.portLabels.placement
     supports weighting
     supports searchOrder

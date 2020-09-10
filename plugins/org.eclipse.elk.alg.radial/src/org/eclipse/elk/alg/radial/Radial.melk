@@ -30,10 +30,11 @@ algorithm radial(RadialLayoutProvider) {
     supports org.eclipse.elk.position
     supports org.eclipse.elk.spacing.nodeNode
     // Common node micro layout
-    supports org.eclipse.elk.omitNodeMicroLayout
-    supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.minimum
+    supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.omitNodeMicroLayout
     supports org.eclipse.elk.portLabels.placement
     supports compactionStepSize
     supports compactor
