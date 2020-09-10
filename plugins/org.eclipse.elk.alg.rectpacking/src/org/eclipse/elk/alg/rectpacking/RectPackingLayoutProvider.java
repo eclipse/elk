@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.rectpacking.firstiteration.AreaApproximation;
 import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
@@ -47,6 +48,12 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Rectangle Packing", 1);
 
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(layoutGraph)
+                           .execute();
+        }
+        
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(layoutGraph, "Input");
         }
