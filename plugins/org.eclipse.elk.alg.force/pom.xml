@@ -30,6 +30,11 @@
       <artifactId>org.eclipse.elk.core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.elk</groupId>
+      <artifactId>org.eclipse.elk.alg.common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
