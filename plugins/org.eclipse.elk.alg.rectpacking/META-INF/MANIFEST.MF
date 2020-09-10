@@ -6,8 +6,9 @@ Bundle-SymbolicName: org.eclipse.elk.alg.rectpacking;singleton:=true
 Bundle-Version: 0.7.1
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.elk.graph,
+Require-Bundle: org.eclipse.elk.alg.common,
  org.eclipse.elk.core,
+ org.eclipse.elk.graph,
  com.google.guava,
  org.eclipse.xtext.xbase.lib;bundle-version="2.10.0"
 Export-Package: org.eclipse.elk.alg.rectpacking,
