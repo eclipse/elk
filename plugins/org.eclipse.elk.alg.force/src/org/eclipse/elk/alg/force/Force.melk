@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -46,6 +46,12 @@ algorithm force(ForceLayoutProvider) {
     supports org.eclipse.elk.padding = new ElkPadding(50)
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.portConstraints
+    // Common node micro layout
+    supports org.eclipse.elk.omitNodeMicroLayout
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.portLabels.placement
     supports model
     supports temperature
     supports iterations
