@@ -104,8 +104,14 @@ public final class NodeLabelAndSizeCalculator {
          * set the width of the eastern and western ones to the maximum width of the labels they will contain. We can't
          * do that for the northern and southern cells yet because port label placement is more complicated there.
          */
-        NodeLabelCellCreator.createNodeLabelCells(nodeContext, false, 
-                graph == null ? true : graph.getProperty(CoreOptions.DIRECTION).isHorizontal());
+        boolean horizontalLayoutMode = true; 
+        // If the graph is null, no layout direction is specified, or the layout direction is set to undefined, 
+        // use horizontal layout mode (which yields vertically stacked labels).
+        if (graph != null && graph.hasProperty(CoreOptions.DIRECTION)) {
+            final Direction layoutDirection = graph.getProperty(CoreOptions.DIRECTION);
+            horizontalLayoutMode = layoutDirection == Direction.UNDEFINED || layoutDirection.isHorizontal();  
+        }
+        NodeLabelCellCreator.createNodeLabelCells(nodeContext, false, horizontalLayoutMode);
         InsidePortLabelCellCreator.createInsidePortLabelCells(nodeContext);
         
         
