@@ -36,10 +36,11 @@ algorithm stress(StressLayoutProvider) {
     supports org.eclipse.elk.edgeLabels.inline = true
     supports org.eclipse.elk.padding = new ElkPadding(10)
     // Common node micro layout
-    supports org.eclipse.elk.omitNodeMicroLayout
-    supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.minimum
+    supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.omitNodeMicroLayout
     supports org.eclipse.elk.portLabels.placement
     supports fixed
     supports dimension
