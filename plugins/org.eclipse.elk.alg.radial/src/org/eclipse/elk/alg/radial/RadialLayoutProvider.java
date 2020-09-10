@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.radial;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.radial.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.radial.options.CompactionStrategy;
@@ -39,6 +40,12 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
         progressMonitor.begin("Radial layout", algorithm.size());
 
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!layoutGraph.getProperty(RadialOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(layoutGraph)
+                           .execute();
+        }
+
         // pre calculate the root node and save it
         ElkNode root = RadialUtil.findRoot(layoutGraph);
         layoutGraph.setProperty(InternalProperties.ROOT_NODE, root);
@@ -53,12 +60,6 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
         }
         layoutGraph.setProperty(RadialOptions.RADIUS, layoutRadius);
         
-        //add support for the NodeDimensionCaluclation
-        ElkGraphAdapter adapter = ElkGraphAdapters.adapt(layoutGraph);
-        layoutGraph.getWidth();
-        NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);   
-        NodeDimensionCalculation.calculateNodeMargins(adapter);
-                
         // execute the different phases
         for (ILayoutProcessor<ElkNode> processor : assembleAlgorithm(layoutGraph)) {
             processor.process(layoutGraph, progressMonitor.subTask(1));
