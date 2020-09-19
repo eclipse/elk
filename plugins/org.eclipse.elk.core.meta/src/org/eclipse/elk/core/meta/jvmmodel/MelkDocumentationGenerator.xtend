@@ -26,7 +26,6 @@ import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdModel
 import org.eclipse.elk.core.meta.metaData.MdOption
 import org.eclipse.elk.graph.properties.GraphFeature
-import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmEnumerationType
 import org.eclipse.xtext.common.types.JvmField
 import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
@@ -668,7 +667,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         if (type !== null) {
             val jvmType = type.type
             if (jvmType instanceof JvmEnumerationType) {
-                val enumType = jvmType as JvmEnumerationType
+                val enumType = jvmType
                 return enumType.literals
             // in case of EnumSet the inner type is extracted
             } else if (jvmType.identifier == EnumSet.canonicalName) {
