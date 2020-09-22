@@ -175,6 +175,9 @@ public final class LayoutMetaDataService {
             provider.apply(registry);
             registry.applyDependencies();
         }
+        // As soon as new layout options have been registered, we must clear the suffix cache to ensure unique 
+        // suffixes from now onwards
+        optionSuffixMap.clear();
     }
 
     /**
