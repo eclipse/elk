@@ -26,6 +26,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator.DummyNodeStrategy;
+import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
@@ -230,7 +231,7 @@ public class LayerSweepCrossingMinimizer
         return oldNumberOfCrossings;
     }
     
-    private int countModelOrderChanges(final LNode[][] layers, final OrderingStrategy strat) {
+    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strat) {
         int previousLayer = -1;
         int wrongModelOrder = 0;
         for (LNode[] layer : layers) {
@@ -240,6 +241,26 @@ public class LayerSweepCrossingMinimizer
                 for (int j = i + 1; j < layer.length; j++) {
                     if (comp.compare(layer[i], layer[j]) > 0) {
                         wrongModelOrder++;
+                    }
+                }
+            }
+            previousLayer++;
+        }
+        return wrongModelOrder;
+    }
+    
+    private int countModelOrderPortChanges(final LNode[][] layers, final OrderingStrategy strat) {
+        int previousLayer = -1;
+        int wrongModelOrder = 0;
+        for (LNode[] layer : layers) {
+            for (LNode lNode : layer) {
+                Comparator<LPort> comp = new ModelOrderPortComparator(
+                        previousLayer == -1 ? layers[0] : layers[previousLayer], lNode.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER));
+                for (int i = 0; i < lNode.getPorts().size(); i++) {
+                    for (int j = i + 1; j < lNode.getPorts().size(); j++) {
+                        if (comp.compare(lNode.getPorts().get(i), lNode.getPorts().get(j)) > 0) {
+                            wrongModelOrder++;
+                        }
                     }
                 }
             }
@@ -260,8 +281,13 @@ public class LayerSweepCrossingMinimizer
             GraphInfoHolder gD = countCrossingsIn.pop();
             totalCrossings +=
                     gD.crossCounter().countAllCrossings(gD.currentNodeOrder())
-                    + currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_INFLUENCE)
-                    * countModelOrderChanges(gD.currentNodeOrder(),
+                    + currentGraph.lGraph().getProperty(
+                            LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE)
+                    * countModelOrderNodeChanges(gD.currentNodeOrder(),
+                            currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY))
+                    + currentGraph.lGraph().getProperty(
+                            LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE)
+                    * countModelOrderPortChanges(gD.currentNodeOrder(),
                             currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY));
             for (LGraph childLGraph : gD.childGraphs()) {
                 GraphInfoHolder child = graphInfoHolders.get(childLGraph.id);

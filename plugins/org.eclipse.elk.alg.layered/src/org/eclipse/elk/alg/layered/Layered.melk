@@ -185,7 +185,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports crossingMinimization.positionId
     supports considerModelOrder.strategy
     supports considerModelOrder.dummyStrategy
-    supports considerModelOrder.crossingCounterInfluence
+    supports considerModelOrder.crossingCounterNodeInfluence
+    supports considerModelOrder.crossingCounterPortInfluence
 }
 
 /* ------------------------
@@ -929,11 +930,19 @@ group considerModelOrder {
         default = DummyNodeStrategy.DUMMY_NODE_OVER
         targets parents
     }
-    option crossingCounterInfluence: double {
-        label "Crossing counter influence"
+    option crossingCounterNodeInfluence: double {
+        label "Crossing counter node influence"
         description
-            "Indicates with what percentage (1 for 100%) violations of the model order are weighted against the
-             crossings. Defaults to no influence (0)"
+            "Indicates with what percentage (1 for 100%) violations of the node model order are weighted against the
+             crossings. Defaults to no influence (0)."
+        default = 0
+        targets parents
+    }
+    option crossingCounterPortInfluence: double {
+        label "Crossing counter port influence"
+        description
+            "Indicates with what percentage (1 for 100%) violations of the port model order are weighted against the
+             crossings. Defaults to no influence (0)."
         default = 0
         targets parents
     }

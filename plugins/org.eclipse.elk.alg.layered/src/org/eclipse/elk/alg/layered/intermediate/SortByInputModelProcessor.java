@@ -79,6 +79,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                                             previousOrder));
                         }
                     });
+                    node.setProperty(InternalProperties.TARGET_NODE_MODEL_ORDER, targetNodeModelOrder);
                     Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer, targetNodeModelOrder));
                     node.cachePortSides();
