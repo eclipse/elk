@@ -224,7 +224,7 @@ class ElkGraphImporter {
         int index = 0;
         for (ElkNode child : elkgraph.getChildren()) {
             if (!child.getProperty(LayeredOptions.NO_LAYOUT)) {
-                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE) {
                     child.setProperty(InternalProperties.MODEL_ORDER, index);
                     index++;
                 }
@@ -236,7 +236,7 @@ class ElkGraphImporter {
         // (this is not part of the previous loop since all children must have already been transformed)
         index = 0;
         for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
-            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE) {
                 elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
                 index++;
             }

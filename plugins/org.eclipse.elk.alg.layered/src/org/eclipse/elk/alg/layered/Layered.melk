@@ -17,6 +17,7 @@ import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.HierarchyHandling
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator.DummyNodeStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -182,7 +183,9 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.interactiveLayout
     supports layering.layerId
     supports crossingMinimization.positionId
-    supports considerModelOrder
+    supports considerModelOrder.strategy
+    supports considerModelOrder.dummyStrategy
+    supports considerModelOrder.crossingCounterInfluence
 }
 
 /* ------------------------
@@ -909,13 +912,31 @@ group edgeLabels {
 /* ------------------------
  *    miscellaneous
  * ------------------------*/
-advanced option considerModelOrder: OrderingStrategy {
-    label "Consider model order"
-    description
-        "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
-         conflicts between the ordering or edges and nodes."
-    default = OrderingStrategy.NONE
-    targets parents
+group considerModelOrder {
+    option strategy: OrderingStrategy {
+        label "Consider model order"
+        description
+            "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
+             conflicts between the ordering or edges and nodes."
+        default = OrderingStrategy.NONE
+        targets parents
+    }
+    option dummyStrategy: DummyNodeStrategy {
+        label "Dummy node strategy"
+        description
+            "Indicates whether dummy nodes are sorted under, over, or eual to nodes that have no connection to a
+             previous layer."
+        default = DummyNodeStrategy.DUMMY_NODE_OVER
+        targets parents
+    }
+    option crossingCounterInfluence: double {
+        label "Crossing counter influence"
+        description
+            "Indicates with what percentage (1 for 100%) violations of the model order are weighted against the
+             crossings. Defaults to no influence (0)"
+        default = 0
+        targets parents
+    }
 }
 
 advanced option directionCongruency: DirectionCongruency {

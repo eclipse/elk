@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
+import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator.DummyNodeStrategy;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
@@ -86,7 +87,8 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             // Sort nodes.
             Collections.sort(layer.getNodes(),
                     new ModelOrderNodeComparator(previousLayer,
-                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER)));
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_DUMMY_STRATEGY)));
             layerIndex++;
         }
     }
