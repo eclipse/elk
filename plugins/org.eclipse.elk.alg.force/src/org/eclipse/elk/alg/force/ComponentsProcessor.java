@@ -63,7 +63,7 @@ public final class ComponentsProcessor {
             // perform DFS starting on each node, collecting connected components
             List<FGraph> components = new LinkedList<FGraph>();
             for (FNode node : graph.getNodes()) {
-                FGraph comp = dfs(node, null, visited, incidence);
+                FGraph comp = dfs(node, null, null, visited, incidence);
                 if (comp != null) {
                     comp.copyProperties(graph);
                     components.add(comp);
@@ -114,13 +114,15 @@ public final class ComponentsProcessor {
      * corresponding connected component.
      * 
      * @param node a node.
+     * @param last the last node, i.e. the node from which the dfs arrived at {@value node}, or {@code null}
+     *             if the dfs just started.
      * @param graph a graph representing a connected component, or {@code null}.
      * @param visited boolean indicating for each node whether it was already visited ({@code true})
      *                or not.
      * @param incidence list of incident edges for each node.
      * @return the connected component, or {@code null} if the node was already visited.
      */
-    private FGraph dfs(final FNode node, final FGraph graph, final boolean[] visited,
+    private FGraph dfs(final FNode node, final FNode last, final FGraph graph, final boolean[] visited,
             final List<FEdge>[] incidence) {
         
         if (!visited[node.id]) {
@@ -131,11 +133,15 @@ public final class ComponentsProcessor {
             }
             component.getNodes().add(node);
             for (FEdge edge : incidence[node.id]) {
+                if (edge.getTarget() == last || edge.getSource() == last) {
+                    // Do not handle again the edge we just arrived from
+                    continue;
+                }
                 if (edge.getSource() != node) {
-                    dfs(edge.getSource(), component, visited, incidence);
+                    dfs(edge.getSource(), node, component, visited, incidence);
                 }
                 if (edge.getTarget() != node) {
-                    dfs(edge.getTarget(), component, visited, incidence);
+                    dfs(edge.getTarget(), node, component, visited, incidence);
                 }
                 component.getEdges().add(edge);
                 component.getLabels().addAll(edge.getLabels());
