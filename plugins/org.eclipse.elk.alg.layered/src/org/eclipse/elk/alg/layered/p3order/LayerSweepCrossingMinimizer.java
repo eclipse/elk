@@ -231,12 +231,19 @@ public class LayerSweepCrossingMinimizer
         return oldNumberOfCrossings;
     }
     
-    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strat) {
+    /**
+     * Compares all nodes in a each layer and counts how often they are not in model order.
+     * This requires that the {@code SortByInputModelProcessor} ran previously.
+     * @param layers layers to check
+     * @param strategy the ordering strategy to compare the nodes
+     * @return The number of model order conflicts
+     */
+    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strategy) {
         int previousLayer = -1;
         int wrongModelOrder = 0;
         for (LNode[] layer : layers) {
-            Comparator<LNode> comp = new ModelOrderNodeComparator(
-                    previousLayer == -1 ? layers[0] : layers[previousLayer], strat, DummyNodeStrategy.EQUAL);
+            ModelOrderNodeComparator comp = new ModelOrderNodeComparator(
+                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, DummyNodeStrategy.EQUAL);
             for (int i = 0; i < layer.length; i++) {
                 for (int j = i + 1; j < layer.length; j++) {
                     if (comp.compare(layer[i], layer[j]) > 0) {
@@ -248,14 +255,21 @@ public class LayerSweepCrossingMinimizer
         }
         return wrongModelOrder;
     }
-    
-    private int countModelOrderPortChanges(final LNode[][] layers, final OrderingStrategy strat) {
+
+    /**
+     * Compares all ports in a each layer and counts how often they are not in model order.
+     * This requires that the {@code SortByInputModelProcessor} ran previously.
+     * @param layers layers to check
+     * @return The number of model order conflicts
+     */
+    private int countModelOrderPortChanges(final LNode[][] layers) {
         int previousLayer = -1;
         int wrongModelOrder = 0;
         for (LNode[] layer : layers) {
             for (LNode lNode : layer) {
                 Comparator<LPort> comp = new ModelOrderPortComparator(
-                        previousLayer == -1 ? layers[0] : layers[previousLayer], lNode.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER));
+                        previousLayer == -1 ? layers[0] : layers[previousLayer],
+                                lNode.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER));
                 for (int i = 0; i < lNode.getPorts().size(); i++) {
                     for (int j = i + 1; j < lNode.getPorts().size(); j++) {
                         if (comp.compare(lNode.getPorts().get(i), lNode.getPorts().get(j)) > 0) {
@@ -279,16 +293,20 @@ public class LayerSweepCrossingMinimizer
         countCrossingsIn.push(currentGraph);
         while (!countCrossingsIn.isEmpty()) {
             GraphInfoHolder gD = countCrossingsIn.pop();
-            totalCrossings +=
-                    gD.crossCounter().countAllCrossings(gD.currentNodeOrder())
-                    + currentGraph.lGraph().getProperty(
-                            LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE)
-                    * countModelOrderNodeChanges(gD.currentNodeOrder(),
-                            currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY))
-                    + currentGraph.lGraph().getProperty(
-                            LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE)
-                    * countModelOrderPortChanges(gD.currentNodeOrder(),
-                            currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY));
+            double modelOrderInfluence = 0;
+            // Additionally add changes to the model order to the number of crossings.
+            // The influence of port and node order can be configured.
+            if (currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE) {
+                modelOrderInfluence += currentGraph.lGraph()
+                        .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE)
+                        * countModelOrderNodeChanges(gD.currentNodeOrder(),
+                                currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY));
+                modelOrderInfluence += currentGraph.lGraph()
+                        .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE)
+                        * countModelOrderPortChanges(gD.currentNodeOrder());
+            }
+            totalCrossings += gD.crossCounter().countAllCrossings(gD.currentNodeOrder()) + modelOrderInfluence;
             for (LGraph childLGraph : gD.childGraphs()) {
                 GraphInfoHolder child = graphInfoHolders.get(childLGraph.id);
                 if (!child.dontSweepInto()) {

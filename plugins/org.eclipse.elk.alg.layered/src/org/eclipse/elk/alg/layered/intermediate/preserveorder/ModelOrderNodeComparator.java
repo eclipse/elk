@@ -10,7 +10,6 @@
 package org.eclipse.elk.alg.layered.intermediate.preserveorder;
 
 import java.util.Comparator;
-import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -25,10 +24,39 @@ import org.eclipse.elk.alg.layered.options.OrderingStrategy;
  */
 public class ModelOrderNodeComparator implements Comparator<LNode> {
     
+    /**
+     * Strategy to sort dummy nodes compared to nodes with no connection to the previous layer.
+     * Dummy nodes nodes are not part of the input model and 
+     */
     public enum DummyNodeStrategy {
+        /**
+         * Dummy nodes are sorted over normal nodes.
+         */
         DUMMY_NODE_OVER,
+        /**
+         * Dummy nodes are sorted under normal nodes.
+         */
         DUMMY_NODE_UNDER,
-        EQUAL
+        /**
+         * Dummy nodes are equal to normal nodes.
+         */
+        EQUAL;
+        
+        /**
+         * Returns a value for a comparator to implement the desired sorting strategy.
+         * @return a model order node comparator value
+         */
+        public int returnValue() {
+            switch (this) {
+            case DUMMY_NODE_OVER:
+                return Integer.MAX_VALUE;
+            case DUMMY_NODE_UNDER:
+                return -1;
+            default:
+                return 0;
+            }
+            
+        }
     }
     
     /**
@@ -41,7 +69,10 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
      */
     private final OrderingStrategy orderingStrategy;
     
-    private int dummyNodeOrder = 0;
+    /**
+     * Dummy node sorting strategy when compared to nodes with no connection to the previous layer.
+     */
+    private DummyNodeStrategy dummyNodeOrder = DummyNodeStrategy.EQUAL;
     
     /**
      * Creates a comparator to compare {@link LNode}s in the same layer.
@@ -73,16 +104,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     private ModelOrderNodeComparator(final OrderingStrategy orderingStrategy,
             final DummyNodeStrategy dummyNodeStrategy) {
         this.orderingStrategy = orderingStrategy;
-        switch (dummyNodeStrategy) {
-        case DUMMY_NODE_OVER:
-            dummyNodeOrder = Integer.MAX_VALUE;
-            break;
-        case DUMMY_NODE_UNDER:
-            dummyNodeOrder = -1;
-            break;
-        default:
-            break;
-        }
+        this.dummyNodeOrder = dummyNodeStrategy;
     }
 
     @Override
@@ -165,9 +187,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 return edge.getProperty(InternalProperties.MODEL_ORDER);
             }
         }
-        // Set to -1 to sort nodes without a connection to the previous layer over dummy nodes.
+        // Set to -1 to sort dummy nodes under nodes without a connection to the previous layer.
+        // Set to MAX_INT to sort dummy nodes over nodes without a connection to the previous layer.
+        // Set to 0 if you do not care about their order.
         // One of this has to be chosen, since dummy nodes are not comparable with nodes
         // that do not have a connection to the previous layer.
-        return dummyNodeOrder;
+        return dummyNodeOrder.returnValue();
     }
 }

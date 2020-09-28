@@ -925,7 +925,7 @@ group considerModelOrder {
     option dummyStrategy: DummyNodeStrategy {
         label "Dummy node strategy"
         description
-            "Indicates whether dummy nodes are sorted under, over, or eual to nodes that have no connection to a
+            "Indicates whether dummy nodes are sorted under, over, or equal to nodes that have no connection to a
              previous layer."
         default = DummyNodeStrategy.DUMMY_NODE_OVER
         targets parents
@@ -937,6 +937,7 @@ group considerModelOrder {
              crossings. Defaults to no influence (0)."
         default = 0
         targets parents
+        requires org.eclipse.elk.alg.layered.considerModelOrder.strategy
     }
     option crossingCounterPortInfluence: double {
         label "Crossing counter port influence"
@@ -945,6 +946,7 @@ group considerModelOrder {
              crossings. Defaults to no influence (0)."
         default = 0
         targets parents
+        requires org.eclipse.elk.alg.layered.considerModelOrder.strategy
     }
 }
 
