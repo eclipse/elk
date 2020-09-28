@@ -32,6 +32,7 @@ algorithm stress(StressLayoutProvider) {
     category org.eclipse.elk.force
     preview images/stress_layout.png
     supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.edgeLabels.inline = true
     supports fixed
     supports dimension
     supports epsilon

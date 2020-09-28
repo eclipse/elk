@@ -56,6 +56,10 @@ public class StressLayoutProvider extends AbstractLayoutProvider {
             }
             stressMajorization.initialize(subGraph);
             stressMajorization.execute();
+            
+            // Note that contrary to force itself, labels are not considered during stress layout.
+            // Hence, all we can do here is to place the labels at reasonable positions after layout has finished.
+            subGraph.getLabels().forEach(label -> label.refreshPosition());
         }
 
         // pack the components back into one graph
