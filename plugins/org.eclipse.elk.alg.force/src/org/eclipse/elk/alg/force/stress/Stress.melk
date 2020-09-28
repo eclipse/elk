@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.force
 
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider
 import org.eclipse.elk.alg.force.stress.StressMajorization.Dimension
+import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the ELK Stress layout algorithm.
@@ -33,6 +34,7 @@ algorithm stress(StressLayoutProvider) {
     preview images/stress_layout.png
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.edgeLabels.inline = true
+    supports org.eclipse.elk.padding = new ElkPadding(10)
     supports fixed
     supports dimension
     supports epsilon
