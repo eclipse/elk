@@ -83,7 +83,7 @@ public final class FLabel extends FParticle {
             if (src.y >= tgt.y) {
                 // CASE1, src top left, tgt bottom right
                 pos.x = tgt.x + ((src.x - tgt.x) / 2) + spacing;
-                pos.y = tgt.y + ((src.y - tgt.y) / 2) - spacing;
+                pos.y = tgt.y + ((src.y - tgt.y) / 2) - spacing - getSize().y;
             } else {
                 // CASE2, src bottom left, tgt top right
                 pos.x = tgt.x + ((src.x - tgt.x) / 2) + spacing;
@@ -97,7 +97,7 @@ public final class FLabel extends FParticle {
             } else {
                 // CASE1, src bottom right, tgt top left
                 pos.x = src.x + ((tgt.x - src.x) / 2) + spacing;
-                pos.y = src.y + ((tgt.y - src.y) / 2) - spacing;
+                pos.y = src.y + ((tgt.y - src.y) / 2) - spacing - getSize().y;
             }
         }
     }
