@@ -46,6 +46,7 @@ algorithm force(ForceLayoutProvider) {
     supports org.eclipse.elk.padding = new ElkPadding(50)
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.portConstraints
+    supports org.eclipse.elk.edgeLabels.inline = false
     supports model
     supports temperature
     supports iterations
