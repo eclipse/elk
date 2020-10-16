@@ -46,6 +46,7 @@ algorithm force(ForceLayoutProvider) {
     supports org.eclipse.elk.padding = new ElkPadding(50)
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.portConstraints
+    supports org.eclipse.elk.edgeLabels.inline = false
     // Common node micro layout
     supports org.eclipse.elk.omitNodeMicroLayout
     supports org.eclipse.elk.nodeSize.options
