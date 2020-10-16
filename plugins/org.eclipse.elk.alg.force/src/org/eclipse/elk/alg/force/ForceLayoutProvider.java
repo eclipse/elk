@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.force;
 import java.util.List;
 import java.util.Random;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.model.AbstractForceModel;
 import org.eclipse.elk.alg.force.model.EadesModel;
@@ -25,8 +26,6 @@ import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider for the force layout algorithms.
- *
- * @author msp
  */
 public final class ForceLayoutProvider extends AbstractLayoutProvider {
 
@@ -36,15 +35,21 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
     @Override
-    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode elkGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Force", 1);
+        
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!elkGraph.getProperty(ForceOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(elkGraph)
+                           .execute();
+        }
         
         // transform the input graph
         IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
-        FGraph fgraph = graphImporter.importGraph(kgraph);
+        FGraph fgraph = graphImporter.importGraph(elkGraph);
 
         // set special properties for the layered graph
-        setOptions(fgraph, kgraph);
+        setOptions(fgraph, elkGraph);
 
         // update the force model depending on user selection
         updateModel(fgraph.getProperty(ForceOptions.MODEL));

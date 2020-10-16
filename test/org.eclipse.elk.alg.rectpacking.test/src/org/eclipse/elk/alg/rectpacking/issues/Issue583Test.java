@@ -13,11 +13,13 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -25,6 +27,11 @@ import org.junit.Test;
  *
  */
 public class Issue583Test {
+
+    @BeforeClass
+    public static void init() {
+        PlainJavaInitialization.initializePlainJavaLayout();
+    }
 
     @Test
     public void testDecreaseApproximatedWidth() {

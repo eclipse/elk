@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,7 +11,9 @@ package org.eclipse.elk.alg.mrtree;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
+import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -19,9 +21,6 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Layout provider to connect the tree layouter to the Eclipse based layout services and orchestrate
  * the pre layout processing.
- * 
- * @author sor
- * @author sgu
  */
 public class TreeLayoutProvider extends AbstractLayoutProvider {
 
@@ -37,10 +36,17 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
     // Regular Layout
 
     @Override
-    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+        
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!layoutGraph.getProperty(MrTreeOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(layoutGraph)
+                           .execute();
+        }
+        
         // build tGraph
         IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
-        TGraph tGraph = graphImporter.importGraph(kgraph);
+        TGraph tGraph = graphImporter.importGraph(layoutGraph);
 
         // split the input graph into components
         List<TGraph> components = componentsProcessor.split(tGraph);
