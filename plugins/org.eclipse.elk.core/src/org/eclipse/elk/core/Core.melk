@@ -202,7 +202,9 @@ programmatic option bendPoints: KVectorChain {
 advanced option contentAlignment: EnumSet<ContentAlignment> {
     label "Content Alignment"
     description
-        "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+        "Specifies how the content of a node are aligned. Each node can individually control the alignment of its
+         contents. I.e. if a node should be aligned top left in its parent node, the parent node should specify that
+         option."
     default = ContentAlignment.topLeft()
     targets parents
 }
