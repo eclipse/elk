@@ -133,6 +133,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
                     // transform the edge's labels
                     for (ElkLabel klabel : kedge.getLabels()) {
                         FLabel newLabel = new FLabel(newEdge, klabel.getText());
+                        newLabel.copyProperties(klabel);
                         newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                         
                         newLabel.getSize().x = Math.max(klabel.getWidth(), 1);

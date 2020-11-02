@@ -202,7 +202,9 @@ programmatic option bendPoints: KVectorChain {
 advanced option contentAlignment: EnumSet<ContentAlignment> {
     label "Content Alignment"
     description
-        "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+        "Specifies how the content of a node are aligned. Each node can individually control the alignment of its
+         contents. I.e. if a node should be aligned top left in its parent node, the parent node should specify that
+         option."
     default = ContentAlignment.topLeft()
     targets parents
 }
@@ -281,6 +283,18 @@ advanced option interactiveLayout: boolean {
     label "interactive Layout"
     description
         "Whether the graph should be changeable interactively and by setting constraints"
+    default = false
+    targets parents
+}
+
+advanced option omitNodeMicroLayout: boolean {
+    label "Omit Node Micro Layout"
+    description
+        "Node micro layout comprises the computation of node dimensions (if requested), the placement of ports 
+         and their labels, and the placement of node labels. 
+         The functionality is implemented independent of any specific layout algorithm and shouldn't have any 
+         negative impact on the layout algorithm's performance itself. Yet, if any unforeseen behavior occurs,
+         this option allows to deactivate the micro layout."
     default = false
     targets parents
 }

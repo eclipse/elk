@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -14,10 +14,6 @@ import org.eclipse.elk.core.math.KVector;
 
 /**
  * A label in the force graph.
- * 
- * @author tmn
- * @author owo
- * @author msp
  */
 public final class FLabel extends FParticle {
     
@@ -69,35 +65,45 @@ public final class FLabel extends FParticle {
     }
     
     /**
-     * Refresh the label position, that is, place it in the center of the edge.
+     * Refresh the label position, that is, place it as specified by {@link ForceOptions#EDGE_LABELS_INLINE}.
      */
-    public void refreshPosition() { 
-        double spacing = edge.getProperty(ForceOptions.SPACING_EDGE_LABEL).doubleValue();
-
+    public void refreshPosition() {
+        
+        boolean placeInline = getProperty(ForceOptions.EDGE_LABELS_INLINE);
         KVector src = edge.getSource().getPosition();
         KVector tgt = edge.getTarget().getPosition();
 
-        // TODO add support for head and tail labels
-        KVector pos = getPosition();
-        if (src.x >= tgt.x) {
-            if (src.y >= tgt.y) {
-                // CASE1, src top left, tgt bottom right
-                pos.x = tgt.x + ((src.x - tgt.x) / 2) + spacing;
-                pos.y = tgt.y + ((src.y - tgt.y) / 2) - spacing;
-            } else {
-                // CASE2, src bottom left, tgt top right
-                pos.x = tgt.x + ((src.x - tgt.x) / 2) + spacing;
-                pos.y = src.y + ((tgt.y - src.y) / 2) + spacing;
-            }
+        if (placeInline) {
+            // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
+            KVector srcToTgt = tgt.clone().sub(src).scale(0.5);
+            KVector toLabelCenter = getSize().clone().scale(0.5);
+            KVector newLabelPosition = src.clone().add(srcToTgt).sub(toLabelCenter);
+            getPosition().set(newLabelPosition);
         } else {
-            if (src.y >= tgt.y) {
-                // CASE2, src top right, tgt bottom left
-                pos.x = src.x + ((tgt.x - src.x) / 2) + spacing;
-                pos.y = tgt.y + ((src.y - tgt.y) / 2) + spacing;
+            // TODO The spacing has to be retrieved from the surrounding node/graph
+            double spacing = edge.getProperty(ForceOptions.SPACING_EDGE_LABEL).doubleValue();
+            // TODO add support for head and tail labels
+            KVector pos = getPosition();
+            if (src.x >= tgt.x) {
+                if (src.y >= tgt.y) {
+                    // CASE1, src top left, tgt bottom right
+                    pos.x = tgt.x + ((src.x - tgt.x) / 2) + spacing;
+                    pos.y = tgt.y + ((src.y - tgt.y) / 2) - spacing - getSize().y;
+                } else {
+                    // CASE2, src bottom left, tgt top right
+                    pos.x = tgt.x + ((src.x - tgt.x) / 2) + spacing;
+                    pos.y = src.y + ((tgt.y - src.y) / 2) + spacing;
+                }
             } else {
-                // CASE1, src bottom right, tgt top left
-                pos.x = src.x + ((tgt.x - src.x) / 2) + spacing;
-                pos.y = src.y + ((tgt.y - src.y) / 2) - spacing;
+                if (src.y >= tgt.y) {
+                    // CASE2, src top right, tgt bottom left
+                    pos.x = src.x + ((tgt.x - src.x) / 2) + spacing;
+                    pos.y = tgt.y + ((src.y - tgt.y) / 2) + spacing;
+                } else {
+                    // CASE1, src bottom right, tgt top left
+                    pos.x = src.x + ((tgt.x - src.x) / 2) + spacing;
+                    pos.y = src.y + ((tgt.y - src.y) / 2) - spacing - getSize().y;
+                }
             }
         }
     }

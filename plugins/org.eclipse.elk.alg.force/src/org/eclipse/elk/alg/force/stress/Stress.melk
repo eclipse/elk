@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.force
 
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider
 import org.eclipse.elk.alg.force.stress.StressMajorization.Dimension
+import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the ELK Stress layout algorithm.
@@ -32,6 +33,14 @@ algorithm stress(StressLayoutProvider) {
     category org.eclipse.elk.force
     preview images/stress_layout.png
     supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.edgeLabels.inline = true
+    // Common node micro layout
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.minimum
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.omitNodeMicroLayout
+    supports org.eclipse.elk.portLabels.placement
     supports fixed
     supports dimension
     supports epsilon
