@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
+import org.eclipse.elk.core.math.ElkPadding;
 
 /**
  * This class implements a concrete strategy in the strategy pattern given by {@link BestCandidateFilter}.
@@ -24,14 +25,19 @@ import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 public class AspectRatioFilter implements BestCandidateFilter {
 
     @Override
-    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio) {
+    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio,
+            final ElkPadding padding) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
         double smallestDeviation = Double.POSITIVE_INFINITY;
         for (DrawingData opt : candidates) {
-            smallestDeviation = Math.min(smallestDeviation, Math.abs(opt.getAspectRatio() - aspectRatio));
+            smallestDeviation = Math.min(smallestDeviation, Math.abs(((opt.getDrawingWidth() + padding.getHorizontal())
+                    / (opt.getDrawingHeight() + padding.getVertical()))
+                    - aspectRatio));
         }
         for (DrawingData candidate : candidates) {
-            if (Math.abs(candidate.getAspectRatio() - aspectRatio) == smallestDeviation) {
+            if (Math.abs(((candidate.getDrawingWidth() + padding.getHorizontal())
+                    / (candidate.getDrawingHeight() + padding.getVertical()))
+                    - aspectRatio) == smallestDeviation) {
                 remainingCandidates.add(candidate);
             }
         }

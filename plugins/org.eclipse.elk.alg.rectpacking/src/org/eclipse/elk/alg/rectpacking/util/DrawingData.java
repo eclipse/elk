@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.rectpacking.util;
 
+import org.eclipse.elk.core.math.ElkPadding;
+
 /**
  * Class that offers instances to save information about a possible drawing. Can be used to return multiple values that
  * are calculated for a possible drawing in a method for example.
@@ -195,5 +197,12 @@ public class DrawingData {
      */
     public void setNextYcoordinate(final double potentialY) {
         this.nextYcoordinate = potentialY;
+    }
+
+    /**
+     * @return the dar
+     */
+    public double getDar() {
+        return dar;
     }
 }

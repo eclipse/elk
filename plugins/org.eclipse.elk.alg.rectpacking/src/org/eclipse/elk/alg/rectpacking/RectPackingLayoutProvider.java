@@ -118,10 +118,10 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         minSize.x -= padding.getHorizontal();
         minSize.y -= padding.getVertical();
         double maxWidth = minSize.x;
-        if (targetWidth < 0 || targetWidth < minSize.x) {
+        if (targetWidth < 0 || targetWidth - padding.getHorizontal() < minSize.x) {
             // Initial width approximation.
             AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
-            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
+            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing, padding);
             if (progressMonitor.isLoggingEnabled()) {
                 progressMonitor.logGraph(layoutGraph, "After approximation");
             }
@@ -133,7 +133,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             DrawingUtil.resetCoordinates(rectangles);
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
             // Modify the initial approximation if necessary.
-            maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
+            maxWidth = Math.max(minSize.x, drawing.getDrawingWidth() - padding.getHorizontal());
             
             drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph);
         }
