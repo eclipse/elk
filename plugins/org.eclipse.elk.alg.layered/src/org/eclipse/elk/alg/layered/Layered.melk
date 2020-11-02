@@ -17,7 +17,6 @@ import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.HierarchyHandling
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
-import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator.DummyNodeStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -915,35 +914,39 @@ group edgeLabels {
  * ------------------------*/
 group considerModelOrder {
     option strategy: OrderingStrategy {
-        label "Consider model order"
+        label "Consider Model Order"
         description
-            "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
-             conflicts between the ordering or edges and nodes."
+            "Preserves the order of nodes and edges in the model file if this does not lead to additional edge
+             crossings. Depending on the strategy this is not always possible since the node and edge order might be
+             conflicting."
         default = OrderingStrategy.NONE
         targets parents
     }
     option dummyStrategy: DummyNodeStrategy {
-        label "Dummy node strategy"
+        label "Dummy Node Strategy"
         description
             "Indicates whether dummy nodes are sorted under, over, or equal to nodes that have no connection to a
-             previous layer."
+             previous layer in a left-to-right or right-to-left layout. Under and over changes to right and left in a
+             vertical layout."
         default = DummyNodeStrategy.DUMMY_NODE_OVER
         targets parents
     }
     option crossingCounterNodeInfluence: double {
-        label "Crossing counter node influence"
+        label "Crossing Counter Node Order Influence"
         description
             "Indicates with what percentage (1 for 100%) violations of the node model order are weighted against the
-             crossings. Defaults to no influence (0)."
+             crossings. This allows some edge crossings in favor of preserving the model order.
+             Defaults to no influence (0)."
         default = 0
         targets parents
         requires org.eclipse.elk.alg.layered.considerModelOrder.strategy
     }
     option crossingCounterPortInfluence: double {
-        label "Crossing counter port influence"
+        label "Crossing Counter Port Order Influence"
         description
             "Indicates with what percentage (1 for 100%) violations of the port model order are weighted against the
-             crossings. Defaults to no influence (0)."
+             crossings. This allows some edge crossings in favor of preserving the model order.
+             Defaults to no influence (0)."
         default = 0
         targets parents
         requires org.eclipse.elk.alg.layered.considerModelOrder.strategy

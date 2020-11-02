@@ -25,8 +25,8 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
-import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator.DummyNodeStrategy;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
+import org.eclipse.elk.alg.layered.options.DummyNodeStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
@@ -296,14 +296,16 @@ public class LayerSweepCrossingMinimizer
             double modelOrderInfluence = 0;
             // Additionally add changes to the model order to the number of crossings.
             // The influence of port and node order can be configured.
-            if (currentGraph.lGraph()
-                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE) {
-                modelOrderInfluence += currentGraph.lGraph()
-                        .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE)
-                        * countModelOrderNodeChanges(gD.currentNodeOrder(),
-                                currentGraph.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY));
-                modelOrderInfluence += currentGraph.lGraph()
-                        .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE)
+            OrderingStrategy modelOrderStrategy = currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY);
+            double crossingCounterNodeInfluence = currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE);
+            double crossingCounterPortInfluence = currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE);
+            if (modelOrderStrategy != OrderingStrategy.NONE) {
+                modelOrderInfluence += crossingCounterNodeInfluence
+                        * countModelOrderNodeChanges(gD.currentNodeOrder(), modelOrderStrategy);
+                modelOrderInfluence += crossingCounterPortInfluence
                         * countModelOrderPortChanges(gD.currentNodeOrder());
             }
             totalCrossings += gD.crossCounter().countAllCrossings(gD.currentNodeOrder()) + modelOrderInfluence;

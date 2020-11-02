@@ -20,7 +20,6 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
-import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator.DummyNodeStrategy;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;

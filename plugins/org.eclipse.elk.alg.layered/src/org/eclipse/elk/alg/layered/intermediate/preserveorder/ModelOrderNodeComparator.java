@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.DummyNodeStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 
@@ -23,41 +24,6 @@ import org.eclipse.elk.alg.layered.options.OrderingStrategy;
  * or the order of the nodes they connect to in the previous layer.
  */
 public class ModelOrderNodeComparator implements Comparator<LNode> {
-    
-    /**
-     * Strategy to sort dummy nodes compared to nodes with no connection to the previous layer.
-     * Dummy nodes nodes are not part of the input model and 
-     */
-    public enum DummyNodeStrategy {
-        /**
-         * Dummy nodes are sorted over normal nodes.
-         */
-        DUMMY_NODE_OVER,
-        /**
-         * Dummy nodes are sorted under normal nodes.
-         */
-        DUMMY_NODE_UNDER,
-        /**
-         * Dummy nodes are equal to normal nodes.
-         */
-        EQUAL;
-        
-        /**
-         * Returns a value for a comparator to implement the desired sorting strategy.
-         * @return a model order node comparator value
-         */
-        public int returnValue() {
-            switch (this) {
-            case DUMMY_NODE_OVER:
-                return Integer.MAX_VALUE;
-            case DUMMY_NODE_UNDER:
-                return -1;
-            default:
-                return 0;
-            }
-            
-        }
-    }
     
     /**
      * The previous layer.
@@ -77,15 +43,15 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     /**
      * Creates a comparator to compare {@link LNode}s in the same layer.
      * 
-     * @param previousLayer The previous layer
+     * @param thePreviousLayer The previous layer
      * @param orderingStrategy The ordering strategy
      * @param dummyNodeStrategy The strategy to order dummy nodes and nodes with no connection the previous layer
      */
-    public ModelOrderNodeComparator(final Layer previousLayer, final OrderingStrategy orderingStrategy,
+    public ModelOrderNodeComparator(final Layer thePreviousLayer, final OrderingStrategy orderingStrategy,
             final DummyNodeStrategy dummyNodeStrategy) {
         this(orderingStrategy, dummyNodeStrategy);
-        this.previousLayer = new LNode[previousLayer.getNodes().size()];
-        previousLayer.getNodes().toArray(this.previousLayer);
+        this.previousLayer = new LNode[thePreviousLayer.getNodes().size()];
+        thePreviousLayer.getNodes().toArray(this.previousLayer);
     }
 
     /**
