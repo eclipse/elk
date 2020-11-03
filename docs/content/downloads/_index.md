@@ -12,7 +12,7 @@ All downloads are provided under the terms and conditions of the [Eclipse Founda
 
 ## Nightly Builds
 
-* [Documentation](https://download.eclipse.org/elk/updates/releases/nightly/elk-nightly-docs.zip)
-* [Update site](https://download.eclipse.org/elk/updates/releases/nightly/)
-* [Zipped update site](https://download.eclipse.org/elk/updates/releases/nightly/elk-nightly.zip) (for offline use)
+* [Documentation](https://download.eclipse.org/elk/updates/nightly/elk-nightly-docs.zip)
+* [Update site](https://download.eclipse.org/elk/updates/nightly/)
+* [Zipped update site](https://download.eclipse.org/elk/updates/nightly/elk-nightly.zip) (for offline use)
 * [Maven central](https://oss.sonatype.org/content/repositories/snapshots/org/eclipse/elk/) (for building pure Java projects that use ELK)
