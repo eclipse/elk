@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2019 Kiel University and others.
+// Copyright (c) 2019, 2020 Kiel University and others.
 //
 // This program and the accompanying materials are made available under the
 // terms of the Eclipse Public License 2.0 which is available at
@@ -9,13 +9,92 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 pipeline {
-  // Build agents this build is run on must support a few tools
-  agent any
-  tools {
-    maven 'apache-maven-latest'
-    ant 'apache-ant-1.9.6'
-    git 'Default'
-    jdk 'jdk1.8.0-latest'
+  // Build agent is defined by a custom pod. See documentation at
+  // https://wiki.eclipse.org/Jenkins. We need to...
+  // 
+  // - ...build ELK with Maven
+  // - ...build the website with Hugo
+  // - ...deploy artifacts to download.eclipse.org
+  // - ...use the local Nexus server as proxy for Maven Central
+  // - ...deploy artifacts to OSSRH / Maven Central
+  agent  {
+    kubernetes {
+      label 'elk-build-pod'
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: maven
+    image: maven:3.6-openjdk-14
+    command:
+    - cat
+    tty: true
+    env:
+    - name: "MAVEN_OPTS"
+      value: "-Duser.home=/home/jenkins"
+    volumeMounts:
+    - name: settings-xml
+      mountPath: /home/jenkins/.m2/settings.xml
+      subPath: settings.xml
+      readOnly: true
+    - name: toolchains-xml
+      mountPath: /home/jenkins/.m2/toolchains.xml
+      subPath: toolchains.xml
+      readOnly: true
+    - name: settings-security-xml
+      mountPath: /home/jenkins/.m2/settings-security.xml
+      subPath: settings-security.xml
+      readOnly: true
+    - name: m2-repo
+      mountPath: /home/jenkins/.m2/repository
+    resources:
+      limits:
+        memory: "2Gi"
+        cpu: "1"
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+  - name: hugo
+    image: klakegg/hugo:alpine
+    command:
+    - cat
+    tty: true
+  - name: jnlp
+    volumeMounts:
+    - name: "jenkins-home"
+      mountPath: "/home/jenkins"
+      readOnly: false
+    - name: volume-known-hosts
+      mountPath: /home/jenkins/.ssh
+  volumes:
+  - name: volume-known-hosts
+    configMap:
+      name: known-hosts
+  - name: settings-xml
+    secret:
+      secretName: m2-secret-dir
+      items:
+      - key: settings.xml
+        path: settings.xml
+  - name: toolchains-xml
+    configMap:
+      name: m2-dir
+      items:
+      - key: toolchains.xml
+        path: toolchains.xml
+  - name: settings-security-xml
+    secret:
+      secretName: m2-secret-dir
+      items:
+      - key: settings-security.xml
+        path: settings-security.xml
+  - name: "jenkins-home"
+    emptyDir: {}
+  - name: m2-repo
+    emptyDir: {}
+"""
+    }
   }
 
   // Parameters to be supplied to the build
@@ -61,9 +140,6 @@ pipeline {
       // Checks out all of the repositories and creates all directories
       // our build requires
       steps {
-        // Start with a clean workspace
-        cleanWs()
-
         // Clone main ELK Repository
         checkout(
           [
@@ -107,21 +183,18 @@ pipeline {
             userRemoteConfigs: [[url: 'https://github.com/eclipse/elk-models.git']]
           ]
         )
-
-        // We may want to clone the website repository here as well at some point. Right
-        // now, the publish-website.sh script does that for us. In fact, doing it here
-        // doesn't work due to failed SSH connections. If we get that solved, we may be
-        // able to replace the whole script by checking out the website repository here
-        // and running commands later (see https://wiki.eclipse.org/Jenkins)
       }
     }
 
     stage('BuildMeta') {
       // Builds and publishes the ELK Meta Data Compiler
       steps {
-        sh "mvn -f elk/build/pom.xml" +
-           " -Pelk-meta" +
-           " clean install"
+        container('maven') {
+          sh "mvn -v"
+          sh "mvn -f elk/build/pom.xml" +
+            " -Pelk-meta" +
+            " clean install"
+        }
       }
     }
 
@@ -131,13 +204,14 @@ pipeline {
       // integration test and the deploy phases. If we can solve that problem, we can
       // merge the two steps.
       steps {
-        sh "mvn -f elk/build/pom.xml" +
-           " -Pelk-update-site" +
-           " -s /opt/public/hipp/homes/genie.elk/.m2/settings-deploy-ossrh.xml" +
-           " --define elk.metadata.documentation.outputPath=elk/docs/" +
-           " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
-           " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
-           " clean integration-test"
+        container('maven') {
+          sh "mvn -v"
+          sh "mvn -f elk/build/pom.xml" +
+            " -Pelk-update-site" +
+            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
+            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
+            " clean integration-test"
+        }
       }
     }
 
@@ -145,33 +219,58 @@ pipeline {
       // Builds the ELK update site itself and publishes to Maven Central (again, this
       // should, in an ideal world, be merged with the TestELK stage)
       steps {
-        sh "mvn -f elk/build/pom.xml" +
-           " -Pelk-update-site -Pmaven-publish -Psign" +
-           " -s /opt/public/hipp/homes/genie.elk/.m2/settings-deploy-ossrh.xml" +
-           " --define elk.metadata.documentation.outputPath=elk/docs/" +
-           " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
-           " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
-           " clean deploy"
+        container('maven') {
+          sh "mvn -v"
+          sh "mvn -f elk/build/pom.xml" +
+            " -Pelk-update-site -Pmaven-publish -Psign" +
+            " --define elk.metadata.documentation.outputPath=elk/docs/" +
+            " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
+            " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
+            " clean package"
+        }
       }
     }
 
-    stage('GenerateDownloads') {
-      // Generates and publishes our downloads
+    stage('BuildWebsite') {
       steps {
-        sh "ant -f elk/build/releng/publish.xml" +
-           " -DtargetDir=${params.ELK_TARGET_DIR}" +
-           " -Dversion=${params.VERSION}" +
-           " -Dhugo=/shared/common/hugo/latest/hugo" +
-           " docs zipIt publish"
+        container('hugo') {
+          dir ('elk/docs') {
+            sh "hugo"
+          }
+        }
       }
     }
 
-    stage('DeployWebsite') {
-      // Deploys the previously built website
+    stage('ZipFiles') {
       steps {
-        dir ('elk/build/releng') {
-          sshagent(['git.eclipse.org-bot-ssh']) {
-            sh "./publish-website.sh"
+        // Zip the update site
+        dir ('elk/build/org.eclipse.elk.repository/target/repository') {
+          sh "zip -r elk-${params.VERSION}.zip *"
+        }
+        
+        // Zip the website, put the zip file into the update site directory as well
+        dir ('elk/docs/public') {
+          sh "zip -r ../../build/org.eclipse.elk.repository/target/repository/elk-${params.VERSION}-docs.zip *"
+        }
+      }
+    }
+
+    stage('Deploy') {
+      // Deploys the previously built artifacts
+      steps {
+        container('jnlp') {
+          // Deploy update site folder
+          sshagent(['projects-storage.eclipse.org-bot-ssh']) {
+            sh "ssh genie.elk@projects-storage.eclipse.org rm -rfv ${params.ELK_TARGET_DIR}"
+            sh "ssh genie.elk@projects-storage.eclipse.org mkdir -pv ${params.ELK_TARGET_DIR}"
+            sh "scp -vr elk/build/org.eclipse.elk.repository/target/repository/* genie.elk@projects-storage.eclipse.org:${params.ELK_TARGET_DIR}"
+          }
+
+          // Deploy the website
+          dir ('elk/build/releng') {
+            sshagent(['git.eclipse.org-bot-ssh']) {
+              sh "bash publish-website.sh"
+            }
           }
         }
       }
@@ -183,7 +282,7 @@ pipeline {
       // Publish JUnit test result reports for them to show up in Jenkins
       junit 'elk/test/**/surefire-reports/*.xml'
     }
-
+    
     regression {
       // Notify developers of regressions
       mail subject: "ELK ${currentBuild.fullDisplayName}: ${currentBuild.currentResult}",
