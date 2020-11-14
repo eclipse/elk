@@ -95,7 +95,7 @@ public class BasicEdgeRouterTest extends TestGraphCreator {
             
             for (ElkEdge edge : node.getContainedEdges()) {
                 for (ElkEdgeSection section : edge.getSections()) {
-                    checkEdgeRoute(ElkUtil.createVectorChain(section));
+                    checkEdgeRouteIsOrthogonal(edge, ElkUtil.createVectorChain(section));
                 }
             }
             
@@ -105,12 +105,13 @@ public class BasicEdgeRouterTest extends TestGraphCreator {
     private static final double TOLERANCE = 0.05;
 
     /**
-     * Ensures that the given list of points describe an orthogonal route through the diagram.
+     * Ensures that the given list of points describe an orthogonal route through the diagram. Utility method
+     * that can be used by other tests as well.
      */
-    private void checkEdgeRoute(final KVectorChain route) {
+    public static void checkEdgeRouteIsOrthogonal(final Object edge, final KVectorChain route) {
         // The route should contain at least two points
         if (route.size() < 2) {
-            fail("Route with less than 2 points");
+            fail(edge + ": Route with less than 2 points");
         }
         
         boolean horizontal = isHorizontal(route.get(0), route.get(1));
@@ -120,7 +121,7 @@ public class BasicEdgeRouterTest extends TestGraphCreator {
         while (pointIter.hasNext()) {
             KVector curr = pointIter.next();
             
-            String error = "horizontal = " + horizontal + " prev = " + prev + " curr = " + curr;
+            String error = edge + ": horizontal = " + horizontal + " prev = " + prev + " curr = " + curr;
             
             if (horizontal) {
                 assertEquals(error, prev.y, curr.y, TOLERANCE);
@@ -137,7 +138,7 @@ public class BasicEdgeRouterTest extends TestGraphCreator {
     /**
      * Checks whether the line from p1 to p2 is horizontal.
      */
-    private boolean isHorizontal(final KVector p1, final KVector p2) {
+    private static boolean isHorizontal(final KVector p1, final KVector p2) {
         return Math.abs(p1.y - p2.y) < TOLERANCE;
     }
     

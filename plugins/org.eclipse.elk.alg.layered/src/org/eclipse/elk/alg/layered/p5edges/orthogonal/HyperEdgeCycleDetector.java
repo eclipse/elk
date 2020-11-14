@@ -71,8 +71,11 @@ public final class HyperEdgeCycleDetector {
         // process edges that point left: remove those of zero weight, reverse the others
         for (HyperEdgeSegment source : segments) {
             for (HyperEdgeSegmentDependency outDependency : source.getOutgoingSegmentDependencies()) {
-                if (source.mark > outDependency.getTarget().mark) {
-                    result.add(outDependency);
+                // Only consider critical dependencies, if required
+                if (!criticalOnly || outDependency.getType() == DependencyType.CRITICAL) {
+                    if (source.mark > outDependency.getTarget().mark) {
+                        result.add(outDependency);
+                    }
                 }
             }
         }
