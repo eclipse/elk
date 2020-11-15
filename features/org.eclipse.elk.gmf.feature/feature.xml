@@ -40,7 +40,7 @@ SPDX-License-Identifier: EPL-2.0
       <import plugin="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui.render" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="com.google.guava" version="15.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
    </requires>
 
    <plugin

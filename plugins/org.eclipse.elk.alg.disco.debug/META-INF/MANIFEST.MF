@@ -5,7 +5,7 @@ Bundle-Name: ELK DisCo Debugging Utilities
 Bundle-SymbolicName: org.eclipse.elk.alg.disco.debug;singleton:=true
 Bundle-Version: 0.8.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: com.google.guava;bundle-version="15.0.0",
+Require-Bundle: com.google.guava,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.elk.core,
