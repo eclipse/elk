@@ -5,7 +5,7 @@ Bundle-Name: ELK Layout Service Layer
 Bundle-SymbolicName: org.eclipse.elk.core.service;singleton:=true
 Bundle-Version: 0.8.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
-Require-Bundle: com.google.guava;bundle-version="15.0.0",
+Require-Bundle: com.google.guava,
  com.google.inject;bundle-version="3.0.0";visibility:=reexport,
  org.eclipse.core.runtime,
  org.eclipse.jface,
