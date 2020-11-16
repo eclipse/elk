@@ -36,6 +36,9 @@ spec:
     - name: "HOME"
       value: "/home/jenkins"
     volumeMounts:
+    - name: "jenkins-home"
+      mountPath: "/home/jenkins"
+      readOnly: false
     - name: settings-xml
       mountPath: /home/jenkins/.m2/settings.xml
       subPath: settings.xml
@@ -69,9 +72,6 @@ spec:
       readOnly: false
     - name: volume-known-hosts
       mountPath: /home/jenkins/.ssh
-    env:
-    - name: "HOME"
-      value: "/home/jenkins"
   volumes:
   - name: volume-known-hosts
     configMap:
