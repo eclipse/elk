@@ -191,7 +191,7 @@ spec:
       }
     }
 
-    stage('BuildMeta') {
+    stage('MelkCompiler') {
       // Builds and publishes the ELK Meta Data Compiler
       steps {
         container('maven') {
@@ -220,11 +220,17 @@ spec:
       }
     }
 
-    stage('BuildELK') {
+    stage('DeployELK') {
       // Builds the ELK update site itself and publishes to Maven Central (again, this
       // should, in an ideal world, be merged with the TestELK stage)
       steps {
         container('maven') {
+          // To sign our artifacts, we need the private key to be imported.
+          withCredentials([file(credentialsId: 'secret-subkeys.asc', variable: 'KEYRING')]) {
+              sh 'gpg --batch --import "${KEYRING}"'
+              sh 'for fpr in $(gpg --list-keys --with-colons  | awk -F: \'/fpr:/ {print $10}\' | sort -u); do echo -e "5\ny\n" |  gpg --batch --command-fd 0 --expert --edit-key ${fpr} trust; done'
+          }
+
           sh "mvn -v"
           sh "mvn -f elk/build/pom.xml" +
             " -Pelk-update-site -Pmaven-publish -Psign" +
@@ -236,17 +242,26 @@ spec:
       }
     }
 
-    stage('BuildWebsite') {
+    stage('Website') {
       steps {
         container('hugo') {
           dir ('elk/docs') {
             sh "hugo"
           }
         }
+
+        container('jnlp') {
+          // Deploy the website
+          dir ('elk/build/releng') {
+            sshagent(['git.eclipse.org-bot-ssh']) {
+              sh "bash publish-website.sh"
+            }
+          }
+        }
       }
     }
 
-    stage('ZipFiles') {
+    stage('Publish') {
       steps {
         // Zip the update site
         dir ('elk/build/org.eclipse.elk.repository/target/repository') {
@@ -257,25 +272,14 @@ spec:
         dir ('elk/docs/public') {
           sh "zip -r ../../build/org.eclipse.elk.repository/target/repository/elk-${params.VERSION}-docs.zip *"
         }
-      }
-    }
-
-    stage('Deploy') {
-      // Deploys the previously built artifacts
-      steps {
+        
+        // Deploy the previously built artifacts
         container('jnlp') {
           // Deploy update site folder
           sshagent(['projects-storage.eclipse.org-bot-ssh']) {
             sh "ssh genie.elk@projects-storage.eclipse.org rm -rfv ${params.ELK_TARGET_DIR}"
             sh "ssh genie.elk@projects-storage.eclipse.org mkdir -pv ${params.ELK_TARGET_DIR}"
             sh "scp -vr elk/build/org.eclipse.elk.repository/target/repository/* genie.elk@projects-storage.eclipse.org:${params.ELK_TARGET_DIR}"
-          }
-
-          // Deploy the website
-          dir ('elk/build/releng') {
-            sshagent(['git.eclipse.org-bot-ssh']) {
-              sh "bash publish-website.sh"
-            }
           }
         }
       }
