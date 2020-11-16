@@ -226,7 +226,7 @@ spec:
             " --define elk.metadata.documentation.outputPath=elk/docs/" +
             " --define tests.paths.elk-repo=${env.WORKSPACE}/elk" +
             " --define tests.paths.models-repo=${env.WORKSPACE}/elk-models" +
-            " clean package"
+            " clean deploy"
         }
       }
     }
