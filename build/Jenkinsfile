@@ -67,6 +67,9 @@ spec:
       readOnly: false
     - name: volume-known-hosts
       mountPath: /home/jenkins/.ssh
+    env:
+    - name: "HOME"
+      value: "/home/jenkins"
   volumes:
   - name: volume-known-hosts
     configMap:
