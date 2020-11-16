@@ -33,6 +33,8 @@ spec:
     env:
     - name: "MAVEN_OPTS"
       value: "-Duser.home=/home/jenkins"
+    - name: "HOME"
+      value: "/home/jenkins"
     volumeMounts:
     - name: settings-xml
       mountPath: /home/jenkins/.m2/settings.xml
