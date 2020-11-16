@@ -391,11 +391,11 @@ class ElkGraphImporter {
                 // Transform the edge, finally...
                 LEdge ledge = transformEdge(elkedge, parentElkGraph, parentLGraph);
                 
-                // Find the graph the edge's coordinates will have to be made relative to during export
-                LGraph coordinateSystemOrigin = findCoordinateSystemOrigin(elkedge, elkgraph, lgraph);
-                if (coordinateSystemOrigin != null) {
-                    ledge.setProperty(InternalProperties.COORDINATE_SYSTEM_ORIGIN, coordinateSystemOrigin);
-                }
+                // Find the graph the edge's coordinates will have to be made relative to during export. This will only
+                // do something if the edge containment inside ELK Layered differs from the edge containment in the
+                // ELK graph
+                ledge.setProperty(InternalProperties.COORDINATE_SYSTEM_ORIGIN,
+                        findCoordinateSystemOrigin(elkedge, elkgraph, lgraph));
             }
             
             // We may need to look at edges contained in the current graph node's children as well.
