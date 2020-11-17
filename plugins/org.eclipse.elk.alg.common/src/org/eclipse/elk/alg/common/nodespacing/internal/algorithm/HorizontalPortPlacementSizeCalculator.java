@@ -15,11 +15,13 @@ import java.util.Iterator;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
 import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
 import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.ElkUtil;
 
 import com.google.common.math.DoubleMath;
 
@@ -335,6 +337,18 @@ public final class HorizontalPortPlacementSizeCalculator {
                     // node, which means that it is placed right of the port as well to keep it from overlapping with
                     // inside edges
                     portContext.portMargin.right = nodeContext.portLabelSpacing + labelWidth;
+                }
+            } else if (PortLabelPlacement.isFixed(nodeContext.portLabelsPlacement)) {
+                // The fixed port label is not considered with portContext.portLabelCell. Nevertheless, a port margin
+                // must be added if necessary.
+                ElkRectangle labelsBounds = ElkUtil.getLabelsBounds(portContext.port);
+                if (labelsBounds.x < 0) {
+                    // Add the part of the label that is on the left of the port to the left margin
+                    portContext.portMargin.left = -labelsBounds.x;
+                }
+                if (labelsBounds.x + labelsBounds.width > portContext.port.getSize().x) {
+                    // Add the part of the label that is on the right of the port to the right margin
+                    portContext.portMargin.right = labelsBounds.x + labelsBounds.width - portContext.port.getSize().x;
                 }
             }
         }

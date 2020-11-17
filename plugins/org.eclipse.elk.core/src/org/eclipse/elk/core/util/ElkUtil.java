@@ -28,6 +28,7 @@ import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -563,6 +564,62 @@ public final class ElkUtil {
             bounds = new ElkRectangle();
         }
         return bounds;
+    }
+
+    /**
+     * Compute the part of the labels of the port that is inside the node. This method must be used for label with
+     * "fixed" port label placement ({@link PortLabelPlacement#isFixed(Set)}).
+     * 
+     * @param port
+     *            The port
+     * @param portBorderOffset
+     *            The border offset of the port
+     * @return the part of the labels that is inside the node
+     */
+    public static double computeInsidePart(final PortAdapter<?> port, final double portBorderOffset) {
+        ElkRectangle labelBounds = getLabelsBounds(port);
+        return computeInsidePart(new KVector(labelBounds.x, labelBounds.y),
+                new KVector(labelBounds.width, labelBounds.height), port.getSize(), portBorderOffset, port.getSide());
+    }
+
+    /**
+     * Compute the part of the label of the port that is inside the node. This method must be used for label with
+     * "fixed" port label placement ({@link PortLabelPlacement#isFixed(Set)}).
+     * 
+     * @param labelPosition
+     *            The coordinates of the label (relative to the port)
+     * @param labelSize
+     *            The size of the label
+     * @param portSize
+     *            The size of the port
+     * @param portBorderOffset
+     *            The border offset of the port
+     * @param portSide
+     *            The side of the port
+     * @return the part of the label that is inside the node
+     */
+    public static double computeInsidePart(final KVector labelPosition, final KVector labelSize, final KVector portSize,
+            final double portBorderOffset, final PortSide portSide) {
+        double insidePart = 0;
+        switch (portSide) {
+        case NORTH:
+            insidePart = Math.max(0, labelSize.y + labelPosition.y - (portSize.y + portBorderOffset));
+            break;
+
+        case SOUTH:
+            insidePart = Math.max(0, -labelPosition.y - portBorderOffset);
+            break;
+
+        case EAST:
+            insidePart = Math.max(0, -labelPosition.x - portBorderOffset);
+            break;
+
+        case WEST:
+            insidePart = Math.max(0, labelSize.x + labelPosition.x - (portSize.x + portBorderOffset));
+            break;
+        }
+
+        return insidePart;
     }
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
