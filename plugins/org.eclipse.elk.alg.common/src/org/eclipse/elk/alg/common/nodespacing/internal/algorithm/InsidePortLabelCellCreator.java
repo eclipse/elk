@@ -107,7 +107,7 @@ public final class InsidePortLabelCellCreator {
     }
 
     /**
-     * Calculates the cell's height to fit the largest label in there. If there actually is a label, also setup the
+     * Calculates the cell's width to fit the largest label in there. If there actually is a label, also setup the
      * cell's top or bottom padding to ensure enough space between ports and labels.
      */
     private static void calculateWidthDueToLabels(final NodeContext nodeContext, final PortSide portSide) {
