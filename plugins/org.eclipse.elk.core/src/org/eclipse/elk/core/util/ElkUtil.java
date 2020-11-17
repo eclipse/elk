@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.ContentAlignment;
@@ -30,6 +31,8 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.validation.GraphIssue;
 import org.eclipse.elk.core.validation.GraphValidationException;
 import org.eclipse.elk.core.validation.IValidatingGraphElementVisitor;
@@ -535,7 +538,33 @@ public final class ElkUtil {
         return junctionPoints;
     }
 
-
+    /**
+     * Compute the bounding box of the labels of the port corresponding to the {@code port}. This bounding box
+     * coordinates are relative to the port (as the location of each port).
+     * 
+     * @param port
+     *            The port of the labels
+     * @return the bounds of the labels
+     */
+    public static ElkRectangle getLabelsBounds(final PortAdapter<?> port) {
+        ElkRectangle bounds = null;
+        for (LabelAdapter<?> label : port.getLabels()) {
+            ElkRectangle currentLabelBounds = new ElkRectangle(label.getPosition().x, label.getPosition().y,
+                    label.getSize().x, label.getSize().y);
+            if (bounds == null) {
+                // First label
+                bounds = currentLabelBounds;
+            } else {
+                bounds.union(currentLabelBounds);
+            }
+        }
+        if (bounds == null) {
+            // No label case, return an empty rectangle
+            bounds = new ElkRectangle();
+        }
+        return bounds;
+    }
+    
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // COORDINATE TRANSLATION
 

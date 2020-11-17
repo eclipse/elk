@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.test;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -147,5 +148,57 @@ public final class GraphTestUtils {
 
         return parentNode;
     }
-    
+
+    /**
+     * Returns the {@link ElkNode} corresponding to the {@code childPath}.
+     *
+     * @param parent
+     *            a parent in the hierarchy of the wanted child.
+     * @param childPath
+     *            a list of identifier ({@link ElkShape#getIdentifier()}) to go from {@code parent} to the wanted child.
+     * @return the {@link ElkNode} corresponding to the {@code childPath}
+     * @throws NullPointerException
+     *             if {@code parent} is {@code null}.
+     * @throws IllegalArgumentException
+     *             if the {@code childPath} does not match to an existing path
+     */
+    public static ElkNode getChild(final ElkNode parent, final String... childPath) {
+        Objects.requireNonNull(parent, "parent cannot be null");
+        ElkNode result = null;
+        ElkNode currentParent = parent;
+        for (String identifier : childPath) {
+            result = null;
+            for (ElkNode child : currentParent.getChildren()) {
+                if (identifier.equals(child.getIdentifier())) {
+                    result = child;
+                    break;
+                }
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("The node \"" + currentParent.getIdentifier()
+                        + "\" has no child with identifier \"" + identifier + "\".");
+            } else {
+                currentParent = result;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the {@link ElkPort} of this {@code node} with the identifier {@code portId}.
+     *
+     * @param node
+     *            the node containing the wanted port
+     * @param portId
+     *            the identifier of the wanted port
+     * @return the {@link ElkPort} with the {@code portId}
+     * @throws IllegalArgumentException
+     *             if the {@code node} does not have a port with this identifier
+     */
+    public static ElkPort getPort(final ElkNode node, final String portId) {
+        return node.getPorts().stream().filter(p -> portId.equals(p.getIdentifier())).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "The node \"" + node.getIdentifier() + "\" has no port with identifier \"" + portId + "\"."));
+    }
+
 }

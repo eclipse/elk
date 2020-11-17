@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -73,6 +73,18 @@ public final class ElkGraphAdapters {
         return new ElkNodeAdapter(node.getParent() == null ? null : adapt(node.getParent()), node);
     }
 
+
+    /**
+     * Creates a single port adapter for the given port.
+     * 
+     * @param port
+     *            the port that should be wrapped in an adapter
+     * @return an {@link ElkPortAdapter} for the passed port.
+     */
+    public static ElkPortAdapter adaptSinglePort(final ElkPort port) {
+        return new ElkPortAdapter(port);
+    }
+    
     /**
      * Implements basic adpater functionality for {@link ElkGraphElement}s.
      * 
