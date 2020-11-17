@@ -28,7 +28,7 @@ public class StripContainerCell extends ContainerCell {
     
     /** Whether we lay children out in rows or columns. */
     private final Strip containerMode;
-    /** Whether the outer cells should be the same width org height. */
+    /** Whether the outer cells should be the same width or height. */
     private final boolean symmetrical;
     /** A container cell can include gaps between its children when calculating its preferred size. */
     private final double gap;

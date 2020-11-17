@@ -133,7 +133,7 @@ public final class NodeLabelAndSizeCalculator {
          * satisfies all spacing constraints. This may or may not include the labels of ports. We remember these
          * information by setting the minimum width of north / south inside port label cells and the minimum height of
          * east / west inside port label cells. Since the east / west cells are surrounded by the north / south cells,
-         * their height may be updated later once we know how hight the north / south cells will be.
+         * their height may be updated later once we know how high the north / south cells will be.
          */
         HorizontalPortPlacementSizeCalculator.calculateHorizontalPortPlacementSize(nodeContext);
         VerticalPortPlacementSizeCalculator.calculateVerticalPortPlacementSize(nodeContext);
