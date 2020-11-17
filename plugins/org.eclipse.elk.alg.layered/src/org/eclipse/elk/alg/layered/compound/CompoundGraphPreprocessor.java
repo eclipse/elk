@@ -32,6 +32,7 @@ import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -193,15 +194,23 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                             
                             // If port labels are placed outside, modify the size. At this point, the port's side
                             // may not be known yet if port constraints are free. If they are, however, we know that
-                            // the port will end up on either the east or west side. (see #596)
+                            // the port will end up on either the east or west side. (see #596).
+                            // But if the port labels are fixed, we should consider the part that is inside the node.
                             if (!insidePortLabels) {
                                 PortSide side = port.getSide();
+                                double insidePart = 0;
+                                if (PortLabelPlacement
+                                        .isFixed(node.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT))) {
+                                    // We use 0 as port border offset here, as we only want the label part that is
+                                    // inside the node "after" the port.
+                                    insidePart = ElkUtil.computeInsidePart(extPortLabel.getPosition(),
+                                            extPortLabel.getSize(), port.getSize(), 0, side);
+                                }
                                 if (portConstraints == PortConstraints.FREE
                                         || PortSide.SIDES_EAST_WEST.contains(side)) {
-                                    
-                                    dummyPortLabel.getSize().x = 0;
+                                    dummyPortLabel.getSize().x = insidePart;
                                 } else {
-                                    dummyPortLabel.getSize().y = 0;
+                                    dummyPortLabel.getSize().y = insidePart;
                                 }
                             }
                         }

@@ -23,6 +23,8 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 
 /**
  * Various little methods that didn't quite fit into any of the other classes.
@@ -59,8 +61,9 @@ public final class NodeLabelAndSizeUtilities {
         
         for (PortContext portContext : nodeContext.portContexts.values()) {
             // If the port extends into the node, ensure the inside port space is enough
+            double portBorderOffset = 0;
             if (portContext.port.hasProperty(CoreOptions.PORT_BORDER_OFFSET)) {
-                double portBorderOffset = portContext.port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
+                portBorderOffset = portContext.port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
                 
                 if (portBorderOffset < 0) {
                     // The port does extend into the node, by -portBorderOffset
@@ -81,6 +84,56 @@ public final class NodeLabelAndSizeUtilities {
                         nodeCellPadding.left = Math.max(nodeCellPadding.left, -portBorderOffset);
                         break;
                     }
+                }
+            }
+            if (PortLabelPlacement.isFixed(nodeContext.portLabelsPlacement)) {
+                // Ensure that the part of the fixed label, that is inside the node, has enough space.
+                double insidePart =
+                        ElkUtil.computeInsidePart(portContext.port, portBorderOffset);
+                boolean symmetry =
+                        !nodeContext.node.getProperty(CoreOptions.NODE_SIZE_OPTIONS).contains(SizeOptions.ASYMMETRICAL);
+                boolean insidePartIsBigger = false;
+                switch (portContext.port.getSide()) {
+                case NORTH:
+                    insidePartIsBigger = insidePart > nodeCellPadding.top;
+                    nodeCellPadding.top = Math.max(nodeCellPadding.top, insidePart);
+                    if (symmetry && insidePartIsBigger) {
+                        nodeCellPadding.top = Math.max(nodeCellPadding.top, nodeCellPadding.bottom);
+                        // For symmetry, the portBorderOffset is not considered (only label + label padding)
+                        nodeCellPadding.bottom = nodeCellPadding.top + portBorderOffset;
+                    }
+                    break;
+
+                case SOUTH:
+                    insidePartIsBigger = insidePart > nodeCellPadding.bottom;
+                    nodeCellPadding.bottom = Math.max(nodeCellPadding.bottom, insidePart);
+                    if (symmetry && insidePartIsBigger) {
+                        nodeCellPadding.bottom = Math.max(nodeCellPadding.bottom, nodeCellPadding.top);
+                        // For symmetry, the portBorderOffset is not considered (only label + label padding)
+                        nodeCellPadding.top = nodeCellPadding.bottom + portBorderOffset;
+                    }
+                    break;
+
+                case EAST:
+                    insidePartIsBigger = insidePart > nodeCellPadding.right;
+                    nodeCellPadding.right = Math.max(nodeCellPadding.right, insidePart);
+                    if (symmetry && insidePartIsBigger) {
+                        nodeCellPadding.right = Math.max(nodeCellPadding.left, nodeCellPadding.right);
+                        // For symmetry, the portBorderOffset is not considered (only label + label padding)
+                        nodeCellPadding.left = nodeCellPadding.right + portBorderOffset;
+
+                    }
+                    break;
+
+                case WEST:
+                    insidePartIsBigger = insidePart > nodeCellPadding.left;
+                    nodeCellPadding.left = Math.max(nodeCellPadding.left, insidePart);
+                    if (symmetry && insidePartIsBigger) {
+                        nodeCellPadding.left = Math.max(nodeCellPadding.left, nodeCellPadding.right);
+                        // For symmetry, the portBorderOffset is not considered (only label + label padding)
+                        nodeCellPadding.right = nodeCellPadding.left + portBorderOffset;
+                    }
+                    break;
                 }
             }
         }

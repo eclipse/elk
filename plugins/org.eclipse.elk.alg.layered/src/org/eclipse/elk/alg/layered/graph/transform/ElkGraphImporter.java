@@ -679,16 +679,25 @@ class ElkGraphImporter {
                 dummyPort.getLabels().add(llabel);
                 
                 // If port labels are placed outside, modify the size
+                // If the port labels are fixed, we should consider the part that is inside the node and not 0.
                 if (!insidePortLabels) {
+                    double insidePart = 0;
+                    if (PortLabelPlacement.isFixed(elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT))) {
+                        // We use 0 as port border offset here, as we only want the label part that is
+                        // inside the node "after" the port.
+                        insidePart = ElkUtil.computeInsidePart(new KVector(elklabel.getX(), elklabel.getY()),
+                                new KVector(elklabel.getWidth(), elklabel.getHeight()),
+                                new KVector(elkport.getWidth(), elkport.getHeight()), 0, portSide);
+                    }
                     switch (portSide) {
                     case EAST:
                     case WEST:
-                        llabel.getSize().x = 0;
+                        llabel.getSize().x = insidePart;
                         break;
-                        
+
                     case NORTH:
                     case SOUTH:
-                        llabel.getSize().y = 0;
+                        llabel.getSize().y = insidePart;
                         break;
                     }
                 }
