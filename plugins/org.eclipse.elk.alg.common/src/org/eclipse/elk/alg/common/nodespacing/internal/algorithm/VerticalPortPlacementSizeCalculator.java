@@ -15,11 +15,13 @@ import java.util.Iterator;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
 import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
 import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.ElkUtil;
 
 /**
  * Calculates the space required to setup port labels.
@@ -318,6 +320,18 @@ public final class VerticalPortPlacementSizeCalculator {
                     // which means that it is placed below the port as well to keep it from overlapping with inside
                     // edges
                     portContext.portMargin.bottom = nodeContext.portLabelSpacing + labelHeight;
+                }
+            } else if (PortLabelPlacement.isFixed(nodeContext.portLabelsPlacement)) {
+                // The fixed port label is not considered with portContext.portLabelCell. Nevertheless, a port margin
+                // must be added if necessary.
+                ElkRectangle labelsBounds = ElkUtil.getLabelsBounds(portContext.port);
+                if (labelsBounds.y < 0) {
+                 // Add the part of the label that is above the port to the top margin
+                    portContext.portMargin.top = -labelsBounds.y;
+                }
+                if (labelsBounds.y + labelsBounds.height > portContext.port.getSize().y) {
+                 // Add the part of the label that is below the port to the bottom margin
+                    portContext.portMargin.bottom = labelsBounds.y + labelsBounds.height - portContext.port.getSize().y;
                 }
             }
         }
