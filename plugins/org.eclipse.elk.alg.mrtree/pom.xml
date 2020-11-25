@@ -13,14 +13,14 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.mrtree</artifactId>
   <name>ELK Mr. Tree Layout Algorithm</name>
-  <version>0.7.0</version>
+  <version>0.7.1</version>
   <description>Layout algorithm based on the tree approach.</description>
   <packaging>eclipse-plugin</packaging>
 

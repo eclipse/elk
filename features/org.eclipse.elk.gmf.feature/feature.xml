@@ -11,7 +11,7 @@
 <feature
       id="org.eclipse.elk.gmf.feature"
       label="Eclipse Layout Kernel (Incubation) - GMF Support"
-      version="0.7.0"
+      version="0.7.1"
       provider-name="Eclipse Layout Kernel"
       plugin="org.eclipse.elk.core">
 

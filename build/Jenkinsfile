@@ -115,7 +115,7 @@ spec:
     string(
       name: 'VERSION',
       description: 'The build version number. Used to generate download file names.',
-      defaultValue: '0.7.0'
+      defaultValue: '0.7.1'
     )
 
     // Regarding ELK proper...

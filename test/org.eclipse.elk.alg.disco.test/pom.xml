@@ -14,13 +14,13 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.disco.test</artifactId>
-  <version>0.7.0</version>
+  <version>0.7.1</version>
   <packaging>eclipse-test-plugin</packaging>
 
   <build>
