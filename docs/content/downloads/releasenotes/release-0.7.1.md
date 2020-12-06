@@ -3,7 +3,7 @@ title: "0.7.1"
 menu:
   main:
     parent: "ReleaseNotes"
-    weight: 71
+    weight: -71
 draft: true
 ---
 
