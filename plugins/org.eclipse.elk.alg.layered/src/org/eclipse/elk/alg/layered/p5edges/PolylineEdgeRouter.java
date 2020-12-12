@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -76,9 +76,11 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      *     - LABEL_DUMMY_INSERTER
      * 
      * Before phase 3:
+     *   - Always:
+     *     - INVERTED_PORT_PROCESSOR
+     *   
      *   - For non-free ports:
      *     - NORTH_SOUTH_PORT_PREPROCESSOR
-     *     - INVERTED_PORT_PROCESSOR
      *     
      *   - For edge labels:
      *     - LABEL_SIDE_SELECTOR
@@ -107,8 +109,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      *     - END_LABEL_POSTPROCESSOR
      */
     
-    /** additional processor dependencies for graphs with possible inverted ports. */
-    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INVERTED_PORT_PROCESSING_ADDITIONS =
+    /** baseline config. */
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSOR_CONFIGURATION =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
     
@@ -149,18 +151,13 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
         
         // Basic configuration
         LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
-                LayoutProcessorConfiguration.<LayeredPhases, LGraph>create();
+                LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSOR_CONFIGURATION);
         
         // Additional dependencies
-        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
-                || graph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
-            
-            configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
-
-            if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
-                configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
-            }
+        if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
+            configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
         }
+        
         if (graphProperties.contains(GraphProperties.SELF_LOOPS)) {
             configuration.addAll(SELF_LOOP_PROCESSING_ADDITIONS);
         }
