@@ -44,7 +44,8 @@ public class Issue700Test {
         // The bug was introduced while fixing #665, so ensure that the fix for #700 does not return the favour...
         return Lists.newArrayList(
                 new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("665.+\\.elkt")),
-                new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("700.+\\.elkt")));
+                new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("700.+\\.elkt")),
+                new ModelResourcePath("examples/hierarchy/**"));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////

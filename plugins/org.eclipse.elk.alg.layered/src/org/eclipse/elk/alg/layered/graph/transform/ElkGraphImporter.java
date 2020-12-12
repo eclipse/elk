@@ -407,8 +407,10 @@ class ElkGraphImporter {
                 for (ElkNode elkChildGraphNode : elkGraphNode.getChildren()) {
                     boolean usesElkLayered = !elkChildGraphNode.hasProperty(CoreOptions.ALGORITHM)
                             || elkChildGraphNode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                    boolean partOfSameLayoutRun = elkChildGraphNode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
+                            == HierarchyHandling.INCLUDE_CHILDREN;
                     
-                    if (usesElkLayered) {
+                    if (usesElkLayered && partOfSameLayoutRun) {
                         elkGraphQueue.add(elkChildGraphNode);
                     }
                 }
