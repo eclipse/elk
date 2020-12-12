@@ -36,8 +36,8 @@ public enum HierarchyHandling {
     INHERIT,
 
     /**
-     * Allows the node's children should be included in the current layout run. Which children are included in the
-     * layout run is determined by their hierarchy handling setting. For a child to actually be included, its hierarchy
+     * Allows the node's children to be included in the current layout run. Which children are included in the layout
+     * run is determined by their hierarchy handling setting. For a child to actually be included, its hierarchy
      * handling must be set to either {@link #INHERIT} or {@link #INCLUDE_CHILDREN}.
      */
     INCLUDE_CHILDREN,
