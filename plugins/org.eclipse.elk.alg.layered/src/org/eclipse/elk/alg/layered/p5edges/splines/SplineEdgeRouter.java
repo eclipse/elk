@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -84,7 +84,8 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSING_ADDITIONS =
             LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING,
-                    IntermediateProcessorStrategy.FINAL_SPLINE_BENDPOINTS_CALCULATOR);
+                    IntermediateProcessorStrategy.FINAL_SPLINE_BENDPOINTS_CALCULATOR)
+                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
     
     /** additional processor dependencies for graphs with self-loops. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> SELF_LOOP_PROCESSING_ADDITIONS =
@@ -103,11 +104,6 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
                 .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
 
-    /** additional processor dependencies for graphs with possible inverted ports. */
-    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INVERTED_PORT_PROCESSING_ADDITIONS =
-            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
-    
     /** additional processor dependencies for graphs with northern / southern non-free ports. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
             LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
@@ -140,14 +136,8 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
             configuration.addAll(CENTER_EDGE_LABEL_PROCESSING_ADDITIONS);
         }
 
-        if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
-                || graph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
-            
-            configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
-
-            if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
-                configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
-            }
+        if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
+            configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
         }
 
         if (graphProperties.contains(GraphProperties.END_LABELS)) {
