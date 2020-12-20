@@ -4,7 +4,6 @@ menu:
   main:
     parent: "ReleaseNotes"
     weight: -71
-draft: true
 ---
 
 * [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.7.1)
