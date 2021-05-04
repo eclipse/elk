@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.layered.p2layers;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -140,30 +141,37 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
     /**
      * Check the layering of the given node by comparing the layer index of all successors.
      * 
-     * @param node1 a node
+     * @param node a node
      * @param graph the layered graph
      */
-    private void checkNode(final LNode node1, final LGraph graph) {
-        node1.id = 1;
-        Layer layer1 = node1.getLayer();
-        for (LPort port : node1.getPorts(PortType.OUTPUT)) {
-            for (LEdge edge : port.getOutgoingEdges()) {
-                LNode node2 = edge.getTarget().getNode();
-                if (node1 != node2) {
-                    Layer layer2 = node2.getLayer();
-                    if (layer2.id <= layer1.id) {
-                        // a violation was detected - move the target node to the next layer
-                        int newIndex = layer1.id + 1;
-                        if (newIndex == graph.getLayers().size()) {
-                            Layer newLayer = new Layer(graph);
-                            newLayer.id = newIndex;
-                            graph.getLayers().add(newLayer);
-                            node2.setLayer(newLayer);
-                        } else {
-                            Layer newLayer = graph.getLayers().get(newIndex);
-                            node2.setLayer(newLayer);
+    private void checkNode(final LNode node, final LGraph graph) {
+        node.id = 1;
+        Stack<LNode> stack = new Stack<>();
+        stack.push(node);
+        
+        while (!stack.isEmpty()) {
+            final LNode node1 = stack.pop();
+            Layer layer1 = node1.getLayer();
+            for (LPort port : node1.getPorts(PortType.OUTPUT)) {
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    LNode node2 = edge.getTarget().getNode();
+                    if (node1 != node2) {
+                        Layer layer2 = node2.getLayer();
+                        if (layer2.id <= layer1.id) {
+                            // a violation was detected - move the target node to the next layer
+                            int newIndex = layer1.id + 1;
+                            if (newIndex == graph.getLayers().size()) {
+                                Layer newLayer = new Layer(graph);
+                                newLayer.id = newIndex;
+                                graph.getLayers().add(newLayer);
+                                node2.setLayer(newLayer);
+                            } else {
+                                Layer newLayer = graph.getLayers().get(newIndex);
+                                node2.setLayer(newLayer);
+                            }
+                            stack.push(node2);
+                            node2.id = 1;
                         }
-                        checkNode(node2, graph);
                     }
                 }
             }
