@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.elk.alg.common.networksimplex.NEdge;
 import org.eclipse.elk.alg.common.networksimplex.NGraph;
@@ -67,14 +68,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
     private LGraph layeredGraph;
 
     /**
-     * A {@code LinkedList} containing all nodes of the currently identified connected component by
-     * {@code connectedComponents()}.
-     * 
-     * @see #connectedComponents(List)
-     */
-    private List<LNode> componentNodes;
-
-    /**
      * A flag indicating whether a specified node has been visited during DFS-traversal. This array
      * has to be filled with {@code false} each time, before a DFS-based method is invoked.
      */
@@ -107,7 +100,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
         } else {
             Arrays.fill(nodeVisited, false);
         }
-        componentNodes = Lists.newArrayList();
 
         // re-index nodes
         int counter = 0;
@@ -118,7 +110,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
         LinkedList<List<LNode>> components = Lists.newLinkedList();
         for (LNode node : theNodes) {
             if (!nodeVisited[node.id]) {
-                connectedComponentsDFS(node);
+                final List<LNode> componentNodes = connectedComponentsDFS(node);
                 // connected component with the most nodes should be layered first to guarantee
                 // reusability of attribute instances
                 if (components.isEmpty() || components.getFirst().size() < componentNodes.size()) {
@@ -126,7 +118,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
                 } else {
                     components.addLast(componentNodes);
                 }
-                componentNodes = Lists.newArrayList();
             }
         }
         return components;
@@ -145,22 +136,29 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
      * @see NetworkSimplexLayerer#connectedComponents(List) connectedComponents()
      * @see NetworkSimplexLayerer#componentNodes componentNodes
      */
-    private void connectedComponentsDFS(final LNode node) {
+    private List<LNode> connectedComponentsDFS(final LNode node) {
+        List<LNode> componentNodes = Lists.newArrayList();
+        Stack<LNode> stack = new Stack<>();
+        stack.push(node);
         nodeVisited[node.id] = true;
-        
-        // node is part of the current connected component
-        componentNodes.add(node);
-        LNode opposite;
-        
-        // continue with next nodes, if not already visited
-        for (LPort port : node.getPorts()) {
-            for (LEdge edge : port.getConnectedEdges()) {
-                opposite = getOpposite(port, edge).getNode();
-                if (!nodeVisited[opposite.id]) {
-                    connectedComponentsDFS(opposite);
+
+        while (!stack.isEmpty()) {
+            final LNode current = stack.pop();
+            componentNodes.add(current);
+
+            // continue with next nodes, if not already visited
+            for (LPort port : current.getPorts()) {
+                for (LEdge edge : port.getConnectedEdges()) {
+                    LNode opposite = getOpposite(port, edge).getNode();
+                    if (!nodeVisited[opposite.id]) {
+                        nodeVisited[opposite.id] = true;
+                        stack.push(opposite);
+                    }
                 }
             }
         }
+
+        return componentNodes;
     }
 
     /**
@@ -213,7 +211,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
      * Release all created resources so the GC can reap them.
      */
     private void dispose() {
-        this.componentNodes = null;
         this.layeredGraph = null;
         this.nodeVisited = null;
     }
