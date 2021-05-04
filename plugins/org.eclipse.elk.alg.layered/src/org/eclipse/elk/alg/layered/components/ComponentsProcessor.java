@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -108,7 +109,7 @@ public final class ComponentsProcessor {
             // Perform DFS starting on each node, collecting connected components
             result = Lists.newArrayList();
             for (LNode node : graph.getLayerlessNodes()) {
-                Pair<List<LNode>, Set<PortSide>> componentData = dfs(node, null);
+                Pair<List<LNode>, Set<PortSide>> componentData = dfs(node);
                 
                 if (componentData != null) {
                     LGraph newGraph = new LGraph();
@@ -168,43 +169,44 @@ public final class ComponentsProcessor {
      * connected component and return the set of external port sides the component connects to.
      * 
      * @param node a node.
-     * @param data pair of nodes in the component and external port sides used to produce the result
-     *             during recursive calls. Should be {@code null} when this method is called.
      * @return a pairing of the connected component and the set of port sides of external ports it
      *         connects to, or {@code null} if the node was already visited
      */
-    private Pair<List<LNode>, Set<PortSide>> dfs(final LNode node,
-            final Pair<List<LNode>, Set<PortSide>> data) {
+    private Pair<List<LNode>, Set<PortSide>> dfs(final LNode node) {
         
+        // If the node has not been visited
         if (node.id == 0) {
-            // Mark the node as visited
+            List<LNode> component = Lists.newArrayList();
+            Set<PortSide> extPortSides = EnumSet.noneOf(PortSide.class);
+
+            Stack<LNode> stack = new Stack<>();
+            stack.push(node);
             node.id = 1;
             
-            // Check if we already have a list of nodes for the connected component
-            Pair<List<LNode>, Set<PortSide>> mutableData = data;
-            if (mutableData == null) {
-                List<LNode> component = Lists.newArrayList();
-                Set<PortSide> extPortSides = EnumSet.noneOf(PortSide.class);
-                
-                mutableData = new Pair<List<LNode>, Set<PortSide>>(component, extPortSides);
-            }
-            
-            // Add this node to the component
-            mutableData.getFirst().add(node);
-            
-            // Check if this node is an external port dummy and, if so, add its side
-            if (node.getType() == NodeType.EXTERNAL_PORT) {
-                mutableData.getSecond().add(node.getProperty(InternalProperties.EXT_PORT_SIDE));
-            }
-            
-            // DFS
-            for (LPort port1 : node.getPorts()) {
-                for (LPort port2 : port1.getConnectedPorts()) {
-                    dfs(port2.getNode(), mutableData);
+            while (!stack.isEmpty()) {
+                LNode current = stack.pop();
+
+                // Add this node to the component
+                component.add(current);
+
+                // Check if this node is an external port dummy and, if so, add its side
+                if (current.getType() == NodeType.EXTERNAL_PORT) {
+                    extPortSides.add(current.getProperty(InternalProperties.EXT_PORT_SIDE));
+                }
+
+                // DFS
+                for (LPort port1 : current.getPorts()) {
+                    for (LPort port2 : port1.getConnectedPorts()) {
+                        // Add adjacent nodes that haven't been visited yet
+                        if (port2.getNode().id == 0) {
+                            stack.push(port2.getNode());
+                            port2.getNode().id = 1;
+                        }
+                    }
                 }
             }
             
-            return mutableData;
+            return Pair.of(component, extPortSides);
         }
         
         // The node was already visited
