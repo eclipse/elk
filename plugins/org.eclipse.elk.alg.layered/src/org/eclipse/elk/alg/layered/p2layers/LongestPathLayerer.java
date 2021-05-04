@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.layered.p2layers;
 
 import java.util.List;
+import java.util.Stack;
 
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -65,6 +66,9 @@ public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGr
         for (LNode node : nodes) {
             // the node id is used as index for the nodeHeights array
             node.id = index;
+            // -1 will indicate 'non-visited', 
+            // 0 will indicate 'visited-once during dfs descent'
+            // anything > 0 indicates the position within the layering
             nodeHeights[index] = -1;
             index++;
         }
@@ -91,26 +95,53 @@ public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGr
      * @param node node to visit
      * @return height of the given node in the layered graph
      */
-    private int visit(final LNode node) {
-        int height = nodeHeights[node.id];
-        if (height >= 0) {
+    private void visit(final LNode start) {
+        if (nodeHeights[start.id] > 0) {
             // the node was already visited (the case height == 0 should never occur)
-            return height;
+            return;
         } else {
-            int maxHeight = 1;
-            for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getOutgoingEdges()) {
-                    LNode targetNode = edge.getTarget().getNode();
-                    
-                    // ignore self-loops
-                    if (node != targetNode) {
-                        int targetHeight = visit(targetNode);
-                        maxHeight = Math.max(maxHeight, targetHeight + 1);
+            Stack<LNode> stack = new Stack<>();
+            stack.push(start);
+
+            while (!stack.isEmpty()) {
+                final LNode node = stack.peek();
+
+                if (nodeHeights[node.id] == -1) {
+                    // descent
+                    nodeHeights[node.id] = 0;
+                    boolean hasSuccessors = false;
+                    for (LPort port : node.getPorts()) {
+                        for (LEdge edge : port.getOutgoingEdges()) {
+                            hasSuccessors = true;
+                            LNode target = edge.getTarget().getNode();
+                            // only push successors that haven't been positioned so far
+                            if (nodeHeights[target.id] == -1) {
+                                stack.push(target);
+                            }
+                        }
                     }
+                    // position the leaves
+                    if (!hasSuccessors) {
+                        putNode(node, 1);
+                        stack.pop();
+                    }
+                } else if (nodeHeights[node.id] == 0) {
+                    // ascent
+                    int maxHeight = 1;
+                    for (LPort port : node.getPorts()) {
+                        for (LEdge edge : port.getOutgoingEdges()) {
+                            LNode target = edge.getTarget().getNode();
+                            assert nodeHeights[target.id] > 0;
+                            maxHeight = Math.max(maxHeight, nodeHeights[target.id]);
+                        }
+                    }
+                    putNode(node, maxHeight + 1);
+                    stack.pop();
+                } else {
+                    // node has already been placed in the meantime
+                    stack.pop();
                 }
             }
-            putNode(node, maxHeight);
-            return maxHeight;
         }
     }
     
@@ -135,3 +166,4 @@ public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGr
     }
 
 }
+ 
