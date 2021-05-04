@@ -28,6 +28,7 @@ import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.Configurator;
 import org.eclipse.elk.alg.test.framework.annotations.ConfiguratorProvider;
 import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
+import org.eclipse.elk.alg.test.framework.annotations.GraphProvider;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
@@ -35,6 +36,7 @@ import org.eclipse.elk.alg.test.framework.io.FileExtensionFilter;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.Lists;
@@ -56,7 +58,32 @@ public class BasicLayerAssignmentTest {
         return Lists.newArrayList(
                 new ModelResourcePath("realworld/ptolemy/**/").withFilter(new FileExtensionFilter("elkg")));
     }
-    
+
+    /**
+     * Value enforces a stack overflow with -Xss2m, but succeeds for -Xss3m. As of early 2021, 2m seems to be larger
+     * than common JVM defaults.
+     */
+    private static final int NUMBER_NODES_STACK_OVERFLOW_TEST = 25_000;
+
+    /**
+     * #755.
+     * 
+     * Creates a simple path to maximize recursion depth.
+     */
+    @GraphProvider
+    public ElkNode testNoStackOverflow() {
+        ElkNode root = ElkGraphUtil.createGraph();
+        ElkNode previous = null;
+        for (int i = 0; i < NUMBER_NODES_STACK_OVERFLOW_TEST; ++i) {
+            ElkNode child = ElkGraphUtil.createNode(root);
+            if (previous != null) {
+                ElkGraphUtil.createSimpleEdge(previous, child);
+            }
+            previous = child;
+        }
+        
+        return root;
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
