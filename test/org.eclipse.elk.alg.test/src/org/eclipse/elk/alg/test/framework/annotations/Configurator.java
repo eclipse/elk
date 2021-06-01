@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Flags a method as configuring input graphs. A method such annotated must not expect exactly one parameter of type
+ * Flags a method as configuring input graphs. A method such annotated must expect exactly one parameter of type
  * {@link ElkNode}.
  */
 @Retention(RetentionPolicy.RUNTIME)

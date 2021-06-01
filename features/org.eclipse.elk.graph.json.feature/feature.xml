@@ -38,7 +38,7 @@ SPDX-License-Identifier: EPL-2.0
    </license>
 
    <requires>
-      <import plugin="com.google.guava" version="15.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava"/>
       <import plugin="com.google.gson" version="2.2.4" match="greaterOrEqual"/>
       <import plugin="org.eclipse.elk.graph"/>
       <import plugin="org.eclipse.elk.core"/>

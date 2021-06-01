@@ -6,7 +6,7 @@ Bundle-Version: 0.8.0.qualifier
 Automatic-Module-Name: org.eclipse.elk.alg.rectpacking.test
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Eclipse Modeling Project
-Require-Bundle: com.google.guava;bundle-version="15.0.0",
+Require-Bundle: com.google.guava,
  org.eclipse.elk.core,
  org.eclipse.elk.alg.common,
  org.eclipse.elk.alg.test,

@@ -3,7 +3,7 @@ title: "0.5.0"
 menu:
   main:
     parent: "ReleaseNotes"
-    weight: 50
+    weight: -50
 ---
 
 * [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.5.0)

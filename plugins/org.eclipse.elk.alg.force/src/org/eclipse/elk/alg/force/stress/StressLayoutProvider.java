@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.force.stress;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.force.ComponentsProcessor;
 import org.eclipse.elk.alg.force.ElkGraphImporter;
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
@@ -23,8 +24,6 @@ import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider for stress-minimizing layouts. 
- * 
- * @author uru
  */
 public class StressLayoutProvider extends AbstractLayoutProvider {
 
@@ -37,9 +36,17 @@ public class StressLayoutProvider extends AbstractLayoutProvider {
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Stress", 1);
 
+
         // calculate initial coordinates
         if (!layoutGraph.getProperty(StressOptions.INTERACTIVE)) {
             new ForceLayoutProvider().layout(layoutGraph, progressMonitor.subTask(1));
+        } else {
+            // If requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+            // Note that for the non-interactive case (above) this will be taken care of by the force layout provider
+            if (!layoutGraph.getProperty(StressOptions.OMIT_NODE_MICRO_LAYOUT)) {
+                NodeMicroLayout.forGraph(layoutGraph)
+                               .execute();
+            }
         }
         
         // transform the input graph
@@ -56,6 +63,10 @@ public class StressLayoutProvider extends AbstractLayoutProvider {
             }
             stressMajorization.initialize(subGraph);
             stressMajorization.execute();
+            
+            // Note that contrary to force itself, labels are not considered during stress layout.
+            // Hence, all we can do here is to place the labels at reasonable positions after layout has finished.
+            subGraph.getLabels().forEach(label -> label.refreshPosition());
         }
 
         // pack the components back into one graph

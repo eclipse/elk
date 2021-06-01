@@ -443,11 +443,11 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      */
     private def String toOptionDocsString(MdOptionDependency dependency) {
         // Link to the layout option we depend upon
-        var result = "[" + dependency.target.qualifiedName + "]("
-                + dependency.target.qualifiedName.toHugoIdentifier + ")";
+        var result = "[" + dependency.target.qualifiedName + "]({{< relref \"reference/options/"
+                + dependency.target.qualifiedName.toHugoIdentifier + ".md\" >}})";
         
         if (dependency.value !== null) {
-            result += " (" + getText(dependency.value) + ")";
+            result += " (`" + getText(dependency.value) + "`)";
         }
         
         return result;

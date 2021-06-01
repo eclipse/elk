@@ -9,3 +9,12 @@ languageCode = "en-us"
 canonifyURLs = true
 uglyURLs = true
 relativeURLs = true
+
+# Fixes issue 718 by keeping Hugo from lower-casing all file names,
+# which invalidates our URLs
+disablePathToLower = true
+
+[markup]
+    [markup.goldmark]
+        [markup.goldmark.renderer]
+            unsafe = true

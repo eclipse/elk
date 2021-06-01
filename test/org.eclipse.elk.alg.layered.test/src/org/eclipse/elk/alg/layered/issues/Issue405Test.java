@@ -9,7 +9,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.issues;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.ElkShape;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -81,7 +84,6 @@ public class Issue405Test {
     
     @Test
     public void testPortAndLabelPositionsEqual(final ElkNode graph) {
-
         // There are four (non-hierarchical) nodes within the diagram for which different layout directions are used.
         // Each node has a number of ports, each of which has a single label.
         // While we do not know in which "order" the ports are placed, we expect the collective of port positions 
@@ -93,21 +95,43 @@ public class Issue405Test {
             .map(name -> getRelevantPortsAndPortLabels(graph, name))
             .reduce((previous, current) -> {
                 for (ElkPort port : previous.getFirst()) {
-                    boolean foundExactlyOneMatch = current.getFirst().stream()
-                            .map(other -> checkPositionEquals(port, other))
-                            .reduce(false, (a, b) -> a ^ b);
-                    assertTrue("Unexpected port position " + port, foundExactlyOneMatch);
+                    // For the previous node's port, find all of the current node's ports that match its position
+                    List<ElkPort> matchingPorts = current.getFirst().stream()
+                            .filter(other -> checkPositionEquals(port, other))
+                            .collect(Collectors.toList());
+                    if (matchingPorts.size() != 1) {
+                        // We expected there to be exactly one such port!
+                        fail(positionsDontMatchErrorMessage(port,  current.getFirst()));
+                    }
                 }
     
                 for (ElkLabel label : previous.getSecond()) {
-                    boolean foundExactlyOneMatch = current.getSecond().stream()
-                            .map(other -> checkPositionEquals(label, other))
-                            .reduce(false, (a, b) -> a ^ b);
-                    assertTrue("Unexpected port label position " + label, foundExactlyOneMatch);
-    
+                    // For the previous node's label, find all of the current node's ports that match its position
+                    List<ElkLabel> matchingLabels = current.getSecond().stream()
+                            .filter(other -> checkPositionEquals(label, other))
+                            .collect(Collectors.toList());
+                    if (matchingLabels.size() != 1) {
+                        // We expected there to be exactly one such label!
+                        fail(positionsDontMatchErrorMessage(label,  current.getSecond()));
+                    }
                 }
                 return current;
             });
+    }
+    
+    private String positionsDontMatchErrorMessage(final ElkGraphElement fixedElement,
+            final List<? extends ElkGraphElement> otherElements) {
+        
+        String message = fixedElement + " of graph " + ElkGraphUtil.containingGraph(fixedElement)
+                + " has not exactly one matching element in graph "
+                + ElkGraphUtil.containingGraph(otherElements.get(0));
+        
+        // List all other elements
+        for (ElkGraphElement matchingElement : otherElements) {
+            message += "\n- " + matchingElement;
+        }
+        
+        return message;
     }
 
 }
