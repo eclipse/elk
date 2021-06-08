@@ -297,8 +297,10 @@ class ElkGraphImporter {
         while (!elkGraphQueue.isEmpty()) {
             ElkNode elknode = elkGraphQueue.poll();
             
-            // Assign a model order to the edges as they are read
-            elknode.setProperty(InternalProperties.MODEL_ORDER, index++);
+            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+                // Assign a model order to the edges as they are read
+                elknode.setProperty(InternalProperties.MODEL_ORDER, index++);
+            }
             
             // Check if the current node is to be laid out in the first place
             boolean isNodeToBeLaidOut = !elknode.getProperty(LayeredOptions.NO_LAYOUT);
