@@ -12,9 +12,9 @@ package org.eclipse.elk.conn.gmf;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
+import org.eclipse.elk.core.service.ui.IEclipseDiagramLayoutConnector;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.IGraphicalEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
 
@@ -56,7 +56,7 @@ public class GmfLayoutSetup implements ILayoutSetup {
 
         @Override
         public void configure(final Binder binder) {
-            binder.bind(IDiagramLayoutConnector.class).to(GmfDiagramLayoutConnector.class);
+            binder.bind(IEclipseDiagramLayoutConnector.class).to(GmfDiagramLayoutConnector.class);
             binder.bind(ILayoutConfigurationStore.Provider.class).to(GmfLayoutConfigurationStore.Provider.class);
         }
         

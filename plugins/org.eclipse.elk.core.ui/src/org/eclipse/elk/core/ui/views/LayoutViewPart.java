@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.ui.EclipseLayoutConnectorsService;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -106,7 +106,7 @@ public class LayoutViewPart extends ViewPart {
     
     /** The selection listener. */
     private final ISelectionListener selectionListener = (final IWorkbenchPart part, final ISelection selection) -> {
-        Injector injector = LayoutConnectorsService.getInstance().getInjector(part, null);
+        Injector injector = EclipseLayoutConnectorsService.getInstance().getInjector(part, null);
         if (injector != null) {
             try {
                 currentPropSourceProvider = injector.getInstance(LayoutPropertySourceProvider.class);

@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.core.service;
+package org.eclipse.elk.core.service.ui;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,18 +16,24 @@ import java.util.ListIterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.elk.core.service.internal.DefaultModule;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
+import org.eclipse.elk.core.service.ILayoutSetup;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.ui.internal.EclipseDefaultModule;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.inject.Injector;
 
 /**
- * A service class for layout connectors, which are provided by {@link ILayoutSetup} classes
+ * A service class for layout connectors, which are provided by {@link IEclipseLayoutSetup} classes
  * registered through the extension point.
  *
  * @author msp
  */
-public class LayoutConnectorsService {
+public class EclipseLayoutConnectorsService extends LayoutConnectorsService {
 
     /** Identifier of the extension point for layout connectors. */
     protected static final String EXTP_ID_LAYOUT_CONNECTORS = "org.eclipse.elk.core.service.layoutConnectors";
@@ -39,16 +45,16 @@ public class LayoutConnectorsService {
     protected static final String ATTRIBUTE_PRIORITY = "priority";
     
     /** The singleton instance of the connectors service. */
-    private static LayoutConnectorsService instance;
+    private static EclipseLayoutConnectorsService instance;
     
     /**
      * Returns the singleton instance of the connectors service.
      * 
      * @return the singleton instance
      */
-    public static synchronized LayoutConnectorsService getInstance() {
+    public static synchronized EclipseLayoutConnectorsService getInstance() {
         if (instance == null) {
-            instance = new LayoutConnectorsService();
+            instance = new EclipseLayoutConnectorsService();
         }
         return instance;
     }
@@ -79,26 +85,32 @@ public class LayoutConnectorsService {
     private final List<SetupEntry> entries = new LinkedList<SetupEntry>();
     
     /** list of registered layout listeners. */
-    private final List<ILayoutListener> layoutListeners = new LinkedList<ILayoutListener>();
+    private final List<IEclipseLayoutListener> layoutListeners = new LinkedList<IEclipseLayoutListener>();
     
     /**
      * Load all registered extensions for the layout connectors extension point.
      */
-    public LayoutConnectorsService() {
+    public EclipseLayoutConnectorsService() {
         if (Platform.isRunning())
             loadLayoutSetupExtensions();
     }
 
     /**
-     * Returns the most suitable layout setup injector for diagram part.
-     * An implementation of {@link IDiagramLayoutConnector} can be obtained from such an injector.
+     * Returns the most suitable layout setup injector for the given workbench and diagram part.
+     * An implementation of {@link IEclipseDiagramLayoutConnector} can be obtained from such an injector.
      * 
+     * @param workbenchPart the workbench part for which the injector should be fetched, or {@code null}
      * @param diagramPart the diagram part for which the injector should be fetched, or {@code null}
      * @return the most suitable injector, or {@code null} if none applies
      */
-    public final Injector getInjector(final Object diagramPart) {
+    public final Injector getInjector(final IWorkbenchPart workbenchPart, final Object diagramPart) {
         for (SetupEntry entry : entries) {
-            if (entry.setup.supports(diagramPart)) {
+            if (workbenchPart == null) {
+                if (entry.setup.supports(diagramPart)) {
+                    return getInjector(entry);
+                }
+            } else if (entry.setup.supports(workbenchPart)
+                    && (diagramPart == null || entry.setup.supports(diagramPart))) {
                 return getInjector(entry);
             }
         }
@@ -107,7 +119,7 @@ public class LayoutConnectorsService {
     
     private Injector getInjector(final SetupEntry entry) {
         if (entry.injector == null) {
-            entry.injector = entry.setup.createInjector(new DefaultModule());
+            entry.injector = entry.setup.createInjector(new EclipseDefaultModule());
         }
         return entry.injector;
     }
@@ -115,11 +127,13 @@ public class LayoutConnectorsService {
     /**
      * Returns the most suitable diagram layout connector for the given workbench and diagram part.
      * 
+     * @param workbenchPart the workbench part for which the connector should be fetched, or {@code null}
      * @param diagramPart the diagram part for which the connector should be fetched, or {@code null}
      * @return the most suitable connector, or {@code null} if none applies
      */
-    public final IDiagramLayoutConnector getConnector(final Object diagramPart) {
-        Injector injector = getInjector(diagramPart);
+    public final IDiagramLayoutConnector getConnector(final IWorkbenchPart workbenchPart,
+            final Object diagramPart) {
+        Injector injector = getInjector(workbenchPart, diagramPart);
         if (injector != null) {
             return injector.getInstance(IDiagramLayoutConnector.class);
         }
@@ -129,22 +143,22 @@ public class LayoutConnectorsService {
     /**
      * Add the given instance to the list of layout listeners.
      */
-    public void addLayoutListener(final ILayoutListener listener) {
+    public void addLayoutListener(final IEclipseLayoutListener listener) {
         layoutListeners.add(listener);
     }
 
     /**
      * Remove the given instance from the list of layout listeners.
      */
-    public void removeLayoutListener(final ILayoutListener listener) {
+    public void removeLayoutListener(final IEclipseLayoutListener listener) {
         layoutListeners.remove(listener);
     }
     
     /**
      * Called by the {@link DiagramLayoutEngine} when automatic layout ist about to start.
      */
-    protected void fireLayoutAboutToStart(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
-        for (ILayoutListener listener : layoutListeners) {
+    protected void fireLayoutAboutToStart(final EclipseLayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
+        for (IEclipseLayoutListener listener : layoutListeners) {
             listener.layoutAboutToStart(mapping, progressMonitor);
         }
     }
@@ -152,8 +166,8 @@ public class LayoutConnectorsService {
     /**
      * Called by the {@link DiagramLayoutEngine} when automatic layout has been done.
      */
-    protected void fireLayoutDone(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
-        for (ILayoutListener listener : layoutListeners) {
+    protected void fireLayoutDone(final EclipseLayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
+        for (IEclipseLayoutListener listener : layoutListeners) {
             listener.layoutDone(mapping, progressMonitor);
         }
     }
@@ -185,8 +199,7 @@ public class LayoutConnectorsService {
                     
                 }
             } catch (CoreException exception) {
-                // TODO handle this
-//                StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
+                StatusManager.getManager().handle(exception, EclipseElkServicePlugin.PLUGIN_ID);
             }
         }
     }

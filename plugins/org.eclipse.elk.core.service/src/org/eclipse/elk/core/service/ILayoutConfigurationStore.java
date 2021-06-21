@@ -14,7 +14,6 @@ import java.util.Set;
 
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Persistence layer for layout configuration. Implementations are used by the Layout view to modify
@@ -88,7 +87,7 @@ public interface ILayoutConfigurationStore {
          * @param context a context for layout configuration, usually a selected diagram element
          * @return a layout configuration store, or {@code null} if the given context is not applicable
          */
-        ILayoutConfigurationStore get(IWorkbenchPart workbenchPart, Object context);
+        ILayoutConfigurationStore get(Object workbenchPart, Object context);
         
     }
 

@@ -10,7 +10,7 @@
 package org.eclipse.elk.core.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.ui.EclipseLayoutConnectorsService;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -25,7 +25,7 @@ public class ActiveEditorSupportedTester extends PropertyTester {
             final Object[] args, final Object expectedValue) {
         if (receiver instanceof IWorkbenchPart) {
             IWorkbenchPart workbenchPart = (IWorkbenchPart) receiver;
-            return LayoutConnectorsService.getInstance().getConnector(workbenchPart, null) != null;
+            return EclipseLayoutConnectorsService.getInstance().getConnector(workbenchPart, null) != null;
         }
         return false;
     }

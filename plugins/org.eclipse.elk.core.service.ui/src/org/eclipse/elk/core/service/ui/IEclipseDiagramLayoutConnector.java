@@ -7,9 +7,11 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.core.service;
+package org.eclipse.elk.core.service.ui;
 
+import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Interface for connectors of diagram layout. A diagram layout connector is responsible for transforming
@@ -19,7 +21,7 @@ import org.eclipse.elk.graph.properties.IPropertyHolder;
  * 
  * @author msp
  */
-public interface IDiagramLayoutConnector {
+public interface IEclipseDiagramLayoutConnector {
 
     /**
      * Build a KGraph instance for the given diagram. The resulting layout graph should reflect
@@ -41,7 +43,7 @@ public interface IDiagramLayoutConnector {
      * @return a layout graph mapping, or {@code null} if the given workbench part or diagram part
      *            is not supported
      */
-    LayoutMapping buildLayoutGraph(Object diagramPart);
+    LayoutMapping buildLayoutGraph(IWorkbenchPart workbenchPart, Object diagramPart);
 
     /**
      * Apply the computed layout back to the diagram. Graph elements whose modification flag

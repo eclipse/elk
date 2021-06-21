@@ -248,11 +248,12 @@ public class LayoutConfigurationManager {
     protected void configureElement(final ElkGraphElement element, final LayoutMapping layoutMapping,
             final LayoutConfigurator configurator) {
         Object diagramPart = layoutMapping.getGraphMap().get(element);
-        ILayoutConfigurationStore configurationStore = configProvider.get(layoutMapping.getWorkbenchPart(),
-                diagramPart);
-        if (configurationStore != null) {
-            configureElement(element, configurationStore, configurator);
-        }
+        // XXX
+//        ILayoutConfigurationStore configurationStore = configProvider.get(layoutMapping.getWorkbenchPart(),
+//                diagramPart);
+//        if (configurationStore != null) {
+//            configureElement(element, configurationStore, configurator);
+//        }
     }
     
     /**

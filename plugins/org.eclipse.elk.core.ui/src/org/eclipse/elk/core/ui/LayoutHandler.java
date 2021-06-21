@@ -12,7 +12,7 @@ package org.eclipse.elk.core.ui;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.ui.EclipseDiagramLayoutEngine;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -67,7 +67,7 @@ public class LayoutHandler extends AbstractHandler {
                 diagramPart = structuredSelection.toList();
             }
         }
-        DiagramLayoutEngine.invokeLayout(editorPart, diagramPart, animation, progressDialog,
+        EclipseDiagramLayoutEngine.invokeLayout(editorPart, diagramPart, animation, progressDialog,
                 false, zoomToFit);
         return null;
     }

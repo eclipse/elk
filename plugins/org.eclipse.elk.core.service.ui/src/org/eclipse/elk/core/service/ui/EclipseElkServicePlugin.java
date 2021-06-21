@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.core.service;
+package org.eclipse.elk.core.service.ui;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,13 +20,16 @@ import java.util.concurrent.Executors;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.service.util.MonitoredOperation;
+import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.service.ui.util.EclipseMonitoredOperation;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -36,20 +39,20 @@ import com.google.common.collect.Multimap;
 /**
  * The activator class controls the plug-in life cycle.
  */
-public class ElkServicePlugin extends Plugin {
+public final class EclipseElkServicePlugin extends ElkServicePlugin {
 
     /** The plug-in ID. */
     public static final String PLUGIN_ID = "org.eclipse.elk.core.service";
 
     /** The shared instance. */
-    private static ElkServicePlugin plugin;
+    private static EclipseElkServicePlugin plugin;
     
     /** The local preference store. */
     private IPreferenceStore preferenceStore;
     /** The executor service used to perform layout operations. */
     private ExecutorService executorService;
     /** map of currently running layout operations. */
-    private final Multimap<Object, MonitoredOperation> runningOperations = HashMultimap.create();
+    private final Multimap<Pair<IWorkbenchPart, Object>, EclipseMonitoredOperation> runningOperations = HashMultimap.create();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Instance
@@ -59,7 +62,7 @@ public class ElkServicePlugin extends Plugin {
      * 
      * @return the shared instance
      */
-    public static ElkServicePlugin getInstance() {
+    public static EclipseElkServicePlugin getInstance() {
         return plugin;
     }
     
@@ -79,7 +82,7 @@ public class ElkServicePlugin extends Plugin {
     @Override
     public void stop(final BundleContext context) throws Exception {
         LayoutMetaDataService.unload();
-        LayoutConnectorsService.unload();
+        EclipseLayoutConnectorsService.unload();
         if (executorService != null) {
             executorService.shutdown();
             executorService = null;
@@ -101,8 +104,7 @@ public class ElkServicePlugin extends Plugin {
     public IPreferenceStore getPreferenceStore() {
         // Create the preference store lazily.
         if (preferenceStore == null) {
-            // TODO do this as a service
-//            preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
+            preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
 
         }
         return preferenceStore;
@@ -121,7 +123,7 @@ public class ElkServicePlugin extends Plugin {
     /**
      * Return the map of currently running layout operations.
      */
-    public Multimap<Object, MonitoredOperation> getRunningOperations() {
+    public Multimap<Pair<IWorkbenchPart, Object>, EclipseMonitoredOperation> getRunningOperationsEclipse() {
         return runningOperations;
     }
     
@@ -194,8 +196,7 @@ public class ElkServicePlugin extends Plugin {
                     }
                 }
             } catch (CoreException exception) {
-                // TODO handle this
-//                StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
+                StatusManager.getManager().handle(exception, EclipseElkServicePlugin.PLUGIN_ID);
             }
         }
     }

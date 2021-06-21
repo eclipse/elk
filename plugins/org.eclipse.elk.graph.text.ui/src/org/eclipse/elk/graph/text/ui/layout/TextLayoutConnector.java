@@ -9,8 +9,9 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ui.layout;
 
-import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.service.ui.EclipseLayoutMapping;
+import org.eclipse.elk.core.service.ui.IEclipseDiagramLayoutConnector;
 import org.eclipse.elk.core.ui.rendering.GraphRenderingConfigurator;
 import org.eclipse.elk.core.ui.rendering.LayoutGraphDialog;
 import org.eclipse.elk.graph.ElkNode;
@@ -25,10 +26,10 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 /**
  * This connector copies the graph from an Xtext editor and displays the layout result in a dialog.
  */
-public class TextLayoutConnector implements IDiagramLayoutConnector {
+public class TextLayoutConnector implements IEclipseDiagramLayoutConnector {
 
     @Override
-    public LayoutMapping buildLayoutGraph(IWorkbenchPart workbenchPart, Object diagramPart) {
+    public EclipseLayoutMapping buildLayoutGraph(IWorkbenchPart workbenchPart, Object diagramPart) {
         if (workbenchPart instanceof XtextEditor) {
             XtextEditor xtextEditor = (XtextEditor) workbenchPart;
             return xtextEditor.getDocument().readOnly(resource -> {
@@ -44,8 +45,8 @@ public class TextLayoutConnector implements IDiagramLayoutConnector {
         }
     }
     
-    protected LayoutMapping buildLayoutGraph(XtextEditor xtextEditor, ElkNode rootNode) {
-        LayoutMapping mapping = new LayoutMapping(xtextEditor);
+    protected EclipseLayoutMapping buildLayoutGraph(XtextEditor xtextEditor, ElkNode rootNode) {
+        EclipseLayoutMapping mapping = new EclipseLayoutMapping(xtextEditor);
         mapping.setParentElement(rootNode);
         mapping.setLayoutGraph(EcoreUtil.copy(rootNode));
         return mapping;
@@ -62,5 +63,4 @@ public class TextLayoutConnector implements IDiagramLayoutConnector {
             dialog.open();
         });
     }
-
 }

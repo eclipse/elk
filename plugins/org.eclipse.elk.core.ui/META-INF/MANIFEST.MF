@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
  com.google.guava,
  org.eclipse.elk.graph,
  org.eclipse.elk.core,
- org.eclipse.elk.core.service
+ org.eclipse.elk.core.service,
+ org.eclipse.elk.core.service.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

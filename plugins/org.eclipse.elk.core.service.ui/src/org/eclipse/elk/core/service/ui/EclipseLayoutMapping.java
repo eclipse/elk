@@ -7,12 +7,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.core.service;
+package org.eclipse.elk.core.service.ui;
 
+import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.properties.MapPropertyHolder;
-//import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -23,7 +23,7 @@ import com.google.common.collect.HashBiMap;
  *
  * @author msp
  */
-public class LayoutMapping extends MapPropertyHolder {
+public class EclipseLayoutMapping extends LayoutMapping {
     
     private static final long serialVersionUID = 2237409212851510612L;
     
@@ -33,6 +33,17 @@ public class LayoutMapping extends MapPropertyHolder {
     private ElkNode layoutGraph;
     /** the top-level diagram part. */
     private Object parentElement;
+    /** the workbench part for wich the mapping was created, if any. */
+    private final IWorkbenchPart workbenchPart;
+    
+    /**
+     * Create a layout mapping.
+     * 
+     * @param theWorkbenchPart the workbench part for which the mapping is created, which may be {@code null}
+     */
+    public EclipseLayoutMapping(final Object theWorkbenchPart) {
+        this.workbenchPart = (IWorkbenchPart) theWorkbenchPart;
+    }
     
     /**
      * Returns the bidirectional mapping of layout graph elements to diagram parts.
@@ -79,11 +90,11 @@ public class LayoutMapping extends MapPropertyHolder {
         return parentElement;
     }
     
-//    /**
-//     * Returns the workbench part, or {@code null}.
-//     */
-//    public IWorkbenchPart getWorkbenchPart() {
-//        return workbenchPart;
-//    }
+    /**
+     * Returns the workbench part, or {@code null}.
+     */
+    public IWorkbenchPart getWorkbenchPart() {
+        return workbenchPart;
+    }
 
 }

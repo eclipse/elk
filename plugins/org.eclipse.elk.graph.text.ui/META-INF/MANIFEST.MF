@@ -8,6 +8,7 @@ Bundle-SymbolicName: org.eclipse.elk.graph.text.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.elk.core,
  org.eclipse.elk.core.service,
+ org.eclipse.elk.core.service.ui,
  org.eclipse.elk.core.ui,
  org.eclipse.elk.graph,
  org.eclipse.elk.graph.text,

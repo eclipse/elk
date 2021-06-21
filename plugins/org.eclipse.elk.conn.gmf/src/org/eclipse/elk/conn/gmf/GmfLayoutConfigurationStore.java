@@ -34,7 +34,6 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.StringValueStyle;
 import org.eclipse.gmf.runtime.notation.View;
-import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -55,7 +54,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         private IEditPartFilter editPartFilter;
 
         @Override
-        public ILayoutConfigurationStore get(final IWorkbenchPart workbenchPart, final Object context) {
+        public ILayoutConfigurationStore get(final Object workbenchPart, final Object context) {
             if (context instanceof EditPart) {
                 try {
                     return new GmfLayoutConfigurationStore((EditPart) context, editPartFilter);

@@ -33,8 +33,9 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.service.ui.EclipseLayoutMapping;
+import org.eclipse.elk.core.service.ui.IEclipseDiagramLayoutConnector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.graph.ElkConnectableShape;
@@ -85,7 +86,7 @@ import com.google.inject.Singleton;
  * information is stored persistently.
  */
 @Singleton
-public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
+public class GmfDiagramLayoutConnector implements IEclipseDiagramLayoutConnector {
 
     /** list of connection edit parts that were found in the diagram. */
     public static final IProperty<List<ConnectionEditPart>> CONNECTIONS = 
@@ -176,7 +177,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     @Override
     public LayoutMapping buildLayoutGraph(final IWorkbenchPart workbenchPart, final Object diagramPart) {
         // get the diagram editor part
-        DiagramEditor diagramEditor = getDiagramEditor(workbenchPart);
+        DiagramEditor diagramEditor = getDiagramEditor((IWorkbenchPart) workbenchPart);
 
         // choose the layout root edit part
         IGraphicalEditPart layoutRootPart = null;
@@ -230,7 +231,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         }
 
         // create the mapping
-        LayoutMapping mapping = buildLayoutGraph(layoutRootPart, selectedParts, workbenchPart);
+        LayoutMapping mapping = buildLayoutGraph(layoutRootPart, selectedParts, (IWorkbenchPart) workbenchPart);
 
         return mapping;
     }
@@ -288,7 +289,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     protected LayoutMapping buildLayoutGraph(final IGraphicalEditPart layoutRootPart,
             final List<ShapeNodeEditPart> selection, final IWorkbenchPart workbenchPart) {
         
-        LayoutMapping mapping = new LayoutMapping(workbenchPart);
+        LayoutMapping mapping = new EclipseLayoutMapping((IWorkbenchPart) workbenchPart);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setParentElement(layoutRootPart);
 
@@ -343,7 +344,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     @Override
     public void applyLayout(final LayoutMapping mapping, final IPropertyHolder settings) {
         boolean zoomToFit = settings.getProperty(CoreOptions.ZOOM_TO_FIT);
-        IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
+        IWorkbenchPart workbenchPart = ((EclipseLayoutMapping) mapping).getWorkbenchPart();
         int animationTime = calcAnimationTime(mapping, settings,
                 workbenchPart != null && !workbenchPart.getSite().getPage().isPartVisible(workbenchPart));
         mapping.setProperty(ANIMATION_TIME, animationTime);
@@ -522,7 +523,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         if (applyLayoutCommand != null) {
             // Get a command stack to execute the command
             CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-            IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
+            IWorkbenchPart workbenchPart = ((EclipseLayoutMapping) mapping).getWorkbenchPart();
             if (commandStack == null) {
                 if (workbenchPart != null) {
                     Object adapter = workbenchPart.getAdapter(CommandStack.class);
