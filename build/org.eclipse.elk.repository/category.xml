@@ -53,6 +53,10 @@
    <feature url="features/org.eclipse.elk.graph.json.source_0.8.0.qualifier.jar" id="org.eclipse.elk.graph.json.feature.source" version="0.8.0.qualifier">
       <category name="elk"/>
    </feature>
+
+   <bundle id="org.eclipse.elk.core.service.ui" version="0.8.0.qualifier"/>
+   <bundle id="org.eclipse.elk.core.service.ui.source" version="0.8.0.qualifier"/>
+
    <category-def name="elk" label="Eclipse Layout Kernel">
       <description>
          Eclipse Layout Kernel components for the automatic layout of diagrams.
