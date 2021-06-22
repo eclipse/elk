@@ -13,8 +13,6 @@ Require-Bundle: com.google.guava,
  org.eclipse.emf.edit;bundle-version="2.5.0",
  org.eclipse.elk.graph,
  org.eclipse.elk.core;visibility:=reexport,
- org.eclipse.elk.core.service.source,
- org.eclipse.elk.core.service,
  org.eclipse.elk.core.service
 Eclipse-RegisterBuddy: org.eclipse.elk.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
