@@ -90,15 +90,20 @@ public class LayoutConnectorsService {
     }
 
     /**
-     * Returns the most suitable layout setup injector for diagram part.
+     * Returns the most suitable layout setup injector for the given workbench and diagram part.
      * An implementation of {@link IDiagramLayoutConnector} can be obtained from such an injector.
      * 
      * @param diagramPart the diagram part for which the injector should be fetched, or {@code null}
      * @return the most suitable injector, or {@code null} if none applies
      */
-    public final Injector getInjector(final Object diagramPart) {
+    public final Injector getInjector(final Object workbenchPart, final Object diagramPart) {
         for (SetupEntry entry : entries) {
-            if (entry.setup.supports(diagramPart)) {
+            if (workbenchPart == null) {
+                if (entry.setup.supports(diagramPart)) {
+                    return getInjector(entry);
+                }
+            } else if (entry.setup.supports(workbenchPart)
+                    && (diagramPart == null || entry.setup.supports(diagramPart))) {
                 return getInjector(entry);
             }
         }
@@ -115,11 +120,13 @@ public class LayoutConnectorsService {
     /**
      * Returns the most suitable diagram layout connector for the given workbench and diagram part.
      * 
+     * @param workbenchPart the workbench part for which the connector should be fetched, or {@code null}
      * @param diagramPart the diagram part for which the connector should be fetched, or {@code null}
      * @return the most suitable connector, or {@code null} if none applies
      */
-    public final IDiagramLayoutConnector getConnector(final Object diagramPart) {
-        Injector injector = getInjector(diagramPart);
+    public final IDiagramLayoutConnector getConnector(final Object workbenchPart,
+            final Object diagramPart) {
+        Injector injector = getInjector(workbenchPart, diagramPart);
         if (injector != null) {
             return injector.getInstance(IDiagramLayoutConnector.class);
         }

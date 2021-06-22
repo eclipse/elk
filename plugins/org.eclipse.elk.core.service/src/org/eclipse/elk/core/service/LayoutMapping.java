@@ -12,7 +12,6 @@ package org.eclipse.elk.core.service;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
-//import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -33,6 +32,17 @@ public class LayoutMapping extends MapPropertyHolder {
     private ElkNode layoutGraph;
     /** the top-level diagram part. */
     private Object parentElement;
+    /** the workbench part for wich the mapping was created, if any. */
+    private final Object workbenchPart;
+    
+    /**
+     * Create a layout mapping.
+     * 
+     * @param theWorkbenchPart the workbench part for which the mapping is created, which may be {@code null}
+     */
+    public LayoutMapping(final Object theWorkbenchPart) {
+        this.workbenchPart = theWorkbenchPart;
+    }
     
     /**
      * Returns the bidirectional mapping of layout graph elements to diagram parts.
@@ -79,11 +89,11 @@ public class LayoutMapping extends MapPropertyHolder {
         return parentElement;
     }
     
-//    /**
-//     * Returns the workbench part, or {@code null}.
-//     */
-//    public IWorkbenchPart getWorkbenchPart() {
-//        return workbenchPart;
-//    }
+    /**
+     * Returns the workbench part, or {@code null}.
+     */
+    public Object getWorkbenchPart() {
+        return workbenchPart;
+    }
 
 }

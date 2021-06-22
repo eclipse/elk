@@ -27,6 +27,7 @@ import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.service.ui.util.EclipseMonitoredOperation;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -185,7 +186,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      *            if true, automatic zoom-to-fit is activated (if supported by the diagram connector)
      * @return the layout mapping used in this operation
      */
-    public static EclipseLayoutMapping invokeLayout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+    public static LayoutMapping invokeLayout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoomToFit) {
         Parameters params = new Parameters();
@@ -209,7 +210,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      *            layout parameters, or {@code null} to use default values
      * @return the layout mapping used in this operation
      */
-    public static EclipseLayoutMapping invokeLayout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+    public static LayoutMapping invokeLayout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final Parameters params) {
         return invokeLayout(workbenchPart, diagramPart, (IElkCancelIndicator) null, params);
     }
@@ -238,7 +239,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      * @return the layout mapping used in this operation, or {@code null} if the workbench part and diagram
      *            part cannot be identified by the {@link EclipseLayoutConnectorsService}
      */
-    public static EclipseLayoutMapping invokeLayout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+    public static LayoutMapping invokeLayout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final IElkCancelIndicator cancelIndicator, final Parameters params) {
         Injector injector = EclipseLayoutConnectorsService.getInstance().getInjector(workbenchPart, diagramPart);
 
@@ -328,14 +329,14 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      *            layout parameters, or {@code null} to use default values
      * @return the layout mapping used in this operation
      */
-    public EclipseLayoutMapping layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+    public LayoutMapping layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final IElkCancelIndicator cancelIndicator, final Parameters params) {
         if (workbenchPart == null && diagramPart == null) {
             throw new NullPointerException();
         }
         
         final Parameters finalParams = params != null ? params : new Parameters();
-        final Maybe<EclipseLayoutMapping> layoutMapping = Maybe.create();
+        final Maybe<LayoutMapping> layoutMapping = Maybe.create();
         final Pair<IWorkbenchPart, Object> target = Pair.of(workbenchPart, diagramPart);
         final ExecutorService executorService = EclipseElkServicePlugin.getInstance().getExecutorService();
         final EclipseMonitoredOperation monitoredOperation = 
@@ -345,14 +346,12 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
             @Override
             protected void preUIexec() {
                 boolean layoutAncestors = finalParams.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
-                EclipseLayoutMapping mapping;
+                LayoutMapping mapping;
                 if (layoutAncestors && workbenchPart != null) {
-                    mapping = (EclipseLayoutMapping) ((IEclipseDiagramLayoutConnector) connector)
-                            .buildLayoutGraph(workbenchPart, null);
+                    mapping = connector.buildLayoutGraph(workbenchPart, null);
                     mapping.setParentElement(diagramPart);
                 } else {
-                    mapping = (EclipseLayoutMapping) ((IEclipseDiagramLayoutConnector) connector)
-                            .buildLayoutGraph(workbenchPart, diagramPart);
+                    mapping = connector.buildLayoutGraph(workbenchPart, diagramPart);
                 }
                 
                 if (mapping != null && mapping.getLayoutGraph() != null) {
@@ -370,7 +369,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
                     return Status.CANCEL_STATUS;
                 }
 
-                EclipseLayoutMapping mapping = layoutMapping.get();
+                LayoutMapping mapping = layoutMapping.get();
                 IStatus status;
                 if (mapping != null && mapping.getLayoutGraph() != null) {
                     
@@ -465,7 +464,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      *            layout parameters
      * @return the layout mapping used in this operation
      */
-    public EclipseLayoutMapping layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+    public LayoutMapping layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final IElkProgressMonitor progressMonitor, final Parameters params) {
         if (workbenchPart == null && diagramPart == null) {
             throw new NullPointerException();
@@ -487,7 +486,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
         // Build the layout graph
         IElkProgressMonitor submon1 = finalMonitor.subTask(1);
         submon1.begin("Build layout graph", 1);
-        EclipseLayoutMapping mapping = (EclipseLayoutMapping) ((IEclipseDiagramLayoutConnector) connector)
+        LayoutMapping mapping = connector
                 .buildLayoutGraph(workbenchPart, diagramPart);
         
         if (mapping != null && mapping.getLayoutGraph() != null) {
@@ -505,7 +504,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
             submon3.done();
         } else {
             if (mapping == null) {
-                mapping = new EclipseLayoutMapping(workbenchPart);
+                mapping = new LayoutMapping(workbenchPart);
             }
             IStatus status = new Status(Status.WARNING, EclipseElkServicePlugin.PLUGIN_ID,
                     "Unable to build the layout graph from the given selection.");
@@ -519,7 +518,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
     /**
      * Create a diagram layout configuration and add it to the setup.
      */
-    protected void addDiagramConfig(final EclipseParameters params, final EclipseLayoutMapping layoutMapping) {
+    protected void addDiagramConfig(final EclipseParameters params, final LayoutMapping layoutMapping) {
         LayoutConfigurator diagramConfig = configManager.createConfigurator(layoutMapping);
         if (params.configurators.isEmpty()) {
             params.addLayoutRun(diagramConfig);
@@ -558,7 +557,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      * @param params
      *            layout parameters
      */
-    protected void handleAncestors(final EclipseLayoutMapping mapping, final EclipseParameters params) {
+    protected void handleAncestors(final LayoutMapping mapping, final EclipseParameters params) {
         boolean layoutAncestors = params.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
         if (layoutAncestors) {
             // Mark all parallel areas for exclusion from layout
@@ -606,7 +605,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      *            layout parameters
      * @return a status indicating success or failure
      */
-    public IStatus layout(final EclipseLayoutMapping mapping, final IElkProgressMonitor progressMonitor,
+    public IStatus layout(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor,
             final EclipseParameters params) {
         mapping.setProperty(MAPPING_CONNECTOR, connector);
         handleAncestors(mapping, params);
@@ -688,7 +687,7 @@ public class EclipseDiagramLayoutEngine extends DiagramLayoutEngine {
      *            an optional array of graph element visitors to apply
      * @return a status indicating success or failure
      */
-    public IStatus layout(final EclipseLayoutMapping mapping,
+    public IStatus layout(final LayoutMapping mapping,
             final IElkProgressMonitor progressMonitor, final IGraphElementVisitor... visitors) {
 
         if (progressMonitor.isCanceled()) {

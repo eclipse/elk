@@ -9,8 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ui.layout;
 
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.ILayoutSetup;
-import org.eclipse.elk.core.service.ui.IEclipseDiagramLayoutConnector;
 import org.eclipse.elk.graph.text.ui.ElkGraphTextUiActivator;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
@@ -40,7 +40,7 @@ public class TextLayoutSetup implements ILayoutSetup {
 
         @Override
         public void configure(final Binder binder) {
-            binder.bind(IEclipseDiagramLayoutConnector.class).to(TextLayoutConnector.class);
+            binder.bind(IDiagramLayoutConnector.class).to(TextLayoutConnector.class);
         }
         
     }

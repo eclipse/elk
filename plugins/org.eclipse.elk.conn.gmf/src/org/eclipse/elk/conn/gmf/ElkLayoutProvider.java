@@ -122,7 +122,7 @@ public class ElkLayoutProvider extends AbstractProvider implements ILayoutNodePr
         
         return new Runnable() {
             public void run() {
-                DiagramLayoutEngine.invokeLayout(diagramPart, false, progressDialog,
+                DiagramLayoutEngine.invokeLayout(null, diagramPart, false, progressDialog,
                         false, zoomToFit);
             }
         };

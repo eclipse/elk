@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ui.EclipseElkServicePlugin;
+import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.service.util.ProgressMonitorAdapter;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkCancelIndicator;
@@ -42,19 +43,10 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  * @author msp
  */
-public abstract class EclipseMonitoredOperation {
+public abstract class EclipseMonitoredOperation extends MonitoredOperation {
 
     /** maximal number of recursion levels for which progress is displayed. */
     private static final int MAX_PROGRESS_LEVELS = 4;
-    
-    /** The executor service used to perform operations. */
-    private final ExecutorService executorService;
-    /** Timestamp of the operation's starting time. */
-    private long timestamp;
-    /** Whether the operation has been canceled. */
-    private boolean isCanceled;
-    /** Additional cancel indicator to query. */
-    private final IElkCancelIndicator cancelIndicator;
     
     /**
      * Create a monitored operation with the given executor service.
@@ -72,11 +64,7 @@ public abstract class EclipseMonitoredOperation {
      * @param cancelIndicator an indicator queried regularly for cancelation
      */
     public EclipseMonitoredOperation(final ExecutorService service, final IElkCancelIndicator cancelIndicator) {
-        if (service == null) {
-            throw new NullPointerException();
-        }
-        this.executorService = service;
-        this.cancelIndicator = cancelIndicator;
+        super(service, cancelIndicator);
     }
     
     /**

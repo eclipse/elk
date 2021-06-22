@@ -117,7 +117,7 @@ public class LayoutDiagramFileHandler extends AbstractHandler {
         monitor.worked(1);
         
         // perform layout on the diagram
-        DiagramLayoutEngine.invokeLayout(editPart.get(), monitor.subTask(1), null);
+        DiagramLayoutEngine.invokeLayout(null, editPart.get(), monitor.subTask(1), null);
         
         // save the modified diagram
         resource.save(Collections.emptyMap());

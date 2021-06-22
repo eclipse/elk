@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.service.ui.EclipseElkServicePlugin;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.elk.core.ui.Messages;
@@ -127,7 +127,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @return a group with developer options
      */
     private Group createDeveloperOptionsGroup(final Composite parent) {
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore servicePrefStore = EclipseElkServicePlugin.getInstance().getPreferenceStore();
         
         Group developerGroup = new Group(parent, SWT.NONE);
         developerGroup.setText(Messages.getString("LayoutPreferencePage.developerGroup.text")); //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     protected void performDefaults() {
         super.performDefaults();
         IPreferenceStore mainPrefStore = getPreferenceStore();
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore servicePrefStore = EclipseElkServicePlugin.getInstance().getPreferenceStore();
         
         // set default values for the general options
         animationCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
@@ -214,7 +214,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     public boolean performOk() {
         IPreferenceStore mainPrefStore = getPreferenceStore();
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore servicePrefStore = EclipseElkServicePlugin.getInstance().getPreferenceStore();
         
         // set new values for the general options
         mainPrefStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());

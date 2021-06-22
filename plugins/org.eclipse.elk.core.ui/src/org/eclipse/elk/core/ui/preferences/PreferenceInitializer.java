@@ -11,7 +11,7 @@ package org.eclipse.elk.core.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.service.ui.EclipseElkServicePlugin;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.elk.core.ui.views.LayoutViewPart;
@@ -24,7 +24,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     @Override
     public void initializeDefaultPreferences() {
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore servicePrefStore = EclipseElkServicePlugin.getInstance().getPreferenceStore();
         IPreferenceStore uiPrefStore = ElkUiPlugin.getInstance().getPreferenceStore();
         
         uiPrefStore.setDefault(LayoutHandler.PREF_ANIMATION, true);

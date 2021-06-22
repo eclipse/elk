@@ -18,8 +18,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
+import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.service.ui.internal.EclipseDefaultModule;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.ui.IWorkbenchPart;
@@ -33,7 +35,7 @@ import com.google.inject.Injector;
  *
  * @author msp
  */
-public class EclipseLayoutConnectorsService extends LayoutConnectorsService {
+public class EclipseLayoutConnectorsService {
 
     /** Identifier of the extension point for layout connectors. */
     protected static final String EXTP_ID_LAYOUT_CONNECTORS = "org.eclipse.elk.core.service.layoutConnectors";
@@ -85,7 +87,7 @@ public class EclipseLayoutConnectorsService extends LayoutConnectorsService {
     private final List<SetupEntry> entries = new LinkedList<SetupEntry>();
     
     /** list of registered layout listeners. */
-    private final List<IEclipseLayoutListener> layoutListeners = new LinkedList<IEclipseLayoutListener>();
+    private final List<ILayoutListener> layoutListeners = new LinkedList<ILayoutListener>();
     
     /**
      * Load all registered extensions for the layout connectors extension point.
@@ -143,22 +145,22 @@ public class EclipseLayoutConnectorsService extends LayoutConnectorsService {
     /**
      * Add the given instance to the list of layout listeners.
      */
-    public void addLayoutListener(final IEclipseLayoutListener listener) {
+    public void addLayoutListener(final ILayoutListener listener) {
         layoutListeners.add(listener);
     }
 
     /**
      * Remove the given instance from the list of layout listeners.
      */
-    public void removeLayoutListener(final IEclipseLayoutListener listener) {
+    public void removeLayoutListener(final ILayoutListener listener) {
         layoutListeners.remove(listener);
     }
     
     /**
      * Called by the {@link DiagramLayoutEngine} when automatic layout ist about to start.
      */
-    protected void fireLayoutAboutToStart(final EclipseLayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
-        for (IEclipseLayoutListener listener : layoutListeners) {
+    protected void fireLayoutAboutToStart(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
+        for (ILayoutListener listener : layoutListeners) {
             listener.layoutAboutToStart(mapping, progressMonitor);
         }
     }
@@ -166,8 +168,8 @@ public class EclipseLayoutConnectorsService extends LayoutConnectorsService {
     /**
      * Called by the {@link DiagramLayoutEngine} when automatic layout has been done.
      */
-    protected void fireLayoutDone(final EclipseLayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
-        for (IEclipseLayoutListener listener : layoutListeners) {
+    protected void fireLayoutDone(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
+        for (ILayoutListener listener : layoutListeners) {
             listener.layoutDone(mapping, progressMonitor);
         }
     }

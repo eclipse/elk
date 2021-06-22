@@ -41,7 +41,7 @@ public interface IDiagramLayoutConnector {
      * @return a layout graph mapping, or {@code null} if the given workbench part or diagram part
      *            is not supported
      */
-    LayoutMapping buildLayoutGraph(Object diagramPart);
+    LayoutMapping buildLayoutGraph(Object workbenchPart, Object diagramPart);
 
     /**
      * Apply the computed layout back to the diagram. Graph elements whose modification flag

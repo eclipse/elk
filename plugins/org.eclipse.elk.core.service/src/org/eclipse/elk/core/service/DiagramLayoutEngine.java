@@ -44,7 +44,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.ConfigurationException;
@@ -180,7 +179,7 @@ public class DiagramLayoutEngine {
      *            if true, automatic zoom-to-fit is activated (if supported by the diagram connector)
      * @return the layout mapping used in this operation
      */
-    public static LayoutMapping invokeLayout(final Object diagramPart,
+    public static LayoutMapping invokeLayout(final Object workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoomToFit) {
         Parameters params = new Parameters();
@@ -189,7 +188,7 @@ public class DiagramLayoutEngine {
             .setProperty(CoreOptions.PROGRESS_BAR, progressBar)
             .setProperty(CoreOptions.LAYOUT_ANCESTORS, layoutAncestors)
             .setProperty(CoreOptions.ZOOM_TO_FIT, zoomToFit);
-        return invokeLayout(diagramPart, params);
+        return invokeLayout(workbenchPart, diagramPart, params);
     }
     
     /**
@@ -204,9 +203,9 @@ public class DiagramLayoutEngine {
      *            layout parameters, or {@code null} to use default values
      * @return the layout mapping used in this operation
      */
-    public static LayoutMapping invokeLayout(final Object diagramPart,
+    public static LayoutMapping invokeLayout(final Object workbenchPart, final Object diagramPart,
             final Parameters params) {
-        return invokeLayout(diagramPart, (IElkCancelIndicator) null, params);
+        return invokeLayout(workbenchPart, diagramPart, (IElkCancelIndicator) null, params);
     }
 
     /**
@@ -233,34 +232,33 @@ public class DiagramLayoutEngine {
      * @return the layout mapping used in this operation, or {@code null} if the workbench part and diagram
      *            part cannot be identified by the {@link LayoutConnectorsService}
      */
-    public static LayoutMapping invokeLayout(final Object diagramPart,
+    public static LayoutMapping invokeLayout(final Object workbenchPart, final Object diagramPart,
             final IElkCancelIndicator cancelIndicator, final Parameters params) {
-        Injector injector = LayoutConnectorsService.getInstance().getInjector(diagramPart);
+        Injector injector = LayoutConnectorsService.getInstance().getInjector(workbenchPart, diagramPart);
 
         if (injector != null) {
             try {
                 DiagramLayoutEngine engine = injector.getInstance(DiagramLayoutEngine.class);
                 if (cancelIndicator instanceof IElkProgressMonitor) {
-                    return engine.layout(diagramPart, (IElkProgressMonitor) cancelIndicator, params);
+                    return engine.layout(workbenchPart, diagramPart, (IElkProgressMonitor) cancelIndicator, params);
                 } else {
-                    return engine.layout(diagramPart, cancelIndicator, params);
+                    return engine.layout(workbenchPart, diagramPart, cancelIndicator, params);
                 }
             } catch (ConfigurationException exception) {
-//                IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
-//                        workbenchPart == null
-//                        ? "The Guice configuration for the given selection is inconsistent."
-//                        : "The Guice configuration for " + workbenchPart.getTitle() + " is inconsistent.",
-//                        exception);
-//                StatusManager.getManager().handle(status, StatusManager.SHOW);
-                // TODO handle
+                IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
+                        workbenchPart == null
+                        ? "The Guice configuration for the given selection is inconsistent."
+                        : "The Guice configuration for " + workbenchPart + " is inconsistent.",
+                        exception);
+                exception.printStackTrace();
+                // XXX handle status
             }
         } else {
-//            IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
-//                    workbenchPart == null
-//                    ? "No layout connector is available for the given selection."
-//                    : "No layout connector is available for " + workbenchPart.getTitle() + ".");
-//            StatusManager.getManager().handle(status, StatusManager.SHOW);
-            // TODO handle
+            IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
+                    workbenchPart == null
+                    ? "No layout connector is available for the given selection."
+                    : "No layout connector is available for " + workbenchPart + ".");
+            // XXX handle status
         }
         return null;
     }
@@ -325,15 +323,15 @@ public class DiagramLayoutEngine {
      *            layout parameters, or {@code null} to use default values
      * @return the layout mapping used in this operation
      */
-    public LayoutMapping layout(final Object diagramPart,
+    public LayoutMapping layout(final Object workbenchPart, final Object diagramPart,
             final IElkCancelIndicator cancelIndicator, final Parameters params) {
-        if (diagramPart == null) {
+        if (workbenchPart == null && diagramPart == null) {
             throw new NullPointerException();
         }
         
         final Parameters finalParams = params != null ? params : new Parameters();
         final Maybe<LayoutMapping> layoutMapping = Maybe.create();
-        final Pair<Object, Object> target = Pair.of(null, diagramPart);
+        final Pair<Object, Object> target = Pair.of(workbenchPart, diagramPart);
         final ExecutorService executorService = ElkServicePlugin.getInstance().getExecutorService();
         final MonitoredOperation monitoredOperation = new MonitoredOperation(executorService, cancelIndicator) {
             
@@ -342,11 +340,11 @@ public class DiagramLayoutEngine {
             protected void preUIexec() {
                 boolean layoutAncestors = finalParams.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
                 LayoutMapping mapping;
-                if (layoutAncestors) {
-                    mapping = connector.buildLayoutGraph(null);
+                if (layoutAncestors && workbenchPart != null) {
+                    mapping = connector.buildLayoutGraph(workbenchPart, null);
                     mapping.setParentElement(diagramPart);
                 } else {
-                    mapping = connector.buildLayoutGraph(diagramPart);
+                    mapping = connector.buildLayoutGraph(workbenchPart, diagramPart);
                 }
                 
                 if (mapping != null && mapping.getLayoutGraph() != null) {
@@ -397,7 +395,7 @@ public class DiagramLayoutEngine {
             }
         };
         
-        Multimap<Object, MonitoredOperation> runningOperations = ElkServicePlugin
+        Multimap<Pair<Object, Object>, MonitoredOperation> runningOperations = ElkServicePlugin
                 .getInstance().getRunningOperations();
         synchronized (runningOperations) {
             runningOperations.put(target, monitoredOperation);
@@ -407,12 +405,10 @@ public class DiagramLayoutEngine {
             boolean progressBar = finalParams.getGlobalSettings().getProperty(CoreOptions.PROGRESS_BAR);
             if (progressBar) {
                 // Perform layout with a progress bar
-                // XXX
-//                monitoredOperation.runMonitored();
+                monitoredOperation.runMonitored();
             } else {
                 // Perform layout without a progress bar
-                // XXX
-//                monitoredOperation.runUnmonitored();
+                monitoredOperation.runUnmonitored();
             }
         } finally {
             synchronized (runningOperations) {
@@ -430,7 +426,7 @@ public class DiagramLayoutEngine {
      * @param time operations with a timestamp that is less than this are stopped
      */
     protected void stopEarlierOperations(final Pair<Object, Object> target, final long time) {
-        Multimap<Object, MonitoredOperation> runningOperations = ElkServicePlugin
+        Multimap<Pair<Object, Object>, MonitoredOperation> runningOperations = ElkServicePlugin
                 .getInstance().getRunningOperations();
         synchronized (runningOperations) {
             for (MonitoredOperation operation : runningOperations.get(target)) {
@@ -461,19 +457,15 @@ public class DiagramLayoutEngine {
      *            layout parameters
      * @return the layout mapping used in this operation
      */
-    public LayoutMapping layout(final Object diagramPart,
+    public LayoutMapping layout(final Object workbenchPart, final Object diagramPart,
             final IElkProgressMonitor progressMonitor, final Parameters params) {
-        if (diagramPart == null) {
+        if (workbenchPart == null && diagramPart == null) {
             throw new NullPointerException();
         }
         
         final IElkProgressMonitor finalMonitor;
         if (progressMonitor == null) {
-            IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
-            finalMonitor = new BasicProgressMonitor(0)
-                    .withLogging(prefStore.getBoolean(PREF_DEBUG_LOGGING))
-                    .withLogPersistence(prefStore.getBoolean(PREF_DEBUG_STORE))
-                    .withExecutionTimeMeasurement(prefStore.getBoolean(PREF_DEBUG_EXEC_TIME));
+            finalMonitor = new BasicProgressMonitor(0);
         } else {
             finalMonitor = progressMonitor;
         }
@@ -483,7 +475,7 @@ public class DiagramLayoutEngine {
         // Build the layout graph
         IElkProgressMonitor submon1 = finalMonitor.subTask(1);
         submon1.begin("Build layout graph", 1);
-        LayoutMapping mapping = connector.buildLayoutGraph(diagramPart);
+        LayoutMapping mapping = connector.buildLayoutGraph(workbenchPart, diagramPart);
         
         if (mapping != null && mapping.getLayoutGraph() != null) {
             // Extract the diagram configuration
@@ -500,7 +492,7 @@ public class DiagramLayoutEngine {
             submon3.done();
         } else {
             if (mapping == null) {
-                mapping = new LayoutMapping();
+                mapping = new LayoutMapping(workbenchPart);
             }
             IStatus status = new Status(Status.WARNING, ElkServicePlugin.PLUGIN_ID,
                     "Unable to build the layout graph from the given selection.");

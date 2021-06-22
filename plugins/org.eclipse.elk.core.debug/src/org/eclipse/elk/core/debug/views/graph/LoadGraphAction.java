@@ -17,7 +17,7 @@ import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.debug.model.ExecutionInfo;
 import org.eclipse.elk.core.debug.model.ExecutionInfoModel;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.service.ui.EclipseElkServicePlugin;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -136,7 +136,7 @@ public class LoadGraphAction extends Action {
      * That object is not added to the {@link ExecutionInfoModel} by this method.
      */
     static ExecutionInfo layout(final String fileName, final boolean performLayout, final ElkNode graph) {
-        IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore prefStore = EclipseElkServicePlugin.getInstance().getPreferenceStore();
         IElkProgressMonitor monitor =
                 new BasicProgressMonitor()
                         .withMaxHierarchyLevels(0)

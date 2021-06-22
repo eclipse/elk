@@ -26,7 +26,6 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -44,12 +43,10 @@ public class ElkServicePlugin extends Plugin {
     /** The shared instance. */
     private static ElkServicePlugin plugin;
     
-    /** The local preference store. */
-    private IPreferenceStore preferenceStore;
     /** The executor service used to perform layout operations. */
     private ExecutorService executorService;
     /** map of currently running layout operations. */
-    private final Multimap<Object, MonitoredOperation> runningOperations = HashMultimap.create();
+    private final Multimap<Pair<Object, Object>, MonitoredOperation> runningOperations = HashMultimap.create();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Instance
@@ -85,28 +82,12 @@ public class ElkServicePlugin extends Plugin {
             executorService = null;
         }
         
-        preferenceStore = null;
         plugin = null;
         super.stop(context);
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Accessors
-    
-    /**
-     * Return the preference store associated with this plug-in.
-     * 
-     * Implementation is inspired by {@link org.eclipse.ui.plugin.AbstractUIPlugin#getPreferenceStore()}.
-     */
-    public IPreferenceStore getPreferenceStore() {
-        // Create the preference store lazily.
-        if (preferenceStore == null) {
-            // TODO do this as a service
-//            preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
-
-        }
-        return preferenceStore;
-    }
     
     /**
      * Return the executor service to use for automatic layout operations.
@@ -121,7 +102,7 @@ public class ElkServicePlugin extends Plugin {
     /**
      * Return the map of currently running layout operations.
      */
-    public Multimap<Object, MonitoredOperation> getRunningOperations() {
+    public Multimap<Pair<Object, Object>, MonitoredOperation> getRunningOperations() {
         return runningOperations;
     }
     
