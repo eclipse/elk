@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
+ * Copyright (c) 2019, 2021 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,7 +10,6 @@
 package org.eclipse.elk.core.debug.actions;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.service.ui.EclipseElkServicePlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
