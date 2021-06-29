@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -64,7 +65,7 @@ public final class ModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases,
                     for (LEdge edge : port.getOutgoingEdges()) {
                         LNode target = edge.getTarget().getNode();
                         if (target != source) {
-                            int modelOrderTarget = source.getProperty(InternalProperties.MODEL_ORDER);
+                            int modelOrderTarget = target.getProperty(InternalProperties.MODEL_ORDER);
                             if (modelOrderTarget < modelOrderSource) {
                                 revEdges.add(edge);
                             }
@@ -76,11 +77,11 @@ public final class ModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases,
             // reverse the gathered edges
             for (LEdge edge : revEdges) {
                 edge.reverse(layeredGraph, true);
+                layeredGraph.setProperty(InternalProperties.CYCLIC, true);
             }
-            
             revEdges.clear();
         } else {
-            throw new IllegalArgumentException(
+            throw new UnsupportedConfigurationException(
                     "Model order has to be considered to use the model order cycle breaker " + this.toString());
         }
         monitor.done();
