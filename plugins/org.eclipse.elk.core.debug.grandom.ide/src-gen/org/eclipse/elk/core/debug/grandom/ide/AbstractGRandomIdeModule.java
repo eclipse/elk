@@ -9,6 +9,9 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.grandom.ide;
 
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
+
 import org.eclipse.elk.core.debug.grandom.ide.contentassist.antlr.GRandomParser;
 import org.eclipse.elk.core.debug.grandom.ide.contentassist.antlr.internal.InternalGRandomLexer;
 import org.eclipse.xtext.ide.DefaultIdeModule;
@@ -20,11 +23,8 @@ import org.eclipse.xtext.ide.editor.contentassist.antlr.AntlrProposalConflictHel
 import org.eclipse.xtext.ide.editor.contentassist.antlr.IContentAssistParser;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 import org.eclipse.xtext.ide.refactoring.IRenameStrategy2;
-import org.eclipse.xtext.ide.server.rename.IRenameService2;
-import org.eclipse.xtext.ide.server.rename.RenameService2;
-
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
+import org.eclipse.xtext.ide.server.rename.IRenameService;
+import org.eclipse.xtext.ide.server.rename.RenameService;
 
 /**
  * Manual modifications go to {@link GRandomIdeModule}.
@@ -55,8 +55,8 @@ public abstract class AbstractGRandomIdeModule extends DefaultIdeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
-	public Class<? extends IRenameService2> bindIRenameService() {
-		return RenameService2.class;
+	public Class<? extends IRenameService> bindIRenameService() {
+		return RenameService.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
