@@ -183,7 +183,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports layering.layerId
     supports crossingMinimization.positionId
     supports considerModelOrder.strategy
-    supports considerModelOrder.dummyStrategy
+    supports considerModelOrder.longEdgeStrategy
     supports considerModelOrder.crossingCounterNodeInfluence
     supports considerModelOrder.crossingCounterPortInfluence
 }
@@ -922,13 +922,13 @@ group considerModelOrder {
         default = OrderingStrategy.NONE
         targets parents
     }
-    option dummyStrategy: DummyNodeStrategy {
-        label "Dummy Node Strategy"
+    option longEdgeStrategy: LongEdgeOrderingStrategy {
+        label "Long Edge Ordering Strategy"
         description
-            "Indicates whether dummy nodes are sorted under, over, or equal to nodes that have no connection to a
+            "Indicates whether long edges are sorted under, over, or equal to nodes that have no connection to a
              previous layer in a left-to-right or right-to-left layout. Under and over changes to right and left in a
              vertical layout."
-        default = DummyNodeStrategy.DUMMY_NODE_OVER
+        default = LongEdgeOrderingStrategy.DUMMY_NODE_OVER
         targets parents
     }
     option crossingCounterNodeInfluence: double {

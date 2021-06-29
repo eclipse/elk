@@ -26,7 +26,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
-import org.eclipse.elk.alg.layered.options.DummyNodeStrategy;
+import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
@@ -293,7 +293,7 @@ public class LayerSweepCrossingMinimizer
         int wrongModelOrder = 0;
         for (LNode[] layer : layers) {
             ModelOrderNodeComparator comp = new ModelOrderNodeComparator(
-                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, DummyNodeStrategy.EQUAL);
+                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL);
             for (int i = 0; i < layer.length; i++) {
                 for (int j = i + 1; j < layer.length; j++) {
                     if (comp.compare(layer[i], layer[j]) > 0) {

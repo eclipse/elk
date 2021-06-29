@@ -15,7 +15,7 @@ package org.eclipse.elk.alg.layered.options;
  * Strategy to sort dummy nodes compared to nodes with no connection to the previous layer.
  * Dummy nodes nodes are not part of the input model and 
  */
-public enum DummyNodeStrategy {
+public enum LongEdgeOrderingStrategy {
     /**
      * Dummy nodes are sorted over normal nodes.
      */
