@@ -82,6 +82,8 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         double targetWidth = -1;
         if (layoutGraph.hasProperty(RectPackingOptions.TARGET_WIDTH)) {
             targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
+            // Add padding to target width to get the actual width of the drawing with padding included
+            targetWidth += padding.getHorizontal();
         }
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
@@ -135,18 +137,25 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         } else {
             drawing = new DrawingData(aspectRatio, targetWidth, 0, DrawingDataDescriptor.WHOLE_DRAWING);
         }
+        // Readd padding for next steps.
+        minSize.x += padding.getHorizontal();
+        minSize.y += padding.getVertical();
+        
         // Placement according to approximated width.
         if (!onlyFirstIteration) {
             DrawingUtil.resetCoordinates(rectangles);
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
             // Modify the initial approximation if necessary.
-            maxWidth = Math.max(minSize.x, drawing.getDrawingWidth() - padding.getHorizontal());
-            
+            maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
+            // Resize graph to maxWidth for debugging.
+            ElkUtil.resizeNode(layoutGraph, maxWidth, layoutGraph.getHeight(), false, true);
+            // Run placement, compaction, and expansion (if enabled).
             drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph);
         }
 
         // Final touch.
         applyPadding(rectangles, padding);
+        // XXX use resize node also for expanding nodes.
         ElkUtil.resizeNode(layoutGraph, drawing.getDrawingWidth() + padding.getHorizontal(),
                 drawing.getDrawingHeight() + padding.getVertical(), false, true);
         if (progressMonitor.isLoggingEnabled()) {

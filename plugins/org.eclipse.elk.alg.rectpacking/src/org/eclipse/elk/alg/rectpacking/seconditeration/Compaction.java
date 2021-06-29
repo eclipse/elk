@@ -74,7 +74,8 @@ public final class Compaction {
                 if (currentStack != null) {
                     currentStack.updateDimension();
                 }
-                currentStack = new BlockStack(currentStack == null ? 0 : currentStack.getX() + currentStack.getWidth(), row.getY());
+                currentStack = new BlockStack(currentStack == null ? 0 : currentStack.getX() + currentStack.getWidth() +
+                        nodeNodeSpacing, row.getY(), nodeNodeSpacing);
                 block.setLocation(currentStack.getX() + currentStack.getWidth(), row.getY());
                 row.getStacks().add(currentStack);
                 currentStack.addBlock(block);
@@ -134,7 +135,7 @@ public final class Compaction {
                 // If it could compact the width of the current block and try to fit as much as possible in there
 
                 // Try to fit next block on top of the current block.
-                if (placeBelow(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex)) {
+                if (placeBelow(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex, nodeNodeSpacing)) {
                     somethingWasChanged = true;
                     continue;
                 }
@@ -276,18 +277,23 @@ public final class Compaction {
      */
     private static boolean placeBelow(final List<RectRow> rows, final RectRow row, final Block block,
             final Block nextBlock,final  boolean wasFromNextRow,
-            double boundingWidth, int nextRowIndex) {
+            double boundingWidth, int nextRowIndex, final double nodeNodeSpacing) {
         boolean somethingWasChanged = false;
         // Flatten both blocks and check whether they fit on top of each other.
-        double currentBlockMinHeight = block.getHeightForTargetWidth(boundingWidth - block.getX());                
-        double nextBlockMinHeight = nextBlock.getHeightForTargetWidth(boundingWidth - block.getX());
+        double remainingWidth = boundingWidth - block.getX();
+        double currentBlockMinHeight = block.getHeightForTargetWidth(remainingWidth);
+        // Case that the next block cannot fit in any case.
+        if (nextBlock.getMinWidth() > remainingWidth) {
+            return false;
+        }
+        double nextBlockMinHeight = nextBlock.getHeightForTargetWidth(remainingWidth);
         
-        if (currentBlockMinHeight + nextBlockMinHeight <= row.getHeight()) {
+        if (currentBlockMinHeight + nodeNodeSpacing + nextBlockMinHeight <= row.getHeight()) {
             // Case they fit on top of each other.
             block.placeRectsIn(boundingWidth - block.getX());
             block.setFixed(true);
             nextBlock.placeRectsIn(boundingWidth - block.getX());
-            nextBlock.setLocation(block.getX(), block.getY() + block.getHeight());
+            nextBlock.setLocation(block.getX(), block.getY() + block.getHeight() + nodeNodeSpacing);
             nextBlock.setPositionFixed(true);
             block.getStack().addBlock(nextBlock);
             somethingWasChanged = true;
