@@ -281,7 +281,7 @@ public final class Compaction {
         boolean somethingWasChanged = false;
         // Flatten both blocks and check whether they fit on top of each other.
         double remainingWidth = boundingWidth - block.getX();
-        double currentBlockMinHeight = block.getHeightForTargetWidth(remainingWidth);
+        double currentBlockMinHeight = block.getY() - row.getY() + block.getHeightForTargetWidth(remainingWidth);
         // Case that the next block cannot fit in any case.
         if (nextBlock.getMinWidth() > remainingWidth) {
             return false;
