@@ -149,14 +149,12 @@ public class BlockStack {
         double currentY = this.getY();
         double currentHeight = 0;
         double currentWidth = 0;
-        int index = 0;
         for (Block block : blocks) {
             block.setLocation(this.x, currentY);
-            block.placeRectsIn(targetWidth); // XXX check what this does
+            block.placeRectsIn(targetWidth);
             currentWidth = Math.max(currentWidth, block.getWidth());
-            currentY += block.getHeight() + (index > 0 ? nodeNodeSpacing : 0);
+            currentY += block.getHeight() + nodeNodeSpacing;
             currentHeight = currentY;
-            index++;
         }
         this.width = currentWidth;
         this.height = currentHeight;
