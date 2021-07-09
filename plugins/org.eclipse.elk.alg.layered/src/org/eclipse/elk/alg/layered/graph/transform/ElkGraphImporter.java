@@ -298,7 +298,7 @@ class ElkGraphImporter {
             ElkNode elknode = elkGraphQueue.poll();
             
             if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
-                // Assign a model order to the edges as they are read
+                // Assign a model order to the nodes as they are read
                 elknode.setProperty(InternalProperties.MODEL_ORDER, index++);
             }
             
@@ -364,8 +364,10 @@ class ElkGraphImporter {
                 // We don't support hyperedges
                 checkEdgeValidity(elkedge);
                 
-                // Assign a model order to the edges as they are read
-                elkedge.setProperty(InternalProperties.MODEL_ORDER, index++);
+                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+                    // Assign a model order to the edges as they are read
+                    elkedge.setProperty(InternalProperties.MODEL_ORDER, index++);
+                }
                 
                 ElkNode sourceNode = ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
                 ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
