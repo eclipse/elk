@@ -286,19 +286,18 @@ class ElkGraphImporter {
      *            graph to add the direct children of the current hierarchy level to.
      */
     private void importHierarchicalGraph(final ElkNode elkgraph, final LGraph lgraph) {
-        final Queue<ElkNode> elknodeQueue = Lists.newLinkedList();
+        final Queue<ElkNode> elkGraphQueue = Lists.newLinkedList();
         
         Direction parentGraphDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
 
         // Transform the node's children
-        elknodeQueue.addAll(elkgraph.getChildren());
-        while (!elknodeQueue.isEmpty()) {
-            ElkNode elknode = elknodeQueue.poll();
+        elkGraphQueue.addAll(elkgraph.getChildren());
+        while (!elkGraphQueue.isEmpty()) {
+            ElkNode elknode = elkGraphQueue.poll();
             
             // Check if the current node is to be laid out in the first place
             boolean isNodeToBeLaidOut = !elknode.getProperty(LayeredOptions.NO_LAYOUT);
             if (isNodeToBeLaidOut) {
-                
                 // Check if there has to be an LGraph for this node (which is the case if it has children or inside
                 // self-loops, and if it does not have another layout algorithm configured)
                 boolean hasChildren = !elknode.getChildren().isEmpty();
@@ -342,73 +341,77 @@ class ElkGraphImporter {
                     lnode.setNestedGraph(nestedGraph);
                     nestedGraph.setParentNode(lnode);
                     
-                    elknodeQueue.addAll(elknode.getChildren());
+                    elkGraphQueue.addAll(elknode.getChildren());
                 }
             }
         }
 
         // Transform the edges
-        elknodeQueue.add(elkgraph);
-        while (!elknodeQueue.isEmpty()) {
-            ElkNode elknode = elknodeQueue.poll();
+        elkGraphQueue.add(elkgraph);
+        while (!elkGraphQueue.isEmpty()) {
+            ElkNode elkGraphNode = elkGraphQueue.poll();
             
-            boolean enableInsideSelfLoops = elknode.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
-
-            // Check if the current node is to be laid out in the first place
-            if (!elknode.getProperty(LayeredOptions.NO_LAYOUT)) {
-                for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
-                    // Check if the current edge is to be laid out
-                    if (!elkedge.getProperty(LayeredOptions.NO_LAYOUT)) {
-                        // We don't support hyperedges
-                        checkEdgeValidity(elkedge);
-                        
-                        // Check if this edge is an inside self-loop
-                        boolean isInsideSelfLoop = enableInsideSelfLoops
-                                && elkedge.isSelfloop()
-                                && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
-                        
-                        // Find the graph the edge will be placed in. Basically, if the edge is an inside
-                        // self loop or connects to a descendant of this node, the edge will be placed in
-                        // the graph that represents the node's insides. Otherwise, it will be placed in
-                        // the graph that represents the node's parent.
-                        ElkNode parentKGraph = elknode.getParent();
-                        ElkNode edgeTargetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
-                        
-                        if (ElkGraphUtil.isDescendant(edgeTargetNode, elknode) || isInsideSelfLoop) {
-                            parentKGraph = elknode;
-                        }
-                        
-                        LGraph parentLGraph = lgraph;
-                        LNode parentLNode = (LNode) nodeAndPortMap.get(parentKGraph);
-                        if (parentLNode != null) {
-                            parentLGraph = parentLNode.getNestedGraph();
-                        }
-                        
-                        // Transform the edge, finally...
-                        LEdge ledge = transformEdge(elkedge, parentKGraph, parentLGraph);
-                        
-                        // Find the graph the edge's coordinates will have to be made relative to during export
-                        LGraph coordinateSystemOrigin = findCoordinateSystemOrigin(elkedge, elkgraph, lgraph);
-                        if (coordinateSystemOrigin != null) {
-                            ledge.setProperty(InternalProperties.COORDINATE_SYSTEM_ORIGIN, coordinateSystemOrigin);
-                        }
-                    }
+            for (ElkEdge elkedge : elkGraphNode.getContainedEdges()) {
+                // We don't support hyperedges
+                checkEdgeValidity(elkedge);
+                
+                ElkNode sourceNode = ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
+                ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
+                
+                // Don't bother if either the edge or at least one of its end points are excluded from layout
+                if (elkedge.getProperty(LayeredOptions.NO_LAYOUT)
+                        || sourceNode.getProperty(LayeredOptions.NO_LAYOUT)
+                        || targetNode.getProperty(LayeredOptions.NO_LAYOUT)) {
+                    continue;
                 }
                 
-                // We add the current node's children if two conditions are met: first, the current node's parent is
-                // null or set to INCLUDE_CHILDREN, and second, the child does not have another layout algorithm
-                // configured
-                HierarchyHandling parentHierarchyHandling = elknode.getParent() == null
-                        ? HierarchyHandling.INCLUDE_CHILDREN
-                        : elknode.getParent().getProperty(LayeredOptions.HIERARCHY_HANDLING);
-                if (parentHierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN) {
-                    for (ElkNode child : elknode.getChildren()) {
-                        boolean usesElkLayered = !child.hasProperty(CoreOptions.ALGORITHM)
-                                || child.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
-                        
-                        if (usesElkLayered) {
-                            elknodeQueue.add(child);
-                        }
+                // Check if this edge is an inside self-loop
+                boolean isInsideSelfLoop = elkedge.isSelfloop()
+                        && sourceNode.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE)
+                        && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
+                
+                // Find the graph the edge will be placed in. Basically, if the edge is an inside
+                // self loop or connects one of its end points to a descendant, the edge will be
+                // placed in the graph that represents that end point's insides. Otherwise, it will
+                // be placed in the current graph.
+                ElkNode parentElkGraph = elkGraphNode;
+                
+                if (isInsideSelfLoop || ElkGraphUtil.isDescendant(targetNode, sourceNode)) {
+                    parentElkGraph = sourceNode;
+                } else if (ElkGraphUtil.isDescendant(sourceNode, targetNode)) {
+                    parentElkGraph = targetNode;
+                }
+                
+                LGraph parentLGraph = lgraph;
+                LNode parentLNode = (LNode) nodeAndPortMap.get(parentElkGraph);
+                if (parentLNode != null) {
+                    parentLGraph = parentLNode.getNestedGraph();
+                }
+                
+                // Transform the edge, finally...
+                LEdge ledge = transformEdge(elkedge, parentElkGraph, parentLGraph);
+                
+                // Find the graph the edge's coordinates will have to be made relative to during export. This will only
+                // do something if the edge containment inside ELK Layered differs from the edge containment in the
+                // ELK graph
+                ledge.setProperty(InternalProperties.COORDINATE_SYSTEM_ORIGIN,
+                        findCoordinateSystemOrigin(elkedge, elkgraph, lgraph));
+            }
+            
+            // We may need to look at edges contained in the current graph node's children as well.
+            // this is true unless either the current graph node does not have hierarchy handling
+            // enabled, or a child has another layout algorithm configured
+            boolean hasHierarchyHandlingEnabled = elkGraphNode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
+                    == HierarchyHandling.INCLUDE_CHILDREN;
+            if (hasHierarchyHandlingEnabled) {
+                for (ElkNode elkChildGraphNode : elkGraphNode.getChildren()) {
+                    boolean usesElkLayered = !elkChildGraphNode.hasProperty(CoreOptions.ALGORITHM)
+                            || elkChildGraphNode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                    boolean partOfSameLayoutRun = elkChildGraphNode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
+                            == HierarchyHandling.INCLUDE_CHILDREN;
+                    
+                    if (usesElkLayered && partOfSameLayoutRun) {
+                        elkGraphQueue.add(elkChildGraphNode);
                     }
                 }
             }
@@ -679,16 +682,25 @@ class ElkGraphImporter {
                 dummyPort.getLabels().add(llabel);
                 
                 // If port labels are placed outside, modify the size
+                // If the port labels are fixed, we should consider the part that is inside the node and not 0.
                 if (!insidePortLabels) {
+                    double insidePart = 0;
+                    if (PortLabelPlacement.isFixed(elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT))) {
+                        // We use 0 as port border offset here, as we only want the label part that is
+                        // inside the node "after" the port.
+                        insidePart = ElkUtil.computeInsidePart(new KVector(elklabel.getX(), elklabel.getY()),
+                                new KVector(elklabel.getWidth(), elklabel.getHeight()),
+                                new KVector(elkport.getWidth(), elkport.getHeight()), 0, portSide);
+                    }
                     switch (portSide) {
                     case EAST:
                     case WEST:
-                        llabel.getSize().x = 0;
+                        llabel.getSize().x = insidePart;
                         break;
-                        
+
                     case NORTH:
                     case SOUTH:
-                        llabel.getSize().y = 0;
+                        llabel.getSize().y = insidePart;
                         break;
                     }
                 }

@@ -249,11 +249,14 @@ advanced option expandNodes: boolean {
 advanced option hierarchyHandling: HierarchyHandling {
     label "Hierarchy Handling"
     description
-        "If this option is set to SEPARATE_CHILDREN, each hierarchy level of the graph is processed independently, 
-        possibly by different layout algorithms, beginning with the lowest level. 
-        If it is set to INCLUDE_CHILDREN, the algorithm is responsible to process
-        all hierarchy levels that are contained in the associated parent node.
-        If the root node is set to inherit (or not set at all), the default behavior is SEPARATE_CHILDREN."
+        "Determines whether separate layout runs are triggered for different compound nodes in a
+        hierarchical graph. Setting a node's hierarchy handling to `INCLUDE_CHILDREN` will lay
+        out that node and all of its descendants in a single layout run, until a descendant is
+        encountered which has its hierarchy handling set to `SEPARATE_CHILDREN`. In general,
+        `SEPARATE_CHILDREN` will ensure that a new layout run is triggered for a node with that
+        setting. Including multiple levels of hierarchy in a single layout run may allow
+        cross-hierarchical edges to be laid out properly. If the root node is set to `INHERIT`
+        (or not set at all), the default behavior is `SEPARATE_CHILDREN`."
     default = HierarchyHandling.INHERIT
     targets parents, nodes
 }
@@ -487,7 +490,7 @@ group nodeLabels {
         description
             "Define padding for node labels that are placed inside of a node."
         default = new ElkPadding(5)
-        targets nodes
+        targets parents
     }
 
     option placement: EnumSet<NodeLabelPlacement> {

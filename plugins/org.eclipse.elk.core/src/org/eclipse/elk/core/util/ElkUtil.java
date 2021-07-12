@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.ContentAlignment;
@@ -27,9 +28,12 @@ import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.validation.GraphIssue;
 import org.eclipse.elk.core.validation.GraphValidationException;
 import org.eclipse.elk.core.validation.IValidatingGraphElementVisitor;
@@ -535,7 +539,89 @@ public final class ElkUtil {
         return junctionPoints;
     }
 
+    /**
+     * Compute the bounding box of the labels of the port corresponding to the {@code port}. This bounding box
+     * coordinates are relative to the port (as the location of each port).
+     * 
+     * @param port
+     *            The port of the labels
+     * @return the bounds of the labels
+     */
+    public static ElkRectangle getLabelsBounds(final PortAdapter<?> port) {
+        ElkRectangle bounds = null;
+        for (LabelAdapter<?> label : port.getLabels()) {
+            ElkRectangle currentLabelBounds = new ElkRectangle(label.getPosition().x, label.getPosition().y,
+                    label.getSize().x, label.getSize().y);
+            if (bounds == null) {
+                // First label
+                bounds = currentLabelBounds;
+            } else {
+                bounds.union(currentLabelBounds);
+            }
+        }
+        if (bounds == null) {
+            // No label case, return an empty rectangle
+            bounds = new ElkRectangle();
+        }
+        return bounds;
+    }
 
+    /**
+     * Compute the part of the labels of the port that is inside the node. This method must be used for label with
+     * "fixed" port label placement ({@link PortLabelPlacement#isFixed(Set)}).
+     * 
+     * @param port
+     *            The port
+     * @param portBorderOffset
+     *            The border offset of the port
+     * @return the part of the labels that is inside the node
+     */
+    public static double computeInsidePart(final PortAdapter<?> port, final double portBorderOffset) {
+        ElkRectangle labelBounds = getLabelsBounds(port);
+        return computeInsidePart(new KVector(labelBounds.x, labelBounds.y),
+                new KVector(labelBounds.width, labelBounds.height), port.getSize(), portBorderOffset, port.getSide());
+    }
+
+    /**
+     * Compute the part of the label of the port that is inside the node. This method must be used for label with
+     * "fixed" port label placement ({@link PortLabelPlacement#isFixed(Set)}).
+     * 
+     * @param labelPosition
+     *            The coordinates of the label (relative to the port)
+     * @param labelSize
+     *            The size of the label
+     * @param portSize
+     *            The size of the port
+     * @param portBorderOffset
+     *            The border offset of the port
+     * @param portSide
+     *            The side of the port
+     * @return the part of the label that is inside the node
+     */
+    public static double computeInsidePart(final KVector labelPosition, final KVector labelSize, final KVector portSize,
+            final double portBorderOffset, final PortSide portSide) {
+        double insidePart = 0;
+        switch (portSide) {
+        case NORTH:
+            insidePart = Math.max(0, labelSize.y + labelPosition.y - (portSize.y + portBorderOffset));
+            break;
+
+        case SOUTH:
+            insidePart = Math.max(0, -labelPosition.y - portBorderOffset);
+            break;
+
+        case EAST:
+            insidePart = Math.max(0, -labelPosition.x - portBorderOffset);
+            break;
+
+        case WEST:
+            insidePart = Math.max(0, labelSize.x + labelPosition.x - (portSize.x + portBorderOffset));
+            break;
+        }
+
+        return insidePart;
+    }
+    
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // COORDINATE TRANSLATION
 

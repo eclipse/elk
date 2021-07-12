@@ -230,7 +230,8 @@ A white box test method needs to specify which layout processor(s) it wants to r
 ```java
 @TestBeforeProcessor(NetworkSimplexLayerer.class)
 @TestAfterProcessor(NetworkSimplexLayerer.class)
-public void testNetworkSimplexLayerer(LGraph lGraph) {
+public void testNetworkSimplexLayerer(Object graph) {
+    LGraph lGraph = (LGraph) graph;
     // Test things...
 }
 ```

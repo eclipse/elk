@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2020 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -50,10 +50,6 @@ import com.google.common.collect.Iterables;
  *   <dt>Postcondition:</dt><dd>each node is assigned a horizontal coordinate;
  *     the bend points of each edge are set; the width of the whole graph is set</dd>
  * </dl>
- *
- * @author msp
- * @author cds
- * @author jjc
  */
 public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     
@@ -262,18 +258,22 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
                     PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
             
             if (slotsCount > 0) {
-                // The space between each pair of edge segments, and between nodes and edges
-                double increment =
-                        edgeNodeSpacing + (slotsCount - 1) * edgeEdgeSpacing;
+                // Compute routing area's width
+                double routingWidth = (slotsCount - 1) * edgeEdgeSpacing;
+                
+                if (leftLayer != null) {
+                    routingWidth += edgeNodeSpacing;
+                }
+                
                 if (rightLayer != null) {
-                    increment += edgeNodeSpacing;
+                    routingWidth += edgeNodeSpacing;
                 }
                 
                 // If we are between two layers, make sure their minimal spacing is preserved
-                if (increment < nodeNodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
-                    increment = nodeNodeSpacing;
+                if (routingWidth < nodeNodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
+                    routingWidth = nodeNodeSpacing;
                 }
-                xpos += increment;
+                xpos += routingWidth;
             } else if (!isLeftLayerExternal && !isRightLayerExternal) {
                 // If all edges are straight, use the usual spacing 
                 xpos += nodeNodeSpacing;

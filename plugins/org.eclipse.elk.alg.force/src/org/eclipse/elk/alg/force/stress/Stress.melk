@@ -11,7 +11,6 @@ package org.eclipse.elk.alg.force
 
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider
 import org.eclipse.elk.alg.force.stress.StressMajorization.Dimension
-import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the ELK Stress layout algorithm.
