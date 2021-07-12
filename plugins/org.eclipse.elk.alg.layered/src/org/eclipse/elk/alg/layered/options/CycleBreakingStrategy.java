@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p1cycles.DepthFirstCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.GreedyCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.InteractiveCycleBreaker;
+import org.eclipse.elk.alg.layered.p1cycles.ModelOrderCycleBreaker;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
@@ -40,7 +41,13 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
      * a node, that movement is reflected in the decision which edges to reverse.
      */
     @AdvancedPropertyValue
-    INTERACTIVE;
+    INTERACTIVE,
+    
+    /**
+     * Reacts to the input model by respecting the initial ordering in the model file.
+     * This ordering is used to identify backwards edges.
+     */
+    MODEL_ORDER;
     
 
     @Override
@@ -54,6 +61,9 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
             
         case INTERACTIVE:
             return new InteractiveCycleBreaker();
+            
+        case MODEL_ORDER:
+            return new ModelOrderCycleBreaker();
             
         default:
             throw new IllegalArgumentException(
