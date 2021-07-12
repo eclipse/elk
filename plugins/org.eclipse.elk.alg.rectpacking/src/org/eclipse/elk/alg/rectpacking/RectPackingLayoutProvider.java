@@ -147,15 +147,14 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, expandNodes, expandToAspectRatio, compaction, nodeNodeSpacing);
             // Modify the initial approximation if necessary.
             maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
-            // Resize graph to maxWidth for debugging.
-            ElkUtil.resizeNode(layoutGraph, maxWidth, layoutGraph.getHeight(), false, true);
+            
             // Run placement, compaction, and expansion (if enabled).
             drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph);
         }
 
         // Final touch.
         applyPadding(rectangles, padding);
-        // XXX use resize node also for expanding nodes.
+        
         ElkUtil.resizeNode(layoutGraph, drawing.getDrawingWidth() + padding.getHorizontal(),
                 drawing.getDrawingHeight() + padding.getVertical(), false, true);
         if (progressMonitor.isLoggingEnabled()) {
