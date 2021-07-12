@@ -54,8 +54,8 @@ public abstract class AbstractGRandomIdeModule extends DefaultIdeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
-	public Class<? extends IRenameService2> bindIRenameService() {
-		return RenameService2.class;
+	public Class<? extends IRenameService> bindIRenameService() {
+		return RenameService.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
