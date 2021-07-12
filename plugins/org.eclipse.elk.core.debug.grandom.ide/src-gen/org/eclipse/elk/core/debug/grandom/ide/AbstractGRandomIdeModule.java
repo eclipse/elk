@@ -11,7 +11,6 @@ package org.eclipse.elk.core.debug.grandom.ide;
 
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
-
 import org.eclipse.elk.core.debug.grandom.ide.contentassist.antlr.GRandomParser;
 import org.eclipse.elk.core.debug.grandom.ide.contentassist.antlr.internal.InternalGRandomLexer;
 import org.eclipse.xtext.ide.DefaultIdeModule;
@@ -55,8 +54,8 @@ public abstract class AbstractGRandomIdeModule extends DefaultIdeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
-	public Class<? extends IRenameService> bindIRenameService() {
-		return RenameService.class;
+	public Class<? extends IRenameService2> bindIRenameService() {
+		return RenameService2.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
