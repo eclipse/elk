@@ -74,9 +74,8 @@ public final class ElkServicePlugin extends Plugin {
         super.start(context);
         plugin = this;
         
-        // Load layout providers wherever we can find them, if as services or through our extension points
+        // Load layout providers as a service
         loadLayoutProvidersThroughJavaServices();
-        loadLayoutProvidersThroughExtensionPoints();
     }
 
     @Override
@@ -168,37 +167,4 @@ public final class ElkServicePlugin extends Plugin {
             }
         }
     }
-    
-    /** identifier of the extension point for layout providers. */
-    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "org.eclipse.elk.core.layoutProviders";
-    /** name of the 'provider' element in the 'layout providers' extension point. */
-    protected static final String ELEMENT_PROVIDER = "provider";
-    /** name of the 'class' attribute in the extension points. */
-    protected static final String ATTRIBUTE_CLASS = "class";
-    
-    /**
-     * Creates a new instance, loading the extension point information in the process.
-     */
-    @Deprecated
-    private void loadLayoutProvidersThroughExtensionPoints() {
-        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
-        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
-        
-        for (IConfigurationElement element : extensions) {
-            try {
-                if (ELEMENT_PROVIDER.equals(element.getName())) {
-                    ILayoutMetaDataProvider provider = (ILayoutMetaDataProvider)
-                            element.createExecutableExtension(ATTRIBUTE_CLASS);
-                    
-                    if (provider != null) {
-                        service.registerLayoutMetaDataProviders(provider);
-                    }
-                }
-            } catch (CoreException exception) {
-                StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
-            }
-        }
-    }
-    
 }

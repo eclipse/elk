@@ -12,9 +12,6 @@ package org.eclipse.elk.core;
 /**
  * A layout provider executes a layout algorithm to layout the child elements of a node.
  * <p>
- * When used in Eclipse, layout providers must be registered through the {@code layoutProviders} extension point, which
- * is defined by the {@code org.eclipse.elk.core.service} plugin.
- * </p>
  * 
  * @author ars
  * @author msp

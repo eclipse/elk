@@ -203,8 +203,7 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     }
 
     /**
-     * Returns the layout category identifier. Layout categories are represented by {@link LayoutCategoryData}
-     * and can be defined in the 'layoutProviders' extension point.
+     * Returns the layout category identifier. Layout categories are represented by {@link LayoutCategoryData}.
      *
      * @return the category identifier
      */
