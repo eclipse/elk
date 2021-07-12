@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 Kiel University and others.
+ * Copyright (c) 2009, 2021 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -174,9 +174,9 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     }
 
     @Override
-    public LayoutMapping buildLayoutGraph(final IWorkbenchPart workbenchPart, final Object diagramPart) {
+    public LayoutMapping buildLayoutGraph(final Object workbenchPart, final Object diagramPart) {
         // get the diagram editor part
-        DiagramEditor diagramEditor = getDiagramEditor(workbenchPart);
+        DiagramEditor diagramEditor = getDiagramEditor((IWorkbenchPart) workbenchPart);
 
         // choose the layout root edit part
         IGraphicalEditPart layoutRootPart = null;
@@ -230,7 +230,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         }
 
         // create the mapping
-        LayoutMapping mapping = buildLayoutGraph(layoutRootPart, selectedParts, workbenchPart);
+        LayoutMapping mapping = buildLayoutGraph(layoutRootPart, selectedParts, (IWorkbenchPart) workbenchPart);
 
         return mapping;
     }
@@ -288,7 +288,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     protected LayoutMapping buildLayoutGraph(final IGraphicalEditPart layoutRootPart,
             final List<ShapeNodeEditPart> selection, final IWorkbenchPart workbenchPart) {
         
-        LayoutMapping mapping = new LayoutMapping(workbenchPart);
+        LayoutMapping mapping = new LayoutMapping((IWorkbenchPart) workbenchPart);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setParentElement(layoutRootPart);
 
@@ -343,7 +343,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     @Override
     public void applyLayout(final LayoutMapping mapping, final IPropertyHolder settings) {
         boolean zoomToFit = settings.getProperty(CoreOptions.ZOOM_TO_FIT);
-        IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
+        IWorkbenchPart workbenchPart = (IWorkbenchPart) mapping.getWorkbenchPart();
         int animationTime = calcAnimationTime(mapping, settings,
                 workbenchPart != null && !workbenchPart.getSite().getPage().isPartVisible(workbenchPart));
         mapping.setProperty(ANIMATION_TIME, animationTime);
@@ -522,7 +522,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         if (applyLayoutCommand != null) {
             // Get a command stack to execute the command
             CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-            IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
+            IWorkbenchPart workbenchPart = (IWorkbenchPart) mapping.getWorkbenchPart();
             if (commandStack == null) {
                 if (workbenchPart != null) {
                     Object adapter = workbenchPart.getAdapter(CommandStack.class);

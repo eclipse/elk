@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 TypeFox GmbH and others.
+ * Copyright (c) 2021 TypeFox GmbH and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -18,7 +18,6 @@ import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 
@@ -28,7 +27,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 public class TextLayoutConnector implements IDiagramLayoutConnector {
 
     @Override
-    public LayoutMapping buildLayoutGraph(IWorkbenchPart workbenchPart, Object diagramPart) {
+    public LayoutMapping buildLayoutGraph(Object workbenchPart, Object diagramPart) {
         if (workbenchPart instanceof XtextEditor) {
             XtextEditor xtextEditor = (XtextEditor) workbenchPart;
             return xtextEditor.getDocument().readOnly(resource -> {
@@ -62,5 +61,4 @@ public class TextLayoutConnector implements IDiagramLayoutConnector {
             dialog.open();
         });
     }
-
 }

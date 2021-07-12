@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
+ * Copyright (c) 2019, 2021 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,7 +10,7 @@
 package org.eclipse.elk.core.debug.actions;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.service.ui.EclipseElkServicePlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -45,26 +45,26 @@ public class PreferenceAction extends Action {
         updateCheckedState();
         
         // Listen for preference changes
-        ElkServicePlugin.getInstance().getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
+        EclipseElkServicePlugin.getInstance().getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
     }
     
     /**
      * Shuts down this action.
      */
     public void dispose() {
-        ElkServicePlugin.getInstance().getPreferenceStore().removePropertyChangeListener(propertyChangeListener);
+        EclipseElkServicePlugin.getInstance().getPreferenceStore().removePropertyChangeListener(propertyChangeListener);
     }
     
     /**
      * Updates the checked property of this action.
      */
     public void updateCheckedState() {
-        setChecked(ElkServicePlugin.getInstance().getPreferenceStore().getBoolean(preferenceId));
+        setChecked(EclipseElkServicePlugin.getInstance().getPreferenceStore().getBoolean(preferenceId));
     }
 
     @Override
     public void run() {
-        IPreferenceStore prefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore prefStore = EclipseElkServicePlugin.getInstance().getPreferenceStore();
         prefStore.setValue(preferenceId, !prefStore.getBoolean(preferenceId));
     }
     

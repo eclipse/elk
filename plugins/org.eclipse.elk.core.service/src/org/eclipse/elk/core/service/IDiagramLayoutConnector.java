@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2021 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,7 +10,6 @@
 package org.eclipse.elk.core.service;
 
 import org.eclipse.elk.graph.properties.IPropertyHolder;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Interface for connectors of diagram layout. A diagram layout connector is responsible for transforming
@@ -42,7 +41,7 @@ public interface IDiagramLayoutConnector {
      * @return a layout graph mapping, or {@code null} if the given workbench part or diagram part
      *            is not supported
      */
-    LayoutMapping buildLayoutGraph(IWorkbenchPart workbenchPart, Object diagramPart);
+    LayoutMapping buildLayoutGraph(Object workbenchPart, Object diagramPart);
 
     /**
      * Apply the computed layout back to the diagram. Graph elements whose modification flag

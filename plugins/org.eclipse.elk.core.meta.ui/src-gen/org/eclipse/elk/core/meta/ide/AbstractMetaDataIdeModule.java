@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.core.meta.ide;
 
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 import org.eclipse.elk.core.meta.ide.contentassist.antlr.MetaDataParser;
 import org.eclipse.elk.core.meta.ide.contentassist.antlr.internal.InternalMetaDataLexer;
 import org.eclipse.xtext.ide.LexerIdeBindings;
@@ -24,6 +22,9 @@ import org.eclipse.xtext.ide.refactoring.IRenameStrategy2;
 import org.eclipse.xtext.ide.server.rename.IRenameService;
 import org.eclipse.xtext.ide.server.rename.RenameService;
 import org.eclipse.xtext.xbase.ide.DefaultXbaseIdeModule;
+
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link MetaDataIdeModule}.

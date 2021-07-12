@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.grandom.ide;
 
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 import org.eclipse.elk.core.debug.grandom.ide.contentassist.antlr.GRandomParser;
 import org.eclipse.elk.core.debug.grandom.ide.contentassist.antlr.internal.InternalGRandomLexer;
 import org.eclipse.xtext.ide.DefaultIdeModule;
@@ -24,6 +22,9 @@ import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 import org.eclipse.xtext.ide.refactoring.IRenameStrategy2;
 import org.eclipse.xtext.ide.server.rename.IRenameService;
 import org.eclipse.xtext.ide.server.rename.RenameService;
+
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link GRandomIdeModule}.

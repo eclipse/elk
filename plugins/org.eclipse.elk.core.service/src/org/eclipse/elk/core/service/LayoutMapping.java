@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2021 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -12,7 +12,6 @@ package org.eclipse.elk.core.service;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
-import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -34,14 +33,14 @@ public class LayoutMapping extends MapPropertyHolder {
     /** the top-level diagram part. */
     private Object parentElement;
     /** the workbench part for wich the mapping was created, if any. */
-    private final IWorkbenchPart workbenchPart;
+    private final Object workbenchPart;
     
     /**
      * Create a layout mapping.
      * 
      * @param theWorkbenchPart the workbench part for which the mapping is created, which may be {@code null}
      */
-    public LayoutMapping(final IWorkbenchPart theWorkbenchPart) {
+    public LayoutMapping(final Object theWorkbenchPart) {
         this.workbenchPart = theWorkbenchPart;
     }
     
@@ -93,7 +92,7 @@ public class LayoutMapping extends MapPropertyHolder {
     /**
      * Returns the workbench part, or {@code null}.
      */
-    public IWorkbenchPart getWorkbenchPart() {
+    public Object getWorkbenchPart() {
         return workbenchPart;
     }
 
