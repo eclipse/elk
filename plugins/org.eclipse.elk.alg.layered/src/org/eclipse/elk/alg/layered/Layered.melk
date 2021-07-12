@@ -182,7 +182,10 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.interactiveLayout
     supports layering.layerId
     supports crossingMinimization.positionId
-    supports considerModelOrder
+    supports considerModelOrder.strategy
+    supports considerModelOrder.longEdgeStrategy
+    supports considerModelOrder.crossingCounterNodeInfluence
+    supports considerModelOrder.crossingCounterPortInfluence
 }
 
 /* ------------------------
@@ -909,13 +912,49 @@ group edgeLabels {
 /* ------------------------
  *    miscellaneous
  * ------------------------*/
-advanced option considerModelOrder: OrderingStrategy {
-    label "Consider model order"
-    description
-        "Preserves the order of nodes and edges in the model file if this does not lead to edge crossings or
-         conflicts between the ordering or edges and nodes."
-    default = OrderingStrategy.NONE
-    targets parents
+group considerModelOrder {
+    option strategy: OrderingStrategy {
+        label "Consider Model Order"
+        description
+            "Preserves the order of nodes and edges in the model file if this does not lead to additional edge
+             crossings. Depending on the strategy this is not always possible since the node and edge order might be
+             conflicting."
+        default = OrderingStrategy.NONE
+        targets parents
+    }
+    option longEdgeStrategy: LongEdgeOrderingStrategy {
+        label "Long Edge Ordering Strategy"
+        description
+            "Indicates whether long edges are sorted under, over, or equal to nodes that have no connection to a
+             previous layer in a left-to-right or right-to-left layout. Under and over changes to right and left in a
+             vertical layout."
+        default = LongEdgeOrderingStrategy.DUMMY_NODE_OVER
+        targets parents
+    }
+    option crossingCounterNodeInfluence: double {
+        label "Crossing Counter Node Order Influence"
+        description
+            "Indicates with what percentage (1 for 100%) violations of the node model order are weighted against the
+             crossings e.g. a value of 0.5 means two model order violations are as important as on edge crossing.
+             This allows some edge crossings in favor of preserving the model order. It is advised to set this value to
+             a very small positive value (e.g. 0.001) to have minimal crossing and a optimal node order. Defaults to no
+             influence (0)."
+        default = 0
+        targets parents
+        requires org.eclipse.elk.alg.layered.considerModelOrder.strategy
+    }
+    option crossingCounterPortInfluence: double {
+        label "Crossing Counter Port Order Influence"
+        description
+            "Indicates with what percentage (1 for 100%) violations of the port model order are weighted against the
+             crossings e.g. a value of 0.5 means two model order violations are as important as on edge crossing.
+             This allows some edge crossings in favor of preserving the model order. It is advised to set this value to
+             a very small positive value (e.g. 0.001) to have minimal crossing and a optimal port order. Defaults to no
+             influence (0)."
+        default = 0
+        targets parents
+        requires org.eclipse.elk.alg.layered.considerModelOrder.strategy
+    }
 }
 
 advanced option directionCongruency: DirectionCongruency {
