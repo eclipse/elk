@@ -79,12 +79,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // Whether interactive layout is activ.
         boolean interactive = layoutGraph.getProperty(RectPackingOptions.INTERACTIVE);
         // A target width for the algorithm. If this is set the width approximation step is skipped.
-        double targetWidth = -1;
-        if (layoutGraph.hasProperty(RectPackingOptions.TARGET_WIDTH)) {
-            targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
-            // Add padding to target width to get the actual width of the drawing with padding included
-            targetWidth += padding.getHorizontal();
-        }
+        double targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
@@ -127,7 +122,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         minSize.x -= padding.getHorizontal();
         minSize.y -= padding.getVertical();
         double maxWidth = minSize.x;
-        if (targetWidth < 0 || targetWidth - padding.getHorizontal() < minSize.x) {
+        if (targetWidth < 0 || targetWidth < minSize.x) {
             // Initial width approximation.
             AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
             drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing, padding);
