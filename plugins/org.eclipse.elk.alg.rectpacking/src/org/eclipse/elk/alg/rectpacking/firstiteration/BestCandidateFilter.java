@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.rectpacking.firstiteration;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
+import org.eclipse.elk.core.math.ElkPadding;
 
 /**
  * Interface implementing the Strategy interface of the strategy pattern. This interface offers a method that filters a
@@ -26,5 +27,5 @@ public interface BestCandidateFilter {
      * @param aspectRatio The desired aspect ratio.
      * @return A list that is filtered by whatever the implementation filtered for.
      */
-    List<DrawingData> filterList(List<DrawingData> candidates, double aspectRatio);
+    List<DrawingData> filterList(List<DrawingData> candidates, double aspectRatio, ElkPadding padding);
 }

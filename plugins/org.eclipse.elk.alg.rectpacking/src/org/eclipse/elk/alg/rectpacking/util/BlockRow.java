@@ -75,11 +75,11 @@ public class BlockRow {
      * @return true if the rectangle fits in this row.
      */
     public boolean addRectangle(final ElkNode rect) {
-        this.rects.add(rect);
-        rect.setX(x + width);
+        rect.setX(x + width + (this.rects.isEmpty() ? 0 : nodeNodeSpacing));
         rect.setY(y);
-        this.height = Math.max(this.height, rect.getHeight() + nodeNodeSpacing);
-        this.width += rect.getWidth() + nodeNodeSpacing;
+        this.height = Math.max(this.height, rect.getHeight());
+        this.width += rect.getWidth() + (this.rects.isEmpty() ? 0 : nodeNodeSpacing);
+        this.rects.add(rect);
         return true;
     }
     
@@ -101,16 +101,16 @@ public class BlockRow {
      * Updates the coordinates of all rectangles and the height and width of the row.
      */
     public void updateRow() {
-        double width = 0;
-        double height = 0;
+        double width = 0;//rects.isEmpty() ? 0 : -nodeNodeSpacing;
+        double height = 0;//rects.isEmpty() ? 0 : -nodeNodeSpacing;
         for (ElkNode rect : rects) {
             rect.setX(x + width);
             rect.setY(this.y);
             width += rect.getWidth() + nodeNodeSpacing;
             height = Math.max(height, rect.getHeight() + nodeNodeSpacing);
         }
-        this.width = width;
-        this.height = height;
+        this.width = width - nodeNodeSpacing;
+        this.height = height - nodeNodeSpacing;
     }
 
     /**
@@ -130,7 +130,7 @@ public class BlockRow {
             rect.setX(rect.getX() + i * additionalWidthForRect);
             rect.setY(rect.getY() + index * additionalHeightForRow);
             rect.setWidth(rect.getWidth() + additionalWidthForRect);
-            rect.setHeight(this.height - nodeNodeSpacing);
+            rect.setHeight(this.height);
             i++;
             double newWidth = rect.getWidth();
             double newHeight = rect.getHeight();

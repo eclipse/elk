@@ -40,6 +40,10 @@ public class BlockStack {
      * Height of this stack.
      */
     private double height;
+    /**
+     * Spacing between two nodes.
+     */
+    private double nodeNodeSpacing;
 
     //////////////////////////////////////////////////////////////////
     // Constructors.
@@ -50,10 +54,11 @@ public class BlockStack {
      * @param x The x-coordinate.
      * @param y The y-coordinate.
      */
-    public BlockStack(final double x, final double y) {
+    public BlockStack(final double x, final double y, final double nodeNodeSpacing) {
         blocks = new ArrayList<>();
         this.x = x;
         this.y = y;
+        this.nodeNodeSpacing = nodeNodeSpacing;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -64,10 +69,10 @@ public class BlockStack {
      * @param block The block to add.
      */
     public void addBlock(final Block block) {
-        blocks.add(block);
         block.setStack(this);
         this.width = Math.max(this.width, block.getWidth());
-        this.height += block.getHeight();
+        this.height += block.getHeight() + (this.blocks.isEmpty() ? 0 : nodeNodeSpacing);
+        blocks.add(block);
     }
     
     /**
@@ -76,9 +81,11 @@ public class BlockStack {
     public void updateDimension() {
         double height = 0;
         double width = 0;
+        int index = 0;
         for (Block block : blocks) {
             width = Math.max(width, block.getWidth());
-            height += block.getHeight();
+            height += block.getHeight() + (index > 0 ? nodeNodeSpacing : 0);
+            index++;
         }
         this.height = height;
         this.width = width;
@@ -146,7 +153,7 @@ public class BlockStack {
             block.setLocation(this.x, currentY);
             block.placeRectsIn(targetWidth);
             currentWidth = Math.max(currentWidth, block.getWidth());
-            currentY += block.getHeight();
+            currentY += block.getHeight() + nodeNodeSpacing;
             currentHeight = currentY;
         }
         this.width = currentWidth;

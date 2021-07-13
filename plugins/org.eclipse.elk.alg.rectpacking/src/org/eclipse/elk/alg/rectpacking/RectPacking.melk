@@ -135,7 +135,8 @@ advanced option targetWidth: double {
     label "Target Width"
     description
         "Option to place the rectangles in the given target width
-            instead of approximating the width using the desired aspect ratio."
+            instead of approximating the width using the desired aspect ratio.
+            The padding is not included in this. Meaning a drawing will have width of targetwidth + horizontal padding."
     targets nodes
     default = -1
 }

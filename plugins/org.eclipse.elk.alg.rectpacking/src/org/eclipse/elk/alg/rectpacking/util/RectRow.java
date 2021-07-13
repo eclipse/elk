@@ -25,6 +25,8 @@ public class RectRow {
     private double width = 0;
     /** Y-coordinate of this row. */
     private double y;
+    /** Spacing between two nodes (used for block and stack spacing) */
+    private double nodeNodeSpacing;
     /** This row's blocks. */
     private final List<Block> children = new ArrayList<Block>();
     /**
@@ -41,8 +43,9 @@ public class RectRow {
      * 
      * @param y The y-coordinate of the row.
      */
-    public RectRow(final double y) {
+    public RectRow(final double y, final double nodeNodeSpacing) {
         this.y = y;
+        this.nodeNodeSpacing = nodeNodeSpacing;
     }
 
     //////////////////////////////////////////////////////////////////
@@ -56,10 +59,11 @@ public class RectRow {
     protected void notifyAboutNodeChange() {
         double totalStackWidth = 0;
         double newMaxHeight = Double.NEGATIVE_INFINITY;
-
+        int index = 0;
         for (Block child : this.children) {
-            totalStackWidth += child.getWidth();
+            totalStackWidth += child.getWidth() + (index > 0 ? nodeNodeSpacing : 0);
             newMaxHeight = Math.max(newMaxHeight, child.getHeight());
+            index++;
         }
 
         this.width = totalStackWidth;
@@ -85,7 +89,7 @@ public class RectRow {
         double currentX = -1;
         for (Block block : children) {
             if (block.getX() != currentX) {
-                stacks.add(new BlockStack(block.getX(), this.y));
+                stacks.add(new BlockStack(block.getX(), this.y, nodeNodeSpacing));
                 stacks.get(stacks.size() - 1).addBlock(block);
                 currentX = block.getX();
             } else {
@@ -124,10 +128,10 @@ public class RectRow {
      * @param stack The stack to add.
      */
     public void addBlock(final Block block) {
-        this.children.add(block);
 
         this.height = Math.max(this.height, block.getHeight());
-        this.width += block.getWidth();
+        this.width += block.getWidth() + (this.children.isEmpty() ? 0 : nodeNodeSpacing);
+        this.children.add(block);
     }
 
     /**
@@ -136,7 +140,7 @@ public class RectRow {
      */
     public void removeBlock(final Block block) {
         this.children.remove(block);
-        this.width -= block.getWidth();
+        this.width -= block.getWidth() + (this.children.isEmpty() ? 0 : nodeNodeSpacing);
 
         double newMaxHeight = Double.MIN_VALUE;
         for (Block child : this.children) {

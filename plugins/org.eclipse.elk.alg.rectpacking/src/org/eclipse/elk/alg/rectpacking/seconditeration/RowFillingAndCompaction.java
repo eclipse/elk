@@ -83,16 +83,18 @@ public class RowFillingAndCompaction {
                 RectRow currentRow = rows.get(rowIdx);
                 if (rowIdx != 0) {
                     RectRow previousRow = rows.get(rowIdx - 1);
-                    currentRow.setY(previousRow.getY() + previousRow.getHeight());
+                    currentRow.setY(previousRow.getY() + previousRow.getHeight() + nodeNodeSpacing);
                 }
                 Compaction.compact(rowIdx, rows, maxWidth, nodeNodeSpacing);
                 adjustWidthAndHeight(currentRow);
+                // Log graph after first row compaction.
+                progressMonitor.logGraph(layoutGraph, "Compacted row " + rowIdx);
             }
         } else {
             // Put every block in its own block stack.
             for (RectRow row : rows) {
                 for (Block block : row.getChildren()) {
-                    BlockStack stack = new BlockStack(block.getX(), block.getY());
+                    BlockStack stack = new BlockStack(block.getX(), block.getY(), nodeNodeSpacing);
                     stack.addBlock(block);
                     row.getStacks().add(stack);
                 }
@@ -118,7 +120,7 @@ public class RowFillingAndCompaction {
         }
         
         if (this.expandNodes) {
-            RectangleExpansion.expand(rows, totalWidth + nodeNodeSpacing, additionalHeight, nodeNodeSpacing);
+            RectangleExpansion.expand(rows, totalWidth, additionalHeight, nodeNodeSpacing);
         }
 
         if (progressMonitor.isLoggingEnabled()) {
@@ -138,10 +140,12 @@ public class RowFillingAndCompaction {
     private void adjustWidthAndHeight(final RectRow row) {
         double maxHeight = 0;
         double maxWidth = 0;
+        int index = 0;
         for (BlockStack stack : row.getStacks()) {
             stack.updateDimension();
             maxHeight = Math.max(maxHeight, stack.getHeight());
-            maxWidth += stack.getWidth();
+            maxWidth += stack.getWidth() + (index > 0 ? nodeNodeSpacing : 0);
+            index++;
         }
         row.setHeight(maxHeight);
         row.setWidth(maxWidth);
@@ -156,12 +160,14 @@ public class RowFillingAndCompaction {
     private void calculateDimensions(final List<RectRow> rows) {
         double maxWidth = 0;
         double newHeight = 0;
+        int index = 0;
         for (RectRow row : rows) {
             maxWidth = Math.max(maxWidth, row.getWidth());
-            newHeight += row.getHeight();
+            newHeight += row.getHeight() + (index > 0 ? nodeNodeSpacing : 0);
+            index++;
         }
 
-        this.drawingHeight = newHeight - nodeNodeSpacing;
-        this.drawingWidth = maxWidth - nodeNodeSpacing;
+        this.drawingHeight = newHeight;
+        this.drawingWidth = maxWidth;
     }
 }
