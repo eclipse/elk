@@ -113,19 +113,15 @@ public final class Compaction {
                 
                 // From the previous step the next block and the next row might be empty.
                 // Delete all empty blocks and rows.
-                while (nextBlock.getChildren().isEmpty()) {
+                if (nextBlock.getChildren().isEmpty()) {
                     rows.get(nextRowIndex).removeBlock(nextBlock);
+                    nextBlock = null;
                     while (rows.size() > nextRowIndex && rows.get(nextRowIndex).getChildren().isEmpty()) {
                         rows.remove(rows.get(nextRowIndex));
                     }
-                    if (rows.size() > nextRowIndex) {
-                        nextBlock = rows.get(nextRowIndex).getFirstBlock();
-                    } else {
-                        nextBlock = null;
-                        break;
-                    }
                 }
                 if (nextBlock == null) {
+                    blockId--;
                     continue;
                 }
                 // Get height of block if it uses the 
