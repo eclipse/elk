@@ -353,7 +353,7 @@ public final class Compaction {
                 return false;
         }
         if (lastRowOptimization || nextBlockHeight <= row.getHeight()) {
-            if (lastRowOptimization) {
+            if (lastRowOptimization && nextBlockHeight > row.getHeight()) {
                 block.setHeight(nextBlockHeight);
                 block.placeRectsIn(block.getWidthForTargetHeight(nextBlockHeight));
             } else {
