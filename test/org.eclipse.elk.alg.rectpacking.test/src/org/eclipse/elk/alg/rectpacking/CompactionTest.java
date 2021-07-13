@@ -211,6 +211,59 @@ public class CompactionTest {
         assertEquals("", 80.0, n6.getY(), 1);        
     }
     
+    /**
+     * Test block absorption from a block in a stack.
+     */
+    @Test
+    public void testAbsorbBlockInStack() {
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        ElkNode n3 = ElkGraphUtil.createNode(parent);
+        ElkNode n4 = ElkGraphUtil.createNode(parent);
+        ElkNode n5 = ElkGraphUtil.createNode(parent);
+        ElkNode n6 = ElkGraphUtil.createNode(parent);
+        ElkNode n7 = ElkGraphUtil.createNode(parent);
+        ElkNode n8 = ElkGraphUtil.createNode(parent);
+        ElkNode n9 = ElkGraphUtil.createNode(parent);
+        ElkNode n10 = ElkGraphUtil.createNode(parent);
+        ElkNode n11 = ElkGraphUtil.createNode(parent);
+        ElkNode n12 = ElkGraphUtil.createNode(parent);
+        ElkNode n13 = ElkGraphUtil.createNode(parent);
+        ElkNode n14 = ElkGraphUtil.createNode(parent);
+        ElkNode n15 = ElkGraphUtil.createNode(parent);
+        ElkNode n16 = ElkGraphUtil.createNode(parent);
+        ElkNode n17 = ElkGraphUtil.createNode(parent);
+        ElkNode n18 = ElkGraphUtil.createNode(parent);
+        ElkNode n19 = ElkGraphUtil.createNode(parent);
+        parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
+        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 330.0);
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 1.0);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        n1.setDimensions(178, 162);
+        n2.setDimensions(75, 23);
+        n3.setDimensions(75, 23);
+        n4.setDimensions(75, 23);
+        n5.setDimensions(75, 23);
+        n6.setDimensions(75, 23);
+        n7.setDimensions(75, 23);
+        n8.setDimensions(75, 23);
+        n9.setDimensions(75, 23);
+        n10.setDimensions(47, 23);
+        n11.setDimensions(47, 23);
+        n12.setDimensions(47, 23);
+        n13.setDimensions(47, 23);
+        n14.setDimensions(47, 23);
+        n15.setDimensions(47, 23);
+        n16.setDimensions(47, 23);
+        n17.setDimensions(47, 23);
+        n18.setDimensions(47, 23);
+        n19.setDimensions(47, 23);
+        RectPackingLayoutProvider layoutProvider = new RectPackingLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        assertEquals("", 178 + 2 + 2*75, parent.getWidth(), 1);
+        assertEquals("", 162 + 1 + 23, parent.getHeight(), 1);
+    }
 
     /**
      * Test how a block is compacted inside a row to save space.
@@ -445,6 +498,55 @@ public class CompactionTest {
         assertEquals("", 0.0, n3.getY(), 1);
         assertEquals("", 40.0, n4.getX(), 1);
         assertEquals("", 20.0, n4.getY(), 1);      
+    }
+    
+    /**
+     * Test the case where a stack is put next to a stack with multiple blocks.
+     */
+    @Test
+    public void testPlaceStackNextToMultipleBlockStack() {
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        ElkNode n3 = ElkGraphUtil.createNode(parent);
+        ElkNode n4 = ElkGraphUtil.createNode(parent);
+        ElkNode n5 = ElkGraphUtil.createNode(parent);
+        ElkNode n6 = ElkGraphUtil.createNode(parent);
+        parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
+        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 135.0);
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 5.0);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        n1.setDimensions(30, 100);
+        n2.setDimensions(30, 10);
+        n3.setDimensions(30, 10);
+        n4.setDimensions(30, 85);
+        n5.setDimensions(30, 85);
+        n6.setDimensions(30, 30);
+        
+        // ___  ___  ___  ___
+        //|   ||___||___||   |
+        //|   | ___  ___ |___|
+        //|   ||   ||   |
+        //|   ||   ||   |
+        //|   ||   ||   |
+        //|   ||   ||   |
+        //|___||___||___|
+        RectPackingLayoutProvider layoutProvider = new RectPackingLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        assertEquals("", 135.0, parent.getWidth(), 1);
+        assertEquals("", 100.0, parent.getHeight(), 1);
+        assertEquals("", 0.0, n1.getX(), 1);
+        assertEquals("", 0.0, n1.getY(), 1);
+        assertEquals("", 35.0, n2.getX(), 1);
+        assertEquals("", 0.0, n2.getY(), 1);
+        assertEquals("", 70.0, n3.getX(), 1);
+        assertEquals("", 0.0, n3.getY(), 1);
+        assertEquals("", 35.0, n4.getX(), 1);
+        assertEquals("", 15.0, n4.getY(), 1);
+        assertEquals("", 70.0, n5.getX(), 1);
+        assertEquals("", 15.0, n5.getY(), 1);
+        assertEquals("", 105.0, n6.getX(), 1);
+        assertEquals("", 0.0, n6.getY(), 1);   
     }
 
 }
