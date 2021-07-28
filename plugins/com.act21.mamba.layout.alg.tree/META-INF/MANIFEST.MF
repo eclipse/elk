@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tree
+Bundle-SymbolicName: com.act21.mamba.layout.alg.tree
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: ACT21
+Require-Bundle: org.eclipse.elk.core,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.alg.common,
+ com.google.guava
+Automatic-Module-Name: com.act21.mamba.layout.alg.grid
+Export-Package: com.act21.mamba.layout.alg.tree,
+ com.act21.mamba.layout.alg.tree.options
+Bundle-RequiredExecutionEnvironment: JavaSE-11

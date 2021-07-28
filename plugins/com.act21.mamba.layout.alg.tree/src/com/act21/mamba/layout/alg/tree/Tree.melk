@@ -1,0 +1,37 @@
+package com.act21.mamba.layout.alg.tree
+
+import com.act21.mamba.layout.alg.tree.TreeLayoutProvider
+import org.eclipse.elk.core.math.ElkPadding
+
+bundle { 
+    metadataClass TreeMetadataProvider
+    idPrefix com.act21.mamba.layout.alg.tree
+}
+option reverseInput : boolean {
+    label "Reverse Input"
+    description
+        "True if nodes should be placed in reverse order of their
+        appearance in the graph."
+    default = false
+    targets parents
+}
+
+option numColumns : int {
+    label "Num Columns"
+    description
+        "Number of columns."
+    default = 1
+    targets parents 
+}
+
+algorithm Tree(TreeLayoutProvider) {
+    label "Tree"
+    description "Please insert a short but informative description here"
+    metadataClass options.TreeOptions
+    supports reverseInput
+    supports numColumns
+    supports org.eclipse.elk.padding = new ElkPadding(10)  
+    supports org.eclipse.elk.spacing.edgeEdge = 5 
+    supports org.eclipse.elk.spacing.edgeNode = 10
+    supports org.eclipse.elk.spacing.nodeNode = 10
+}
