@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * A simple layout algorithm class. This algorithm already supports a number of
- * layout options, places nodes, and routes edges.
+ * layout options, places nodes, and routes edges.....
  */
 public class TreeLayoutProvider extends AbstractLayoutProvider {
 
