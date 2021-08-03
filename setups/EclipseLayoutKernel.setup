@@ -264,7 +264,7 @@
       <requirement
           name="org.eclipse.elk.sdk.feature.feature.group"/>
       <repository
-          url="http://build.eclipse.org/modeling/elk/updates/nightly/"/>
+          url="https://download.eclipse.org/elk/updates/nightly/"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask">
