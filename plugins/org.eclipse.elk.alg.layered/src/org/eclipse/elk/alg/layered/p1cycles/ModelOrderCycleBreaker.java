@@ -34,13 +34,16 @@ import com.google.common.collect.Lists;
  * Requires considerModelOrder to be a non NONE value.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>none</dd>
- *   <dt>Postcondition:</dt><dd>the graph has no cycles</dd>
+ *   <dt>Precondition:</dt>
+ *      <dd>no self loops</dd>
+ *   <dt>Postcondition:</dt>
+ *      <dd>the graph has no cycles</dd>
  * </dl>
- * 
- * @author sdo
  */
 public final class ModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
+
+    private int firstSeparateModelOrder;
+    private int lastSeparateModelOrder;
 
     /** intermediate processing configuration. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -56,34 +59,72 @@ public final class ModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases,
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Model order cycle breaking", 1);
         
-        if (layeredGraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
-            // gather edges that point to the wrong direction
-            List<LEdge> revEdges = Lists.newArrayList();
-            for (LNode source : layeredGraph.getLayerlessNodes()) {
-                int modelOrderSource = source.getProperty(InternalProperties.MODEL_ORDER);
-                for (LPort port : source.getPorts(PortType.OUTPUT)) {
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        LNode target = edge.getTarget().getNode();
-                        if (target != source) {
-                            int modelOrderTarget = target.getProperty(InternalProperties.MODEL_ORDER);
-                            if (modelOrderTarget < modelOrderSource) {
-                                revEdges.add(edge);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // reverse the gathered edges
-            for (LEdge edge : revEdges) {
-                edge.reverse(layeredGraph, true);
-                layeredGraph.setProperty(InternalProperties.CYCLIC, true);
-            }
-            revEdges.clear();
-        } else {
+        // Reset FIRST_SEPARATE and LAST_SEPARATE counters.
+        firstSeparateModelOrder = 0;
+        lastSeparateModelOrder = 0;
+        
+        if (layeredGraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
             throw new UnsupportedConfigurationException(
                     "Model order has to be considered to use the model order cycle breaker " + this.toString());
         }
+        // gather edges that point to the wrong direction
+        List<LEdge> revEdges = Lists.newArrayList();
+        int numberOfNodes = layeredGraph.getLayerlessNodes().size();
+        for (LNode source : layeredGraph.getLayerlessNodes()) {
+            int modelOrderSource = computeConstraintModelOrder(source, numberOfNodes);
+            
+            for (LPort port : source.getPorts(PortType.OUTPUT)) {
+                for (LEdge edge : port.getOutgoingEdges()) {
+                LNode target = edge.getTarget().getNode();
+                    int modelOrderTarget = computeConstraintModelOrder(target, numberOfNodes);
+                    if (modelOrderTarget < modelOrderSource) {
+                        revEdges.add(edge);
+                    }
+                }
+            }
+        }
+        
+        // reverse the gathered edges
+        for (LEdge edge : revEdges) {
+            edge.reverse(layeredGraph, true);
+            layeredGraph.setProperty(InternalProperties.CYCLIC, true);
+        }
+        revEdges.clear();
         monitor.done();
+    }
+    
+    /**
+     * Set model order to a value such that the constraint is respected and the ordering between nodes with
+     * the same constraint is preserved.
+     * The order should be FIRST_SEPARATE < FIRST < NORMAL < LAST < LAST_SEPARATE. The offset is used to make sure the 
+     * all nodes have unique model orders.
+     * @param node The LNode
+     * @param offset The offset between FIRST, FIRST_SEPARATE, NORMAL, LAST_SEPARATE, and LAST nodes for unique order
+     * @return A unique model order
+     */
+    private int computeConstraintModelOrder(final LNode node, final int offset) {
+        int modelOrder = 0;
+        switch (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT)) {
+        case FIRST_SEPARATE:
+            modelOrder = 2 * -offset + firstSeparateModelOrder;
+            firstSeparateModelOrder++;
+            break;
+        case FIRST:
+            modelOrder = -offset;
+            break;
+        case LAST:
+            modelOrder = offset;
+            break;
+        case LAST_SEPARATE:
+            modelOrder = 2 * offset + lastSeparateModelOrder;
+            lastSeparateModelOrder++;
+            break;
+        default:
+            break;
+        }
+        if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+            modelOrder += node.getProperty(InternalProperties.MODEL_ORDER);
+        }
+        return modelOrder;
     }
 }
