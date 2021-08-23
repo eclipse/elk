@@ -33,12 +33,12 @@ public class ScaleMeasureFilter implements BestCandidateFilter {
         for (DrawingData opt : candidates) {
             maxScale = Math.max(maxScale, DrawingUtil.computeScaleMeasure(
                     opt.getDrawingWidth() + padding.getHorizontal(),
-                    opt.getDrawingHeight() + padding.getVertical(), opt.getDar()));
+                    opt.getDrawingHeight() + padding.getVertical(), opt.getDesiredAspectRatio()));
         }
         for (DrawingData candidate : candidates) {
             if (DrawingUtil.computeScaleMeasure(
                     candidate.getDrawingWidth() + padding.getHorizontal(),
-                    candidate.getDrawingHeight() + padding.getVertical(), candidate.getDar()) == maxScale) {
+                    candidate.getDrawingHeight() + padding.getVertical(), candidate.getDesiredAspectRatio()) == maxScale) {
                 remainingCandidates.add(candidate);
             }
         }

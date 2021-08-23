@@ -200,9 +200,9 @@ public class DrawingData {
     }
 
     /**
-     * @return the dar
+     * @return the desired aspect ratio
      */
-    public double getDar() {
+    public double getDesiredAspectRatio() {
         return dar;
     }
 }
