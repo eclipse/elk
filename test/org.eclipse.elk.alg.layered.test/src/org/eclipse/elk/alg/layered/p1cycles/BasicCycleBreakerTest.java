@@ -73,17 +73,24 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     }
     
     @ConfiguratorProvider
-    public LayoutConfigurator modelOrderonfigurator() {
-        return configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
+    public LayoutConfigurator modelOrderPreferEdgesConfigurator() {
+        LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER,
+                OrderingStrategy.PREFER_EDGES);
+        return config;
+    }
+    
+    @ConfiguratorProvider
+    public LayoutConfigurator modelOrderNodesAndEdgesConfigurator() {
+        LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER,
+                OrderingStrategy.NODES_AND_EDGES);
+        return config;
     }
     
     private LayoutConfigurator configuratorFor(final CycleBreakingStrategy strategy) {
         LayoutConfigurator config = new LayoutConfigurator();
         config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, strategy);
-        if (strategy == CycleBreakingStrategy.MODEL_ORDER) {
-            config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER,
-                    OrderingStrategy.PREFER_EDGES);
-        }
         return config;
     }
     
@@ -123,6 +130,7 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     @TestAfterProcessor(DepthFirstCycleBreaker.class)
     @TestAfterProcessor(GreedyCycleBreaker.class)
     @TestAfterProcessor(InteractiveCycleBreaker.class)
+    @TestAfterProcessor(ModelOrderCycleBreaker.class)
     public void testIsAcyclic(final Object graph) {
         LGraph lGraph = (LGraph) graph;
         
