@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.Configurator;
@@ -71,9 +72,18 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
         return configuratorFor(CycleBreakingStrategy.GREEDY);
     }
     
+    @ConfiguratorProvider
+    public LayoutConfigurator modelOrderonfigurator() {
+        return configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
+    }
+    
     private LayoutConfigurator configuratorFor(final CycleBreakingStrategy strategy) {
         LayoutConfigurator config = new LayoutConfigurator();
         config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, strategy);
+        if (strategy == CycleBreakingStrategy.MODEL_ORDER) {
+            config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER,
+                    OrderingStrategy.PREFER_EDGES);
+        }
         return config;
     }
     
