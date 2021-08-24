@@ -69,14 +69,26 @@ public final class ModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases,
         }
         // gather edges that point to the wrong direction
         List<LEdge> revEdges = Lists.newArrayList();
-        int numberOfNodes = layeredGraph.getLayerlessNodes().size();
+        
+        // One needs an offset to make sure that the model order of nodes with port constraints is
+        // always lower/higher than that of other nodes.
+        // E.g. A node with the LAST constraint needs to have a model order m = modelOrder + offset
+        // such that m > m(n) with m(n) being the model order of a normal node n (without constraints).
+        // Such that the highest model order has to be used as an offset
+        int offset = layeredGraph.getLayerlessNodes().size();
+        for (LNode node : layeredGraph.getLayerlessNodes()) {
+            if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                offset = Math.max(offset, node.getProperty(InternalProperties.MODEL_ORDER) + 1);
+            }
+        }
+        
         for (LNode source : layeredGraph.getLayerlessNodes()) {
-            int modelOrderSource = computeConstraintModelOrder(source, numberOfNodes);
+            int modelOrderSource = computeConstraintModelOrder(source, offset);
             
             for (LPort port : source.getPorts(PortType.OUTPUT)) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                 LNode target = edge.getTarget().getNode();
-                    int modelOrderTarget = computeConstraintModelOrder(target, numberOfNodes);
+                    int modelOrderTarget = computeConstraintModelOrder(target, offset);
                     if (modelOrderTarget < modelOrderSource) {
                         revEdges.add(edge);
                     }
