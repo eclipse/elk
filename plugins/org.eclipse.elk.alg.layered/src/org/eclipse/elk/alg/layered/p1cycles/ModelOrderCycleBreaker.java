@@ -19,9 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
-import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -31,7 +29,6 @@ import com.google.common.collect.Lists;
 /**
  * A cycle breaker that reverses all edges that go against the model order,
  * i.e. edges from high model order to low model order.
- * Requires considerModelOrder to be a non NONE value.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -63,10 +60,6 @@ public final class ModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases,
         firstSeparateModelOrder = 0;
         lastSeparateModelOrder = 0;
         
-        if (layeredGraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
-            throw new UnsupportedConfigurationException(
-                    "Model order has to be considered to use the model order cycle breaker " + this.toString());
-        }
         // gather edges that point to the wrong direction
         List<LEdge> revEdges = Lists.newArrayList();
         

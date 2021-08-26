@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.ConfiguratorProvider;
 import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
+import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.FileExtensionFilter;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
@@ -73,4 +74,9 @@ public class BasicConsiderModelOrderTest {
     // Tests
     
     // Just check for errors that might occur
+    
+    @TestAfterProcessor(SortByInputModelProcessor.class)
+    public void test(final Object graph) {
+        assert(true);
+    }
 }
