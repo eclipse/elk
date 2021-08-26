@@ -175,8 +175,7 @@ public class ElkServicePlugin extends Plugin {
                     }
                 }
             } catch (CoreException exception) {
-                // TODO handle this
-//                StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
+                exception.printStackTrace();
             }
         }
     }
