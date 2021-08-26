@@ -32,18 +32,18 @@ import com.google.common.collect.Lists;
  * @author cds
  * @author ima
  */
-public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
+public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
-    private float[] portRanks;
+    protected float[] portRanks;
     /** the random number generator. */
-    private final Random random;
+    protected final Random random;
     /** the constraint resolver for ordering constraints. */
-    private ForsterConstraintResolver constraintResolver;
+    protected ForsterConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
-    private BarycenterState[][] barycenterState;
+    protected BarycenterState[][] barycenterState;
     /** The Barycenter PortDistributor is used to ask for the port ranks.*/
-    private final AbstractBarycenterPortDistributor portDistributor;
+    protected final AbstractBarycenterPortDistributor portDistributor;
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization.
@@ -266,7 +266,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         }
     }
 
-    private BarycenterState stateOf(final LNode node) {
+    protected BarycenterState stateOf(final LNode node) {
         return barycenterState[node.getLayer().id][node.id];
     }
     
@@ -307,7 +307,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     /**
      * Compares two {@link LNode}s based on their barycenter values.
      */
-    private final Comparator<LNode> barycenterStateComparator = 
+    protected Comparator<LNode> barycenterStateComparator = 
         (n1, n2) -> {
             BarycenterState s1 = stateOf(n1);
             BarycenterState s2 = stateOf(n2);

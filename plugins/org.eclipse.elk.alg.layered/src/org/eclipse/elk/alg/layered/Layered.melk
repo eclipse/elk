@@ -130,6 +130,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.layering.layerConstraint
     supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
     supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+    supports org.eclipse.elk.alg.layered.crossingMinimization.forceNodeModelOrder
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitchHierarchical.type
@@ -325,6 +326,14 @@ group crossingMinimization {
             "Strategy for crossing minimization."
         default = CrossingMinimizationStrategy.LAYER_SWEEP
         targets parents
+    }
+    
+    option forceNodeModelOrder: boolean {
+        label "Force Node Model Order"
+        description
+            "The node order given by the model does not change to produce a better layout. E.g. if node A
+             is before node B in the model this is not changed during crossing minimization"
+         targets parents
     }
 
     advanced option hierarchicalSweepiness: double {
