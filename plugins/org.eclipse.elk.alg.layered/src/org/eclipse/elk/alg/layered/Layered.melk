@@ -333,6 +333,7 @@ group crossingMinimization {
         description
             "The node order given by the model does not change to produce a better layout. E.g. if node A
              is before node B in the model this is not changed during crossing minimization"
+         default = false
          targets parents
     }
 

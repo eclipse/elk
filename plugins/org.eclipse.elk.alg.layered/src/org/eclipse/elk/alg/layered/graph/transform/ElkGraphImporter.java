@@ -228,8 +228,7 @@ class ElkGraphImporter {
                 if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE
                         || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
                             == CycleBreakingStrategy.MODEL_ORDER
-                        || elkgraph.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                            && elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                        || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
                     child.setProperty(InternalProperties.MODEL_ORDER, index);
                     index++;
                 }
@@ -244,8 +243,7 @@ class ElkGraphImporter {
             if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE
                     || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
                         == CycleBreakingStrategy.MODEL_ORDER
-                    || elkgraph.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                        && elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                    || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
                 elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
                 index++;
             }
