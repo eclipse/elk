@@ -427,6 +427,14 @@ public final class InternalProperties {
      */
     public static final IProperty<Boolean> FIRST_TRY_WITH_INITIAL_ORDER =
             new Property<>("firstTryWithInitialOrder", false);
+    
+    /**
+     * Set during crossing minimization on a graph to signal that crossing minimization should not shuffle the free
+     * nodes.
+     * This also fixes the initial sweep direction to backwards (since the previous one was forward).
+     */
+    public static final IProperty<Boolean> SECOND_TRY_WITH_INITIAL_ORDER =
+            new Property<>("firstTryWithInitialOrder", false);
 
     /**
      * List of nodes hidden by the {@link LayerConstraintPreprocessor}. Set on graphs.

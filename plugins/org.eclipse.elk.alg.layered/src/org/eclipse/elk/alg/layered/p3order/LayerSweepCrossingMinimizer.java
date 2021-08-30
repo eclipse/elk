@@ -226,14 +226,18 @@ public class LayerSweepCrossingMinimizer
     private int minimizeCrossingsWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
         
-        if (!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+        if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))
                 || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE) {
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
-            isForwardSweep = true;
+            isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
-        gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+        if (gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, true);
+        }
         int crossingsInGraph = countCurrentNumberOfCrossings(gData);
         int oldNumberOfCrossings;
         do {
@@ -255,14 +259,18 @@ public class LayerSweepCrossingMinimizer
     private double minimizeCrossingsNodePortOrderWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
         
-        if (!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+        if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))
                 || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE) {
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
-            isForwardSweep = true;
+            isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
-        gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+        if (gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, true);
+        }
         double crossingsInGraph = countCurrentNumberOfCrossingsNodePortOrder(gData);
         double oldNumberOfCrossings;
         do {
@@ -404,7 +412,8 @@ public class LayerSweepCrossingMinimizer
         improved |= sweepInHierarchicalNodes(firstLayer, forward, firstSweep);
         for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
             improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward,
-                    firstSweep && !graph.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER));
+                    firstSweep && !graph.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                    && !graph.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER));
             improved |= graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
             improved |= sweepInHierarchicalNodes(nodes[i], forward, firstSweep);
         }
