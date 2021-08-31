@@ -251,11 +251,12 @@ class ElkGraphImporter {
             boolean isInsideSelfLoop = enableInsideSelfLoops && elkedge.isSelfloop()
                     && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
             boolean connectsSiblings = source.getParent() == elkgraph && source.getParent() == target.getParent();
+            boolean connectsToGraph = (source.getParent() == elkgraph && target == elkgraph) 
+                    ^ (target.getParent() == elkgraph && source == elkgraph);
             
             // Only transform the edge if we are to layout the edge and if it stays in the current
-            // level of hierarchy (which implies that here we don't transform inside self loops
-            // or edges that connect children to the graph itself)
-            if (isToBeLaidOut && !isInsideSelfLoop && connectsSiblings) {
+            // level of hierarchy (which implies that here we don't transform inside self loops)
+            if (isToBeLaidOut && !isInsideSelfLoop && (connectsToGraph || connectsSiblings)) {
                 transformEdge(elkedge, elkgraph, lgraph);
             } 
         }
