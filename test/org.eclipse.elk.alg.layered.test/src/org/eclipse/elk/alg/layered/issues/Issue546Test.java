@@ -18,13 +18,11 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
-import org.eclipse.elk.alg.test.framework.annotations.Configurator;
 import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -50,14 +48,6 @@ public class Issue546Test {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(new ModelResourcePath("tickets/layered/546_borderGaps.elkt"));
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Configurations
-
-    @Configurator
-    public void configureIncludeChildrenHierarchyHandling(final ElkNode graph) {
-        graph.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////

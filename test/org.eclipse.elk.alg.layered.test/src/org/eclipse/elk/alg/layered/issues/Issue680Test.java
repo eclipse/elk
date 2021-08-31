@@ -16,7 +16,6 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.NullElkProgressMonitor;
@@ -42,7 +41,6 @@ public class Issue680Test {
 
     public Triple<ElkNode, ElkNode, ElkNode> testGraph() {
         ElkNode graph = ElkGraphUtil.createGraph();
-        graph.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
         graph.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
         graph.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
         graph.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
