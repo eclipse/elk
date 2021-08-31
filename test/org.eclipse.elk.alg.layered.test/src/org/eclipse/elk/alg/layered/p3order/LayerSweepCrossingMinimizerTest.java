@@ -29,10 +29,12 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +51,11 @@ import com.google.common.collect.Lists;
 public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     private final CrossMinType crossMinType;
     private LayerSweepCrossingMinimizer crossMin;
+
+    @BeforeClass
+    public static void init() {
+        PlainJavaInitialization.initializePlainJavaLayout();
+    }
 
     /**
      * Constructor called by Parameterized.
