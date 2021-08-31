@@ -234,6 +234,9 @@ public class LayerSweepCrossingMinimizer
             isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
+        if (gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, false);            
+        }
         if (gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
             gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
             gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, true);
@@ -267,6 +270,9 @@ public class LayerSweepCrossingMinimizer
             isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
+        if (gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, false);            
+        }
         if (gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
             gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
             gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, true);
