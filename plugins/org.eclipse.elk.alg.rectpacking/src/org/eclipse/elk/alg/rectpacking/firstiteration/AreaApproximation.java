@@ -68,8 +68,7 @@ public class AreaApproximation {
         List<ElkNode> placedRects = new ArrayList<>();
         placedRects.add(firstRect);
         ElkNode lastPlaced = firstRect;
-        DrawingData currentValues = new DrawingData(this.aspectRatio, firstRect.getWidth(),
-                firstRect.getHeight(),
+        DrawingData currentValues = new DrawingData(this.aspectRatio, firstRect.getWidth(), firstRect.getHeight(),
                 DrawingDataDescriptor.WHOLE_DRAWING);
 
         // Place the other boxes.
@@ -299,8 +298,7 @@ public class AreaApproximation {
         }
 
         // LPR and LPB have more values to be set in newDrawing.
-        DrawingData newDrawing = new DrawingData(aspectRatio, width,
-                height, option, x, y);
+        DrawingData newDrawing = new DrawingData(aspectRatio, width, height, option, x, y);
         return newDrawing;
     }
 }

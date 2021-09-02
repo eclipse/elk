@@ -74,8 +74,8 @@ public final class Compaction {
                 if (currentStack != null) {
                     currentStack.updateDimension();
                 }
-                currentStack = new BlockStack(currentStack == null ? 0 : currentStack.getX() + currentStack.getWidth() +
-                        nodeNodeSpacing, row.getY(), nodeNodeSpacing);
+                currentStack = new BlockStack(currentStack == null ? 0 : currentStack.getX() + currentStack.getWidth()
+                    + nodeNodeSpacing, row.getY(), nodeNodeSpacing);
                 block.setLocation(currentStack.getX() + currentStack.getWidth(), row.getY());
                 row.getStacks().add(currentStack);
                 currentStack.addBlock(block);

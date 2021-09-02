@@ -101,8 +101,8 @@ public class BlockRow {
      * Updates the coordinates of all rectangles and the height and width of the row.
      */
     public void updateRow() {
-        double width = 0;//rects.isEmpty() ? 0 : -nodeNodeSpacing;
-        double height = 0;//rects.isEmpty() ? 0 : -nodeNodeSpacing;
+        double width = 0;
+        double height = 0;
         for (ElkNode rect : rects) {
             rect.setX(x + width);
             rect.setY(this.y);

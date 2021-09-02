@@ -171,7 +171,6 @@ public class Block {
      * 
      * @param rect
      *            the rectangle that was assigned to this stack.
-     *            XXX
      */
     private void adjustSizeAdd(final ElkNode rect) {
         double widthOflastRow = getLastRow().getWidth();
@@ -187,8 +186,8 @@ public class Block {
             totalHeight += row.getHeight();
         }
         this.height = totalHeight;
-        this.averageHeight = maxHeight / this.children.size() -
-                nodeNodeSpacing * ((double) (this.children.size() - 1) / ((double) this.children.size()));
+        this.averageHeight = maxHeight / this.children.size()
+                - nodeNodeSpacing * ((double) (this.children.size() - 1) / ((double) this.children.size()));
         this.parentRow.notifyAboutNodeChange();
     }
     
@@ -366,8 +365,8 @@ public class Block {
             this.smallestRectHeight = Math.min(smallestRectHeight, rect.getHeight());
             this.maxHeight += rect.getHeight() + nodeNodeSpacing;
         }
-        this.averageHeight = maxHeight / this.children.size() -
-                nodeNodeSpacing * ((double) (this.children.size() - 1) / ((double) this.children.size()));
+        this.averageHeight = maxHeight / this.children.size()
+                - nodeNodeSpacing * ((double) (this.children.size() - 1) / ((double) this.children.size()));
         
         this.parentRow.notifyAboutNodeChange();
     }

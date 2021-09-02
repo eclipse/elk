@@ -30,13 +30,14 @@ public class AspectRatioFilter implements BestCandidateFilter {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
         double smallestDeviation = Double.POSITIVE_INFINITY;
         for (DrawingData opt : candidates) {
-            smallestDeviation = Math.min(smallestDeviation, Math.abs(((opt.getDrawingWidth() + padding.getHorizontal())
-                    / (opt.getDrawingHeight() + padding.getVertical()))
-                    - aspectRatio));
+            smallestDeviation = Math.min(smallestDeviation,
+                    Math.abs(((opt.getDrawingWidth() + padding.getHorizontal())
+                            / (opt.getDrawingHeight() + padding.getVertical()))
+                        - aspectRatio));
         }
         for (DrawingData candidate : candidates) {
             if (Math.abs(((candidate.getDrawingWidth() + padding.getHorizontal())
-                    / (candidate.getDrawingHeight() + padding.getVertical()))
+                        / (candidate.getDrawingHeight() + padding.getVertical()))
                     - aspectRatio) == smallestDeviation) {
                 remainingCandidates.add(candidate);
             }

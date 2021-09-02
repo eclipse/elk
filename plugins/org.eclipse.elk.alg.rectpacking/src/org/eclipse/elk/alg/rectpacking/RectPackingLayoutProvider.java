@@ -149,8 +149,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
 
         // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
         if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
-            NodeMicroLayout.forGraph(layoutGraph)
-                           .execute();
+            NodeMicroLayout.forGraph(layoutGraph).execute();
         }
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(layoutGraph, "Output");
