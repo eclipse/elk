@@ -185,21 +185,21 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     private void updateBiggerAndSmallerAssociations(final LNode bigger, final LNode smaller) {
         HashSet<LNode> biggerNodeBiggerThan = biggerThan.get(bigger);
         HashSet<LNode> smallerNodeBiggerThan = biggerThan.get(smaller);
+        HashSet<LNode> biggerNodeSmallerThan = smallerThan.get(bigger);
+        HashSet<LNode> smallerNodeSmallerThan = smallerThan.get(smaller);
         biggerNodeBiggerThan.add(smaller);
-        for (LNode node : smallerNodeBiggerThan) {
-            if (!biggerNodeBiggerThan.contains(node)) {
-                updateBiggerAndSmallerAssociations(bigger, node);
-            }
+        smallerNodeSmallerThan.add(bigger);
+        for (LNode verySmall : smallerNodeBiggerThan) {
+            biggerNodeBiggerThan.add(verySmall);
+            smallerThan.get(verySmall).add(bigger);
+            smallerThan.get(verySmall).addAll(biggerNodeSmallerThan);
         }
         
 
-        HashSet<LNode> biggerNodeSmallerThan = smallerThan.get(bigger);
-        HashSet<LNode> smallerNodeSmallerThan = smallerThan.get(smaller);
-        smallerNodeSmallerThan.add(bigger);
-        for (LNode node : biggerNodeSmallerThan) {
-            if (!smallerNodeSmallerThan.contains(node)) {
-                updateBiggerAndSmallerAssociations(node, smaller);
-            }
+        for (LNode veryBig : biggerNodeSmallerThan) {
+            smallerNodeSmallerThan.add(veryBig);
+            biggerThan.get(veryBig).add(smaller);
+            biggerThan.get(veryBig).addAll(smallerNodeBiggerThan);
         }
     }
 }
