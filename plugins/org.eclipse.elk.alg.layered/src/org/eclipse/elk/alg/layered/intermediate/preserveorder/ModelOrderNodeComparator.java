@@ -17,6 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 
@@ -29,7 +30,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     /**
      * The previous layer.
      */
-    private final Layer previousLayer;
+    private LNode[] previousLayer;
     
     /**
      * The ordering strategy.
@@ -46,14 +47,41 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     private HashMap<LNode, HashSet<LNode>> smallerThan = new HashMap<>();
     
     /**
+     * Dummy node sorting strategy when compared to nodes with no connection to the previous layer.
+     */
+    private LongEdgeOrderingStrategy longEdgeNodeOrder = LongEdgeOrderingStrategy.EQUAL;
+    
+    /**
+     * Creates a comparator to compare {@link LNode}s in the same layer.
+     * 
+     * @param thePreviousLayer The previous layer
+     * @param orderingStrategy The ordering strategy
+     * @param longEdgeOrderingStrategy The strategy to order dummy nodes and nodes with no connection the previous layer
+     */
+    public ModelOrderNodeComparator(final Layer thePreviousLayer, final OrderingStrategy orderingStrategy,
+            final LongEdgeOrderingStrategy longEdgeOrderingStrategy) {
+        this(orderingStrategy, longEdgeOrderingStrategy);
+        this.previousLayer = new LNode[thePreviousLayer.getNodes().size()];
+        thePreviousLayer.getNodes().toArray(this.previousLayer);
+    }
+
+    /**
      * Creates a comparator to compare {@link LNode}s in the same layer.
      * 
      * @param previousLayer The previous layer
      * @param orderingStrategy The ordering strategy
+     * @param longEdgeOrderingStrategy The strategy to order dummy nodes and nodes with no connection the previous layer
      */
-    public ModelOrderNodeComparator(final Layer previousLayer, final OrderingStrategy orderingStrategy) {
+    public ModelOrderNodeComparator(final LNode[] previousLayer, final OrderingStrategy orderingStrategy,
+            final LongEdgeOrderingStrategy longEdgeOrderingStrategy) {
+        this(orderingStrategy, longEdgeOrderingStrategy);
         this.previousLayer = previousLayer;
+    }
+    
+    private ModelOrderNodeComparator(final OrderingStrategy orderingStrategy,
+            final LongEdgeOrderingStrategy longEdgeOrderingStrategy) {
         this.orderingStrategy = orderingStrategy;
+        this.longEdgeNodeOrder = longEdgeOrderingStrategy;
     }
 
     @Override
@@ -176,10 +204,12 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 return edge.getProperty(InternalProperties.MODEL_ORDER);
             }
         }
-        // Set to -1 to sort nodes without a connection to the previous layer over dummy nodes.
+        // Set to -1 to sort dummy nodes under nodes without a connection to the previous layer.
+        // Set to MAX_INT to sort dummy nodes over nodes without a connection to the previous layer.
+        // Set to 0 if you do not care about their order.
         // One of this has to be chosen, since dummy nodes are not comparable with nodes
         // that do not have a connection to the previous layer.
-        return Integer.MAX_VALUE;
+        return longEdgeNodeOrder.returnValue();
     }
     
     private void updateBiggerAndSmallerAssociations(final LNode bigger, final LNode smaller) {

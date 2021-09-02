@@ -78,6 +78,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                                             previousOrder));
                         }
                     });
+                    node.setProperty(InternalProperties.TARGET_NODE_MODEL_ORDER, targetNodeModelOrder);
                     Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer, targetNodeModelOrder));
                 }
@@ -85,7 +86,8 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             // Sort nodes.
             Collections.sort(layer.getNodes(),
                     new ModelOrderNodeComparator(previousLayer,
-                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER)));
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY)));
             layerIndex++;
         }
     }

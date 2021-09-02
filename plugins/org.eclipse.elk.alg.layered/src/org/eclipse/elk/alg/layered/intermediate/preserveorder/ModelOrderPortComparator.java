@@ -36,7 +36,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
     /**
      * The previous layer.
      */
-    private final Layer previousLayer;
+    private LNode[] previousLayer;
 
     /**
      * Creates a comparator to compare {@link LPort}s in the same layer.
@@ -45,6 +45,18 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
      * @param targetNodeModelOrder The minimal model order connecting to a target node.
      */
     public ModelOrderPortComparator(final Layer previousLayer, final Map<LNode, Integer> targetNodeModelOrder) {
+        this.previousLayer = new LNode[previousLayer.getNodes().size()];
+        previousLayer.getNodes().toArray(this.previousLayer);
+        this.targetNodeModelOrder = targetNodeModelOrder;
+    }
+
+    /**
+     * Creates a comparator to compare {@link LPort}s in the same layer.
+     * 
+     * @param previousLayer The previous layer
+     * @param targetNodeModelOrder The minimal model order connecting to a target node.
+     */
+    public ModelOrderPortComparator(final LNode[] previousLayer, final Map<LNode, Integer> targetNodeModelOrder) {
         this.previousLayer = previousLayer;
         this.targetNodeModelOrder = targetNodeModelOrder;
     }
@@ -79,12 +91,13 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             if (p1TargetNode != null && p1TargetNode.equals(p2TargetNode)) {
                 return Integer.compare(p1Order, p2Order);
             }
-            
-            if (targetNodeModelOrder.containsKey(p1TargetNode)) {
-                p1Order = targetNodeModelOrder.get(p1TargetNode);
-            }
-            if (targetNodeModelOrder.containsKey(p2TargetNode)) {
-                p2Order = targetNodeModelOrder.get(p2TargetNode);
+            if (targetNodeModelOrder != null) {
+                if (targetNodeModelOrder.containsKey(p1TargetNode)) {
+                    p1Order = targetNodeModelOrder.get(p1TargetNode);
+                }
+                if (targetNodeModelOrder.containsKey(p2TargetNode)) {
+                    p2Order = targetNodeModelOrder.get(p2TargetNode);
+                }
             }
             return Integer.compare(p1Order, p2Order);
             
