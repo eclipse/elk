@@ -421,10 +421,19 @@ public final class InternalProperties {
     public static final IProperty<LNode> LONG_EDGE_TARGET_NODE = new Property<>("longEdgeTargetNode");
     
     /**
-     * Set during crossing minimization on a graph to signal that crossing minization should not shuffle the free nodes.
+     * Set during crossing minimization on a graph to signal that crossing minimization should not shuffle the free
+     * nodes.
      * This also fixes the initial sweep direction to forward.
      */
     public static final IProperty<Boolean> FIRST_TRY_WITH_INITIAL_ORDER =
+            new Property<>("firstTryWithInitialOrder", false);
+    
+    /**
+     * Set during crossing minimization on a graph to signal that crossing minimization should not shuffle the free
+     * nodes.
+     * This also fixes the initial sweep direction to backwards (since the previous one was forward).
+     */
+    public static final IProperty<Boolean> SECOND_TRY_WITH_INITIAL_ORDER =
             new Property<>("firstTryWithInitialOrder", false);
 
     /**
@@ -437,6 +446,12 @@ public final class InternalProperties {
      * disconnected it. Set on edges.
      */
     public static final IProperty<LPort> ORIGINAL_OPPOSITE_PORT = new Property<>("layerConstraints.opposidePort");
+    
+    /**
+     * Holds the model order of the target nodes of a port.
+     * This is used to cache this once it was calculated.
+     */
+    public static final IProperty<Map<LNode, Integer>> TARGET_NODE_MODEL_ORDER = new Property<>("targetNode.modelOrder");
     
     /**
      * Hidden default constructor.

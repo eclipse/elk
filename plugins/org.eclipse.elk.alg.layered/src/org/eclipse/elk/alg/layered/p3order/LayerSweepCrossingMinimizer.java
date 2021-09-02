@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.ArrayDeque;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.Random;
@@ -23,6 +24,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
+import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
+import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
@@ -179,20 +183,41 @@ public class LayerSweepCrossingMinimizer
         // In order to only copy graphs whose node order has changed, save them in a set.
         graphsWhoseNodeOrderChanged.clear();
 
-        int bestCrossings = Integer.MAX_VALUE;
-        if (gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
-            // The first run should begin with a forward sweep.
-            // If the order causes no additional crossings this preserves the current order.
-            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, true);
-        }
-        int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
-        for (int i = 0; i < thouroughness; i++) {
-            int crossings = minimizeCrossingsWithCounter(gData);
-            if (crossings < bestCrossings) {
-                bestCrossings = crossings;
-                saveAllNodeOrdersOfChangedGraphs();
-                if (bestCrossings == 0) {
-                    break;
+        if (gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE) != 0
+            || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE) != 0) {
+            double bestCrossings = Double.MAX_VALUE;
+            if (gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE) {
+                // The first run should begin with a forward sweep.
+                // If the order causes no additional crossings this preserves the current order.
+                gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, true);
+            }
+            int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
+            for (int i = 0; i < thouroughness; i++) {
+                double crossings = minimizeCrossingsNodePortOrderWithCounter(gData);
+                if (crossings < bestCrossings) {
+                    bestCrossings = crossings;
+                    saveAllNodeOrdersOfChangedGraphs();
+                    if (bestCrossings == 0) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            int bestCrossings = Integer.MAX_VALUE;
+            if (gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE) {
+                // The first run should begin with a forward sweep.
+                // If the order causes no additional crossings this preserves the current order.
+                gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, true);
+            }
+            int thouroughness = gData.lGraph().getProperty(LayeredOptions.THOROUGHNESS);
+            for (int i = 0; i < thouroughness; i++) {
+                int crossings = minimizeCrossingsWithCounter(gData);
+                if (crossings < bestCrossings) {
+                    bestCrossings = crossings;
+                    saveAllNodeOrdersOfChangedGraphs();
+                    if (bestCrossings == 0) {
+                        break;
+                    }
                 }
             }
         }
@@ -201,14 +226,21 @@ public class LayerSweepCrossingMinimizer
     private int minimizeCrossingsWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
         
-        if (!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
-                || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) == OrderingStrategy.NONE) {
+        if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))
+                || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE) {
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
-            isForwardSweep = true;
+            isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);
         }
         sweepReducingCrossings(gData, isForwardSweep, true);
-        gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+        if (gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, false);            
+        }
+        if (gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, true);
+        }
         int crossingsInGraph = countCurrentNumberOfCrossings(gData);
         int oldNumberOfCrossings;
         do {
@@ -225,6 +257,94 @@ public class LayerSweepCrossingMinimizer
         } while (oldNumberOfCrossings > crossingsInGraph);
 
         return oldNumberOfCrossings;
+    }
+    
+    private double minimizeCrossingsNodePortOrderWithCounter(final GraphInfoHolder gData) {
+        boolean isForwardSweep = random.nextBoolean();
+        
+        if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))
+                || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE) {
+            gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
+        } else {
+            isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);
+        }
+        sweepReducingCrossings(gData, isForwardSweep, true);
+        if (gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, false);            
+        }
+        if (gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
+            gData.lGraph().setProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER, false);
+            gData.lGraph().setProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER, true);
+        }
+        double crossingsInGraph = countCurrentNumberOfCrossingsNodePortOrder(gData);
+        double oldNumberOfCrossings;
+        do {
+            setCurrentlyBestNodeOrders();
+
+            if (crossingsInGraph == 0) {
+                return 0;
+            }
+
+            isForwardSweep = !isForwardSweep;
+            oldNumberOfCrossings = crossingsInGraph;
+            sweepReducingCrossings(gData, isForwardSweep, false);
+            crossingsInGraph = countCurrentNumberOfCrossingsNodePortOrder(gData);
+        } while (oldNumberOfCrossings > crossingsInGraph);
+
+        return oldNumberOfCrossings;
+    }
+    
+    /**
+     * Compares all nodes in a each layer and counts how often they are not in model order.
+     * This requires that the {@code SortByInputModelProcessor} ran previously.
+     * @param layers layers to check
+     * @param strategy the ordering strategy to compare the nodes
+     * @return The number of model order conflicts
+     */
+    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strategy) {
+        int previousLayer = -1;
+        int wrongModelOrder = 0;
+        for (LNode[] layer : layers) {
+            ModelOrderNodeComparator comp = new ModelOrderNodeComparator(
+                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL);
+            for (int i = 0; i < layer.length; i++) {
+                for (int j = i + 1; j < layer.length; j++) {
+                    if (comp.compare(layer[i], layer[j]) > 0) {
+                        wrongModelOrder++;
+                    }
+                }
+            }
+            previousLayer++;
+        }
+        return wrongModelOrder;
+    }
+
+    /**
+     * Compares all ports in a each layer and counts how often they are not in model order.
+     * This requires that the {@code SortByInputModelProcessor} ran previously.
+     * @param layers layers to check
+     * @return The number of model order conflicts
+     */
+    private int countModelOrderPortChanges(final LNode[][] layers) {
+        int previousLayer = -1;
+        int wrongModelOrder = 0;
+        for (LNode[] layer : layers) {
+            for (LNode lNode : layer) {
+                Comparator<LPort> comp = new ModelOrderPortComparator(
+                        previousLayer == -1 ? layers[0] : layers[previousLayer],
+                                lNode.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER));
+                for (int i = 0; i < lNode.getPorts().size(); i++) {
+                    for (int j = i + 1; j < lNode.getPorts().size(); j++) {
+                        if (comp.compare(lNode.getPorts().get(i), lNode.getPorts().get(j)) > 0) {
+                            wrongModelOrder++;
+                        }
+                    }
+                }
+            }
+            previousLayer++;
+        }
+        return wrongModelOrder;
     }
 
     /*
@@ -250,6 +370,43 @@ public class LayerSweepCrossingMinimizer
         return totalCrossings;
     }
 
+    /*
+     * We only need to count crossings and violations of node and port order below the current graph and also only
+     * if they are marked as to be processed hierarchically.
+     */
+    private double countCurrentNumberOfCrossingsNodePortOrder(final GraphInfoHolder currentGraph) {
+        double totalCrossings = 0;
+        Deque<GraphInfoHolder> countCrossingsIn = new ArrayDeque<>();
+        countCrossingsIn.push(currentGraph);
+        while (!countCrossingsIn.isEmpty()) {
+            GraphInfoHolder gD = countCrossingsIn.pop();
+            double modelOrderInfluence = 0;
+            // Additionally add changes to the model order to the number of crossings.
+            // The influence of port and node order can be configured.
+            OrderingStrategy modelOrderStrategy = currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY);
+            double crossingCounterNodeInfluence = currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE);
+            double crossingCounterPortInfluence = currentGraph.lGraph()
+                    .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE);
+            if (modelOrderStrategy != OrderingStrategy.NONE) {
+                modelOrderInfluence += crossingCounterNodeInfluence
+                        * countModelOrderNodeChanges(gD.currentNodeOrder(), modelOrderStrategy);
+                modelOrderInfluence += crossingCounterPortInfluence
+                        * countModelOrderPortChanges(gD.currentNodeOrder());
+            }
+            totalCrossings += gD.crossCounter().countAllCrossings(gD.currentNodeOrder()) + modelOrderInfluence;
+            for (LGraph childLGraph : gD.childGraphs()) {
+                GraphInfoHolder child = graphInfoHolders.get(childLGraph.id);
+                if (!child.dontSweepInto()) {
+                    totalCrossings += countCurrentNumberOfCrossings(child);
+                }
+            }
+        }
+
+        return totalCrossings;
+    }
+
     private boolean sweepReducingCrossings(final GraphInfoHolder graph, final boolean forward,
             final boolean firstSweep) {
         LNode[][] nodes = graph.currentNodeOrder();
@@ -261,7 +418,8 @@ public class LayerSweepCrossingMinimizer
         improved |= sweepInHierarchicalNodes(firstLayer, forward, firstSweep);
         for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
             improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward,
-                    firstSweep && !graph.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER));
+                    firstSweep && !graph.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
+                    && !graph.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER));
             improved |= graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
             improved |= sweepInHierarchicalNodes(nodes[i], forward, firstSweep);
         }
