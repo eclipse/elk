@@ -9,14 +9,16 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.rectpacking.firstiteration;
 
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.graph.ElkNode;
+
+import com.google.common.collect.Lists;
 
 /**
  * Class that handles the first iteration of the algorithm, producing an approximated bounding box for the packing.
@@ -57,7 +59,8 @@ public class AreaApproximation {
      * @param nodeNodeSpacing The spacing between two nodes.
      * @return A drawing calculated by this methods algorithm.
      */
-    public DrawingData approxBoundingBox(final List<ElkNode> rectangles, final double nodeNodeSpacing) {
+    public DrawingData approxBoundingBox(final List<ElkNode> rectangles, final double nodeNodeSpacing,
+            final ElkPadding padding) {
         // Place first box.
         ElkNode firstRect = rectangles.get(0);
         firstRect.setX(0);
@@ -85,7 +88,7 @@ public class AreaApproximation {
             DrawingData opt4 = calcValuesForOpt(DrawingDataDescriptor.CANDIDATE_POSITION_WHOLE_DRAWING_BELOW, toPlace,
                     lastPlaced, currentValues, placedRects, nodeNodeSpacing);
 
-            DrawingData bestOpt = findBestCandidate(opt1, opt2, opt3, opt4, toPlace, lastPlaced);
+            DrawingData bestOpt = findBestCandidate(opt1, opt2, opt3, opt4, toPlace, lastPlaced, padding);
 
             toPlace.setX(bestOpt.getNextXcoordinate());
             toPlace.setY(bestOpt.getNextYcoordinate());
@@ -113,7 +116,7 @@ public class AreaApproximation {
      * @return Returns the best option out of the given ones or null, if there is no best option found.
      */
     private DrawingData findBestCandidate(final DrawingData opt1, final DrawingData opt2, final DrawingData opt3,
-            final DrawingData opt4, final ElkNode toPlace, final ElkNode lastPlaced) {
+            final DrawingData opt4, final ElkNode toPlace, final ElkNode lastPlaced, final ElkPadding padding) {
         List<DrawingData> candidates = Lists.newArrayList(opt1, opt2, opt3, opt4);
         List<BestCandidateFilter> filters = null;
 
@@ -134,7 +137,7 @@ public class AreaApproximation {
         // Filter the candidates according to the order of the filters using the strategy pattern.
         for (BestCandidateFilter filter : filters) {
             if (candidates.size() > 1) {
-                candidates = filter.filterList(candidates, aspectRatio);
+                candidates = filter.filterList(candidates, aspectRatio, padding);
             }
         }
 
@@ -239,7 +242,8 @@ public class AreaApproximation {
      * @return An {@link DrawingData} object containing the values after the rectangle would be placed.
      */
     private DrawingData calcValuesForOpt(final DrawingDataDescriptor option, final ElkNode toPlace,
-            final ElkNode lastPlaced, final DrawingData drawing, final List<ElkNode> placedRects, final double nodeNodeSpacing) {
+            final ElkNode lastPlaced, final DrawingData drawing, final List<ElkNode> placedRects,
+            final double nodeNodeSpacing) {
 
         double x = 0;
         double y = 0;

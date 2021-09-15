@@ -57,7 +57,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             Layer previousLayer = graph.getLayers().get(previousLayerIndex);
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_ORDER
-                        || node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_POS) {
+                        && node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_POS) {
                     // Special case:
                     // If two edges (of the same node) have the same target node they should be next to each other.
                     // Therefore all ports that connect to the same node should have the same
@@ -81,7 +81,6 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     node.setProperty(InternalProperties.TARGET_NODE_MODEL_ORDER, targetNodeModelOrder);
                     Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer, targetNodeModelOrder));
-                    node.cachePortSides();
                 }
             }
             // Sort nodes.
