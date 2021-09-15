@@ -91,12 +91,13 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             if (p1TargetNode != null && p1TargetNode.equals(p2TargetNode)) {
                 return Integer.compare(p1Order, p2Order);
             }
-            
-            if (targetNodeModelOrder.containsKey(p1TargetNode)) {
-                p1Order = targetNodeModelOrder.get(p1TargetNode);
-            }
-            if (targetNodeModelOrder.containsKey(p2TargetNode)) {
-                p2Order = targetNodeModelOrder.get(p2TargetNode);
+            if (targetNodeModelOrder != null) {
+                if (targetNodeModelOrder.containsKey(p1TargetNode)) {
+                    p1Order = targetNodeModelOrder.get(p1TargetNode);
+                }
+                if (targetNodeModelOrder.containsKey(p2TargetNode)) {
+                    p2Order = targetNodeModelOrder.get(p2TargetNode);
+                }
             }
             return Integer.compare(p1Order, p2Order);
             

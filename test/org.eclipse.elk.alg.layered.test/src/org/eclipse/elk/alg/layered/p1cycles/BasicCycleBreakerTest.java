@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.Configurator;
@@ -71,6 +72,22 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
         return configuratorFor(CycleBreakingStrategy.GREEDY);
     }
     
+    @ConfiguratorProvider
+    public LayoutConfigurator modelOrderPreferEdgesConfigurator() {
+        LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_EDGES);
+        return config;
+    }
+    
+    @ConfiguratorProvider
+    public LayoutConfigurator modelOrderNodesAndEdgesConfigurator() {
+        LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.NODES_AND_EDGES);
+        return config;
+    }
+    
     private LayoutConfigurator configuratorFor(final CycleBreakingStrategy strategy) {
         LayoutConfigurator config = new LayoutConfigurator();
         config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, strategy);
@@ -113,6 +130,7 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     @TestAfterProcessor(DepthFirstCycleBreaker.class)
     @TestAfterProcessor(GreedyCycleBreaker.class)
     @TestAfterProcessor(InteractiveCycleBreaker.class)
+    @TestAfterProcessor(ModelOrderCycleBreaker.class)
     public void testIsAcyclic(final Object graph) {
         LGraph lGraph = (LGraph) graph;
         
