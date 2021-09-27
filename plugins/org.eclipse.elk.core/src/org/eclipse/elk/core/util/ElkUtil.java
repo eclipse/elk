@@ -347,7 +347,7 @@ public final class ElkUtil {
         
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             Set<SizeOptions> sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
-            KVector minSize = node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
+            KVector minSize = new KVector(node.getProperty(CoreOptions.NODE_SIZE_MINIMUM));
 
             // If minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
