@@ -24,11 +24,12 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.layered.intermediate.SortByInputModelProcessor;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderNodeComparator;
 import org.eclipse.elk.alg.layered.intermediate.preserveorder.ModelOrderPortComparator;
-import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -333,7 +334,7 @@ public class LayerSweepCrossingMinimizer
             for (LNode lNode : layer) {
                 Comparator<LPort> comp = new ModelOrderPortComparator(
                         previousLayer == -1 ? layers[0] : layers[previousLayer],
-                                lNode.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER));
+                                SortByInputModelProcessor.longEdgeTargetNodePreprocessing(lNode));
                 for (int i = 0; i < lNode.getPorts().size(); i++) {
                     for (int j = i + 1; j < lNode.getPorts().size(); j++) {
                         if (comp.compare(lNode.getPorts().get(i), lNode.getPorts().get(j)) > 0) {

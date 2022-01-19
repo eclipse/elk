@@ -12,9 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.preserveorder;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -85,10 +83,25 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         if (!p1.getOutgoingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
             LNode p1TargetNode = p1.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
             LNode p2TargetNode = p2.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
-            int p1Order = p1.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
-            int p2Order = p2.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
+            int p1Order = 0;
+            int p2Order = 0;
+            if (p1.getOutgoingEdges().get(0).hasProperty(InternalProperties.MODEL_ORDER)) {
+                p1Order = p1.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
+            }
+            if (p2.getOutgoingEdges().get(0).hasProperty(InternalProperties.MODEL_ORDER)) {
+                p2Order = p1.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
+            }
             
+            // Same target node
             if (p1TargetNode != null && p1TargetNode.equals(p2TargetNode)) {
+                // Backward edges below
+                if (p1.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)
+                        && !p2.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)) {
+                    return 1;
+                } else if (!p1.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)
+                        && p2.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)) {
+                    return -1;
+                }
                 return Integer.compare(p1Order, p2Order);
             }
             if (targetNodeModelOrder != null) {
