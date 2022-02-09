@@ -835,17 +835,6 @@ programmatic option topdownScaleFactor: double {
     targets nodes
 }
 
-// TODO: remove this, we probably don't need it afterall 
-programmatic option propagatedScaleFactor: double {
-    label "Propagated Scale Factor"
-    description
-        "The propagated scale factor is the product of all 'Topdown Scale Factor' values assigned to the direct 
-         ancestors up until the root node."
-    lowerBound = ExclusiveBounds.greaterThan(0)
-    default = 1
-    targets nodes
-}
-
 // TODO: decide whether this is a reasonable demand, or whether it would be easier to add this calculation as a 
 //       post-processing step that can be added after any algorithm
 programmatic option childAreaWidth: double {

@@ -222,11 +222,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
                     double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
                     double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                    // TODO: it seems we do not need the propagated scale factor after all... double check and remove
-                    //double propagatedScaleFactor = layoutNode.getProperty(CoreOptions.PROPAGATED_SCALE_FACTOR);
                     layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                     topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
-                    // topdownLayoutMonitor.log("Propagated Scale Factor: " + scaleFactor * propagatedScaleFactor);
                     
                     // compute translation vector to keep children centered in child area, this is necessary because the aspect ratio
                     // is not the same as the parent aspect ratio
@@ -248,8 +245,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     //TODO: fix the shift computation, is completely off and a mess
                     for (ElkNode node : layoutNode.getChildren()) {
                         // topdownLayoutMonitor.log(node.getX());
-                        // propagate scale factor to children
-                        // node.setProperty(CoreOptions.PROPAGATED_SCALE_FACTOR, scaleFactor * propagatedScaleFactor);
                         // shift all nodes in layout
                         node.setX(node.getX() + xShift);
                         node.setY(node.getY() + yShift);

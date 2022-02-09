@@ -63,7 +63,6 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         
         for (ElkNode node : nodes) {
             // Set the node's size
-            // TODO: eventually don't force one aspect ratio (for this algorithm fine though)
             double desiredNodeWidth = node.getProperty(TopdownpackingOptions.DESIRED_WIDTH);
             double aspectRatio = node.getProperty(TopdownpackingOptions.DESIRED_ASPECT_RATIO);
             node.setDimensions(desiredNodeWidth, desiredNodeWidth/aspectRatio);
@@ -93,8 +92,6 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
                 currentCol = 0;
                 currentRow += 1;
             }
-            // TODO: fix error here in control flow
-            //       total height is not being calculated correctly, 3 child nodes leads to wrong result, 4 leads to correct
         }
         /** REMOVE FOR NOW BECAUSE IT GETS CONFUSING WITH THE SCALING
         // if the last row is not full, do some adjustments to the nodes
