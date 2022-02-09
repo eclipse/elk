@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -395,6 +396,44 @@ public final class ElkUtil {
                 anchor.y *= scalingFactor;
             }
         }
+    }
+    
+    /**
+     * Applies the scaling factor configured in terms of {@link CoreOptions#TOPDOWN_SCALE_FACTOR} to {@code node}'s
+     * the layout data of {@code node}'s ports and labels.<br>
+     * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
+     * {@link CoreOptions#SCALE_FACTOR}.
+     *
+     * @param node
+     *            the node to be scaled
+     */
+    public static void applyTopdownLayoutScaling(final ElkNode node) {
+        final double scalingFactor = node.getProperty(CoreOptions.TOPDOWN_SCALE_FACTOR);
+        if (scalingFactor == 1) {
+            return;
+        }
+                
+        final Iterable<ElkLabel> portLabels = Iterables.concat(
+                Iterables.transform(node.getPorts(), p -> p.getLabels()));
+        for (ElkShape shape : Iterables.concat(node.getLabels(), node.getPorts(), portLabels, node.getChildren())) {
+            shape.setLocation(scalingFactor * shape.getX(), scalingFactor * shape.getY());
+            shape.setDimensions(scalingFactor * shape.getWidth(), scalingFactor * shape.getHeight());
+
+            final KVector anchor = shape.getProperty(CoreOptions.PORT_ANCHOR);
+            if (anchor != null) {
+                anchor.x *= scalingFactor;
+                anchor.y *= scalingFactor;
+            }
+        }
+    }
+    
+    public static ElkPadding scaledPadding(final ElkPadding padding, double scaleFactor) {
+        ElkPadding scaledPadding = padding.clone();
+        scaledPadding.top = padding.top * scaleFactor;
+        scaledPadding.left = padding.left * scaleFactor;
+        scaledPadding.bottom = padding.bottom * scaleFactor;
+        scaledPadding.right = padding.right * scaleFactor;
+        return scaledPadding;
     }
 
     /**

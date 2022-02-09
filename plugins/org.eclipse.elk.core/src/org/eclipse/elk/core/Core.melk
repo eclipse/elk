@@ -825,6 +825,47 @@ programmatic option scaleFactor: double {
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
+programmatic option topdownScaleFactor: double {
+    label "Topdown Scale Factor"
+    description
+        "The scaling factor to be applied to the nodes laid out within the node in recursive topdown
+         layout. The difference to 'Scale Factor' is that the node itself is not scaled."
+    lowerBound = ExclusiveBounds.greaterThan(0)
+    default = 1
+    targets nodes
+}
+
+// TODO: remove this, we probably don't need it afterall 
+programmatic option propagatedScaleFactor: double {
+    label "Propagated Scale Factor"
+    description
+        "The propagated scale factor is the product of all 'Topdown Scale Factor' values assigned to the direct 
+         ancestors up until the root node."
+    lowerBound = ExclusiveBounds.greaterThan(0)
+    default = 1
+    targets nodes
+}
+
+// TODO: decide whether this is a reasonable demand, or whether it would be easier to add this calculation as a 
+//       post-processing step that can be added after any algorithm
+programmatic option childAreaWidth: double {
+    label "Child Area Width"
+    description
+        "The width of the area occupied by the laid out children of a node. This value is necessary to compute the 
+         correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
+         be set for topdown layout to function."
+    targets nodes
+}
+
+programmatic option childAreaHeight: double {
+    label "Child Area Height"
+    description
+        "The height of the area occupied by the laid out children of a node. This value is necessary to compute the 
+         correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
+         be set for topdown layout to function."
+    targets nodes
+}
+
 // --- INSIDE SELF LOOPS
 group insideSelfLoops {
 
