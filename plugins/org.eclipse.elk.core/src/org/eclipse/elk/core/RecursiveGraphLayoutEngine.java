@@ -102,6 +102,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * Recursive function to enable layout of hierarchy. The leafs are laid out first to use their
      * layout information in the levels above.
      * 
+     * If the 'Topdown Layout' option is enabled, root nodes are laid out first and inner layouts are scaled down
+     * so the respective parent nodes can accommodate their children.
+     * 
      * <p>This method returns self loops routed inside the given layout node. Those will have
      * coordinates relative to the node's top left corner, which is incorrect. Once the node's
      * final coordinates in its container are determined, any inside self loops will have to be offset
@@ -199,9 +202,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 // If performing topdown layout, layout this node first, then compute scale factors and layout children
                 // recursively
-                if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
-                    // TODO: think about whether it is possible to have mixed topdown and bottomup layout
-                    //       for now just recursively set all children to topdown as well
+                if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
+                        && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     // Compute layout
@@ -227,9 +229,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                     topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                     
-                    // compute translation vector to keep children centered in child area, this is necessary because the aspect ratio
-                    // is not the same as the parent aspect ratio
-                    // whether vertical centering is desired is up for discussion
+                    // compute translation vector to keep children centered in child area, 
+                    // this is necessary because the aspect ratio is not the same as the parent aspect ratio
                     double xShift = 0;
                     double yShift = 0;
                     if (scaleFactorX > scaleFactorY) {
@@ -240,16 +241,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // vertical shift necessary
                         yShift = 0.5 * (childAreaAvailableHeight - childAreaDesiredHeight * scaleFactorX);
                     }
-                    // THESE ARE WRONG TODO: remove
-                    //xShift = 0.5 * (childAreaAvailableWidth - childAreaDesiredWidth) * scaleFactorY;
-                    //yShift = 0.5 * (childAreaAvailableHeight - childAreaDesiredHeight) * scaleFactorX;
                     topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
-                    //TODO: fix the shift computation, is completely off and a mess
                     for (ElkNode node : layoutNode.getChildren()) {
                         // topdownLayoutMonitor.log(node.getX());
                         // shift all nodes in layout
                         node.setX(node.getX() + xShift);
                         node.setY(node.getY() + yShift);
+                        // TODO: think about whether it is possible to have mixed topdown and bottomup layout
+                        //       for now just recursively set all children to topdown as well
                         // set mode to topdown layout, this could potentially be handled differently in the future
                         node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
                     }
@@ -283,7 +282,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 selfLoop.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
-            if (!layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) || !layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+            if (!layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
+                    || !layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                 executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
             }
             
