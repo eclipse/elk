@@ -825,6 +825,15 @@ programmatic option scaleFactor: double {
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
+programmatic option topdownLayout: boolean {
+    label "Topdown Layout"
+    description
+        "Turns topdown layout on and off. If this option is enabled, hierarchical layout will be computed first for
+         the root node and then for its children recursively. Layouts are then scaled down to fit the area provided by
+         their parents."
+    default = false
+}
+
 programmatic option topdownScaleFactor: double {
     label "Topdown Scale Factor"
     description

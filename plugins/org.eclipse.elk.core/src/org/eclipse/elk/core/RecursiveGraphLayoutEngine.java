@@ -114,7 +114,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
-        boolean topdownlayout = true;
+        // TODO: externalize this control as some option in the GUI somewhere
+        layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
         
         if (progressMonitor.isCanceled()) {
             return Collections.emptyList();
@@ -198,8 +199,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 // If performing topdown layout, layout this node first, then compute scale factors and layout children
                 // recursively
-                // TODO: do this as a separate core option
-                if (topdownlayout) {
+                if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+                    // TODO: think about whether it is possible to have mixed topdown and bottomup layout
+                    //       for now just recursively set all children to topdown as well
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     // Compute layout
@@ -248,6 +250,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // shift all nodes in layout
                         node.setX(node.getX() + xShift);
                         node.setY(node.getY() + yShift);
+                        // set mode to topdown layout, this could potentially be handled differently in the future
+                        node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
                     }
                     //// END SCALING STUFF
                     
@@ -279,7 +283,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 selfLoop.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
-            if (!topdownlayout) {
+            if (!layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) || !layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                 executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
             }
             
