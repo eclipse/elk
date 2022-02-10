@@ -11,8 +11,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * A simple layout algorithm class. This algorithm already supports a number of layout options, places nodes, and
- * routes edges.
+ * A simple box packing algorithm that places nodes as evenly sized rectangles. This algorithm uses fixed sizes and 
+ * therefore requires the option 'Topdown Layout to be set to true to result in a correct layout.
  */
 public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
 
@@ -93,7 +93,8 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
                 currentRow += 1;
             }
         }
-        /** REMOVE FOR NOW BECAUSE IT GETS CONFUSING WITH THE SCALING
+        
+        /** REMOVE THIS, IT'S A LITTLE MORE COMPLICATED NOW, BECAUSE SCALING IS DONE EXTERNALLY
         // if the last row is not full, do some adjustments to the nodes
         // currentCol is at this point the position after the last placed node
         if (currentCol < cols && currentCol > 0) {
@@ -107,7 +108,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
             double midPoint = padding.left + (occupiedWidth/2);
             
             // move nodes so that center matches graph center
-            double xShift = (graphWidth/2) - midPoint;
+            double xShift = (layoutGraph.getWidth()/2) - midPoint;
             nodePlacingMonitor.log("occupiedWidth: " + occupiedWidth);
             nodePlacingMonitor.log("midPoint: " + midPoint);
             nodePlacingMonitor.log("Shifting last row by: " + xShift);
@@ -116,6 +117,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
             }
         }
         */
+        
         
         // store child area as property, remove final superfluous nodeNodeSpacing
         if (totalWidth > padding.left) {
