@@ -22,6 +22,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * When performing topdown layout the nodes need to be assigned sizes before attempting to place them in phase 4 of
  * the layered algorithm.
  * TODO: add proper documentation
+ * TODO: determine if this really is necessary and if yes what needs to be done
  *
  */
 public class TopdownNodeSizeProcessor implements ILayoutProcessor<LGraph> {

@@ -427,13 +427,47 @@ public final class ElkUtil {
         }
     }
     
-    public static ElkPadding scaledPadding(final ElkPadding padding, double scaleFactor) {
-        ElkPadding scaledPadding = padding.clone();
-        scaledPadding.top = padding.top * scaleFactor;
-        scaledPadding.left = padding.left * scaleFactor;
-        scaledPadding.bottom = padding.bottom * scaleFactor;
-        scaledPadding.right = padding.right * scaleFactor;
-        return scaledPadding;
+    /**
+     * Computes the area occupied by this node's layout and stores the values in {@link CoreOptions#CHILD_AREA_WIDTH} 
+     * and {@link CoreOptions#CHILD_AREA_HEIGHT}.
+     * @param node the node whose child area should be computed
+     */
+    public static void computeChildAreaDimensions(final ElkNode node) {
+        // iterate over all nodes and get their coordinate bounds
+        
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxX = 0.0;
+        double maxY = 0.0;
+        
+        for (ElkNode child : node.getChildren()) {
+            System.out.println(child.getIdentifier() + " " + child.getX() + " " + child.getY() + " " + child.getWidth() + " " + child.getHeight());
+            
+            if (minX > node.getX()) {
+                minX = node.getX();
+            }
+            if (minY > node.getY()) {
+                minY = node.getY();
+            }
+            if (maxX < node.getX() + node.getWidth()) {
+                maxX = node.getX() + node.getWidth(); 
+            }
+            if (maxY < node.getY() + node.getHeight()) {
+                maxY = node.getY() + node.getHeight(); 
+            }
+        }
+
+        node.setProperty(CoreOptions.CHILD_AREA_WIDTH, maxX - minX);
+        node.setProperty(CoreOptions.CHILD_AREA_HEIGHT, maxY - minY);
+    }
+    
+    public static ElkPadding scaledPadding(ElkPadding padding, double scale) {
+        ElkPadding newPadding = new ElkPadding();
+        newPadding.left = padding.left * scale;
+        newPadding.bottom = padding.bottom * scale;
+        newPadding.right = padding.right * scale;
+        newPadding.top = padding.top * scale;
+        return newPadding;
     }
 
     /**

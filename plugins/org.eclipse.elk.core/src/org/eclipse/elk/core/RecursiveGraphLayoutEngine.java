@@ -206,17 +206,36 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
+                    // ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     // Compute layout
+                    topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
+                    //double oldWidth = layoutNode.getWidth();
+                    //double oldHeight = layoutNode.getHeight();
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
+                    topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
+                    // Normally layout algorithms adjust the size of the layoutNode at the end to resize it to appropriately fit the 
+                    // the computed layout of the children. For topdown layout this is a big issue, because we actually
+                    // need the layoutNode to keep it's own size so that we can subsequently shrink down the children
+                    //layoutNode.setWidth(oldWidth);
+                    //layoutNode.setHeight(oldHeight);
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
                     
                     // determine dimensions of child area
                     // padding is handled on layout algorithm level, we do not need to take it into account here
+                    // apparently padding is sometimes handled in different ways)
                     double childAreaAvailableWidth = layoutNode.getWidth();
                     double childAreaAvailableHeight = layoutNode.getHeight();
                     topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
+                    
+                    
+                    // check whether child area has been set, and if it hasn't run the util function to determine area
+                    if (!(layoutNode.hasProperty(CoreOptions.CHILD_AREA_WIDTH) 
+                            || layoutNode.hasProperty(CoreOptions.CHILD_AREA_HEIGHT))) {
+                        // compute child area if it hasn't been set by the layout algorithm
+                        ElkUtil.computeChildAreaDimensions(layoutNode);
+                    }
                     
                     double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH);
                     double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
