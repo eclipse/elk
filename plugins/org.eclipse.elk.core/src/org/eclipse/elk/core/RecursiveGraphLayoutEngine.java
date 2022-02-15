@@ -209,8 +209,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     // Compute layout
                     topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
-                    //double oldWidth = layoutNode.getWidth();
-                    //double oldHeight = layoutNode.getHeight();
+                    double oldWidth = layoutNode.getWidth();
+                    double oldHeight = layoutNode.getHeight();
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     // Normally layout algorithms adjust the size of the layoutNode at the end to resize it to appropriately fit the 
@@ -222,62 +222,67 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
                     
-                    // determine dimensions of child area
-                    // padding is handled on layout algorithm level, we do not need to take it into account here
-                    // apparently padding is sometimes handled in different ways)
-                    double childAreaAvailableWidth = layoutNode.getWidth();
-                    double childAreaAvailableHeight = layoutNode.getHeight();
-                    topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
-                    
-                    
-                    // check whether child area has been set, and if it hasn't run the util function to determine area
-                    if (!(layoutNode.hasProperty(CoreOptions.CHILD_AREA_WIDTH) 
-                            || layoutNode.hasProperty(CoreOptions.CHILD_AREA_HEIGHT))) {
-                        // compute child area if it hasn't been set by the layout algorithm
-                        ElkUtil.computeChildAreaDimensions(layoutNode);
+                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.rectpacking")) {
+                        // determine dimensions of child area
+                        // padding is handled on layout algorithm level, we do not need to take it into account here
+                        // apparently padding is sometimes handled in different ways)
+                        double childAreaAvailableWidth = oldWidth;
+                        double childAreaAvailableHeight = oldHeight;
+                        topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
+                        
+                        
+                        // check whether child area has been set, and if it hasn't run the util function to determine area
+                        if (!(layoutNode.hasProperty(CoreOptions.CHILD_AREA_WIDTH) 
+                                || layoutNode.hasProperty(CoreOptions.CHILD_AREA_HEIGHT))) {
+                            // compute child area if it hasn't been set by the layout algorithm
+                            ElkUtil.computeChildAreaDimensions(layoutNode);
+                        }
+                        
+                        double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH);
+                        double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
+                        topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
+                        
+                        // compute scaleFactor
+                        double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
+                        double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
+                        double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                        // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
+                        layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
+                        topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
+                        
+                        // compute translation vector to keep children centered in child area, 
+                        // this is necessary because the aspect ratio is not the same as the parent aspect ratio
+                        double xShift = 0;
+                        double yShift = 0;
+                        if (scaleFactorX > scaleFactorY) {
+                            // horizontal shift necessary
+                            // TODO: still a little off, maybe need to consider padding here
+                            xShift = 0.5 * (childAreaAvailableWidth - childAreaDesiredWidth * scaleFactorY);
+                        } else {
+                            // vertical shift necessary
+                            yShift = 0.5 * (childAreaAvailableHeight - childAreaDesiredHeight * scaleFactorX);
+                        }
+                        topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
+                        for (ElkNode node : layoutNode.getChildren()) {
+                            // topdownLayoutMonitor.log(node.getX());
+                            // shift all nodes in layout
+                            node.setX(node.getX() + xShift);
+                            node.setY(node.getY() + yShift);
+                            // TODO: think about whether it is possible to have mixed topdown and bottomup layout
+                            //       for now just recursively set all children to topdown as well
+                            // set mode to topdown layout, this could potentially be handled differently in the future
+                            node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
+                        }
+                        //// END SCALING STUFF
+                        
+                        // ElkUtil.applyTopdownLayoutScaling(layoutNode);
+                        ElkUtil.applyConfiguredNodeScaling(layoutNode);
+                        // log child sizes
+                        for (ElkNode node : layoutNode.getChildren()) {
+                            topdownLayoutMonitor.log(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
+                        }
                     }
                     
-                    double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH);
-                    double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
-                    topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
-                    
-                    // compute scaleFactor
-                    double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
-                    double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
-                    double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                    layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                    topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
-                    
-                    // compute translation vector to keep children centered in child area, 
-                    // this is necessary because the aspect ratio is not the same as the parent aspect ratio
-                    double xShift = 0;
-                    double yShift = 0;
-                    if (scaleFactorX > scaleFactorY) {
-                        // horizontal shift necessary
-                        // TODO: still a little off, maybe need to consider padding here
-                        xShift = 0.5 * (childAreaAvailableWidth - childAreaDesiredWidth * scaleFactorY);
-                    } else {
-                        // vertical shift necessary
-                        yShift = 0.5 * (childAreaAvailableHeight - childAreaDesiredHeight * scaleFactorX);
-                    }
-                    topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
-                    for (ElkNode node : layoutNode.getChildren()) {
-                        // topdownLayoutMonitor.log(node.getX());
-                        // shift all nodes in layout
-                        node.setX(node.getX() + xShift);
-                        node.setY(node.getY() + yShift);
-                        // TODO: think about whether it is possible to have mixed topdown and bottomup layout
-                        //       for now just recursively set all children to topdown as well
-                        // set mode to topdown layout, this could potentially be handled differently in the future
-                        node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
-                    }
-                    //// END SCALING STUFF
-                    
-                    ElkUtil.applyTopdownLayoutScaling(layoutNode);
-                    // log child sizes
-                    for (ElkNode node : layoutNode.getChildren()) {
-                        topdownLayoutMonitor.log(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
-                    }
                     topdownLayoutMonitor.done();
                 }
                 
@@ -287,7 +292,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
                     // Apply the LayoutOptions.SCALE_FACTOR if present
-                    ElkUtil.applyConfiguredNodeScaling(child);
+                    // TODO: temporary disable here
+                    // ElkUtil.applyConfiguredNodeScaling(child);
                 }
             }
 
