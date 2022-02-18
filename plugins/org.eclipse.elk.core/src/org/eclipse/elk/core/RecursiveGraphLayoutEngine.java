@@ -118,7 +118,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
         // TODO: externalize this control as some option in the GUI somewhere
-        layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
+        layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, false);
         
         if (progressMonitor.isCanceled()) {
             return Collections.emptyList();
