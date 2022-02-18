@@ -13,6 +13,10 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * A simple box packing algorithm that places nodes as evenly sized rectangles. This algorithm uses fixed sizes and 
  * therefore requires the option 'Topdown Layout to be set to true to result in a correct layout.
+ * 
+ * New more specific usage idea: for sccharts in topdown layout instead of rectpacking. parent state should already
+ * be sized to fit this layout. Size can be predicted. This layout should NOT be scaled down, instead only its child layout,
+ * which in the case of SCCharts is a layered layout.
  */
 public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
 
@@ -22,11 +26,13 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Topdownpacking", 1);
         progressMonitor.log("Algorithm began for node " + layoutGraph.getIdentifier());
         
+        /**
         // outer null node shouldn't use default values 40 x 40, because it makes it hard to understand what's happening
         if (layoutGraph.getIdentifier() == null) {
             layoutGraph.setWidth(300);
             layoutGraph.setHeight(200);
         }
+        */
                 
         ElkPadding padding = layoutGraph.getProperty(TopdownpackingOptions.PADDING);
         double nodeNodeSpacing = layoutGraph.getProperty(TopdownpackingOptions.SPACING_NODE_NODE);

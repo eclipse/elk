@@ -381,8 +381,11 @@ public final class ElkUtil {
         if (scalingFactor == 1) {
             return;
         }
-
-        node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
+        
+        // TODO: for topdown scaling we do not want this line, already implemented in 'applyTopdownLayoutScaling' but that
+        //       property is not yet supported in the rendering so I'm using to test the layout portion
+        // TODO: what we also do not want is the viewport zooming that happens with this scale factor
+        // node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
 
         final Iterable<ElkLabel> portLabels = Iterables.concat(
                 Iterables.transform(node.getPorts(), p -> p.getLabels()));
@@ -441,22 +444,22 @@ public final class ElkUtil {
         double maxY = 0.0;
         
         for (ElkNode child : node.getChildren()) {
-            System.out.println(child.getIdentifier() + " " + child.getX() + " " + child.getY() + " " + child.getWidth() + " " + child.getHeight());
             
-            if (minX > node.getX()) {
-                minX = node.getX();
+            if (minX > child.getX()) {
+                minX = child.getX();
             }
-            if (minY > node.getY()) {
-                minY = node.getY();
+            if (minY > child.getY()) {
+                minY = child.getY();
             }
-            if (maxX < node.getX() + node.getWidth()) {
-                maxX = node.getX() + node.getWidth(); 
+            if (maxX < child.getX() + child.getWidth()) {
+                maxX = child.getX() + child.getWidth(); 
             }
-            if (maxY < node.getY() + node.getHeight()) {
-                maxY = node.getY() + node.getHeight(); 
+            if (maxY < child.getY() + child.getHeight()) {
+                maxY = child.getY() + child.getHeight(); 
             }
         }
 
+        
         node.setProperty(CoreOptions.CHILD_AREA_WIDTH, maxX - minX);
         node.setProperty(CoreOptions.CHILD_AREA_HEIGHT, maxY - minY);
     }

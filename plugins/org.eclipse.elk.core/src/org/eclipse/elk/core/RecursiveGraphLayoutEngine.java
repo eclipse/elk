@@ -118,7 +118,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
         // TODO: externalize this control as some option in the GUI somewhere
-        layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, false);
+        layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
         
         if (progressMonitor.isCanceled()) {
             return Collections.emptyList();
@@ -204,30 +204,72 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // recursively
                 if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
                         && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+                    
+                    // FIXME: remove magic numbers
+                    double REGION_WIDTH = 300;
+                    double REGION_ASPECT_RATIO = 1.5;
+                    double STATE_WIDTH = 100; // only hierarchical states
+                    double STATE_ASPECT_RATIO = 1;
+                    
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
-                    // ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
+                    ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
+                    double nodeNodeSpacing = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
                     // Compute layout
-                    topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     double oldWidth = layoutNode.getWidth();
                     double oldHeight = layoutNode.getHeight();
+                    topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
+                    /**
+                     * If the node is a state, then compute area required for regions and set node size.
+                     */
+                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
+                        int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
+                        // TODO: magic numbers region size
+                        double requiredWidth = cols * REGION_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                        double requiredHeight = cols * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                        layoutNode.setDimensions(requiredWidth, requiredHeight);
+                        // TODO: after setting their size with respect to the regions within them, states also need to rescale themselves, so that the available space calculation of its
+                        //       parent region still works, effectively this means: states which have hierarchy below them will need to have some fixed size in the layout so that we 
+                        //       can perform layout topdown without total lookahead
+                        //       BUT HERE:
+                        //       scaling has to apply to the state and its children, for the regions it is different there the scaling only has to apply to the children
+                        //       ACTUALLY this may not be the issue here, as it seems layered layouts are just plain not being scaled here anyway
+                        
+                        // compute scaleFactor
+                        double scaleFactorX = STATE_WIDTH/requiredWidth;
+                        double scaleFactorY = (STATE_WIDTH/STATE_ASPECT_RATIO)/requiredWidth;
+                        double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                        
+                        layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
+                        // layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
+                        topdownLayoutMonitor.log("Set Dimensions of state: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + "|" + layoutNode.getHeight());
+                        topdownLayoutMonitor.log("Set Scalefactor of state: " + layoutNode.getIdentifier() + " " + scaleFactor); 
+                    }
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     // Normally layout algorithms adjust the size of the layoutNode at the end to resize it to appropriately fit the 
                     // the computed layout of the children. For topdown layout this is a big issue, because we actually
                     // need the layoutNode to keep it's own size so that we can subsequently shrink down the children
+                    // if node is a region, resize it after layered altered its size
+                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
+                        layoutNode.setDimensions(oldWidth, oldHeight);
+                    }
                     //layoutNode.setWidth(oldWidth);
                     //layoutNode.setHeight(oldHeight);
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
                     
-                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.rectpacking")) {
-                        // determine dimensions of child area
+                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
+                        topdownLayoutMonitor.log(layoutNode.getProperty(CoreOptions.ALGORITHM));
+                        // determine dimensions of child area 
+                        // TODO: we don't actually know how big the child area will be
+                        //       because it depends on the number of regions in it, so we need to look ahead
+                        
                         // padding is handled on layout algorithm level, we do not need to take it into account here
                         // apparently padding is sometimes handled in different ways)
-                        double childAreaAvailableWidth = oldWidth;
-                        double childAreaAvailableHeight = oldHeight;
+                        double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
+                        double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
                         topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
                         
                         
@@ -266,8 +308,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         for (ElkNode node : layoutNode.getChildren()) {
                             // topdownLayoutMonitor.log(node.getX());
                             // shift all nodes in layout
-                            node.setX(node.getX() + xShift);
-                            node.setY(node.getY() + yShift);
+                            // node.setX(node.getX() + xShift);
+                            // node.setY(node.getY() + yShift);
                             // TODO: think about whether it is possible to have mixed topdown and bottomup layout
                             //       for now just recursively set all children to topdown as well
                             // set mode to topdown layout, this could potentially be handled differently in the future
@@ -277,6 +319,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         // ElkUtil.applyTopdownLayoutScaling(layoutNode);
                         ElkUtil.applyConfiguredNodeScaling(layoutNode);
+                        
                         // log child sizes
                         for (ElkNode node : layoutNode.getChildren()) {
                             topdownLayoutMonitor.log(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
