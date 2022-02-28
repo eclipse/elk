@@ -51,7 +51,7 @@ public final class LayoutMetaDataService {
      * @return  the singleton instance
      */
     public static synchronized LayoutMetaDataService getInstance() {
-        return getInstance(LayoutMetaDataService.class.getClassLoader());
+        return getInstance(null);
     }
     
     /**
