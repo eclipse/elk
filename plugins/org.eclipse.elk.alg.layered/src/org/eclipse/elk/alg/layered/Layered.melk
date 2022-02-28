@@ -49,7 +49,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.edgeLabel
     supports org.eclipse.elk.spacing.edgeNode
     supports org.eclipse.elk.spacing.labelLabel
-    supports org.eclipse.elk.spacing.labelPort
+    supports org.eclipse.elk.spacing.labelPort.horizontal
+    supports org.eclipse.elk.spacing.labelPort.vertical
     supports org.eclipse.elk.spacing.labelNode
     supports org.eclipse.elk.spacing.nodeNode
     supports org.eclipse.elk.spacing.nodeSelfLoop

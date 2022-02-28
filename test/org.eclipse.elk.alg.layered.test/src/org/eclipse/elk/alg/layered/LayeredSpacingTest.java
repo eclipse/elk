@@ -66,7 +66,8 @@ public class LayeredSpacingTest {
                 {LayeredOptions.SPACING_EDGE_NODE},
                 {LayeredOptions.SPACING_LABEL_LABEL},
                 {LayeredOptions.SPACING_LABEL_NODE},
-                {LayeredOptions.SPACING_LABEL_PORT},
+                {LayeredOptions.SPACING_LABEL_PORT_HORIZONTAL},
+                {LayeredOptions.SPACING_LABEL_PORT_VERTICAL},
                 {LayeredOptions.SPACING_NODE_SELF_LOOP},
                 {LayeredOptions.SPACING_PORT_PORT},
                 //

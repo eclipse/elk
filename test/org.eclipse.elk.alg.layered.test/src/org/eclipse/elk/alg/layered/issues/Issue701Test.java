@@ -157,8 +157,8 @@ public class Issue701Test {
         ElkLabel cont3Port1Label = cont3Port1.getLabels().get(0);
         ElkPort cont3Port2 = GraphTestUtils.getPort(cont3, "P2");
         ElkLabel cont3Port2Label = cont3Port2.getLabels().get(0);
-        double spacingLabelCont3Port1 = cont3Port1.getProperty(CoreOptions.SPACING_LABEL_PORT);
-        double spacingLabelCont3Port2 = cont3Port2.getProperty(CoreOptions.SPACING_LABEL_PORT);
+        double spacingLabelCont3Port1 = cont3Port1.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+        double spacingLabelCont3Port2 = cont3Port2.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
         double cont3Port1BorderOffset = cont3Port1.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         double cont3Port2BorderOffset = cont3Port2.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         ElkPadding cont3Padding = cont3.getProperty(CoreOptions.PADDING);
@@ -183,8 +183,8 @@ public class Issue701Test {
         ElkLabel cont4Node1Port1Label = cont4Node1Port1.getLabels().get(0);
         ElkPort cont4Port1 = GraphTestUtils.getPort(cont4, "P1");
         ElkLabel cont4Port1Label = cont4Port1.getLabels().get(0);
-        double spacingLabelCont4Node1Port1 = cont4Node1Port1.getProperty(CoreOptions.SPACING_LABEL_PORT);
-        double spacingLabelCont4Port1 = cont4Port1.getProperty(CoreOptions.SPACING_LABEL_PORT);
+        double spacingLabelCont4Node1Port1 = cont4Node1Port1.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+        double spacingLabelCont4Port1 = cont4Port1.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
         double cont4Node1Port1BorderOffset = cont4Node1Port1.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         double cont4Port1BorderOffset = cont4Port1.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         ElkPadding cont4Padding = cont4.getProperty(CoreOptions.PADDING);
@@ -340,8 +340,8 @@ public class Issue701Test {
         ElkLabel cont3Port1Label = cont3Port1.getLabels().get(0);
         ElkPort cont3Port2 = GraphTestUtils.getPort(cont3, "P2");
         ElkLabel cont3Port2Label = cont3Port2.getLabels().get(0);
-        double spacingLabelCont3Port1 = cont3Port1.getProperty(CoreOptions.SPACING_LABEL_PORT);
-        double spacingLabelCont3Port2 = cont3Port2.getProperty(CoreOptions.SPACING_LABEL_PORT);
+        double spacingLabelCont3Port1 = cont3Port1.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+        double spacingLabelCont3Port2 = cont3Port2.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
         double cont3Port1BorderOffset = cont3Port1.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         double cont3Port2BorderOffset = cont3Port2.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         ElkPadding cont3Padding = cont3.getProperty(CoreOptions.PADDING);
@@ -368,8 +368,8 @@ public class Issue701Test {
         ElkLabel cont4Node1Port1Label = cont4Node1Port1.getLabels().get(0);
         ElkPort cont4Port1 = GraphTestUtils.getPort(cont4, "P1");
         ElkLabel cont4Port1Label = cont4Port1.getLabels().get(0);
-        double spacingLabelCont4Node1Port1 = cont4Node1Port1.getProperty(CoreOptions.SPACING_LABEL_PORT);
-        double spacingLabelCont4Port1 = cont4Port1.getProperty(CoreOptions.SPACING_LABEL_PORT);
+        double spacingLabelCont4Node1Port1 = cont4Node1Port1.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+        double spacingLabelCont4Port1 = cont4Port1.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
         double cont4Node1Port1BorderOffset = cont4Node1Port1.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         double cont4Port1BorderOffset = cont4Port1.getProperty(CoreOptions.PORT_BORDER_OFFSET);
         ElkPadding cont4Padding = cont4.getProperty(CoreOptions.PADDING);
@@ -418,9 +418,9 @@ public class Issue701Test {
                     spacingBetweenPort + Math.max(portLabelWidth, oppositePortLabelWidth) + spacingBetweenPort,
                     node.getWidth(), 0);
         } else {
-            double spacingLabelPort = port.getProperty(CoreOptions.SPACING_LABEL_PORT);
+            double spacingLabelPort = port.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
             double spacingLabelOppositePort =
-                    oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.SPACING_LABEL_PORT);
+                    oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
             double portBorderOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             double oppositePortBorderOffset =
                     oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.PORT_BORDER_OFFSET);
@@ -485,18 +485,20 @@ public class Issue701Test {
             assertEquals("Wrong node label location.", ElkUtil.absolutePosition(node).y + nodeLabelPadding.getTop(),
                     ElkUtil.absolutePosition(nodeLabel).y, 0);
         } else {
-            double spacingLabelPort = port.getProperty(CoreOptions.SPACING_LABEL_PORT);
-            double spacingLabelOppositePort =
-                    oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.SPACING_LABEL_PORT);
+            double spacingLabelPortHorizontal = port.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+            double spacingLabelPortVertical = port.getProperty(CoreOptions.SPACING_LABEL_PORT_VERTICAL);
+            double spacingLabelOppositePortHorizontal =
+                    oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+            double spacingLabelOppositePortVertical =
+                    oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.SPACING_LABEL_PORT_VERTICAL);
             double portBorderOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             double oppositePortBorderOffset =
                     oppositePort == null ? 0 : oppositePort.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             double expectedHeight = -portBorderOffset;
             expectedHeight += -oppositePortBorderOffset;
             // the label size is added twice for the symmetry
-            expectedHeight +=
-                    Math.max((spacingLabelPort + portLabelHeight), (spacingLabelOppositePort + oppositePortLabelHeight))
-                            * 2;
+            expectedHeight += Math.max((spacingLabelPortVertical + portLabelHeight),
+                    (spacingLabelOppositePortVertical + oppositePortLabelHeight)) * 2;
             expectedHeight += nodeLabelPadding.getTop();
             // A free space equals to the node label height is kept.
             expectedHeight += nodeLabel.getHeight() * 2;
@@ -514,7 +516,7 @@ public class Issue701Test {
                 // The port is on the south side, for symmetry a space is let above node label (same as port label)
                 assertEquals("Wrong node label location.",
                         ElkUtil.absolutePosition(node).y + portLabelHeight
-                                + port.getProperty(CoreOptions.SPACING_LABEL_PORT) + nodeLabelPadding.getTop(),
+                                + port.getProperty(CoreOptions.SPACING_LABEL_PORT_VERTICAL) + nodeLabelPadding.getTop(),
                         ElkUtil.absolutePosition(nodeLabel).y, 0);
             }
         }
