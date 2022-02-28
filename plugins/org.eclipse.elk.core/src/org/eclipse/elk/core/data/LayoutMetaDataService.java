@@ -57,9 +57,12 @@ public final class LayoutMetaDataService {
     /**
      * Returns the singleton instance of the layout data service.
      *
+     * @param loader
+     *      The class loader object. This is not explicitly a class loader since elkjs cannot handle it.
+     *
      * @return the singleton instance
      */
-    public static synchronized LayoutMetaDataService getInstance(final ClassLoader loader) {
+    public static synchronized LayoutMetaDataService getInstance(final Object loader) {
         if (instance == null) {
             instance = new LayoutMetaDataService();
             
@@ -72,7 +75,7 @@ public final class LayoutMetaDataService {
             // Invoke service loading to register all meta data providers automatically (this does not work if we're
             // running on Equinox since this will only find services in the realm of this class's class loader)
             for (ILayoutMetaDataProvider provider : java.util.ServiceLoader.load(ILayoutMetaDataProvider.class,
-                    loader)) {
+                    (ClassLoader) loader)) {
                 instance.registerLayoutMetaDataProviders(provider);
             }
 
