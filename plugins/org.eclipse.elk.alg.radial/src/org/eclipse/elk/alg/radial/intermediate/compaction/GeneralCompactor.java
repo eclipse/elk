@@ -21,7 +21,10 @@ public class GeneralCompactor implements ILayoutProcessor<ElkNode> {
 
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("General Compactor", 1);
+        progressMonitor.logGraph(graph, "Before");
         IRadialCompactor compactor = graph.getProperty(RadialOptions.COMPACTOR).create();
         compactor.compact(graph);
+        progressMonitor.logGraph(graph, "After");
     }
 }
