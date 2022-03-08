@@ -44,7 +44,7 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory<LayeredP
     INTERACTIVE,
 
     /**
-     * Allows to do no crossing minimization. This requires to do also set {@link GreedySwitchType} to off.
+     * Allows to do no crossing minimization. This requires to also set {@link GreedySwitchType} to off.
      */
     NONE;
     

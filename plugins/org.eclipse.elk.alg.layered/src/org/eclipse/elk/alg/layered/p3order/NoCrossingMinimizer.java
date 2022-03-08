@@ -18,7 +18,7 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * This class just does nothing instead of minimizing crossing. Everything remains as it was before.
+ * This class does nothing instead of minimizing crossing. Everything remains as it was before.
  * <dl>
  *  <dt>Precondition:</dt>
  *      <dd>The graph has a proper layering, i.e. all long edges have been splitted; all nodes have at least fixed port
@@ -26,7 +26,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *  <dt>Postcondition:</dt>
  *      <dd>The order of nodes and ports remains as it was before this phase.</dd>
  *  <dt>Dependencies:</dt>
- *      <dd>{@link GreedySwitchType} has to be off, since it also reorders edges.</dd>
+ *      <dd>It is advised to set {@link GreedySwitchType} to OFF. Otherwise, nodes and ports might be reordered
+ *      if crossings are created.</dd>
  * </dl>
  *
  */
