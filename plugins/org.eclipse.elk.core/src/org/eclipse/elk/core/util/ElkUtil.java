@@ -382,10 +382,7 @@ public final class ElkUtil {
             return;
         }
         
-        // TODO: for topdown scaling we do not want this line, already implemented in 'applyTopdownLayoutScaling' but that
-        //       property is not yet supported in the rendering so I'm using to test the layout portion
-        // TODO: what we also do not want is the viewport zooming that happens with this scale factor
-        // node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
+        node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
 
         final Iterable<ElkLabel> portLabels = Iterables.concat(
                 Iterables.transform(node.getPorts(), p -> p.getLabels()));
@@ -415,6 +412,8 @@ public final class ElkUtil {
         if (scalingFactor == 1) {
             return;
         }
+        
+        // node.setLocation(scalingFactor * node.getX(), scalingFactor * node.getY());
                 
         final Iterable<ElkLabel> portLabels = Iterables.concat(
                 Iterables.transform(node.getPorts(), p -> p.getLabels()));

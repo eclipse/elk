@@ -844,6 +844,7 @@ programmatic option topdownScaleFactor: double {
     targets nodes
 }
 
+// TODO: sort options properly
 // TODO: decide whether this is a reasonable demand, or whether it would be easier to add this calculation as a 
 //       post-processing step that can be added after any algorithm
 programmatic option childAreaWidth: double {

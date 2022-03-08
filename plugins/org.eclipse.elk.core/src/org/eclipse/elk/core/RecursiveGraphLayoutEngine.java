@@ -208,7 +208,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // FIXME: remove magic numbers
                     double REGION_WIDTH = 300;
                     double REGION_ASPECT_RATIO = 1.5;
-                    double STATE_WIDTH = 100; // only hierarchical states
+                    double STATE_WIDTH = 34; // only hierarchical states
                     double STATE_ASPECT_RATIO = 1;
                     
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
@@ -219,6 +219,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     double oldWidth = layoutNode.getWidth();
                     double oldHeight = layoutNode.getHeight();
                     topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
+                    System.out.println("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     /**
                      * If the node is a state, then compute area required for regions and set node size.
                      */
@@ -239,14 +240,18 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double scaleFactorX = STATE_WIDTH/requiredWidth;
                         double scaleFactorY = (STATE_WIDTH/STATE_ASPECT_RATIO)/requiredWidth;
                         double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                        System.out.println("DEBUG: " + "state: " + layoutNode.getIdentifier() + " req. width: " + requiredWidth + " scale: " + scaleFactor); 
                         
-                        layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
+                        // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         // layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log("Set Dimensions of state: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + "|" + layoutNode.getHeight());
-                        topdownLayoutMonitor.log("Set Scalefactor of state: " + layoutNode.getIdentifier() + " " + scaleFactor); 
+                        topdownLayoutMonitor.log("Set Scalefactor of state: " + layoutNode.getIdentifier() + " " + scaleFactor);
+                        System.out.println("Set Dimensions of state: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + "|" + layoutNode.getHeight());
+                        System.out.println("Set Scalefactor of state: " + layoutNode.getIdentifier() + " " + scaleFactor);
                     }
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
+                    System.out.println("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     // Normally layout algorithms adjust the size of the layoutNode at the end to resize it to appropriately fit the 
                     // the computed layout of the children. For topdown layout this is a big issue, because we actually
                     // need the layoutNode to keep it's own size so that we can subsequently shrink down the children
@@ -259,9 +264,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
+                    System.out.println("Executed layout algorithm: " 
+                            + layoutNode.getProperty(CoreOptions.ALGORITHM)
+                            + " on node " + layoutNode.getIdentifier());
                     
                     if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
                         topdownLayoutMonitor.log(layoutNode.getProperty(CoreOptions.ALGORITHM));
+                        System.out.println(layoutNode.getProperty(CoreOptions.ALGORITHM));
                         // determine dimensions of child area 
                         // TODO: we don't actually know how big the child area will be
                         //       because it depends on the number of regions in it, so we need to look ahead
@@ -271,6 +280,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
                         double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
                         topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
+                        System.out.println("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
                         
                         
                         // check whether child area has been set, and if it hasn't run the util function to determine area
@@ -282,15 +292,25 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH);
                         double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
+                        // This desired child area is wrong, probably because the sizes are set and reset somewhere else
+                        // this causes the weird large scalings in places where they should be smaller than 1
                         topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
+                        System.out.println("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
                         
                         // compute scaleFactor
                         double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
                         double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
-                        double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                        // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                        layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
+                        double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
+                        // TEST set scale on all children instead, because of limitations during render step
+                        // this just isn't a solution, because the layout is not scaled, need to find a way to scale exactly
+                        // the layout and not the encompassing node
+                       // for (ElkNode child : layoutNode.getChildren()) {
+                       //     child.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
+                       // }
+                        layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
+                        // layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
+                        System.out.println("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
                         // compute translation vector to keep children centered in child area, 
                         // this is necessary because the aspect ratio is not the same as the parent aspect ratio
@@ -317,12 +337,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                         //// END SCALING STUFF
                         
-                        // ElkUtil.applyTopdownLayoutScaling(layoutNode);
-                        ElkUtil.applyConfiguredNodeScaling(layoutNode);
+                        ElkUtil.applyTopdownLayoutScaling(layoutNode);
+                        // ElkUtil.applyConfiguredNodeScaling(layoutNode);
                         
                         // log child sizes
                         for (ElkNode node : layoutNode.getChildren()) {
                             topdownLayoutMonitor.log(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
+                            System.out.println(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
                         }
                     }
                     
