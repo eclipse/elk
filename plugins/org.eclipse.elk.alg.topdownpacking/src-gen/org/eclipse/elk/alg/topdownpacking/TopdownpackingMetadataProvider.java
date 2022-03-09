@@ -11,7 +11,7 @@ public class TopdownpackingMetadataProvider implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #DESIRED_WIDTH}.
    */
-  private static final int DESIRED_WIDTH_DEFAULT = 300;
+  private static final int DESIRED_WIDTH_DEFAULT = 100;
   
   /**
    * Lower bound value for {@link #DESIRED_WIDTH}.

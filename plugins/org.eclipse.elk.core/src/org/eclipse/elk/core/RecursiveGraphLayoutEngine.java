@@ -206,7 +206,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                     
                     // FIXME: remove magic numbers
-                    double REGION_WIDTH = 300;
+                    double REGION_WIDTH = 100; // needs to be the same as the desired values for topdownpacking
                     double REGION_ASPECT_RATIO = 1.5;
                     double STATE_WIDTH = 34; // only hierarchical states
                     double STATE_ASPECT_RATIO = 1;
@@ -300,7 +300,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // compute scaleFactor
                         double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
                         double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
-                        double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
+                        //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
+                        double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
                         // TEST set scale on all children instead, because of limitations during render step
                         // this just isn't a solution, because the layout is not scaled, need to find a way to scale exactly
                         // the layout and not the encompassing node

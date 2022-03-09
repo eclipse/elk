@@ -12,7 +12,7 @@ advanced option desiredWidth: int {
     label "Desired or externally set width of a node"
     description
         "Used to define the dimensions of the parent graph to constrain the layout space."
-    default = 300
+    default = 100
     lowerBound = 0
     targets nodes
 }
