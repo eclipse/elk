@@ -208,14 +208,19 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // FIXME: remove magic numbers
                     double REGION_WIDTH = 100; // needs to be the same as the desired values for topdownpacking
                     double REGION_ASPECT_RATIO = 1.5;
-                    double STATE_WIDTH = 34; // only hierarchical states
-                    double STATE_ASPECT_RATIO = 1;
+                    //////double STATE_WIDTH = 34; // only hierarchical states
+                    //////double STATE_ASPECT_RATIO = 1;
                     
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     double nodeNodeSpacing = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
-                    // Compute layout
+
+                    // if node has size requirements, restore them
+                    if (layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_WIDTH) && layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_HEIGHT)) {
+                        layoutNode.setDimensions(layoutNode.getProperty(CoreOptions.NODE_REQUIRED_WIDTH), layoutNode.getProperty(CoreOptions.NODE_REQUIRED_HEIGHT));
+                    }
+                    
                     double oldWidth = layoutNode.getWidth();
                     double oldHeight = layoutNode.getHeight();
                     topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
@@ -235,12 +240,19 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 // what is here now is specific to topdownpacking, and this should be externalized and included with the 
                                 // algorithms, this will result in clearly defined support of topdown layout by the algorithms
                                 // TODO: design sensible mechanism to facilitate this switching
+                                // TODO: this doesn't cover the very first initial case (root scchart)
                                 int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
                                 double requiredWidth = cols * REGION_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
                                 double requiredHeight = cols * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
                                 child.setDimensions(requiredWidth, requiredHeight);
-                                System.out.println("--- Seting " + child.getIdentifier() + " to " + child.getWidth() + " " + child.getHeight());
+                                System.out.println("--- Setting " + child.getIdentifier() + " to " + child.getWidth() + " " + child.getHeight());
                                 // the values I set here are getting lost again
+                                // try storing values in properties and restoring them later
+                                // this might not work though, because I assume during the layered layout they are being
+                                // set and laid out accordingly, in which case I will need to make modifications there
+                                // sort of seems to do what it should although the size is now not quite right for some reason
+                                child.setProperty(CoreOptions.NODE_REQUIRED_WIDTH, requiredWidth);
+                                child.setProperty(CoreOptions.NODE_REQUIRED_HEIGHT, requiredHeight);
                             }
                         }
                     }
