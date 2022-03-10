@@ -220,35 +220,31 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     double oldHeight = layoutNode.getHeight();
                     topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     System.out.println("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
-                    /**
-                     * If the node is a state, then compute area required for regions and set node size.
-                     */
-                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
-                        int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
-                        // TODO: magic numbers region size
-                        double requiredWidth = cols * REGION_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                        double requiredHeight = cols * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
-                        layoutNode.setDimensions(requiredWidth, requiredHeight);
-                        // TODO: after setting their size with respect to the regions within them, states also need to rescale themselves, so that the available space calculation of its
-                        //       parent region still works, effectively this means: states which have hierarchy below them will need to have some fixed size in the layout so that we 
-                        //       can perform layout topdown without total lookahead
-                        //       BUT HERE:
-                        //       scaling has to apply to the state and its children, for the regions it is different there the scaling only has to apply to the children
-                        //       ACTUALLY this may not be the issue here, as it seems layered layouts are just plain not being scaled here anyway
-                        
-                        // compute scaleFactor
-                        double scaleFactorX = STATE_WIDTH/requiredWidth;
-                        double scaleFactorY = (STATE_WIDTH/STATE_ASPECT_RATIO)/requiredWidth;
-                        double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                        System.out.println("DEBUG: " + "state: " + layoutNode.getIdentifier() + " req. width: " + requiredWidth + " scale: " + scaleFactor); 
-                        
-                        // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                        // layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
-                        topdownLayoutMonitor.log("Set Dimensions of state: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + "|" + layoutNode.getHeight());
-                        topdownLayoutMonitor.log("Set Scalefactor of state: " + layoutNode.getIdentifier() + " " + scaleFactor);
-                        System.out.println("Set Dimensions of state: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + "|" + layoutNode.getHeight());
-                        System.out.println("Set Scalefactor of state: " + layoutNode.getIdentifier() + " " + scaleFactor);
+                    
+                    // if we are currently in a region and about to produce a layered layout,
+                    //       then we need to step through the states and set the sizes of the states
+                    //       which have a deeper hierarchy (i.e. child regions) which is essentially the code above, but it has to be done one step earlier
+                    //       this is necessary to correctly compute the size of the layout and subsequently the scale factor
+                    if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
+                        // this if check needs to be thought out better, should mean if we are in a region in case of sccharts and more generally if we are in 
+                        // a non-hierarchical section of the graph, where only the children will be scaled and not this part itself
+                        for (ElkNode child : layoutNode.getChildren()) {
+                            // check if child has children, if yes its size needs to be pre-computed before computing the layout
+                            if (child.getChildren().size() > 0) {
+                                // TODO: predict required size of node depending on the algorithm that will be used
+                                // what is here now is specific to topdownpacking, and this should be externalized and included with the 
+                                // algorithms, this will result in clearly defined support of topdown layout by the algorithms
+                                // TODO: design sensible mechanism to facilitate this switching
+                                int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
+                                double requiredWidth = cols * REGION_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                                double requiredHeight = cols * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                                child.setDimensions(requiredWidth, requiredHeight);
+                                System.out.println("--- Seting " + child.getIdentifier() + " to " + child.getWidth() + " " + child.getHeight());
+                                // the values I set here are getting lost again
+                            }
+                        }
                     }
+                        
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     System.out.println("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
