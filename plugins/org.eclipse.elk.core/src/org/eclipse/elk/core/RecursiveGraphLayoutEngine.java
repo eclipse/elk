@@ -337,8 +337,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         for (ElkNode node : layoutNode.getChildren()) {
                             // topdownLayoutMonitor.log(node.getX());
                             // shift all nodes in layout
-                            // node.setX(node.getX() + xShift);
-                            // node.setY(node.getY() + yShift);
+                            node.setX(node.getX() + xShift);
+                            node.setY(node.getY() + yShift); // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
                             // TODO: think about whether it is possible to have mixed topdown and bottomup layout
                             //       for now just recursively set all children to topdown as well
                             // set mode to topdown layout, this could potentially be handled differently in the future
@@ -346,7 +346,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                         //// END SCALING STUFF
                         
-                        ElkUtil.applyTopdownLayoutScaling(layoutNode);
+                        // THIS IS NO LONGER NECESSARY (I THINK)
+                        // ElkUtil.applyTopdownLayoutScaling(layoutNode);
                         // ElkUtil.applyConfiguredNodeScaling(layoutNode);
                         
                         // log child sizes

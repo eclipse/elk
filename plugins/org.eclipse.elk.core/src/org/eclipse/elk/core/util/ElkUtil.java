@@ -398,6 +398,7 @@ public final class ElkUtil {
         }
     }
     
+    // TODO: remove this function if it turns it it really is unnecessary and it has undesirable behaviour anyway
     /**
      * Applies the scaling factor configured in terms of {@link CoreOptions#TOPDOWN_SCALE_FACTOR} to {@code node}'s
      * the layout data of {@code node}'s ports and labels.<br>
