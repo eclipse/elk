@@ -34,7 +34,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Singleton class for access to the ELK layout meta data. This class is used globally to retrieve meta data for
- * automatic layout through ELK, which is given through the {@code layoutProviders} extension point.
+ * automatic layout through ELK.
  */
 public final class LayoutMetaDataService {
 
@@ -175,9 +175,7 @@ public final class LayoutMetaDataService {
     private final Map<String, LayoutOptionData> optionSuffixMap = Maps.newHashMap();
 
     /**
-     * Registers the data provided by the given meta data providers with the meta data service. This method doesn't
-     * need to be called if ELK is used in an Eclipse context, since the service plug-in automatically registers all
-     * providers known through the {@code layoutProviders} extension point.
+     * Registers the data provided by the given meta data providers with the meta data service.
      *
      * @param providers
      *            the providers to register.
