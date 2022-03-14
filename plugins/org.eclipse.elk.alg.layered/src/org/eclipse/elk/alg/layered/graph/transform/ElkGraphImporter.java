@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
+import org.eclipse.elk.alg.layered.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
@@ -224,7 +225,9 @@ class ElkGraphImporter {
         int index = 0;
         for (ElkNode child : elkgraph.getChildren()) {
             if (!child.getProperty(LayeredOptions.NO_LAYOUT)) {
-                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
+                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                            == CycleBreakingStrategy.MODEL_ORDER) {
                     child.setProperty(InternalProperties.MODEL_ORDER, index);
                     index++;
                 }
@@ -236,7 +239,9 @@ class ElkGraphImporter {
         // (this is not part of the previous loop since all children must have already been transformed)
         index = 0;
         for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
-            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER) != OrderingStrategy.NONE) {
+            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
+                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                        == CycleBreakingStrategy.MODEL_ORDER) {
                 elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
                 index++;
             }
@@ -290,10 +295,19 @@ class ElkGraphImporter {
         
         Direction parentGraphDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
 
+        // Model order index for nodes
+        int index = 0;
         // Transform the node's children
         elkGraphQueue.addAll(elkgraph.getChildren());
         while (!elkGraphQueue.isEmpty()) {
             ElkNode elknode = elkGraphQueue.poll();
+            
+            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
+                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                    == CycleBreakingStrategy.MODEL_ORDER) {
+                // Assign a model order to the nodes as they are read
+                elknode.setProperty(InternalProperties.MODEL_ORDER, index++);
+            }
             
             // Check if the current node is to be laid out in the first place
             boolean isNodeToBeLaidOut = !elknode.getProperty(LayeredOptions.NO_LAYOUT);
@@ -346,6 +360,8 @@ class ElkGraphImporter {
             }
         }
 
+        // Model order index for edges. 
+        index = 0;
         // Transform the edges
         elkGraphQueue.add(elkgraph);
         while (!elkGraphQueue.isEmpty()) {
@@ -354,6 +370,13 @@ class ElkGraphImporter {
             for (ElkEdge elkedge : elkGraphNode.getContainedEdges()) {
                 // We don't support hyperedges
                 checkEdgeValidity(elkedge);
+                
+                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
+                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                        == CycleBreakingStrategy.MODEL_ORDER) {
+                    // Assign a model order to the edges as they are read
+                    elkedge.setProperty(InternalProperties.MODEL_ORDER, index++);
+                }
                 
                 ElkNode sourceNode = ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
                 ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));

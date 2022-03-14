@@ -152,7 +152,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         Object instance = ElkReflect.newInstance(clazz);
         if (instance == null) {
             throw new IllegalStateException("Couldn't create new instance of property '" + id + "'. "
-                    + "Make sure it's type is registered with the " + ElkReflect.class.getSimpleName()
+                    + "Make sure its type is registered with the " + ElkReflect.class.getSimpleName()
                     + " utility class.");
         }
         return (IDataObject) instance;

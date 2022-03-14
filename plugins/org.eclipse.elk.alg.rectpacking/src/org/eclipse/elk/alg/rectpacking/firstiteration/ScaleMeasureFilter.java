@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
+import org.eclipse.elk.alg.rectpacking.util.DrawingUtil;
+import org.eclipse.elk.core.math.ElkPadding;
 
 /**
  * This class implements a concrete strategy in the strategy pattern given by {@link BestCandidateFilter}.
@@ -24,14 +26,21 @@ import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 public class ScaleMeasureFilter implements BestCandidateFilter {
 
     @Override
-    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio) {
+    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio,
+            final ElkPadding padding) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
         double maxScale = Double.NEGATIVE_INFINITY;
         for (DrawingData opt : candidates) {
-            maxScale = Math.max(maxScale, opt.getScaleMeasure());
+            maxScale = Math.max(maxScale, DrawingUtil.computeScaleMeasure(
+                    opt.getDrawingWidth() + padding.getHorizontal(),
+                    opt.getDrawingHeight() + padding.getVertical(),
+                    opt.getDesiredAspectRatio()));
         }
         for (DrawingData candidate : candidates) {
-            if (candidate.getScaleMeasure() == maxScale) {
+            if (DrawingUtil.computeScaleMeasure(
+                    candidate.getDrawingWidth() + padding.getHorizontal(),
+                    candidate.getDrawingHeight() + padding.getVertical(),
+                    candidate.getDesiredAspectRatio()) == maxScale) {
                 remainingCandidates.add(candidate);
             }
         }
