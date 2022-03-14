@@ -84,6 +84,7 @@ class TransferLayoutTest {
             val sections = e.get("sections")
             assertTrue("Every edge must have at least one section.", sections !== null)
             sections.asJsonArray.filter(JsonObject).forEach[checkSection]
+            e.checkContainer();
         ]
         
     }
@@ -99,5 +100,9 @@ class TransferLayoutTest {
         assertTrue(o.has("id"))
         assertTrue(o.has("startPoint"))
         assertTrue(o.has("endPoint"))
+    }
+
+    private def checkContainer(JsonObject o) {
+        assertTrue(o.has("container"))
     }
 }

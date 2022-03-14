@@ -71,4 +71,22 @@ class EdgesTest {
         assertTrue(edge.targets.size === 1)
         assertTrue(edge.targets.head === n3)        
     }
+
+    @Test
+    def void edgeContainmentTest() {
+        val graph = '''
+        {
+          "id": "root",
+          "children": [
+            {"id": "p"},
+            {"id": "q",
+              "children": [{"id": "r"}],
+              "edges": [{"id": "e", "source": "p", "target": "r" }]
+            }]
+        }
+        '''
+        
+        val root = ElkGraphJson.forGraph(graph).toElk
+        assertTrue(root.containedEdges.size === 1)
+    }
 }

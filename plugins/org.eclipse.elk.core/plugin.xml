@@ -16,7 +16,5 @@
             type="elkg"
             class="org.eclipse.elk.core.util.persistence.ElkGraphResourceFactory"/>
    </extension>
-   
-   <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
 
 </plugin>
