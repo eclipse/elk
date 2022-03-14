@@ -861,7 +861,6 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
             // We create a new dummy node in any case, and since there is no port yet we have to create one as well. We
             // do need to pass a position vector to keep an NPE from being thrown (#160), but it is questionable
             // whether this part of the code should actually be used with anything other than fixed port constraints.
-            double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
                     parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
@@ -869,7 +868,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                     portType == PortType.INPUT ? -1 : 1,
                     null,
                     new KVector(),
-                    new KVector(thickness, thickness),
+                    new KVector(0, 0), // A dummy port is not considered to have a size (#766)
                     layoutDirection,
                     graph
             );
