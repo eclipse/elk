@@ -118,7 +118,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
         // TODO: externalize this control as some option in the GUI somewhere
-        layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
+        // layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
         
         if (progressMonitor.isCanceled()) {
             return Collections.emptyList();
@@ -342,6 +342,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             // TODO: think about whether it is possible to have mixed topdown and bottomup layout
                             //       for now just recursively set all children to topdown as well
                             // set mode to topdown layout, this could potentially be handled differently in the future
+                            // Leave this on, because currently only set in statesynthesis, but would need to be set in 
+                            // regionsynthesis too
+                            // TODO: make a decision on how to handle this
                             node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
                         }
                         //// END SCALING STUFF

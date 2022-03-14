@@ -157,7 +157,9 @@ public final class ElkLayered {
         // Resize the resulting graph, according to minimal size constraints and such
         // Disable this only for topdown layout, because graph sizes are set by us
         if (!lgraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
-            resizeGraph(lgraph);
+            System.out.println("topdown false: ");
+            // FIXME: properties aren't set for all nodes or something 
+            // resizeGraph(lgraph);
         }
 
         theMonitor.done();
