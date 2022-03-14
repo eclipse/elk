@@ -34,6 +34,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.ContentAlignment;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -154,7 +155,10 @@ public final class ElkLayered {
         componentsProcessor.combine(components, lgraph);
 
         // Resize the resulting graph, according to minimal size constraints and such
-        resizeGraph(lgraph);
+        // Disable this only for topdown layout, because graph sizes are set by us
+        if (!lgraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+            resizeGraph(lgraph);
+        }
 
         theMonitor.done();
     }
