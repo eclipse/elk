@@ -208,13 +208,20 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // FIXME: remove magic numbers
                     double REGION_WIDTH = 100; // needs to be the same as the desired values for topdownpacking
                     double REGION_ASPECT_RATIO = 1.5;
-                    //////double STATE_WIDTH = 34; // only hierarchical states
-                    //////double STATE_ASPECT_RATIO = 1;
                     
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     double nodeNodeSpacing = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+                    
+                    // set state size of root node FIXME: this is not working, figure out how to do this
+                    // TODO: improve code quality here
+                    int colsR = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
+                    double requiredWidthR = colsR * REGION_WIDTH + padding.left + padding.right + (colsR - 1)*nodeNodeSpacing; 
+                    double requiredHeightR = colsR * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (colsR - 1)*nodeNodeSpacing;
+                    layoutNode.setDimensions(requiredWidthR, requiredHeightR);
+                    System.out.println("Set root: " + layoutNode.getIdentifier() + " " + requiredWidthR);
+                    
 
                     // if node has size requirements, restore them
                     if (layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_WIDTH) && layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_HEIGHT)) {
@@ -227,11 +234,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     System.out.println("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     
                     // if we are currently in a region and about to produce a layered layout,
-                    //       then we need to step through the states and set the sizes of the states
-                    //       which have a deeper hierarchy (i.e. child regions) which is essentially the code above, but it has to be done one step earlier
-                    //       this is necessary to correctly compute the size of the layout and subsequently the scale factor
+                    // then we need to step through the states and set the sizes of the states
                     if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
-                        // this if check needs to be thought out better, should mean if we are in a region in case of sccharts and more generally if we are in 
+                        // TODO: this if check needs to be thought out better, should mean if we are in a region in case of sccharts and more generally if we are in 
                         // a non-hierarchical section of the graph, where only the children will be scaled and not this part itself
                         for (ElkNode child : layoutNode.getChildren()) {
                             // check if child has children, if yes its size needs to be pre-computed before computing the layout
@@ -241,11 +246,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 // algorithms, this will result in clearly defined support of topdown layout by the algorithms
                                 // TODO: design sensible mechanism to facilitate this switching
                                 // TODO: this doesn't cover the very first initial case (root scchart)
-                                int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
+                                int cols = (int) Math.ceil(Math.sqrt(child.getChildren().size()));
                                 double requiredWidth = cols * REGION_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
                                 double requiredHeight = cols * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
                                 child.setDimensions(requiredWidth, requiredHeight);
-                                System.out.println("--- Setting " + child.getIdentifier() + " to " + child.getWidth() + " " + child.getHeight());
                                 // the values I set here are getting lost again
                                 // try storing values in properties and restoring them later
                                 // this might not work though, because I assume during the layered layout they are being
