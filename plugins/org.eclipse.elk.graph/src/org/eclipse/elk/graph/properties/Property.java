@@ -129,7 +129,7 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
             Object clone = ElkReflect.clone(defaultValue);
             if (clone == null) {
                 throw new IllegalStateException(
-                        "Couldn't clone property '" + id + "'. " + "Make sure it's type is registered with the "
+                        "Couldn't clone property '" + id + "'. " + "Make sure its type is registered with the "
                                 + ElkReflect.class.getSimpleName() + " utility class.");
             }
             return (T) clone;

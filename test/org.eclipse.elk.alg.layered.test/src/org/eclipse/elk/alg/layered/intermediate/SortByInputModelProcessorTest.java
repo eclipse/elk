@@ -58,7 +58,7 @@ public class SortByInputModelProcessorTest {
         config.configure(ElkNode.class).setProperty(
                 LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
                 CrossingMinimizationStrategy.LAYER_SWEEP);
-        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER, OrderingStrategy.NODES_AND_EDGES);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.NODES_AND_EDGES);
         return config;
     }
     
