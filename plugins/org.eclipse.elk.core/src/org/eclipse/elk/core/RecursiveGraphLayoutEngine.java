@@ -230,7 +230,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // TODO: make a decision on how to handle this (global values, that are sometimes also node specific
                         node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
                         // this needs to be set (technically only for regions), because top down packing needs the 
-                        // value to be set on the states
+                        // value to be set on the regions
                         node.setProperty(CoreOptions.TOPDOWN_REGION_WIDTH, REGION_WIDTH);
                         node.setProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO, REGION_ASPECT_RATIO);
                     }
@@ -372,8 +372,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             System.out.println(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
                         }
                     }
-                    
                     topdownLayoutMonitor.done();
+                } else {
+                    layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, 1.0);
                 }
                 
                 // Layout each compound node contained in this node separately
