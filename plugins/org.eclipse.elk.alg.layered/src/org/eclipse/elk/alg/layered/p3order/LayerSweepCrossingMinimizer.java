@@ -297,6 +297,31 @@ public class LayerSweepCrossingMinimizer
     }
 
     /**
+     * Compares all nodes in a each layer and counts how often they are not in model order.
+     * This requires that the {@code SortByInputModelProcessor} ran previously.
+     * @param layers layers to check
+     * @param strategy the ordering strategy to compare the nodes
+     * @return The number of model order conflicts
+     */
+    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strategy) {
+        int previousLayer = -1;
+        int wrongModelOrder = 0;
+        for (LNode[] layer : layers) {
+            ModelOrderNodeComparator comp = new ModelOrderNodeComparator(
+                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL);
+            for (int i = 0; i < layer.length; i++) {
+                for (int j = i + 1; j < layer.length; j++) {
+                    if (comp.compare(layer[i], layer[j]) > 0) {
+                        wrongModelOrder++;
+                    }
+                }
+            }
+            previousLayer++;
+        }
+        return wrongModelOrder;
+    }
+
+    /**
      * Compares all ports in a each layer and counts how often they are not in model order.
      * This requires that the {@code SortByInputModelProcessor} ran previously.
      * @param layers layers to check
@@ -322,32 +347,7 @@ public class LayerSweepCrossingMinimizer
         }
         return wrongModelOrder;
     }
-    
-    /**
-     * Compares all nodes in a each layer and counts how often they are not in model order.
-     * This requires that the {@code SortByInputModelProcessor} ran previously.
-     * @param layers layers to check
-     * @param strategy the ordering strategy to compare the nodes
-     * @return The number of model order conflicts
-     */
-    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strategy) {
-        int previousLayer = -1;
-        int wrongModelOrder = 0;
-        for (LNode[] layer : layers) {
-            ModelOrderNodeComparator comp = new ModelOrderNodeComparator(
-                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL);
-            for (int i = 0; i < layer.length; i++) {
-                for (int j = i + 1; j < layer.length; j++) {
-                    if (comp.compare(layer[i], layer[j]) > 0) {
-                        wrongModelOrder++;
-                    }
-                }
-            }
-            previousLayer++;
-        }
-        return wrongModelOrder;
-    }
-    
+
     /*
      * We only need to count crossings below the current graph and also only if they are marked as to be processed
      * hierarchically.
