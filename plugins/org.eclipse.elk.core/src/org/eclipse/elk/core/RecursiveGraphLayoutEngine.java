@@ -62,6 +62,9 @@ import com.google.common.collect.Lists;
  */
 public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     
+    private double REGION_WIDTH;
+    private double REGION_ASPECT_RATIO;
+    
     /**
      * Performs recursive layout on the given layout graph.
      * 
@@ -81,6 +84,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     public void layout(final ElkNode layoutGraph, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
+        // If using topdown layout get relevant properties
+        if (layoutGraph.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
+                && layoutGraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+            REGION_WIDTH = layoutGraph.getProperty(CoreOptions.TOPDOWN_REGION_WIDTH);
+            REGION_ASPECT_RATIO = layoutGraph.getProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO);
+            System.out.println("--------" + REGION_WIDTH + "-------");
+        }
         
         int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
@@ -205,14 +215,25 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
                         && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                     
-                    // FIXME: remove magic numbers
-                    double REGION_WIDTH = 100; // needs to be the same as the desired values for topdownpacking
-                    double REGION_ASPECT_RATIO = 1.5;
-                    
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     double nodeNodeSpacing = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+                    
+                    // propagate properties
+                    for (ElkNode node : layoutNode.getChildren()) {
+                     // TODO: think about whether it is possible to have mixed topdown and bottomup layout
+                        //       for now just recursively set all children to topdown as well
+                        // set mode to topdown layout, this could potentially be handled differently in the future
+                        // Leave this on, because currently only set in statesynthesis, but would need to be set in 
+                        // regionsynthesis too
+                        // TODO: make a decision on how to handle this (global values, that are sometimes also node specific
+                        node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
+                        // this needs to be set (technically only for regions), because top down packing needs the 
+                        // value to be set on the states
+                        node.setProperty(CoreOptions.TOPDOWN_REGION_WIDTH, REGION_WIDTH);
+                        node.setProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO, REGION_ASPECT_RATIO);
+                    }
                     
                     // set state size of root node FIXME: this is not working, figure out how to do this
                     // TODO: improve code quality here
@@ -343,19 +364,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             // shift all nodes in layout
                             node.setX(node.getX() + xShift);
                             node.setY(node.getY() + yShift); // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
-                            // TODO: think about whether it is possible to have mixed topdown and bottomup layout
-                            //       for now just recursively set all children to topdown as well
-                            // set mode to topdown layout, this could potentially be handled differently in the future
-                            // Leave this on, because currently only set in statesynthesis, but would need to be set in 
-                            // regionsynthesis too
-                            // TODO: make a decision on how to handle this
-                            node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
                         }
-                        //// END SCALING STUFF
-                        
-                        // THIS IS NO LONGER NECESSARY (I THINK)
-                        // ElkUtil.applyTopdownLayoutScaling(layoutNode);
-                        // ElkUtil.applyConfiguredNodeScaling(layoutNode);
                         
                         // log child sizes
                         for (ElkNode node : layoutNode.getChildren()) {
