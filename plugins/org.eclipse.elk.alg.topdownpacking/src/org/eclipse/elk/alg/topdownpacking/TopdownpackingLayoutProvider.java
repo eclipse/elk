@@ -64,11 +64,12 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
             double desiredNodeWidth = node.getProperty(CoreOptions.TOPDOWN_REGION_WIDTH);
             double aspectRatio = node.getProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO);
             node.setDimensions(desiredNodeWidth, desiredNodeWidth/aspectRatio);
+            System.out.println("During TDP: " + node.getIdentifier() + " " + node.getWidth() + " " + node.getHeight());
             // Set the node's coordinates
             node.setX(currX);
             node.setY(currY);
             nodePlacingMonitor.log("currX: " + currX);
-            nodePlacingMonitor.log("currY " + currY);
+            nodePlacingMonitor.log("currY: " + currY);
             
             if (currY + desiredNodeWidth/aspectRatio > totalHeight) {
                 totalHeight = currY + desiredNodeWidth/aspectRatio;

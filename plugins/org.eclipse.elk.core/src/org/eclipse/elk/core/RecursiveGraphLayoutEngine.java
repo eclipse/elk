@@ -237,11 +237,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     // set state size of root node FIXME: this is not working, figure out how to do this
                     // TODO: improve code quality here
+                    /** this is called for every node, which is of course not right
                     int colsR = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
                     double requiredWidthR = colsR * REGION_WIDTH + padding.left + padding.right + (colsR - 1)*nodeNodeSpacing; 
                     double requiredHeightR = colsR * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (colsR - 1)*nodeNodeSpacing;
                     layoutNode.setDimensions(requiredWidthR, requiredHeightR);
                     System.out.println("Set root: " + layoutNode.getIdentifier() + " " + requiredWidthR);
+                    */
                     
 
                     // if node has size requirements, restore them
@@ -291,6 +293,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // if node is a region, resize it after layered altered its size
                     if (layoutNode.hasProperty(CoreOptions.ALGORITHM) && !layoutNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.alg.topdownpacking.Topdownpacking")) {
                         layoutNode.setDimensions(oldWidth, oldHeight);
+                        System.out.println("After Resetting old dimensions: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     }
                     //layoutNode.setWidth(oldWidth);
                     //layoutNode.setHeight(oldHeight);
@@ -335,12 +338,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
                         //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
                         double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                        // TEST set scale on all children instead, because of limitations during render step
-                        // this just isn't a solution, because the layout is not scaled, need to find a way to scale exactly
-                        // the layout and not the encompassing node
-                       // for (ElkNode child : layoutNode.getChildren()) {
-                       //     child.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                       // }
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         // layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
