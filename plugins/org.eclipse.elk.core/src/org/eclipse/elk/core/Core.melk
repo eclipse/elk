@@ -844,6 +844,21 @@ programmatic option topdownScaleFactor: double {
     targets nodes
 }
 
+// TODO: region is an sccharts specific term, something more general might be more appropriate
+programmatic option topdownRegionWidth: double {
+    label "Topdown Region Width"
+    description
+        "The fixed size of a region when using topdown layout."
+    default = 100
+}
+
+programmatic option topdownRegionAspectRatio: double {
+    label "Topdown Region Aspect Ratio"
+    description
+        "The fixed aspect ratio of a region when using topdown layout. Default is 1:sqrt(2)."
+    default = 1.414
+}
+
 // TODO: sort options properly
 // TODO: decide whether this is a reasonable demand, or whether it would be easier to add this calculation as a 
 //       post-processing step that can be added after any algorithm

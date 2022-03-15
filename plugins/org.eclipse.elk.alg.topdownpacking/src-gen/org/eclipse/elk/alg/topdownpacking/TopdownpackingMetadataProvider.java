@@ -9,40 +9,6 @@ import org.eclipse.elk.graph.properties.Property;
 @SuppressWarnings("all")
 public class TopdownpackingMetadataProvider implements ILayoutMetaDataProvider {
   /**
-   * Default value for {@link #DESIRED_WIDTH}.
-   */
-  private static final int DESIRED_WIDTH_DEFAULT = 100;
-  
-  /**
-   * Lower bound value for {@link #DESIRED_WIDTH}.
-   */
-  private static final Comparable<? super Integer> DESIRED_WIDTH_LOWER_BOUND = Integer.valueOf(0);
-  
-  /**
-   * Used to define the dimensions of the parent graph to constrain the layout space.
-   */
-  public static final IProperty<Integer> DESIRED_WIDTH = new Property<Integer>(
-            "org.eclipse.elk.alg.topdownpacking.desiredWidth",
-            DESIRED_WIDTH_DEFAULT,
-            DESIRED_WIDTH_LOWER_BOUND,
-            null);
-  
-  /**
-   * Default value for {@link #DESIRED_ASPECT_RATIO}.
-   */
-  private static final double DESIRED_ASPECT_RATIO_DEFAULT = 1.5;
-  
-  /**
-   * Desired aspect ratio for the nodes that are being laid out. To determine the size to apply to nodes.
-   * TODO: decide whether this should be set on nodes individually or globally.
-   */
-  public static final IProperty<Double> DESIRED_ASPECT_RATIO = new Property<Double>(
-            "org.eclipse.elk.alg.topdownpacking.desiredAspectRatio",
-            DESIRED_ASPECT_RATIO_DEFAULT,
-            null,
-            null);
-  
-  /**
    * Default value for {@link #GRID_DIMENSION}.
    */
   private static final int GRID_DIMENSION_DEFAULT = 1;
@@ -60,31 +26,6 @@ public class TopdownpackingMetadataProvider implements ILayoutMetaDataProvider {
             null);
   
   public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData.Builder()
-        .id("org.eclipse.elk.alg.topdownpacking.desiredWidth")
-        .group("")
-        .name("Desired or externally set width of a node")
-        .description("Used to define the dimensions of the parent graph to constrain the layout space.")
-        .defaultValue(DESIRED_WIDTH_DEFAULT)
-        .lowerBound(DESIRED_WIDTH_LOWER_BOUND)
-        .type(LayoutOptionData.Type.INT)
-        .optionClass(Integer.class)
-        .targets(EnumSet.of(LayoutOptionData.Target.NODES))
-        .visibility(LayoutOptionData.Visibility.ADVANCED)
-        .create()
-    );
-    registry.register(new LayoutOptionData.Builder()
-        .id("org.eclipse.elk.alg.topdownpacking.desiredAspectRatio")
-        .group("")
-        .name("Desired aspect ratio")
-        .description("Desired aspect ratio for the nodes that are being laid out. To determine the size to apply to nodes. TODO: decide whether this should be set on nodes individually or globally.")
-        .defaultValue(DESIRED_ASPECT_RATIO_DEFAULT)
-        .type(LayoutOptionData.Type.DOUBLE)
-        .optionClass(Double.class)
-        .targets(EnumSet.of(LayoutOptionData.Target.NODES))
-        .visibility(LayoutOptionData.Visibility.ADVANCED)
-        .create()
-    );
     registry.register(new LayoutOptionData.Builder()
         .id("org.eclipse.elk.alg.topdownpacking.gridDimension")
         .group("")

@@ -8,24 +8,6 @@ bundle {
     idPrefix org.eclipse.elk.alg.topdownpacking
 }
 
-advanced option desiredWidth: int {
-    label "Desired or externally set width of a node"
-    description
-        "Used to define the dimensions of the parent graph to constrain the layout space."
-    default = 100
-    lowerBound = 0
-    targets nodes
-}
-
-advanced option desiredAspectRatio: double {
-    label "Desired aspect ratio" 
-    description
-        "Desired aspect ratio for the nodes that are being laid out. To determine the size to apply to nodes. 
-         TODO: decide whether this should be set on nodes individually or globally."
-    default = 1.5
-    targets nodes
-}
-
 output option gridDimension: int {
     label "Number of child nodes in one row and column"
     description
@@ -41,8 +23,6 @@ algorithm Topdownpacking(TopdownpackingLayoutProvider) {
     label "Topdownpacking"
     description "Please insert a short but informative description here"
     metadataClass options.TopdownpackingOptions
-    supports desiredWidth
-    supports desiredAspectRatio
     supports org.eclipse.elk.padding = new ElkPadding(10)
     supports org.eclipse.elk.spacing.edgeEdge = 5
     supports org.eclipse.elk.spacing.edgeNode = 10

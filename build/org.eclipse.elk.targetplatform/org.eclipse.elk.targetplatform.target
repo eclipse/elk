@@ -1,70 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="Generated from Eclipse Layout Kernel Xtext 2.25" sequenceNumber="5">
+<target name="Generated from Eclipse Layout Kernel Xtext 2.25" sequenceNumber="6">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="com.sun.el" version="0.0.0"/>
-      <unit id="javax.el" version="0.0.0"/>
-      <unit id="javax.servlet.jsp" version="0.0.0"/>
       <unit id="javax.websocket" version="0.0.0"/>
-      <unit id="org.apache.commons.codec" version="0.0.0"/>
-      <unit id="org.apache.commons.logging" version="0.0.0"/>
-      <unit id="org.apache.felix.gogo.runtime" version="0.0.0"/>
-      <unit id="org.apache.jasper.glassfish" version="0.0.0"/>
-      <unit id="org.apiguardian" version="0.0.0"/>
-      <unit id="org.bouncycastle.bcpg" version="0.0.0"/>
-      <unit id="org.bouncycastle.bcprov" version="0.0.0"/>
-      <unit id="org.eclipse.core.filesystem.linux.x86_64" version="0.0.0"/>
-      <unit id="org.eclipse.e4.ui.swt.gtk" version="0.0.0"/>
-      <unit id="org.eclipse.ecf.provider.filetransfer" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.concurrent" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.http.registry" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.jsp.jasper" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.jsp.jasper.registry" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.p2.ui.sdk" version="0.0.0"/>
-      <unit id="org.eclipse.equinox.security.linux.x86_64" version="0.0.0"/>
       <unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.jdt.apt.pluggable.core" version="0.0.0"/>
-      <unit id="org.eclipse.jdt.core.formatterapp" version="0.0.0"/>
-      <unit id="org.eclipse.jface.notifications" version="0.0.0"/>
-      <unit id="org.eclipse.jsch.core" version="0.0.0"/>
       <unit id="org.eclipse.lsp4j.sdk.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.osgi.util" version="0.0.0"/>
-      <unit id="org.eclipse.pde.api.tools.annotations" version="0.0.0"/>
-      <unit id="org.eclipse.pde.ds.annotations" version="0.0.0"/>
-      <unit id="org.eclipse.pde.ds.lib" version="0.0.0"/>
-      <unit id="org.eclipse.pde.ds1_2.lib" version="0.0.0"/>
-      <unit id="org.eclipse.pde.genericeditor.extension" version="0.0.0"/>
-      <unit id="org.eclipse.pde.ua.core" version="0.0.0"/>
-      <unit id="org.eclipse.pde.ui.templates" version="0.0.0"/>
-      <unit id="org.eclipse.tools.layout.spy" version="0.0.0"/>
-      <unit id="org.eclipse.ui.browser" version="0.0.0"/>
-      <unit id="org.eclipse.ui.monitoring" version="0.0.0"/>
+      <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
       <unit id="org.hamcrest.library" version="0.0.0"/>
-      <unit id="org.junit.jupiter.api" version="0.0.0"/>
-      <unit id="org.junit.jupiter.engine" version="0.0.0"/>
-      <unit id="org.junit.jupiter.migrationsupport" version="0.0.0"/>
-      <unit id="org.junit.jupiter.params" version="0.0.0"/>
-      <unit id="org.junit.platform.commons" version="0.0.0"/>
-      <unit id="org.junit.platform.engine" version="0.0.0"/>
-      <unit id="org.junit.platform.launcher" version="0.0.0"/>
-      <unit id="org.junit.platform.runner" version="0.0.0"/>
-      <unit id="org.junit.platform.suite.api" version="0.0.0"/>
-      <unit id="org.junit.vintage.engine" version="0.0.0"/>
-      <unit id="org.objectweb.asm.tree" version="0.0.0"/>
-      <unit id="org.opentest4j" version="0.0.0"/>
-      <unit id="org.slf4j.api" version="0.0.0"/>
       <repository location="http://download.eclipse.org/releases/2021-03"/>
-    </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-      <repository location="https://download.eclipse.org/eclipse/updates/4.20/R-4.20-202106111600"/>
-    </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="org.apache.httpcomponents.httpclient" version="0.0.0"/>
-      <unit id="org.apache.httpcomponents.httpcore" version="0.0.0"/>
-      <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20210223232630/repository/"/>
     </location>
   </locations>
 </target>

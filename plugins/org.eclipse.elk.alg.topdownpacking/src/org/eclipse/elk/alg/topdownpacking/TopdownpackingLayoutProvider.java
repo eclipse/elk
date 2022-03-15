@@ -25,14 +25,6 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         // Start progress monitor
         progressMonitor.begin("Topdownpacking", 1);
         progressMonitor.log("Algorithm began for node " + layoutGraph.getIdentifier());
-        
-        /**
-        // outer null node shouldn't use default values 40 x 40, because it makes it hard to understand what's happening
-        if (layoutGraph.getIdentifier() == null) {
-            layoutGraph.setWidth(300);
-            layoutGraph.setHeight(200);
-        }
-        */
                 
         ElkPadding padding = layoutGraph.getProperty(TopdownpackingOptions.PADDING);
         double nodeNodeSpacing = layoutGraph.getProperty(TopdownpackingOptions.SPACING_NODE_NODE);
@@ -69,8 +61,8 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         
         for (ElkNode node : nodes) {
             // Set the node's size
-            double desiredNodeWidth = node.getProperty(TopdownpackingOptions.DESIRED_WIDTH);
-            double aspectRatio = node.getProperty(TopdownpackingOptions.DESIRED_ASPECT_RATIO);
+            double desiredNodeWidth = node.getProperty(CoreOptions.TOPDOWN_REGION_WIDTH);
+            double aspectRatio = node.getProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO);
             node.setDimensions(desiredNodeWidth, desiredNodeWidth/aspectRatio);
             // Set the node's coordinates
             node.setX(currX);
@@ -100,6 +92,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
+        // TODO: later this stuff should be covered by white space elimination anyway so can be removed here
         /** REMOVE THIS, IT'S A LITTLE MORE COMPLICATED NOW, BECAUSE SCALING IS DONE EXTERNALLY
         // if the last row is not full, do some adjustments to the nodes
         // currentCol is at this point the position after the last placed node
@@ -132,6 +125,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         totalWidth += padding.right;
         
         totalHeight += padding.bottom;
+        // TODO: not sure whether this is actually necessary, because the region layout area is never scaled, so we don't care about its size
         layoutGraph.setProperty(CoreOptions.CHILD_AREA_WIDTH, totalWidth);
         layoutGraph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, totalHeight);
         

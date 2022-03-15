@@ -87,8 +87,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
     // Before Phase 4
     
-    /** Assigns sizes to nodes if performing topdown layout */
-    TOPDOWN_NODE_SIZE_PROCESSOR,
     /** Performs 'wrapping' of the graph, potentially executing improvement heuristics. */
     BREAKING_POINT_PROCESSOR,
     /** Hierarchical one-sided greedy switch crossing reduction. */
@@ -344,9 +342,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             
         case SORT_BY_INPUT_ORDER_OF_MODEL:
             return new SortByInputModelProcessor();
-        
-        case TOPDOWN_NODE_SIZE_PROCESSOR:
-            return new TopdownNodeSizeProcessor();
             
         case TWO_SIDED_GREEDY_SWITCH:
             return new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
