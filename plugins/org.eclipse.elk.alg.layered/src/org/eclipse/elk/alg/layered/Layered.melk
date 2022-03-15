@@ -112,6 +112,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.insideSelfLoops.yo
     supports org.eclipse.elk.nodeSize.constraints
     supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeSize.fixedGraphSize
     supports org.eclipse.elk.direction = Direction.UNDEFINED
     supports org.eclipse.elk.nodeLabels.placement
     supports org.eclipse.elk.nodeLabels.padding
