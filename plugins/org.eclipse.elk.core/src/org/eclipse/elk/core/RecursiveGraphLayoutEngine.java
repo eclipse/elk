@@ -89,7 +89,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 && layoutGraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
             REGION_WIDTH = layoutGraph.getProperty(CoreOptions.TOPDOWN_REGION_WIDTH);
             REGION_ASPECT_RATIO = layoutGraph.getProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO);
-            System.out.println("--------" + REGION_WIDTH + "-------");
         }
         
         int nodeCount = countNodesRecursively(layoutGraph, true);
@@ -127,8 +126,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
-        // TODO: externalize this control as some option in the GUI somewhere
-        // layoutNode.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
         
         if (progressMonitor.isCanceled()) {
             return Collections.emptyList();
@@ -235,8 +232,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         node.setProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO, REGION_ASPECT_RATIO);
                     }
                     
-                    // set state size of root node FIXME: this is not working, figure out how to do this
-                    // TODO: improve code quality here
+                    // set state size of root node FIXME: how can I reliably get hold of the root state?
                     /** this is called for every node, which is of course not right
                     int colsR = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
                     double requiredWidthR = colsR * REGION_WIDTH + padding.left + padding.right + (colsR - 1)*nodeNodeSpacing; 
