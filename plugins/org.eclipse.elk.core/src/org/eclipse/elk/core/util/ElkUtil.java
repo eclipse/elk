@@ -398,38 +398,6 @@ public final class ElkUtil {
         }
     }
     
-    // TODO: remove this function if it turns it it really is unnecessary and it has undesirable behaviour anyway
-    /**
-     * Applies the scaling factor configured in terms of {@link CoreOptions#TOPDOWN_SCALE_FACTOR} to {@code node}'s
-     * the layout data of {@code node}'s ports and labels.<br>
-     * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
-     * {@link CoreOptions#SCALE_FACTOR}.
-     *
-     * @param node
-     *            the node to be scaled
-     */
-    public static void applyTopdownLayoutScaling(final ElkNode node) {
-        final double scalingFactor = node.getProperty(CoreOptions.TOPDOWN_SCALE_FACTOR);
-        if (scalingFactor == 1) {
-            return;
-        }
-        
-        // node.setLocation(scalingFactor * node.getX(), scalingFactor * node.getY());
-                
-        final Iterable<ElkLabel> portLabels = Iterables.concat(
-                Iterables.transform(node.getPorts(), p -> p.getLabels()));
-        for (ElkShape shape : Iterables.concat(node.getLabels(), node.getPorts(), portLabels, node.getChildren())) {
-            shape.setLocation(scalingFactor * shape.getX(), scalingFactor * shape.getY());
-            shape.setDimensions(scalingFactor * shape.getWidth(), scalingFactor * shape.getHeight());
-
-            final KVector anchor = shape.getProperty(CoreOptions.PORT_ANCHOR);
-            if (anchor != null) {
-                anchor.x *= scalingFactor;
-                anchor.y *= scalingFactor;
-            }
-        }
-    }
-    
     /**
      * Computes the area occupied by this node's layout and stores the values in {@link CoreOptions#CHILD_AREA_WIDTH} 
      * and {@link CoreOptions#CHILD_AREA_HEIGHT}.
