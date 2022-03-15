@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
+import org.eclipse.elk.core.math.ElkPadding;
 
 /**
  * This class implements a concrete strategy in the strategy pattern given by {@link BestCandidateFilter}.
@@ -24,14 +25,17 @@ import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 public class AreaFilter implements BestCandidateFilter {
 
     @Override
-    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio) {
+    public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio,
+            final ElkPadding padding) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
         double minArea = Double.POSITIVE_INFINITY;
         for (DrawingData opt : candidates) {
-            minArea = Math.min(minArea, opt.getArea());
+            minArea = Math.min(minArea, (opt.getDrawingWidth() + padding.getHorizontal())
+                    * (opt.getDrawingHeight() + padding.getVertical()));
         }
         for (DrawingData candidate : candidates) {
-            if (candidate.getArea() == minArea) {
+            if ((candidate.getDrawingWidth() + padding.getHorizontal())
+                    * (candidate.getDrawingHeight() + padding.getVertical()) == minArea) {
                 remainingCandidates.add(candidate);
             }
         }

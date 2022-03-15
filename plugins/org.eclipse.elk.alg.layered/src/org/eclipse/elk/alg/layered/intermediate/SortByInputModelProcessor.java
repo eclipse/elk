@@ -62,32 +62,50 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     // If two edges (of the same node) have the same target node they should be next to each other.
                     // Therefore all ports that connect to the same node should have the same
                     // (their minimal) model order.
-                    Map<LNode, Integer> targetNodeModelOrder = new HashMap<>();
                     // Get minimal model order for target node
-
-                    node.getPorts().stream().filter(p -> !p.getOutgoingEdges().isEmpty()).forEach(p -> {
-                        LNode targetNode = getTargetNode(p);
-                        p.setProperty(InternalProperties.LONG_EDGE_TARGET_NODE, targetNode);
-                        if (targetNode != null) {
-                            int previousOrder = Integer.MAX_VALUE;
-                            if (targetNodeModelOrder.containsKey(targetNode)) {
-                                previousOrder = targetNodeModelOrder.get(targetNode);
-                            }
-                            targetNodeModelOrder.put(targetNode,
-                                    Math.min(p.getOutgoingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER),
-                                            previousOrder));
-                        }
-                    });
+                    
                     Collections.sort(node.getPorts(),
-                            new ModelOrderPortComparator(previousLayer, targetNodeModelOrder));
+                            new ModelOrderPortComparator(previousLayer, 
+                                    longEdgeTargetNodePreprocessing(node)));
                 }
             }
             // Sort nodes.
             Collections.sort(layer.getNodes(),
                     new ModelOrderNodeComparator(previousLayer,
-                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER)));
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
+                            graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY)));
             layerIndex++;
         }
+    }
+    
+    /**
+     * Calculate long edge target of port and saves it and adds a map of all long edge targets to the node.
+     * @param node the node
+     * @return A map of all long edge targets of a node
+     */
+    public static Map<LNode, Integer> longEdgeTargetNodePreprocessing(LNode node) {
+        Map<LNode, Integer> targetNodeModelOrder = new HashMap<>();
+        if (node.hasProperty(InternalProperties.TARGET_NODE_MODEL_ORDER)) {
+            return node.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER);
+        }
+        node.getPorts().stream().filter(p -> !p.getOutgoingEdges().isEmpty()).forEach(p -> {
+            LNode targetNode = getTargetNode(p);
+            p.setProperty(InternalProperties.LONG_EDGE_TARGET_NODE, targetNode);
+            if (targetNode != null) {
+                int previousOrder = Integer.MAX_VALUE;
+                if (targetNodeModelOrder.containsKey(targetNode)) {
+                    previousOrder = targetNodeModelOrder.get(targetNode);
+                }
+                LEdge edge = p.getOutgoingEdges().get(0);
+                if (!edge.getProperty(InternalProperties.REVERSED)) {
+                    targetNodeModelOrder.put(targetNode, Math
+                            .min(edge.getProperty(InternalProperties.MODEL_ORDER), previousOrder));
+                }
+            }
+        });
+        node.setProperty(InternalProperties.TARGET_NODE_MODEL_ORDER, targetNodeModelOrder);
+        return targetNodeModelOrder;
+        
     }
 
     /**

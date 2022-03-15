@@ -75,7 +75,7 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     @ConfiguratorProvider
     public LayoutConfigurator modelOrderPreferEdgesConfigurator() {
         LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
-        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER,
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
                 OrderingStrategy.PREFER_EDGES);
         return config;
     }
@@ -83,7 +83,7 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     @ConfiguratorProvider
     public LayoutConfigurator modelOrderNodesAndEdgesConfigurator() {
         LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
-        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER,
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
                 OrderingStrategy.NODES_AND_EDGES);
         return config;
     }

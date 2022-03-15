@@ -27,6 +27,7 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkReflect;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -218,16 +219,20 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     @SuppressWarnings("unchecked")
     protected void applyProperties(final ElkGraphElement element, final IPropertyHolder properties) {
         if (properties != null) {
-            if (!optionFilters.isEmpty()) {
-                for (Map.Entry<IProperty<?>, Object> entry : properties.getAllProperties().entrySet()) {
-                    boolean accept = optionFilters.stream()
-                            .allMatch(filter -> filter.accept(element, entry.getKey()));
-                    if (accept) {
-                        element.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
+            List<IOptionFilter> filters = getFilters();
+            for (Map.Entry<IProperty<?>, Object> entry : properties.getAllProperties().entrySet()) {
+                boolean accept = filters.stream()
+                        .allMatch(filter -> filter.accept(element, entry.getKey()));
+                if (accept) {
+                    Object value = entry.getValue();
+                    if (value instanceof Cloneable) {
+                        Object clone = ElkReflect.clone(value);
+                        if (clone != null) {
+                            value = clone;
+                        }
                     }
+                    element.setProperty((IProperty<Object>) entry.getKey(), value);
                 }
-            } else {
-                element.copyProperties(properties);
             }
         }
     }
