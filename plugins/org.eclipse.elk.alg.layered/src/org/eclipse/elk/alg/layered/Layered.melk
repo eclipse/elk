@@ -186,6 +186,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.longEdgeStrategy
     supports considerModelOrder.crossingCounterNodeInfluence
     supports considerModelOrder.crossingCounterPortInfluence
+    supports generatePositionAndLayerIds
 }
 
 /* ------------------------
@@ -246,7 +247,8 @@ group layering {
     output option layerId: int {
         label "Layer ID"
         description
-            "Layer identifier that was calculated by ELK Layered for a node"
+            "Layer identifier that was calculated by ELK Layered for a node.
+            This is only generated if interactiveLayot or generatePositionAndLayerIds is set."
         default = -1
         lowerBound = -1
         targets nodes
@@ -414,7 +416,8 @@ group crossingMinimization {
     output option positionId: int {
         label "Position ID"
         description
-            "Position within a layer that was determined by ELK Layered for a node."
+            "Position within a layer that was determined by ELK Layered for a node.
+            This is only generated if interactiveLayot or generatePositionAndLayerIds is set."
         default = -1
         lowerBound = -1
         targets nodes
@@ -1048,4 +1051,14 @@ advanced option unnecessaryBendpoints: boolean {
         where an edge changes direction."
     default = false
     targets parents
+}
+
+advanced option generatePositionAndLayerIds: boolean {
+    label "Generate Position and Layer IDs"
+    description
+        "If enabled position id and layer id are generated, which are usually only used internally
+        when setting the interactiveLayout option. This option should be specified on the root node."
+    default = false
+    targets parents
+        
 }
