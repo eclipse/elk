@@ -34,7 +34,6 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.ContentAlignment;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -156,10 +155,8 @@ public final class ElkLayered {
 
         // Resize the resulting graph, according to minimal size constraints and such
         // Disable this only for topdown layout, because graph sizes are set by us
-        if (!lgraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
-            System.out.println("topdown false: ");
-            // FIXME: properties aren't set for all nodes or something 
-            // resizeGraph(lgraph);
+        if (!lgraph.getProperty(LayeredOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            resizeGraph(lgraph);
         }
 
         theMonitor.done();
