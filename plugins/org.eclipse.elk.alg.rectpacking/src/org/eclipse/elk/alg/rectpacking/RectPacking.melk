@@ -83,7 +83,7 @@ output option currentPosition: int {
     label "Current position of a node in the order of nodes"
     description
         "The rectangles are ordered. Normally according to their definition the the model.
-                 This option specifies the current position of a node."
+         This option specifies the current position of a node."
     default = -1
     lowerBound = -1
     targets nodes
@@ -93,8 +93,7 @@ advanced option desiredPosition: int {
     label "Desired index of node"
     description
         "The rectangles are ordered. Normally according to their definition the the model.
-                 This option allows to specify a desired position that has preference over the
-                 original position."
+         This option allows to specify a desired position that has preference over the original position."
     default = -1
     lowerBound = -1
     targets nodes
@@ -104,8 +103,8 @@ programmatic option onlyFirstIteration: boolean {
     label "Only Area Approximation"
     description
         "If enabled only the width approximation step is executed and the nodes are placed accordingly.
-        The nodes are layouted according to the packingStrategy.
-        If set to true not expansion of nodes is taking place."
+         The nodes are layouted according to the packingStrategy.
+         If set to true not expansion of nodes is taking place."
     targets nodes
     default = false
 }
@@ -114,8 +113,8 @@ programmatic option rowCompaction: boolean {
     label "Compact Rows"
     description
         "Enables compaction. Compacts blocks if they do not use the full height of the row.
-        This option allows to have a smaller drawing.
-        If this option is disabled all nodes are placed next to each other in rows."
+         This option allows to have a smaller drawing.
+         If this option is disabled all nodes are placed next to each other in rows."
     targets nodes
     default = true
 }
@@ -124,8 +123,8 @@ advanced option expandToAspectRatio: boolean {
     label "Fit Aspect Ratio"
     description
         "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
-            The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
-            in unreasonable ndoe expansion."
+         The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
+         in unreasonable ndoe expansion."
     targets nodes
     default = false
     requires org.eclipse.elk.expandNodes
@@ -134,8 +133,10 @@ advanced option expandToAspectRatio: boolean {
 advanced option targetWidth: double {
     label "Target Width"
     description
-        "Option to place the rectangles in the given target width
-            instead of approximating the width using the desired aspect ratio."
+        "Option to place the rectangles in the given target width instead of approximating the width using the desired
+         aspect ratio.
+         The padding is not included in this. Meaning a drawing will have width of targetwidth +
+         horizontal padding."
     targets nodes
     default = -1
 }

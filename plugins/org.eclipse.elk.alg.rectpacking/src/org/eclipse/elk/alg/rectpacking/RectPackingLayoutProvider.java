@@ -47,12 +47,6 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Rectangle Packing", 1);
-
-        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
-        if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
-            NodeMicroLayout.forGraph(layoutGraph)
-                           .execute();
-        }
         
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(layoutGraph, "Input");
@@ -79,10 +73,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // Whether interactive layout is activ.
         boolean interactive = layoutGraph.getProperty(RectPackingOptions.INTERACTIVE);
         // A target width for the algorithm. If this is set the width approximation step is skipped.
-        double targetWidth = -1;
-        if (layoutGraph.hasProperty(RectPackingOptions.TARGET_WIDTH)) {
-            targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
-        }
+        double targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
@@ -128,13 +119,17 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         if (targetWidth < 0 || targetWidth < minSize.x) {
             // Initial width approximation.
             AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
-            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing);
+            drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing, padding);
             if (progressMonitor.isLoggingEnabled()) {
                 progressMonitor.logGraph(layoutGraph, "After approximation");
             }
         } else {
             drawing = new DrawingData(aspectRatio, targetWidth, 0, DrawingDataDescriptor.WHOLE_DRAWING);
         }
+        // Readd padding for next steps.
+        minSize.x += padding.getHorizontal();
+        minSize.y += padding.getVertical();
+        
         // Placement according to approximated width.
         if (!onlyFirstIteration) {
             DrawingUtil.resetCoordinates(rectangles);
@@ -142,13 +137,20 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             // Modify the initial approximation if necessary.
             maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
             
+            // Run placement, compaction, and expansion (if enabled).
             drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph);
         }
 
         // Final touch.
         applyPadding(rectangles, padding);
+        
         ElkUtil.resizeNode(layoutGraph, drawing.getDrawingWidth() + padding.getHorizontal(),
                 drawing.getDrawingHeight() + padding.getVertical(), false, true);
+
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(layoutGraph).execute();
+        }
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(layoutGraph, "Output");
         }

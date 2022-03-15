@@ -9,20 +9,17 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.issues;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
-import org.eclipse.elk.alg.test.GraphTestUtils;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
+import org.eclipse.elk.alg.test.framework.annotations.Configurator;
 import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.FileNameFilter;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
-import org.eclipse.elk.graph.ElkEdge;
-import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.graph.ElkNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,44 +27,45 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.Lists;
 
 /**
- * Test for issue 700.
+ * Test for issue 587.
  */
 @RunWith(LayoutTestRunner.class)
 @DefaultConfiguration()
-public class Issue700Test {
+public class Issue587Test {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
 
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
-        // The bug was introduced while fixing #665, so ensure that the fix for #700 does not return the favour...
         return Lists.newArrayList(
-                new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("665.+\\.elkt")),
-                new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("700.+\\.elkt")),
-                new ModelResourcePath("examples/hierarchy/**"));
+                new ModelResourcePath("tickets/layered/**").withFilter(new FileNameFilter("587.+\\.elkt")));
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Configurations
+
+    @Configurator
+    public void configureOrthogonalEdgeRouting(final ElkNode graph) {
+        graph.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+    }
+
+    @Configurator
+    public void configurePolylineEdgeRouting(final ElkNode graph) {
+        graph.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+    }
+
+    @Configurator
+    public void configureSplineEdgeRouting(final ElkNode graph) {
+        graph.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tests
     
     @Test
-    public void testEdgesRouted(final ElkNode graph) {
-        GraphTestUtils.allNodes(graph, true).stream()
-            .flatMap(node -> node.getContainedEdges().stream())
-            .forEach(this::testEdgeRouted);
-    }
-    
-    private void testEdgeRouted(final ElkEdge edge) {
-        assertEquals("Edge has no sections.", 1, edge.getSections().size());
-        
-        // The start and end point may not be at the origin
-        ElkEdgeSection section = edge.getSections().get(0);
-        assertTrue("Edge has no proper start and end coordinates.",
-                section.getStartX() != 0
-                || section.getStartY() != 0
-                || section.getEndX() != 0
-                || section.getEndY() != 0);
+    public void testNoException(final ElkNode graph) {
+        // The bug caused an exception; nothing particular to test here
     }
 
 }

@@ -26,10 +26,10 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 1. Remove the `Website` stage's call to the `publish-website.sh` script from the release build's `Jenkinsfile` and update the build variables at the top of the `Jenkinsfile`:
     
     Variable              | New value
-    --------------------- | -----------------------------------------------------------
+    --------------------- | ---------------------------------------------------------------------
     `BRANCH`              | `releases/VERSION`
     `VERSION`             | Well... the version number...
-    `ELK_TARGET_DIR`      | `/home/data/httpd/download.eclipse.org/elk/updates/VERSION/`
+    `ELK_TARGET_DIR`      | `/home/data/httpd/download.eclipse.org/elk/updates/releases/VERSION/`
     
 1. Update the _ReleaseNightly_ build with the same default values for the build variables. Also remember to update the repository branch the build will check out. Run it.
 1. Update the version numbers on `master`. Tycho can help:
@@ -53,6 +53,7 @@ This is a summary of the information on [this page](https://central.sonatype.org
 ## Releasing to Update Site
 
 1. Run the _PromoteUpdateSite_ build with proper parameter values and run it.
+1. While in Jenkins, disable the nightly release build.
 
 
 ## The Website

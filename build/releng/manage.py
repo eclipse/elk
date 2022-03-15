@@ -15,6 +15,7 @@ would do first, and require an explicit command line switch to make it actually 
 
 import argparse
 from pathlib import Path
+import shutil
 
 # The default directory all path operations will be relative to.
 DEFAULT_BASE_DIR = "/home/data/httpd/download.eclipse.org/elk/"
@@ -61,6 +62,20 @@ def cmd_list(args: argparse.Namespace) -> None:
 
 
 
+#     #                      
+##   ##  ####  #    # ###### 
+# # # # #    # #    # #      
+#  #  # #    # #    # #####  
+#     # #    # #    # #      
+#     # #    #  #  #  #      
+#     #  ####    ##   ###### 
+
+def cmd_mv(args: argparse.Namespace) -> None:
+    shutil.move(args.source, args.dest)
+
+
+
+
  #####                #                          ######
 #     # #    # #####  #       # #    # ######    #     #   ##   #####   ####  # #    #  ####
 #       ##  ## #    # #       # ##   # #         #     #  #  #  #    # #      # ##   # #    #
@@ -87,6 +102,20 @@ parser_list.add_argument(
     type=int,
     default=1,
     help="How many folder levels to go down. By default, only the base folder's content is listed.")
+
+# The move command
+parser_move = subparsers.add_parser(
+    "mv",
+    help="Move a folder to another location.")
+parser_move.set_defaults(func=cmd_mv)
+parser_move.add_argument(
+    "source",
+    type=str,
+    help="Path to the folder to move.")
+parser_move.add_argument(
+    "dest",
+    type=str,
+    help="Path to the folder's new parent folder.")
 
 # Go parse stuff!
 args = parser.parse_args()
