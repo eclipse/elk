@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
-import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -92,8 +91,12 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
                 Collections.sort(layer, barycenterStateComparator);
             }
 
-            // Resolve ordering constraints
-            constraintResolver.processConstraints(layer);
+            // Resolve ordering constraints, since the model order barycenter heuristic does not only use barycenters
+            // the constraints cannot be solved in that case.
+            // FIXME That looks like a bad thing to do.
+            if (!layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                constraintResolver.processConstraints(layer);
+            }
         }
     }
 
