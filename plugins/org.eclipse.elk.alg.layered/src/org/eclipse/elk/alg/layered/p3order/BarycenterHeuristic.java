@@ -92,7 +92,10 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
             }
 
             // Resolve ordering constraints
-            constraintResolver.processConstraints(layer);
+            if (!layer.get(0).getGraph().hasProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
+                || !layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                constraintResolver.processConstraints(layer);
+            }
         }
     }
 
