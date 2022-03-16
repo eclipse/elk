@@ -253,7 +253,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // if node has size requirements, restore them
                     // this affects states whose sizes are set by me before layered layout, this is probably a problem
                     if (layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_WIDTH) && layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_HEIGHT)) {
-                        layoutNode.setDimensions(layoutNode.getProperty(CoreOptions.NODE_REQUIRED_WIDTH), layoutNode.getProperty(CoreOptions.NODE_REQUIRED_HEIGHT));
+                        //layoutNode.setDimensions(layoutNode.getProperty(CoreOptions.NODE_REQUIRED_WIDTH), layoutNode.getProperty(CoreOptions.NODE_REQUIRED_HEIGHT));
                     }
                     
                     double oldWidth = layoutNode.getWidth();
