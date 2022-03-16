@@ -98,6 +98,17 @@ public class BasicConsiderModelOrderTest {
                 0.001);
         return config;
     }
+
+    @ConfiguratorProvider
+    public LayoutConfigurator forceModelOrderConfigurator() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
+                CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER,
+                true);
+        return config;
+    }
     
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////

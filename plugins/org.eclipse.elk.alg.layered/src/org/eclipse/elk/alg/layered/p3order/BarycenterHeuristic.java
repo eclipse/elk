@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
+import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.PortType;
 
 import com.google.common.collect.Lists;
 
@@ -83,7 +85,12 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
         if (layer.size() > 1) {
             // Sort the vertices according to their barycenters
-            Collections.sort(layer, barycenterStateComparator);
+            if (layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                ModelOrderBarycenterHeuristic.insertionSort(layer, barycenterStateComparator,
+                        (ModelOrderBarycenterHeuristic) this);
+            } else {
+                Collections.sort(layer, barycenterStateComparator);
+            }
 
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer);
