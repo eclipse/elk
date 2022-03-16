@@ -234,13 +234,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     }
                     
                     // set state size of root node FIXME: how can I reliably get hold of the root state?
-                    /** this is called for every node, which is of course not right
-                    int colsR = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
-                    double requiredWidthR = colsR * REGION_WIDTH + padding.left + padding.right + (colsR - 1)*nodeNodeSpacing; 
-                    double requiredHeightR = colsR * REGION_WIDTH/REGION_ASPECT_RATIO + padding.top + padding.bottom + (colsR - 1)*nodeNodeSpacing;
-                    layoutNode.setDimensions(requiredWidthR, requiredHeightR);
-                    System.out.println("Set root: " + layoutNode.getIdentifier() + " " + requiredWidthR);
-                    */
+                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
+                        int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
+                        double requiredWidth = cols * HIERARCHICAL_NODE_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                        double requiredHeight = cols * HIERARCHICAL_NODE_WIDTH/HIERARCHICAL_NODE_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                        layoutNode.setDimensions(requiredWidth, requiredHeight);
+                        System.out.println("Set root: " + layoutNode.getIdentifier() + " " + requiredWidth);
+                    }
                     
 
                     // if node has size requirements, restore them //TODO: check whether this is still required when using fixedGraphSize
