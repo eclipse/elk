@@ -87,8 +87,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         // If using topdown layout get relevant properties
         if (layoutGraph.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
                 && layoutGraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
-            REGION_WIDTH = layoutGraph.getProperty(CoreOptions.TOPDOWN_REGION_WIDTH);
-            REGION_ASPECT_RATIO = layoutGraph.getProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO);
+            REGION_WIDTH = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+            REGION_ASPECT_RATIO = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
         }
         
         int nodeCount = countNodesRecursively(layoutGraph, true);
@@ -228,8 +228,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
                         // this needs to be set (technically only for regions), because top down packing needs the 
                         // value to be set on the regions
-                        node.setProperty(CoreOptions.TOPDOWN_REGION_WIDTH, REGION_WIDTH);
-                        node.setProperty(CoreOptions.TOPDOWN_REGION_ASPECT_RATIO, REGION_ASPECT_RATIO);
+                        node.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, REGION_WIDTH);
+                        node.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, REGION_ASPECT_RATIO);
                     }
                     
                     // set state size of root node FIXME: how can I reliably get hold of the root state?

@@ -845,18 +845,24 @@ programmatic option topdownScaleFactor: double {
 }
 
 // TODO: region is an sccharts specific term, something more general might be more appropriate
-programmatic option topdownRegionWidth: double {
-    label "Topdown Region Width"
+programmatic option topdownHierarchicalNodeWidth: double {
+    label "Topdown Hierarchical Node Width"
     description
-        "The fixed size of a region when using topdown layout."
+        "The fixed size of a hierarchical node when using topdown layout."
     default = 100
 }
 
-programmatic option topdownRegionAspectRatio: double {
-    label "Topdown Region Aspect Ratio"
+programmatic option topdownHierarchicalNodeAspectRatio: double {
+    label "Topdown Hierarchical Node Aspect Ratio"
     description
-        "The fixed aspect ratio of a region when using topdown layout. Default is 1:sqrt(2)."
+        "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1:sqrt(2)."
     default = 1.414
+}
+
+programmatic option topdownNodeType: EnumSet<TopdownNodeTypes>{
+    label "Topdown Node Types"
+    description
+        "The different node types used for topdown layout."
 }
 
 // TODO: sort options properly
