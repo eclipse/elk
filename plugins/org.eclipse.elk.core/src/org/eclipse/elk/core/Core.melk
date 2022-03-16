@@ -825,7 +825,7 @@ programmatic option scaleFactor: double {
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
-programmatic option topdownLayout: boolean {
+option topdownLayout: boolean {
     label "Topdown Layout"
     description
         "Turns topdown layout on and off. If this option is enabled, hierarchical layout will be computed first for
@@ -834,36 +834,46 @@ programmatic option topdownLayout: boolean {
     default = false
 }
 
-programmatic option topdownScaleFactor: double {
-    label "Topdown Scale Factor"
-    description
-        "The scaling factor to be applied to the nodes laid out within the node in recursive topdown
-         layout. The difference to 'Scale Factor' is that the node itself is not scaled."
-    lowerBound = ExclusiveBounds.greaterThan(0)
-    default = 1
-    targets nodes
-}
-
-// TODO: region is an sccharts specific term, something more general might be more appropriate
-programmatic option topdownHierarchicalNodeWidth: double {
-    label "Topdown Hierarchical Node Width"
-    description
-        "The fixed size of a hierarchical node when using topdown layout."
-    default = 100
-}
-
-programmatic option topdownHierarchicalNodeAspectRatio: double {
-    label "Topdown Hierarchical Node Aspect Ratio"
-    description
-        "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1:sqrt(2)."
-    default = 1.414
-}
-
-programmatic option topdownNodeType: TopdownNodeTypes{
-    label "Topdown Node Type"
-    description
-        "The different node types used for topdown layout."
-    default = TopdownNodeTypes.NONE
+group topdown {
+    programmatic option scaleFactor: double {
+        label "Topdown Scale Factor"
+        description
+            "The scaling factor to be applied to the nodes laid out within the node in recursive topdown
+             layout. The difference to 'Scale Factor' is that the node itself is not scaled. This value has to be set on 
+             hierarchical nodes."
+        lowerBound = ExclusiveBounds.greaterThan(0)
+        default = 1
+        targets parents
+        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
+    
+    advanced option hierarchicalNodeWidth: double {
+        label "Topdown Hierarchical Node Width"
+        description
+            "The fixed size of a hierarchical node when using topdown layout. This value has to be set on parallel 
+             nodes."
+        default = 100
+        targets parents
+        requires nodeType == TopdownNodeTypes.PARALLEL_NODE
+    }
+    
+    advanced option hierarchicalNodeAspectRatio: double {
+        label "Topdown Hierarchical Node Aspect Ratio"
+        description
+            "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1:sqrt(2). This value 
+             has to be set on parallel nodes."
+        default = 1.414
+        targets parents
+        requires nodeType == TopdownNodeTypes.PARALLEL_NODE
+    }
+    
+    programmatic option nodeType: TopdownNodeTypes{
+        label "Topdown Node Type"
+        description
+            "The different node types used for topdown layout."
+        default = TopdownNodeTypes.NONE
+        targets nodes
+    }
 }
 
 // TODO: sort options properly
