@@ -212,6 +212,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // recursively
                 if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
                         && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+                    
+                    System.out.println(layoutNode.getIdentifier() + " ---- " + layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE));
                                         
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
@@ -235,15 +237,21 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     // set state size of root node FIXME: how can I reliably get hold of the root state?
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
-                        int cols = (int) Math.ceil(Math.sqrt(layoutNode.getChildren().size()));
-                        double requiredWidth = cols * HIERARCHICAL_NODE_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                        double requiredHeight = cols * HIERARCHICAL_NODE_WIDTH/HIERARCHICAL_NODE_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
-                        layoutNode.setDimensions(requiredWidth, requiredHeight);
-                        System.out.println("Set root: " + layoutNode.getIdentifier() + " " + requiredWidth);
+                        // for theoretical multiple root nodes
+                        for (ElkNode rootNode : layoutNode.getChildren()) {
+                            int cols = (int) Math.ceil(Math.sqrt(rootNode.getChildren().size()));
+                            double requiredWidth = cols * HIERARCHICAL_NODE_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                            double requiredHeight = cols * HIERARCHICAL_NODE_WIDTH/HIERARCHICAL_NODE_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                            rootNode.setDimensions(requiredWidth, requiredHeight);
+                            rootNode.setProperty(CoreOptions.NODE_REQUIRED_WIDTH, requiredWidth);
+                            rootNode.setProperty(CoreOptions.NODE_REQUIRED_HEIGHT, requiredHeight);
+                            System.out.println("Set root: " + rootNode.getIdentifier() + " " + requiredWidth);
+                        }
                     }
                     
 
-                    // if node has size requirements, restore them //TODO: check whether this is still required when using fixedGraphSize
+                    // if node has size requirements, restore them
+                    // this affects states whose sizes are set by me before layered layout, this is probably a problem
                     if (layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_WIDTH) && layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_HEIGHT)) {
                         layoutNode.setDimensions(layoutNode.getProperty(CoreOptions.NODE_REQUIRED_WIDTH), layoutNode.getProperty(CoreOptions.NODE_REQUIRED_HEIGHT));
                     }
@@ -279,6 +287,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                     }
                         
+                    System.out.println(layoutNode.getChildren().get(0).getIdentifier() + " " + layoutNode.getChildren().get(0).getWidth());
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     System.out.println("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
@@ -299,6 +308,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     System.out.println("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
+                    System.out.println(layoutNode.getChildren().get(0).getIdentifier() + " " + layoutNode.getChildren().get(0).getWidth());
                     
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
                         topdownLayoutMonitor.log(layoutNode.getProperty(CoreOptions.ALGORITHM));
