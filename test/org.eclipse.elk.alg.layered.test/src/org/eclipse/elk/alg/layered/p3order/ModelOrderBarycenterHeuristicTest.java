@@ -49,11 +49,6 @@ public class ModelOrderBarycenterHeuristicTest {
     @ConfiguratorProvider
     public LayoutConfigurator preferEdgesWeightedConfigurator() {
         LayoutConfigurator config = new LayoutConfigurator();
-        config.configure(ElkNode.class).setProperty(
-                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
-                CrossingMinimizationStrategy.LAYER_SWEEP);
-        config.configure(ElkNode.class).setProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER,
-                true);
         return config;
     }    
 

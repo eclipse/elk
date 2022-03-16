@@ -94,9 +94,9 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
             // Resolve ordering constraints, since the model order barycenter heuristic does not only use barycenters
             // the constraints cannot be solved in that case.
             // FIXME That looks like a bad thing to do.
-            if (!layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+//            if (!layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
                 constraintResolver.processConstraints(layer);
-            }
+//            }
         }
     }
 
