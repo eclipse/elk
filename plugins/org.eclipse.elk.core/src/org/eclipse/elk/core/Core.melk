@@ -863,6 +863,7 @@ programmatic option topdownNodeType: TopdownNodeTypes{
     label "Topdown Node Type"
     description
         "The different node types used for topdown layout."
+    default = TopdownNodeTypes.NONE
 }
 
 // TODO: sort options properly

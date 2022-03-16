@@ -19,6 +19,11 @@ package org.eclipse.elk.core.options;
 public enum TopdownNodeTypes {
     
     /**
+     * Default type.
+     */
+    NONE,
+    
+    /**
      * A parallel node is a node whose layout is not scaled down to fit a fixed size. The parallel node's own 
      * size must be set according to the pre-computed required size of the contained layout.
      */
