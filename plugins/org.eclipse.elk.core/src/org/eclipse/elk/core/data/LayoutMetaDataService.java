@@ -34,7 +34,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Singleton class for access to the ELK layout meta data. This class is used globally to retrieve meta data for
- * automatic layout through ELK, which is given through the {@code layoutProviders} extension point.
+ * automatic layout through ELK.
  */
 public final class LayoutMetaDataService {
 
@@ -46,11 +46,23 @@ public final class LayoutMetaDataService {
     }
     
     /**
+     * Uses this classes default class loader to load the singleton instance of the layout data service.
+     *
+     * @return  the singleton instance
+     */
+    public static synchronized LayoutMetaDataService getInstance() {
+        return getInstance(null);
+    }
+    
+    /**
      * Returns the singleton instance of the layout data service.
+     *
+     * @param loader
+     *      The class loader object. This is not explicitly a class loader since elkjs cannot handle it.
      *
      * @return the singleton instance
      */
-    public static synchronized LayoutMetaDataService getInstance() {
+    public static synchronized LayoutMetaDataService getInstance(final Object loader) {
         if (instance == null) {
             instance = new LayoutMetaDataService();
             
@@ -62,7 +74,8 @@ public final class LayoutMetaDataService {
             
             // Invoke service loading to register all meta data providers automatically (this does not work if we're
             // running on Equinox since this will only find services in the realm of this class's class loader)
-            for (ILayoutMetaDataProvider provider : java.util.ServiceLoader.load(ILayoutMetaDataProvider.class)) {
+            for (ILayoutMetaDataProvider provider : java.util.ServiceLoader.load(ILayoutMetaDataProvider.class,
+                    (ClassLoader) loader)) {
                 instance.registerLayoutMetaDataProviders(provider);
             }
 
@@ -162,9 +175,7 @@ public final class LayoutMetaDataService {
     private final Map<String, LayoutOptionData> optionSuffixMap = Maps.newHashMap();
 
     /**
-     * Registers the data provided by the given meta data providers with the meta data service. This method doesn't
-     * need to be called if ELK is used in an Eclipse context, since the service plug-in automatically registers all
-     * providers known through the {@code layoutProviders} extension point.
+     * Registers the data provided by the given meta data providers with the meta data service.
      *
      * @param providers
      *            the providers to register.

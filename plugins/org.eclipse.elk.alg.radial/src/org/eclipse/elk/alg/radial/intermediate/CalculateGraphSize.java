@@ -25,7 +25,8 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
 
     /** Shift the nodes such that each nodes has x and y coordinates bigger 0. */
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-
+        progressMonitor.begin("Calculate Graph Size", 1);
+        progressMonitor.logGraph(graph, "Before");
         // calculate the offset from border spacing and node distribution
         double minXPos = Double.MAX_VALUE;
         double minYPos = Double.MAX_VALUE;
@@ -60,5 +61,6 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
         double height = maxYPos - minYPos + padding.getVertical();
         graph.setWidth(width);
         graph.setHeight(height);
+        progressMonitor.logGraph(graph, "After");
     }
 }
