@@ -176,7 +176,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                         if (dummyNode == null) {
                             dummyNode = LGraphUtil.createExternalPortDummy(port,
                                     portConstraints, port.getSide(), -port.getNetFlow(),
-                                    null, null, port.getSize(),
+                                    null, new KVector(), port.getSize(),
                                     nestedGraph.getProperty(LayeredOptions.DIRECTION), nestedGraph);
                             dummyNode.setProperty(InternalProperties.ORIGIN, port);
                             dummyNodeMap.put(port, dummyNode);
