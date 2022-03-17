@@ -215,6 +215,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
                         // for theoretical multiple root nodes
                         for (ElkNode rootNode : layoutNode.getChildren()) {
+                            // TODO: here this calculation also needs to be switchable depending on the layout 
+                            //       algorithm used for the parallel nodes
                             double hierarchicalNodeWidth = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                             double hierarchicalNodeAspectRatio = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                             
@@ -241,7 +243,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 // what is here now is specific to topdownpacking, and this should be externalized and included with the 
                                 // algorithms, this will result in clearly defined support of topdown layout by the algorithms
                                 // TODO: design sensible mechanism to facilitate this switching
-                                // TODO: this doesn't cover the very first initial case (root scchart)
                                 double hierarchicalNodeWidth = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                                 double hierarchicalNodeAspectRatio = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                                 
@@ -257,17 +258,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     System.out.println("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
-                    // Normally layout algorithms adjust the size of the layoutNode at the end to resize it to appropriately fit the 
-                    // the computed layout of the children. For topdown layout this is a big issue, because we actually
-                    // need the layoutNode to keep it's own size so that we can subsequently shrink down the children
-                    // if node is a region, resize it after layered altered its size
-                    // TODO: this should no longer be necessary with fixed graph size, remove 
-                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
-                        //layoutNode.setDimensions(oldWidth, oldHeight);
-                        //System.out.println("After Resetting old dimensions: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
-                    }
-                    //layoutNode.setWidth(oldWidth);
-                    //layoutNode.setHeight(oldHeight);
+
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
@@ -279,10 +270,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
                         topdownLayoutMonitor.log(layoutNode.getProperty(CoreOptions.ALGORITHM));
                         System.out.println(layoutNode.getProperty(CoreOptions.ALGORITHM));
-                        // determine dimensions of child area 
-                        // TODO: we don't actually know how big the child area will be
-                        //       because it depends on the number of regions in it, so we need to look ahead
-                        
+
                         // padding is handled on layout algorithm level, we do not need to take it into account here
                         // apparently padding is sometimes handled in different ways)
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
@@ -316,6 +304,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         System.out.println("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
+                        // TODO: fix the calculation
                         // compute translation vector to keep children centered in child area, 
                         // this is necessary because the aspect ratio is not the same as the parent aspect ratio
                         double xShift = 0;
