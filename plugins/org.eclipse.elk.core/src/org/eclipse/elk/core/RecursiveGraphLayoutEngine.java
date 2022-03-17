@@ -63,9 +63,6 @@ import com.google.common.collect.Lists;
  */
 public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     
-    private double HIERARCHICAL_NODE_WIDTH;
-    private double HIERARCHICAL_NODE_ASPECT_RATIO;
-    
     /**
      * Performs recursive layout on the given layout graph.
      * 
@@ -85,12 +82,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     public void layout(final ElkNode layoutGraph, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
-        // If using topdown layout get relevant properties
-        if (layoutGraph.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
-                && layoutGraph.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
-            HIERARCHICAL_NODE_WIDTH = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
-            HIERARCHICAL_NODE_ASPECT_RATIO = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
-        }
         
         int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
@@ -220,40 +211,21 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     double nodeNodeSpacing = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
                     
-                    // propagate properties
-                    for (ElkNode node : layoutNode.getChildren()) {
-                     // TODO: think about whether it is possible to have mixed topdown and bottomup layout
-                        //       for now just recursively set all children to topdown as well
-                        // set mode to topdown layout, this could potentially be handled differently in the future
-                        // Leave this on, because currently only set in statesynthesis, but would need to be set in 
-                        // regionsynthesis too
-                        // TODO: make a decision on how to handle this (global values, that are sometimes also node specific
-                        node.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
-                        // this needs to be set (technically only for regions), because top down packing needs the 
-                        // value to be set on the regions
-                        node.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, HIERARCHICAL_NODE_WIDTH);
-                        node.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, HIERARCHICAL_NODE_ASPECT_RATIO);
-                    }
-                    
-                    // set state size of root node FIXME: how can I reliably get hold of the root state?
+                    // set state size of root node(s)
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
                         // for theoretical multiple root nodes
                         for (ElkNode rootNode : layoutNode.getChildren()) {
+                            double hierarchicalNodeWidth = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+                            double hierarchicalNodeAspectRatio = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+                            
                             int cols = (int) Math.ceil(Math.sqrt(rootNode.getChildren().size()));
-                            double requiredWidth = cols * HIERARCHICAL_NODE_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                            double requiredHeight = cols * HIERARCHICAL_NODE_WIDTH/HIERARCHICAL_NODE_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                            double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                            double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
                             rootNode.setDimensions(requiredWidth, requiredHeight);
                             rootNode.setProperty(CoreOptions.NODE_REQUIRED_WIDTH, requiredWidth);
                             rootNode.setProperty(CoreOptions.NODE_REQUIRED_HEIGHT, requiredHeight);
                             System.out.println("Set root: " + rootNode.getIdentifier() + " " + requiredWidth);
                         }
-                    }
-                    
-
-                    // if node has size requirements, restore them
-                    // this affects states whose sizes are set by me before layered layout, this is probably a problem
-                    if (layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_WIDTH) && layoutNode.hasProperty(CoreOptions.NODE_REQUIRED_HEIGHT)) {
-                        //layoutNode.setDimensions(layoutNode.getProperty(CoreOptions.NODE_REQUIRED_WIDTH), layoutNode.getProperty(CoreOptions.NODE_REQUIRED_HEIGHT));
                     }
                     
                     double oldWidth = layoutNode.getWidth();
@@ -264,25 +236,21 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // if we are currently in a region and about to produce a layered layout,
                     // then we need to step through the states and set the sizes of the states
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
-                        for (ElkNode child : layoutNode.getChildren()) {
+                        for (ElkNode parallelNode : layoutNode.getChildren()) {
                             // check if child has children, if yes its size needs to be pre-computed before computing the layout
-                            if (child.getChildren().size() > 0) {
+                            if (parallelNode.getChildren().size() > 0) {
                                 // TODO: predict required size of node depending on the algorithm that will be used
                                 // what is here now is specific to topdownpacking, and this should be externalized and included with the 
                                 // algorithms, this will result in clearly defined support of topdown layout by the algorithms
                                 // TODO: design sensible mechanism to facilitate this switching
                                 // TODO: this doesn't cover the very first initial case (root scchart)
-                                int cols = (int) Math.ceil(Math.sqrt(child.getChildren().size()));
-                                double requiredWidth = cols * HIERARCHICAL_NODE_WIDTH + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                                double requiredHeight = cols * HIERARCHICAL_NODE_WIDTH/HIERARCHICAL_NODE_ASPECT_RATIO + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
-                                child.setDimensions(requiredWidth, requiredHeight);
-                                // the values I set here are getting lost again
-                                // try storing values in properties and restoring them later
-                                // this might not work though, because I assume during the layered layout they are being
-                                // set and laid out accordingly, in which case I will need to make modifications there
-                                // sort of seems to do what it should although the size is now not quite right for some reason
-                                child.setProperty(CoreOptions.NODE_REQUIRED_WIDTH, requiredWidth);
-                                child.setProperty(CoreOptions.NODE_REQUIRED_HEIGHT, requiredHeight);
+                                double hierarchicalNodeWidth = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+                                double hierarchicalNodeAspectRatio = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+                                
+                                int cols = (int) Math.ceil(Math.sqrt(parallelNode.getChildren().size()));
+                                double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                                double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                                parallelNode.setDimensions(requiredWidth, requiredHeight);
                             }
                         }
                     }
@@ -297,8 +265,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // if node is a region, resize it after layered altered its size
                     // TODO: this should no longer be necessary with fixed graph size, remove 
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
-                        layoutNode.setDimensions(oldWidth, oldHeight);
-                        System.out.println("After Resetting old dimensions: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
+                        //layoutNode.setDimensions(oldWidth, oldHeight);
+                        //System.out.println("After Resetting old dimensions: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     }
                     //layoutNode.setWidth(oldWidth);
                     //layoutNode.setHeight(oldHeight);
@@ -344,8 +312,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
                         //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
                         double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                        layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                        // layoutNode.setProperty(CoreOptions.SCALE_FACTOR, scaleFactor);
+                        // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
+                        layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, 0.5);
                         topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         System.out.println("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
@@ -387,7 +355,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     // Apply the LayoutOptions.SCALE_FACTOR if present
                     // TODO: temporary disable here
-                    // ElkUtil.applyConfiguredNodeScaling(child);
+                    ElkUtil.applyConfiguredNodeScaling(child);
                 }
             }
 
