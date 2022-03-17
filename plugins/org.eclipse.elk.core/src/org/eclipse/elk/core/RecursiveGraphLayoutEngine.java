@@ -203,9 +203,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // recursively
                 if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
                         && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
-                    
-                    System.out.println(layoutNode.getIdentifier() + " ---- " + layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE));
-                                        
+                                                            
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
@@ -224,14 +222,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
                             double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
                             rootNode.setDimensions(requiredWidth, requiredHeight);
-                            System.out.println("Set root: " + rootNode.getIdentifier() + " " + requiredWidth);
                         }
                     }
-                    
-                    double oldWidth = layoutNode.getWidth();
-                    double oldHeight = layoutNode.getHeight();
-                    topdownLayoutMonitor.log("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
-                    System.out.println("Before Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
                     
                     // if we are currently in a region and about to produce a layered layout,
                     // then we need to step through the states and set the sizes of the states
@@ -254,10 +246,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                     }
                         
-                    System.out.println(layoutNode.getChildren().get(0).getIdentifier() + " " + layoutNode.getChildren().get(0).getWidth());
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
-                    topdownLayoutMonitor.log("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
-                    System.out.println("After Layout: " + layoutNode.getIdentifier() + " " + layoutNode.getWidth() + " " + layoutNode.getHeight());
 
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
@@ -268,9 +257,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     System.out.println(layoutNode.getChildren().get(0).getIdentifier() + " " + layoutNode.getChildren().get(0).getWidth());
                     
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
-                        topdownLayoutMonitor.log(layoutNode.getProperty(CoreOptions.ALGORITHM));
-                        System.out.println(layoutNode.getProperty(CoreOptions.ALGORITHM));
 
+                        // TODO: the calculation of available area is definitely having issues
                         // padding is handled on layout algorithm level, we do not need to take it into account here
                         // apparently padding is sometimes handled in different ways)
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
@@ -296,13 +284,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // compute scaleFactor
                         double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
                         double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
+                        // TODO: eventually the scale factor should always be capped at one, because we want to avoid upscaling
                         //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
                         double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         // Below line for testing rendering
                         // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, 0.5);
-                        topdownLayoutMonitor.log("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
-                        System.out.println("Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
+                        topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
+                        System.out.println(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
                         // TODO: fix the calculation
                         // compute translation vector to keep children centered in child area, 
@@ -326,10 +315,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                         
                         // log child sizes
+                        // TODO: remove this logging
+                        /**
                         for (ElkNode node : layoutNode.getChildren()) {
                             topdownLayoutMonitor.log(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
                             System.out.println(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
                         }
+                        */
                     }
                     topdownLayoutMonitor.done();
                 } else {

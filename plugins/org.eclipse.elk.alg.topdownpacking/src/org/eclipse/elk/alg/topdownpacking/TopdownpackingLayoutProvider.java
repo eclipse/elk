@@ -55,10 +55,6 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         int currentCol = 0;
         int currentRow = 0;
         
-        // for keeping track of child area, (omit padding)
-        double totalWidth = padding.left;
-        double totalHeight = padding.top;
-        
         // get hierarchical node sizes from parent for this layout
         double desiredNodeWidth = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
         double aspectRatio = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
@@ -66,25 +62,18 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         for (ElkNode node : nodes) {
             // Set the node's size            
             node.setDimensions(desiredNodeWidth, desiredNodeWidth/aspectRatio);
-            System.out.println("During TDP: " + node.getIdentifier() + " " + node.getWidth() + " " + node.getHeight());
             // Set the node's coordinates
             node.setX(currX);
             node.setY(currY);
             nodePlacingMonitor.log("currX: " + currX);
             nodePlacingMonitor.log("currY: " + currY);
             
-            if (currY + desiredNodeWidth/aspectRatio > totalHeight) {
-                totalHeight = currY + desiredNodeWidth/aspectRatio;
-            }
-            
             nodePlacingMonitor.logGraph(layoutGraph, node.getIdentifier() + " placed in (" + currentCol + "|" + currentRow + ")");
             
             // Advance the coordinates
             currX += node.getWidth() + nodeNodeSpacing;
-            if (currX > totalWidth) {
-                totalWidth = currX;
-            }
             currentCol += 1;
+            
             // go to next row if no space left
             // sizes are pre-computed so that everything fits nicely
             if (currentCol >= cols) {
@@ -119,18 +108,6 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
             }
         }
         */
-        
-        
-        // store child area as property, remove final superfluous nodeNodeSpacing
-        if (totalWidth > padding.left) {
-            totalWidth -= nodeNodeSpacing;
-        }
-        totalWidth += padding.right;
-        
-        totalHeight += padding.bottom;
-        // TODO: not sure whether this is actually necessary, because the region layout area is never scaled, so we don't care about its size
-        layoutGraph.setProperty(CoreOptions.CHILD_AREA_WIDTH, totalWidth);
-        layoutGraph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, totalHeight);
         
         
         // Close the sub monitor
