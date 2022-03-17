@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial.intermediate.overlaps;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -21,7 +22,9 @@ public interface IOverlapRemoval {
      * Remove the existing overlaps from the graph.
      * 
      * @param graph
-     *            The graph where all nodes are positioned but overlaps may appear.
+     *          The graph where all nodes are positioned but overlaps may appear.
+     * @param progressMonitor
+     *          The progress monitor
      */
-    void removeOverlaps(ElkNode graph);
+    void removeOverlaps(ElkNode graph, IElkProgressMonitor progressMonitor);
 }
