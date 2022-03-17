@@ -67,7 +67,7 @@ public class ForsterConstraintResolverTest {
                 if (node.hasProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS)) {
                     boolean violation = node.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).stream()
                             .anyMatch(n -> encounteredNodes.contains(n));
-                    assertFalse(violation);
+                    assertFalse("Successor constraints are not respected for " + node, violation);
                 }
                 
                 encounteredNodes.add(node);
