@@ -222,8 +222,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
                             double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
                             rootNode.setDimensions(requiredWidth, requiredHeight);
-                            rootNode.setProperty(CoreOptions.NODE_REQUIRED_WIDTH, requiredWidth);
-                            rootNode.setProperty(CoreOptions.NODE_REQUIRED_HEIGHT, requiredHeight);
                             System.out.println("Set root: " + rootNode.getIdentifier() + " " + requiredWidth);
                         }
                     }

@@ -897,20 +897,6 @@ programmatic option childAreaHeight: double {
     targets nodes
 }
 
-programmatic option nodeRequiredWidth: double {
-    label"Required Node Width"
-    description
-        "The required width of the node, which has been pre-computed during the layout of its parent and needs to be set 
-         again."
-}
-
-programmatic option nodeRequiredHeight: double {
-    label"Required Node Height"
-    description
-        "The required height of the node, which has been pre-computed during the layout of its parent and needs to be set 
-         again."
-}
-
 // --- INSIDE SELF LOOPS
 group insideSelfLoops {
 
