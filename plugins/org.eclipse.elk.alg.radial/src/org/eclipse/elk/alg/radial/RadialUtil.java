@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -47,6 +48,28 @@ public final class RadialUtil {
      */
     public static List<ElkNode> getSuccessors(final ElkNode node) {
         List<ElkNode> successors = new ArrayList<>();
+        HashSet<ElkNode> children = new HashSet<ElkNode>(node.getChildren());
+        for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
+            if (!(outgoingEdge.getSources().get(0) instanceof ElkPort)) {
+                ElkNode target = ElkGraphUtil.connectableShapeToNode(outgoingEdge.getTargets().get(0));
+                if (!children.contains(target)) {
+                    successors.add(target);
+                }
+            }
+        }
+        return successors;
+    }
+
+    /**
+     * The nodes which succedes the given node in the tree. These are defined by the targets of all outgoing edges of
+     * the node.
+     * 
+     * @param node
+     *            A node.
+     * @return Set of neighbors with outgoing edges.
+     */
+    public static Set<ElkNode> getSuccessorSet(final ElkNode node) {
+        Set<ElkNode> successors = new HashSet<>();
         HashSet<ElkNode> children = new HashSet<ElkNode>(node.getChildren());
         for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
             if (!(outgoingEdge.getSources().get(0) instanceof ElkPort)) {
@@ -186,7 +209,20 @@ public final class RadialUtil {
             successors.addAll(nextLevelNodes);
         }
         return successors;
-
+    }
+    
+    /**
+     * Get set of the nodes in the next level.
+     * @param nodes The nodes in the current level
+     * @return The next nodes
+     */
+    public static Set<ElkNode> getNextLevelNodeSet(final List<ElkNode> nodes) {
+        Set<ElkNode> successors = new HashSet<ElkNode>();
+        for (ElkNode node : nodes) {
+            Set<ElkNode> nextLevelSet = getSuccessorSet(node);
+            successors.addAll(nextLevelSet);
+        }
+        return successors;
     }
 
     /**
