@@ -141,6 +141,7 @@ final class JsonImporter {
                     } else {
                         edge.transformPrimitiveEdge(node)
                     }
+                    ElkGraphUtil.updateContainment(edgeIdMap.get(edge.id))
                 }
             }
         ]
@@ -643,6 +644,8 @@ final class JsonImporter {
                 jsonObj.addJsonObj("junctionPoints", jsonJPs)
             }
         }
+
+        jsonObj.addJsonObj("container", edge.getContainingNode().identifier)
     }
     
     private def dispatch transferLayoutInt(ElkLabel label) {
