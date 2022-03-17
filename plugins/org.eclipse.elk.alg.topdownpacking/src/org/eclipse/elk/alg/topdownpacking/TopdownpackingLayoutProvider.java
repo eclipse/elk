@@ -59,10 +59,12 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         double totalWidth = padding.left;
         double totalHeight = padding.top;
         
+        // get hierarchical node sizes from parent for this layout
+        double desiredNodeWidth = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+        double aspectRatio = layoutGraph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+        
         for (ElkNode node : nodes) {
-            // Set the node's size
-            double desiredNodeWidth = node.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
-            double aspectRatio = node.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+            // Set the node's size            
             node.setDimensions(desiredNodeWidth, desiredNodeWidth/aspectRatio);
             System.out.println("During TDP: " + node.getIdentifier() + " " + node.getWidth() + " " + node.getHeight());
             // Set the node's coordinates
