@@ -9,10 +9,20 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
-import java.util.List;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.ConfiguratorProvider;
@@ -53,8 +63,10 @@ public class ModelOrderBarycenterHeuristicTest {
         config.configure(ElkNode.class).setProperty(
                 LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
                 CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.NODES_AND_EDGES);
         config.configure(ElkNode.class).setProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER,
-                false);
+                true);
         return config;
     }    
 
@@ -64,7 +76,20 @@ public class ModelOrderBarycenterHeuristicTest {
     // Just check for errors that might occur
 
     @TestAfterProcessor(LayerSweepCrossingMinimizer.class)
-    public void test(final Object graph) {
-        assert(true);
+    public void testModelOrderRespected(final Object graph) {
+        for (Layer layer : (LGraph) graph) {
+            // We iterate over the layer's nodes check whether the real nodes (the one with a model order)
+            // are correctly ordered.
+            int modelOrder = -1;
+            for (LNode node : layer) {
+                if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                    int newModelOrder = node.getProperty(InternalProperties.MODEL_ORDER);
+                    assertTrue("Node " + node + " has model order " + newModelOrder
+                                    + ", which is smaller than the previous model order of " + modelOrder,
+                            newModelOrder > modelOrder);
+                    modelOrder = newModelOrder;
+                }
+            }
+        }
     }
 }
