@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p3order.InteractiveCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.layered.p3order.NoCrossingMinimizer;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
@@ -40,7 +41,12 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory<LayeredP
      * a node, that movement is reflected in the ordering of nodes.
      */
     @AdvancedPropertyValue
-    INTERACTIVE;
+    INTERACTIVE,
+
+    /**
+     * Allows to do no crossing minimization. This requires to also set {@link GreedySwitchType} to off.
+     */
+    NONE;
     
 
     @Override
@@ -51,6 +57,9 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory<LayeredP
             
         case INTERACTIVE:
             return new InteractiveCrossingMinimizer();
+            
+        case NONE:
+            return new NoCrossingMinimizer();
             
         default:
             throw new IllegalArgumentException(
