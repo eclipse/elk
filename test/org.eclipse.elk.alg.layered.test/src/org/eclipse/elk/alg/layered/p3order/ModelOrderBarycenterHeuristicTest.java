@@ -54,7 +54,7 @@ public class ModelOrderBarycenterHeuristicTest {
                 LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
                 CrossingMinimizationStrategy.LAYER_SWEEP);
         config.configure(ElkNode.class).setProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER,
-                true);
+                false);
         return config;
     }    
 
