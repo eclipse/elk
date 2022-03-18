@@ -15,6 +15,7 @@ import java.util.Queue;
 import org.eclipse.elk.core.data.DeprecatedLayoutOptionReplacer;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
@@ -206,8 +207,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                                             
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
-                    ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
-                    double nodeNodeSpacing = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
                     
                     // set state size of root node(s)
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
@@ -215,6 +214,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         for (ElkNode rootNode : layoutNode.getChildren()) {
                             // TODO: here this calculation also needs to be switchable depending on the layout 
                             //       algorithm used for the parallel nodes
+                            
+                            // get relevant properties
+                            ElkPadding padding = rootNode.getProperty(CoreOptions.PADDING);
+                            double nodeNodeSpacing = rootNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+                            
                             double hierarchicalNodeWidth = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                             double hierarchicalNodeAspectRatio = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                             
@@ -222,6 +226,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
                             double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
                             rootNode.setDimensions(requiredWidth, requiredHeight);
+                            System.out.println("ROOT required width: " + requiredWidth);
+                            System.out.println("ROOT required height: " + requiredHeight);
                         }
                     }
                     
@@ -235,6 +241,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 // what is here now is specific to topdownpacking, and this should be externalized and included with the 
                                 // algorithms, this will result in clearly defined support of topdown layout by the algorithms
                                 // TODO: design sensible mechanism to facilitate this switching
+                                
+                                // get relevant properties
+                                ElkPadding padding = parallelNode.getProperty(CoreOptions.PADDING);
+                                double nodeNodeSpacing = parallelNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+                                
                                 double hierarchicalNodeWidth = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                                 double hierarchicalNodeAspectRatio = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                                 
@@ -258,9 +269,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
 
-                        // TODO: the calculation of available area is definitely having issues
-                        // padding is handled on layout algorithm level, we do not need to take it into account here
-                        // apparently padding is sometimes handled in different ways)
+                        // get relevant properties
+                        ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
+                        
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
                         double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
                         topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
@@ -310,8 +321,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         for (ElkNode node : layoutNode.getChildren()) {
                             // topdownLayoutMonitor.log(node.getX());
                             // shift all nodes in layout
-                            node.setX(node.getX() + xShift);
-                            node.setY(node.getY() + yShift); // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
+                            //node.setX(node.getX() + xShift);
+                            //node.setY(node.getY() + yShift); // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
                         }
                         
                         // log child sizes

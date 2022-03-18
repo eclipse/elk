@@ -25,7 +25,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         // Start progress monitor
         progressMonitor.begin("Topdownpacking", 1);
         progressMonitor.log("Algorithm began for node " + layoutGraph.getIdentifier());
-                
+        
         ElkPadding padding = layoutGraph.getProperty(TopdownpackingOptions.PADDING);
         double nodeNodeSpacing = layoutGraph.getProperty(TopdownpackingOptions.SPACING_NODE_NODE);
         
@@ -38,7 +38,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
         IElkProgressMonitor nodeArrangementMonitor = progressMonitor.subTask(1);
         nodeArrangementMonitor.begin("Node Arrangement", 1);
         // Compute number of rows and columns to use to arrange nodes to maintain the aspect ratio
-        // TODO: 0 nodes are forbidden, need to error check this
+        // TODO: 0 nodes are forbidden, need to error check this or don't I because isn't called for 0 nodes anyway?
         int cols = (int) Math.ceil(Math.sqrt(nodes.size()));
         
         nodeArrangementMonitor.log(layoutGraph.getIdentifier() + "\nPlacing " + nodes.size() + " nodes in " + cols + " columns.");
