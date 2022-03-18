@@ -222,9 +222,16 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             double hierarchicalNodeWidth = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                             double hierarchicalNodeAspectRatio = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                             
-                            int cols = (int) Math.ceil(Math.sqrt(rootNode.getChildren().size()));
+                            int N = rootNode.getChildren().size();
+                            int cols = (int) Math.ceil(Math.sqrt(N));
                             double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                            double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                            int rows;
+                            if (N > cols * cols - cols) {
+                                rows = cols;
+                            } else { // N <= W^2 - W
+                                rows = cols - 1;
+                            }
+                            double requiredHeight = rows * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (rows - 1)*nodeNodeSpacing;
                             rootNode.setDimensions(requiredWidth, requiredHeight);
                             System.out.println("ROOT required width: " + requiredWidth);
                             System.out.println("ROOT required height: " + requiredHeight);
@@ -249,9 +256,16 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 double hierarchicalNodeWidth = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                                 double hierarchicalNodeAspectRatio = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                                 
-                                int cols = (int) Math.ceil(Math.sqrt(parallelNode.getChildren().size()));
+                                int N = parallelNode.getChildren().size();
+                                int cols = (int) Math.ceil(Math.sqrt(N));
                                 double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                                double requiredHeight = cols * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (cols - 1)*nodeNodeSpacing;
+                                int rows;
+                                if (N > cols * cols - cols) {
+                                    rows = cols;
+                                } else { // N <= W^2 - W
+                                    rows = cols - 1;
+                                }
+                                double requiredHeight = rows * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (rows - 1)*nodeNodeSpacing;
                                 parallelNode.setDimensions(requiredWidth, requiredHeight);
                             }
                         }
