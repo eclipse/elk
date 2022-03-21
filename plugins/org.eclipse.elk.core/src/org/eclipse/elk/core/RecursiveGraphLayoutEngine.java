@@ -319,6 +319,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         System.out.println(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
+                        // TODO: this shift doesn't center anything, it only preserves the intended paddings
+                        //       is a centering shift desired? and how does it relate to white space elimination
                         double xShift = padding.left - padding.left * scaleFactor;
                         double yShift = padding.top - padding.top * scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
