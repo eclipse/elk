@@ -323,33 +323,29 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // when scaling the layout the space around the shrinks as well and therefore
                         // this shrunk padding needs to be recalculated and the entire drawing offset to 
                         // maintain the original padding
-                        double xShift = 0;
-                        double yShift = 0;
-                        if (scaleFactorX > scaleFactorY) {
-                            // horizontal shift necessary
-                            // TODO: still a little off, maybe need to consider padding here
-                            xShift = 0.5 * (childAreaAvailableWidth - childAreaDesiredWidth * scaleFactorY);
-                        } else {
-                            // vertical shift necessary
-                            yShift = 0.5 * (childAreaAvailableHeight - childAreaDesiredHeight * scaleFactorX);
-                        }
+                        System.out.println(layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE) + " " + padding);
+                        double xShift = padding.left - padding.left * scaleFactor;
+                        double yShift = padding.top - padding.top * scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
+                        System.out.println("Shift: (" + xShift + "|" + yShift + ")");
+                        // shift all nodes in layout
                         for (ElkNode node : layoutNode.getChildren()) {
                             // shift all nodes in layout
                             node.setX(node.getX() + xShift);
                             node.setY(node.getY() + yShift); 
-                            // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
-                            // TODO: or just go through edges and shift all bend points
                         }
-                        
-                        // log child sizes
-                        // TODO: remove this logging
-                        /**
-                        for (ElkNode node : layoutNode.getChildren()) {
-                            topdownLayoutMonitor.log(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
-                            System.out.println(node.getIdentifier() + ": (" + node.getWidth() + "|" + node.getHeight() + ")");
+                        // shift all edges
+                        for (ElkEdge edge : layoutNode.getContainedEdges()) {
+                            for (ElkEdgeSection section : edge.getSections()) {
+                                section.setStartLocation(section.getStartX() + xShift, section.getStartY() + yShift);
+                                section.setEndLocation(section.getEndX() + xShift, section.getEndY() + yShift);
+                                for (ElkBendPoint bendPoint : section.getBendPoints()) {
+                                    bendPoint.set(bendPoint.getX() + xShift, bendPoint.getY() + yShift);
+                                }
+                            }
                         }
-                        */
+                        // TODO: shift edge labels
+                        // TODO: anything else that needs to be shifted?
                     }
                     topdownLayoutMonitor.done();
                 } else {
