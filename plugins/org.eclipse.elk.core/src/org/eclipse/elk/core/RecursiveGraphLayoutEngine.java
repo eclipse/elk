@@ -318,12 +318,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         System.out.println(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
-                        // TODO: fix the calculation
-                        // compute translation vector to keep children centered in child area, 
-                        // when scaling the layout the space around the shrinks as well and therefore
-                        // this shrunk padding needs to be recalculated and the entire drawing offset to 
-                        // maintain the original padding
-                        System.out.println(layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE) + " " + padding);
                         double xShift = padding.left - padding.left * scaleFactor;
                         double yShift = padding.top - padding.top * scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
