@@ -216,8 +216,10 @@ final class GraphConfigurator {
             configuration.addAll(LABEL_MANAGEMENT_ADDITIONS);
         }
         
-        // If the graph should be laid out interactively, add the layers and positions to the nodes.
-        if (lgraph.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)) {
+        // If the graph should be laid out interactively or you really want it,
+        // add the layers and positions to the nodes.
+        if (lgraph.getProperty(LayeredOptions.INTERACTIVE_LAYOUT)
+                || lgraph.getProperty(LayeredOptions.GENERATE_POSITION_AND_LAYER_IDS)) {
             configuration.addAfter(LayeredPhases.P5_EDGE_ROUTING, 
                     IntermediateProcessorStrategy.CONSTRAINTS_POSTPROCESSOR);
         }
