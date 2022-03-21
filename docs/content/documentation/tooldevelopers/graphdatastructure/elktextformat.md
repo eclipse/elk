@@ -4,7 +4,7 @@ menu:
   main:
     identifier: "ElkTextFormat"
     parent: "GraphDataStructure"
-    weight: 40
+    weight: 50
 ---
 
 Documentation is coming soon. For the moment you can find an example

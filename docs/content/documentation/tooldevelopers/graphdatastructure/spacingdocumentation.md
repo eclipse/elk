@@ -2,7 +2,8 @@
 title: "Spacing Options"
 menu:
   main:
-    parent: "Layoutoptions"
+    identifier: "SpacingOptions"
+    parent: "GraphDataStructure"
     weight: 30
 
 ---
