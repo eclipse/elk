@@ -208,39 +208,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     
-                    // set state size of root node(s)
-                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
-                        // for theoretical multiple root nodes
-                        for (ElkNode rootNode : layoutNode.getChildren()) {
-                            // TODO: here this calculation also needs to be switchable depending on the layout 
-                            //       algorithm used for the parallel nodes
-                            
-                            // get relevant properties
-                            ElkPadding padding = rootNode.getProperty(CoreOptions.PADDING);
-                            double nodeNodeSpacing = rootNode.getProperty(CoreOptions.SPACING_NODE_NODE);
-                            
-                            double hierarchicalNodeWidth = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
-                            double hierarchicalNodeAspectRatio = rootNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
-                            
-                            int N = rootNode.getChildren().size();
-                            int cols = (int) Math.ceil(Math.sqrt(N));
-                            double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
-                            int rows;
-                            if (N > cols * cols - cols) {
-                                rows = cols;
-                            } else { // N <= W^2 - W
-                                rows = cols - 1;
-                            }
-                            double requiredHeight = rows * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (rows - 1)*nodeNodeSpacing;
-                            rootNode.setDimensions(requiredWidth, requiredHeight);
-                            System.out.println("ROOT required width: " + requiredWidth);
-                            System.out.println("ROOT required height: " + requiredHeight);
-                        }
-                    }
-                    
                     // if we are currently in a region and about to produce a layered layout,
                     // then we need to step through the states and set the sizes of the states
-                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
+                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
+                            || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
                         for (ElkNode parallelNode : layoutNode.getChildren()) {
                             // check if child has children, if yes its size needs to be pre-computed before computing the layout
                             if (parallelNode.getChildren().size() > 0) {
@@ -283,7 +254,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
 
-                        // get relevant properties
                         ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                         
                         // TODO: this value can become negative if the set node size becomes smaller than the padding of the node
@@ -296,7 +266,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         System.out.println("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
                         
                         
-                        // check whether child area has been set, and if it hasn't run the util function to determine area
+                        // check whether child area has been set, and if it hasn't run the util function 
+                        // to determine the size of the area
                         if (!(layoutNode.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH) 
                                 || layoutNode.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT))) {
                             // compute child area if it hasn't been set by the layout algorithm
@@ -314,10 +285,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double scaleFactorY = childAreaAvailableHeight / childAreaDesiredHeight;
                         // TODO: eventually the scale factor should always be capped at one, because we want to avoid upscaling
                         boolean CAP_SCALE = true;
+                        double scaleFactor = 0;
                         if (CAP_SCALE) {
-                            double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1));
+                            scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1));
                         } else {
-                            double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                            scaleFactor = Math.min(scaleFactorX, scaleFactorY);
                         }
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
@@ -325,6 +297,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         // TODO: this shift doesn't center anything, it only preserves the intended paddings
                         //       is a centering shift desired? and how does it relate to white space elimination?
+                        // TODO: also doesn't seem to be quite right, some edges sometimes are still "outside" the intended space
                         double xShift = padding.left - padding.left * scaleFactor;
                         double yShift = padding.top - padding.top * scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
@@ -362,7 +335,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
                     // Apply the LayoutOptions.SCALE_FACTOR if present
-                    // TODO: temporary disable here
                     ElkUtil.applyConfiguredNodeScaling(child);
                 }
             }

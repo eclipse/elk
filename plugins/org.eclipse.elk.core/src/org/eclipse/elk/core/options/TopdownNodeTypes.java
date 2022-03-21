@@ -37,9 +37,8 @@ public enum TopdownNodeTypes {
     HIERARCHICAL_NODE,
     
     /**
-     * The root node is like a parallel node, but it needs to be specifically marked, because for parallel nodes their
-     * sizes are set during the layout of a hierarchical node and the root node has no parent hierarchical node. 
-     * Therefore its size has to be set individually.
+     * The root node marks the root of the diagram, its child should be a single parallel node which is the visual
+     * root of the diagram.
      */
     ROOT_NODE
 
