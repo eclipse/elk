@@ -336,7 +336,7 @@ public final class HorizontalPortPlacementSizeCalculator {
                     // The label is either placed outside (right to the port) or possibly inside, but for a compound
                     // node, which means that it is placed right of the port as well to keep it from overlapping with
                     // inside edges
-                    portContext.portMargin.right = nodeContext.portLabelSpacing + labelWidth;
+                    portContext.portMargin.right = nodeContext.portLabelSpacingHorizontal + labelWidth;
                 }
             } else if (PortLabelPlacement.isFixed(nodeContext.portLabelsPlacement)) {
                 // The fixed port label is not considered with portContext.portLabelCell. Nevertheless, a port margin

@@ -78,11 +78,11 @@ public final class InsidePortLabelCellCreator {
         
         switch (portSide) {
         case NORTH:
-            padding.top = nodeContext.portLabelSpacing;
+            padding.top = nodeContext.portLabelSpacingVertical;
             break;
             
         case SOUTH:
-            padding.bottom = nodeContext.portLabelSpacing;
+            padding.bottom = nodeContext.portLabelSpacingVertical;
             break;
         }
         
@@ -127,11 +127,11 @@ public final class InsidePortLabelCellCreator {
         if (minCellSize.x > 0) {
             switch (portSide) {
             case EAST:
-                theAppropriateCell.getPadding().right = nodeContext.portLabelSpacing;
+                theAppropriateCell.getPadding().right = nodeContext.portLabelSpacingHorizontal;
                 break;
                 
             case WEST:
-                theAppropriateCell.getPadding().left = nodeContext.portLabelSpacing;
+                theAppropriateCell.getPadding().left = nodeContext.portLabelSpacingHorizontal;
                 break;
             }
         }

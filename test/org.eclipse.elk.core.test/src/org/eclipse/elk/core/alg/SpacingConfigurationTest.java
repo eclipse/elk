@@ -111,8 +111,9 @@ public class SpacingConfigurationTest {
                 { CoreOptions.SPACING_EDGE_LABEL },
                 { CoreOptions.SPACING_EDGE_NODE },
                 { CoreOptions.SPACING_LABEL_LABEL },
-                { CoreOptions.SPACING_LABEL_NODE }, 
-                { CoreOptions.SPACING_LABEL_PORT },
+                { CoreOptions.SPACING_LABEL_NODE },
+                { CoreOptions.SPACING_LABEL_PORT_HORIZONTAL },
+                { CoreOptions.SPACING_LABEL_PORT_VERTICAL },
                 { CoreOptions.SPACING_NODE_SELF_LOOP }, 
                 { CoreOptions.SPACING_PORT_PORT } 
             });
