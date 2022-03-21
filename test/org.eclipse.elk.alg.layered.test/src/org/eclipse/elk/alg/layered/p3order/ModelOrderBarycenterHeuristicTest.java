@@ -50,7 +50,7 @@ public class ModelOrderBarycenterHeuristicTest {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
-                new ModelResourcePath("realworld/ptolemy/**/").withFilter(new FileExtensionFilter("elkt")));
+                new ModelResourcePath("realworld/ptolemy/hierarchical/algebraic_heateropentank_HeaterOpenTank").withFilter(new FileExtensionFilter("elkt")));
     }
     
 
