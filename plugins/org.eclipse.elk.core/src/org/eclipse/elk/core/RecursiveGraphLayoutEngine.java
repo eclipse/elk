@@ -300,16 +300,17 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH);
                         double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT);
-                        // This desired child area is wrong, probably because the sizes are set and reset somewhere else
-                        // this causes the weird large scalings in places where they should be smaller than 1
+
                         topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
                         System.out.println("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
                         
+                        // TODO: sometimes some number here becomes negative, which results in a negative scale which
+                        //       can lead to undesired behaviour and crashes, negative numbers should never be created
                         // compute scaleFactor
                         double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
                         double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
                         // TODO: eventually the scale factor should always be capped at one, because we want to avoid upscaling
-                        //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1)); // restrict to 1 to see what happens
+                        //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1));
                         double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         // Below line for testing rendering
@@ -319,7 +320,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         // TODO: fix the calculation
                         // compute translation vector to keep children centered in child area, 
-                        // this is necessary because the aspect ratio is not the same as the parent aspect ratio
+                        // when scaling the layout the space around the shrinks as well and therefore
+                        // this shrunk padding needs to be recalculated and the entire drawing offset to 
+                        // maintain the original padding
                         double xShift = 0;
                         double yShift = 0;
                         if (scaleFactorX > scaleFactorY) {
@@ -332,10 +335,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
                         for (ElkNode node : layoutNode.getChildren()) {
-                            // topdownLayoutMonitor.log(node.getX());
                             // shift all nodes in layout
-                            //node.setX(node.getX() + xShift);
-                            //node.setY(node.getY() + yShift); // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
+                            node.setX(node.getX() + xShift);
+                            node.setY(node.getY() + yShift); 
+                            // this doesn't shift the edges, a translation of the whole part of the svg during rendering is probably the better way to do it
+                            // TODO: or just go through edges and shift all bend points
                         }
                         
                         // log child sizes
