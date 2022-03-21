@@ -832,6 +832,7 @@ option topdownLayout: boolean {
          the root node and then for its children recursively. Layouts are then scaled down to fit the area provided by
          their parents."
     default = false
+    targets parents
 }
 
 group topdown {
