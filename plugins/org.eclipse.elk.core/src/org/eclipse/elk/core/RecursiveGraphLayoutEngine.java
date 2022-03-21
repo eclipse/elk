@@ -286,6 +286,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // get relevant properties
                         ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                         
+                        // TODO: this value can become negative if the set node size becomes smaller than the padding of the node
+                        //       since we can't exactly no what padding will be set, the range for setting node sizes would have
+                        //       to dynamically check whether it works, or we just set it to some minimum here and users shouldn't
+                        //       be doing weird things
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
                         double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
                         topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
@@ -305,22 +309,22 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
                         System.out.println("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
                         
-                        // TODO: sometimes some number here becomes negative, which results in a negative scale which
-                        //       can lead to undesired behaviour and crashes, negative numbers should never be created
                         // compute scaleFactor
-                        double scaleFactorX = childAreaAvailableWidth/childAreaDesiredWidth;
-                        double scaleFactorY = childAreaAvailableHeight/childAreaDesiredHeight;
+                        double scaleFactorX = childAreaAvailableWidth / childAreaDesiredWidth;
+                        double scaleFactorY = childAreaAvailableHeight / childAreaDesiredHeight;
                         // TODO: eventually the scale factor should always be capped at one, because we want to avoid upscaling
-                        //double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1));
-                        double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                        boolean CAP_SCALE = true;
+                        if (CAP_SCALE) {
+                            double scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1));
+                        } else {
+                            double scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+                        }
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                        // Below line for testing rendering
-                        // layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, 0.5);
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         System.out.println(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
                         
                         // TODO: this shift doesn't center anything, it only preserves the intended paddings
-                        //       is a centering shift desired? and how does it relate to white space elimination
+                        //       is a centering shift desired? and how does it relate to white space elimination?
                         double xShift = padding.left - padding.left * scaleFactor;
                         double yShift = padding.top - padding.top * scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
@@ -345,7 +349,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 label.setLocation(label.getX() + xShift, label.getY() + yShift);
                             }
                         }
-                        // TODO: shift edge labels
                         // TODO: anything else that needs to be shifted?
                     }
                     topdownLayoutMonitor.done();
