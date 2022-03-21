@@ -202,8 +202,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 nodeCount = layoutNode.getChildren().size();
                 // If performing topdown layout, layout this node first, then compute scale factors and layout children
                 // recursively
-                if (layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
-                        && layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+                if (layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                                                             
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
