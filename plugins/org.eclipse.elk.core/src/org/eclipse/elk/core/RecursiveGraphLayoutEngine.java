@@ -298,6 +298,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // TODO: this shift doesn't center anything, it only preserves the intended paddings
                         //       is a centering shift desired? and how does it relate to white space elimination?
                         // TODO: also doesn't seem to be quite right, some edges sometimes are still "outside" the intended space
+                        //       not just edges, in large diagrams like wagon the error becomes obvious
                         double xShift = padding.left - padding.left * scaleFactor;
                         double yShift = padding.top - padding.top * scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
