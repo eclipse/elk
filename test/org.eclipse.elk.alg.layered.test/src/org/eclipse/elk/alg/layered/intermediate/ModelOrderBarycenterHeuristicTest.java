@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order;
+package org.eclipse.elk.alg.layered.intermediate;
 
 import static org.junit.Assert.assertTrue;
 
@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
 import org.eclipse.elk.alg.test.framework.annotations.ConfiguratorProvider;
