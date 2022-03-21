@@ -95,7 +95,7 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.EXTERNAL_PORT, 
                 LayeredOptions.SPACING_PORT_PORT);
         nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.LABEL, 
-                LayeredOptions.SPACING_LABEL_PORT);
+                LayeredOptions.SPACING_LABEL_PORT_VERTICAL, LayeredOptions.SPACING_LABEL_PORT_HORIZONTAL);
         
         // label
         nodeTypeSpacing(NodeType.LABEL,

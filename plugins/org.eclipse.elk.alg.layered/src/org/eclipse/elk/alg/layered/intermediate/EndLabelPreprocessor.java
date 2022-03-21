@@ -362,7 +362,7 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         
         RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
                 .createForDirection(portSideToOverlapRemovalDirection(portSide))
-                .withGap(labelLabelSpacing)
+                .withGap(labelLabelSpacing, labelLabelSpacing)
                 .withStartCoordinate(calculateOverlapStartCoordinate(node, portSide, edgeLabelSpacing));
         
         // Gather the rectangles
