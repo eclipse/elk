@@ -92,10 +92,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
             }
 
             // Resolve ordering constraints
-            if (!layer.get(0).getGraph().hasProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                || !layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
-                constraintResolver.processConstraints(layer);
-            }
+            constraintResolver.processConstraints(layer);
         }
     }
 
@@ -105,7 +102,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      * @param nodes
      *            a layer
      */
-    private void randomizeBarycenters(final List<LNode> nodes) {
+    protected void randomizeBarycenters(final List<LNode> nodes) {
         for (LNode node : nodes) {
             // Set barycenters only for nodeGroups containing a single node.
             stateOf(node).barycenter = random.nextDouble();
@@ -122,7 +119,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      * @param preOrdered
      *            whether the nodeGroups have been ordered in a previous run.
      */
-    private void fillInUnknownBarycenters(final List<LNode> nodes, final boolean preOrdered) {
+    protected void fillInUnknownBarycenters(final List<LNode> nodes, final boolean preOrdered) {
         // Determine placements for nodes with undefined barycenter value
         if (preOrdered) {
             double lastValue = -1;
@@ -184,7 +181,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
      * @param forward
      *            {@code true} if the current sweep moves forward
      */
-    private void calculateBarycenters(final List<LNode> nodes, final boolean forward) {
+    protected void calculateBarycenters(final List<LNode> nodes, final boolean forward) {
         // Set all visited flags to false
         for (LNode node : nodes) {
             stateOf(node).visited = false;

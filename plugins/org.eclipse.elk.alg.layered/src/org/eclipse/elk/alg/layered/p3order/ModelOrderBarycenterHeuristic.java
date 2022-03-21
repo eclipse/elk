@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 
 /**
  * Minimizes crossing with the barycenter method. However, the node order given by the order in the model
@@ -68,6 +70,40 @@ public class ModelOrderBarycenterHeuristic extends BarycenterHeuristic {
                     }
                     return compareBasedOnBarycenter(n1, n2);
                 };
+    }
+
+    /**
+     * Don't use!
+     * Only public to be accessible by a test.
+     */
+    @Override
+    public void minimizeCrossings(final List<LNode> layer, final boolean preOrdered,
+            final boolean randomize, final boolean forward) {
+
+        if (randomize) {
+            // Randomize barycenters (we don't need to update the edge count in this case;
+            // there are no edges of interest since we're only concerned with one layer)
+            randomizeBarycenters(layer);
+        } else {
+            // Calculate barycenters and assign barycenters to barycenterless node groups
+            calculateBarycenters(layer, forward);
+            fillInUnknownBarycenters(layer, preOrdered);
+        }
+
+        if (layer.size() > 1) {
+            // Sort the vertices according to their barycenters
+            if (layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                ModelOrderBarycenterHeuristic.insertionSort(layer, barycenterStateComparator,
+                        (ModelOrderBarycenterHeuristic) this);
+            } else {
+                Collections.sort(layer, barycenterStateComparator);
+            }
+
+            // Resolve ordering constraints
+            if (!layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+                constraintResolver.processConstraints(layer);
+            }
+        }
     }
     
     /**
