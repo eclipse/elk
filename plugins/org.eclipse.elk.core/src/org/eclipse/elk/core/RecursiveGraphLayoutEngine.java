@@ -293,14 +293,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         
                         // check whether child area has been set, and if it hasn't run the util function to determine area
-                        if (!(layoutNode.hasProperty(CoreOptions.CHILD_AREA_WIDTH) 
-                                || layoutNode.hasProperty(CoreOptions.CHILD_AREA_HEIGHT))) {
+                        if (!(layoutNode.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH) 
+                                || layoutNode.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT))) {
                             // compute child area if it hasn't been set by the layout algorithm
                             ElkUtil.computeChildAreaDimensions(layoutNode);
                         }
                         
-                        double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH);
-                        double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
+                        double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH);
+                        double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT);
                         // This desired child area is wrong, probably because the sizes are set and reset somewhere else
                         // this causes the weird large scalings in places where they should be smaller than 1
                         topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");

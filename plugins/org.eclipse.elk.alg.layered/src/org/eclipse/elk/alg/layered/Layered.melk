@@ -17,6 +17,7 @@ import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.HierarchyHandling
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.options.TopdownNodeTypes
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -94,6 +95,13 @@ algorithm layered(LayeredLayoutProvider) {
     // splines
     supports edgeRouting.splines.mode
     supports edgeRouting.splines.sloppy.layerSpacingFactor
+    
+    // topdown layout
+    supports org.eclipse.elk.topdownLayout
+    supports org.eclipse.elk.topdown.scaleFactor
+    supports org.eclipse.elk.topdown.hierarchicalNodeWidth
+    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio
+    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.PARALLEL_NODE
     
     // other options
     supports org.eclipse.elk.padding = new ElkPadding(12)

@@ -867,34 +867,34 @@ group topdown {
         requires nodeType == TopdownNodeTypes.PARALLEL_NODE
     }
     
-    programmatic option nodeType: TopdownNodeTypes{
+    advanced option nodeType: TopdownNodeTypes{
         label "Topdown Node Type"
         description
             "The different node types used for topdown layout."
         default = TopdownNodeTypes.NONE
         targets nodes
+        requires nodeSize.fixedGraphSize
     }
-}
-
-// TODO: sort options properly
-// TODO: decide whether this is a reasonable demand, or whether it would be easier to add this calculation as a 
-//       post-processing step that can be added after any algorithm
-programmatic option childAreaWidth: double {
-    label "Child Area Width"
-    description
-        "The width of the area occupied by the laid out children of a node. This value is necessary to compute the 
-         correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
-         be set for topdown layout to function."
-    targets nodes
-}
-
-programmatic option childAreaHeight: double {
-    label "Child Area Height"
-    description
-        "The height of the area occupied by the laid out children of a node. This value is necessary to compute the 
-         correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
-         be set for topdown layout to function."
-    targets nodes
+    
+    programmatic option childAreaWidth: double {
+        label "Child Area Width"
+        description
+            "The width of the area occupied by the laid out children of a node. This value is necessary to compute the 
+             correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
+             be set for topdown layout to function."
+        targets parents
+        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
+    
+    programmatic option childAreaHeight: double {
+        label "Child Area Height"
+        description
+            "The height of the area occupied by the laid out children of a node. This value is necessary to compute the 
+             correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
+             be set for topdown layout to function."
+        targets parents
+        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
 }
 
 // --- INSIDE SELF LOOPS

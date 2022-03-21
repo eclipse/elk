@@ -428,8 +428,8 @@ public final class ElkUtil {
         }
 
         
-        node.setProperty(CoreOptions.CHILD_AREA_WIDTH, maxX - minX);
-        node.setProperty(CoreOptions.CHILD_AREA_HEIGHT, maxY - minY);
+        node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, maxX - minX);
+        node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, maxY - minY);
     }
     
     public static ElkPadding scaledPadding(ElkPadding padding, double scale) {
