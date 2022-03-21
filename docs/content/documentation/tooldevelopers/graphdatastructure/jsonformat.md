@@ -4,7 +4,7 @@ menu:
   main:
     identifier: "JsonFormat"
     parent: "GraphDataStructure"
-    weight: 30
+    weight: 40
 ---
 
 

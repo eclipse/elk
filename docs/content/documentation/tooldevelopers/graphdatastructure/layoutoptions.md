@@ -2,7 +2,7 @@
 title: "Layout Options"
 menu:
   main:
-    id: "Layoutoptions"
+    identifier: "Layoutoptions"
     parent: "GraphDataStructure"
     weight: 20
 ---
