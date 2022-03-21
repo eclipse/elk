@@ -246,9 +246,9 @@ public final class PortLabelPlacementCalculator {
                 nodeContext.nodeLabelSpacing);
         
         // Obtain a rectangle strip overlap remover, which will actually do most of the work
-        RectangleStripOverlapRemover overlapRemover =
-                RectangleStripOverlapRemover.createForDirection(overlapRemovalDirection).withGap(
-                        nodeContext.portLabelSpacingHorizontal, nodeContext.portLabelSpacingVertical);
+        RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
+                .createForDirection(overlapRemovalDirection)
+                .withGap(nodeContext.portLabelSpacingHorizontal, nodeContext.portLabelSpacingVertical);
         
         // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
         double startCoordinate = portSide == PortSide.NORTH

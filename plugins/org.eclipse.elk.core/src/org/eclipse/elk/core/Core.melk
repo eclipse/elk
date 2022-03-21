@@ -384,24 +384,22 @@ group spacing {
         targets parents
     }
     
-    group labelPort {
-        option horizontal: double {
-            label "Horizontal spacing between Label and Port"
-            description
-                "Horizontal spacing to be preserved between labels and the ports they are associated with.
-                Note that the placement of a label is influenced by the 'portlabels.placement' option."
-            default = 1
-            targets parents
-        }
-        
-        option vertical: double {
-            label "Vertical spacing between Label and Port"
-            description
-                "Vertical spacing to be preserved between labels and the ports they are associated with.
-                Note that the placement of a label is influenced by the 'portlabels.placement' option."
-            default = 1
-            targets parents
-        }
+    option labelPortHorizontal: double {
+        label "Horizontal spacing between Label and Port"
+        description
+            "Horizontal spacing to be preserved between labels and the ports they are associated with.
+            Note that the placement of a label is influenced by the 'portlabels.placement' option."
+        default = 1
+        targets parents
+    }
+    
+    option labelPortVertical: double {
+        label "Vertical spacing between Label and Port"
+        description
+            "Vertical spacing to be preserved between labels and the ports they are associated with.
+            Note that the placement of a label is influenced by the 'portlabels.placement' option."
+        default = 1
+        targets parents
     }
 
     option nodeNode: double {
