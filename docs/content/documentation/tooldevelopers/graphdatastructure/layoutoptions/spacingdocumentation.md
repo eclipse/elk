@@ -35,7 +35,8 @@ Spacings are always defined between pairs of things. All spacings in this sectio
 1. [Edge-Node](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-spacing-edgeNode.html)
 1. [Label-Label](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-spacing-labelLabel.html)
 1. [Label-Node](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-spacing-labelNode.html)
-1. [Label-Port](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-spacing-labelPort.html)
+1. Label-Port Vertical (a positive value means further away from the node)
+1. Label-Port Horizontal (a positive value means further away from the node)
 1. [Node-Node](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-spacing-nodeNode.html)
 1. [Port-Port](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-spacing-portPort.html)
 
