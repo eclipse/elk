@@ -9,12 +9,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -30,11 +27,9 @@ import org.eclipse.elk.alg.test.framework.annotations.DefaultConfiguration;
 import org.eclipse.elk.alg.test.framework.annotations.GraphResourceProvider;
 import org.eclipse.elk.alg.test.framework.annotations.TestAfterProcessor;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
-import org.eclipse.elk.alg.test.framework.io.FileExtensionFilter;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.graph.ElkNode;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.google.common.collect.Lists;
@@ -50,7 +45,7 @@ public class ModelOrderBarycenterHeuristicTest {
     @GraphResourceProvider
     public List<AbstractResourcePath> testGraphs() {
         return Lists.newArrayList(
-                new ModelResourcePath("realworld/ptolemy/hierarchical/algebraic_heateropentank_HeaterOpenTank").withFilter(new FileExtensionFilter("elkt")));
+                new ModelResourcePath("realworld/ptolemy/hierarchical/algebraic_heateropentank_HeaterOpenTank.elkt"));
     }
     
 
