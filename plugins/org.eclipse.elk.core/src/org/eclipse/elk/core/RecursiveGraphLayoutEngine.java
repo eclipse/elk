@@ -27,6 +27,7 @@ import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.GraphFeature;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -336,6 +337,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 for (ElkBendPoint bendPoint : section.getBendPoints()) {
                                     bendPoint.set(bendPoint.getX() + xShift, bendPoint.getY() + yShift);
                                 }
+                            }
+                            // shift edge labels
+                            for (ElkLabel label : edge.getLabels()) {
+                                label.setLocation(label.getX() + xShift, label.getY() + yShift);
                             }
                         }
                         // TODO: shift edge labels
