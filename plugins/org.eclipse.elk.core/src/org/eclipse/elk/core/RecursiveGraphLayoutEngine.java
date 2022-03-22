@@ -250,7 +250,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     System.out.println("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
-                    System.out.println(layoutNode.getChildren().get(0).getIdentifier() + " " + layoutNode.getChildren().get(0).getWidth());
                     
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
 
@@ -297,10 +296,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         // TODO: this shift doesn't center anything, it only preserves the intended paddings
                         //       is a centering shift desired? and how does it relate to white space elimination?
-                        // TODO: also doesn't seem to be quite right, some edges sometimes are still "outside" the intended space
-                        //       not just edges, in large diagrams like wagon the error becomes obvious
-                        double xShift = padding.left - padding.left * scaleFactor;
-                        double yShift = padding.top - padding.top * scaleFactor;
+                        // TODO: this shifts everything a little too far, need to rethink what I'm calculating here
+                        double xShift = (padding.left - padding.left * scaleFactor) / scaleFactor;
+                        double yShift = (padding.top - padding.top * scaleFactor) / scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
                         System.out.println("Shift: (" + xShift + "|" + yShift + ")");
                         // shift all nodes in layout
