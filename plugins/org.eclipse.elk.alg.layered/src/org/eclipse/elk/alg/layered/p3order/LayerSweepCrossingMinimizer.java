@@ -87,7 +87,7 @@ public class LayerSweepCrossingMinimizer
     private Set<GraphInfoHolder> graphsWhoseNodeOrderChanged;
     private Random random;
     private long randomSeed;
-    private final CrossMinType crossMinType;
+    private CrossMinType crossMinType;
 
     /**
      * Creates LayerSweepHierarchicalCrossingMinimizer using given minimizer type.
@@ -295,7 +295,7 @@ public class LayerSweepCrossingMinimizer
 
         return oldNumberOfCrossings;
     }
-    
+
     /**
      * Compares all nodes in a each layer and counts how often they are not in model order.
      * This requires that the {@code SortByInputModelProcessor} ran previously.
@@ -566,6 +566,9 @@ public class LayerSweepCrossingMinimizer
      * Traverses inclusion breadth-first and initializes each Graph.
      */
     private List<GraphInfoHolder> initialize(final LGraph rootGraph) {
+        if (rootGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
+            crossMinType = CrossMinType.MODEL_ORDER;
+        }
         graphInfoHolders = Lists.newArrayList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
@@ -620,6 +623,8 @@ public class LayerSweepCrossingMinimizer
     public enum CrossMinType {
         /** Use BarycenterHeuristic. */
         BARYCENTER,
+        /** Use ModelOrderBarycenterHeuristic. */
+        MODEL_ORDER,
         /** Use one-sided GreedySwitchHeuristic. */
         ONE_SIDED_GREEDY_SWITCH,
         /** Use two-sided GreedySwitchHeuristic. */

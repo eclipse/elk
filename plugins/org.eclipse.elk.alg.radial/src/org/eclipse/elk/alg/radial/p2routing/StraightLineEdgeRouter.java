@@ -30,9 +30,11 @@ public class StraightLineEdgeRouter implements ILayoutPhase<RadialLayoutPhases, 
 
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-
+        progressMonitor.begin("Straight Line Edge Routing", 1);
+        progressMonitor.logGraph(graph, "Before");
         ElkNode root = graph.getProperty(InternalProperties.ROOT_NODE);
         routeEdges(root);
+        progressMonitor.logGraph(graph, "After");
     }
 
     /**

@@ -11,7 +11,10 @@ package org.eclipse.elk.alg.radial.intermediate.compaction;
 
 import java.util.List;
 
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * The class provides basic logic for extending or compacting radii, like overlap calculation.
@@ -30,7 +33,7 @@ public class AbstractRadiusExtensionCompaction {
      * Contracts/Extends a list of nodes from the same radius by moving them along their incoming edge.
      * 
      * @param layerNodes
-     *            List of nodes of one radii which shall be moved.
+     *            List of nodes of one radius that shall be moved.
      * @param isContracting
      *            Determines if the layer shall be contracted or extended.
      */
@@ -66,6 +69,50 @@ public class AbstractRadiusExtensionCompaction {
             node.setX(xPos - node.getWidth() / 2);
             node.setY(yPos - node.getHeight() / 2);
         }
+    }
+    
+//    /**
+//     * Moves children of a node by the amount of the given vector in the direction of their connection to the root.
+//     * Since the parent/ancestor node might have moved since nodes in that layer overlapped all children have to be 
+//     * moved by the same amount.
+//     * @param node The node
+//     * @param oldX The nodes old x position
+//     * @param oldY The nodes old y position
+//     */
+//    public void moveChildrenAfterContractLayer(final ElkNode node, final double oldX, final double oldY) {
+//        // Calculate direction of movement for
+//        for (ElkEdge connection : node.getOutgoingEdges()) {
+//            for (ElkConnectableShape target : connection.getTargets()) {
+//                ElkNode child = ElkGraphUtil.connectableShapeToNode(target);
+//                moveChild(child, movedDistance);
+//            }
+//        }     
+//    }
+    
+    /**
+     * Move the node by by the given distance in the direction of the root node to this node.
+     * 
+     * @param node The node
+     * @param distance The distance to move
+     */
+    public void moveNode(final ElkNode node, final double distance) {
+        // Move child distance into the direction of the connection to the root node
+        // We have to measure from center to center since the different nodes might have different sizes.
+        ElkNode root = this.root;
+        double rootX = root.getX() + root.getWidth() / 2.0;
+        double rootY = root.getY() + root.getHeight() / 2.0;
+        double nodeX = node.getX() + node.getWidth() / 2.0;
+        double nodeY = node.getY() + node.getHeight() / 2.0;
+        double differenceX = nodeX - rootX;
+        double differenceY = nodeY - rootY;
+        // Calculate unit vector
+        double length = Math.sqrt(differenceX * differenceX + differenceY * differenceY);
+        double unitX = differenceX / length;
+        double unitY = differenceY / length;
+        // Move node by distance in direction of uni vector.
+        node.setX(node.getX() + unitX * distance);
+        node.setY(node.getY() + unitY * distance);
+        
     }
 
     /**
