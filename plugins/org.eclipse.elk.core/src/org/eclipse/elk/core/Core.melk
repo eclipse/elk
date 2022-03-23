@@ -871,7 +871,8 @@ group topdown {
     advanced option nodeType: TopdownNodeTypes{
         label "Topdown Node Type"
         description
-            "The different node types used for topdown layout."
+            "The different node types used for topdown layout. If the node type is set 
+             to {@link TopdownNodeTypes.PARALLEL_NODE} the algorithm must be set to {@link TopdownPacking}."
         default = TopdownNodeTypes.NONE
         targets nodes
         requires nodeSize.fixedGraphSize
