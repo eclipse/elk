@@ -856,7 +856,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                 outputPortVote++;
             } else if (isSelfLoop && !isInsideSelfLoop) {
                 inputPortVote++;
-            } else if (sourceNode.getGraph().getParentNode()  == node) {
+            } else if (sourceNode.getGraph().getParentNode() == node) {
                 outputPortVote++;
             } else {
                 inputPortVote++;
@@ -919,7 +919,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                     createExternalPortProperties(graph),
                     parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
                     portSide,
-                    calculateNetFlow(outsidePort),
+                    portType == PortType.INPUT ? -1 : 1,
                     null,
                     new KVector(),
                     new KVector(0, 0), // A dummy port is not considered to have a size (#766)
