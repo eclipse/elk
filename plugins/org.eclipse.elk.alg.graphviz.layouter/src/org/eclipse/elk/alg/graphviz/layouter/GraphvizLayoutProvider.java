@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.elk.alg.graphviz.dot.GraphvizDotStandaloneSetup;
 import org.eclipse.elk.alg.graphviz.dot.dot.GraphvizModel;
 import org.eclipse.elk.alg.graphviz.dot.transform.Command;
@@ -136,8 +137,11 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             transData.getTargetGraphs().set(0, graphvizOutput);
             dotExporter.transferLayout(transData);
         } finally {
-            boolean reuseProcess = GraphvizLayouterPreferenceStoreAccess.getUISaveBoolean(
-                    PREF_GRAPHVIZ_REUSE_PROCESS, REUSE_PROCESS_DEFAULT);
+            boolean reuseProcess = false;
+            if (Platform.isRunning()) {
+                reuseProcess = GraphvizLayouterPreferenceStoreAccess.getUISaveBoolean(
+                        PREF_GRAPHVIZ_REUSE_PROCESS, REUSE_PROCESS_DEFAULT);
+            }
             graphvizTool.cleanup(reuseProcess ? Cleanup.NORMAL : Cleanup.STOP);
             progressMonitor.done();
         }

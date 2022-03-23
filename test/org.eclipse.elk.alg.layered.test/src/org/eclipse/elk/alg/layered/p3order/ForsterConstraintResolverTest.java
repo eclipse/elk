@@ -67,7 +67,7 @@ public class ForsterConstraintResolverTest {
                 if (node.hasProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS)) {
                     boolean violation = node.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).stream()
                             .anyMatch(n -> encounteredNodes.contains(n));
-                    assertFalse(violation);
+                    assertFalse("Successor constraints are not respected for " + node, violation);
                 }
                 
                 encounteredNodes.add(node);
@@ -92,7 +92,8 @@ public class ForsterConstraintResolverTest {
                 if (newLayoutUnit != null && newLayoutUnit != currentLayoutUnit) {
                     // We have a node which does not belong to the current layout unit. That's okay if the new layout
                     // unit has not been encountered before (if it has, nodes of different layout units overlap)
-                    assertFalse(encounteredLayoutUnits.contains(newLayoutUnit));
+                    assertFalse("Node " + newLayoutUnit + " is overlapping with the current layout unit",
+                            encounteredLayoutUnits.contains(newLayoutUnit));
                     
                     if (currentLayoutUnit != null) {
                         encounteredLayoutUnits.add(currentLayoutUnit);

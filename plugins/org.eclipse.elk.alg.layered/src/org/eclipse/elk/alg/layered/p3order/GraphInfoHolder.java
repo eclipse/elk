@@ -97,6 +97,11 @@ public class GraphInfoHolder implements IInitializable {
             initializables.add(constraintResolver);
             crossMinimizer = new BarycenterHeuristic(constraintResolver, random,
                     (AbstractBarycenterPortDistributor) portDistributor, currentNodeOrder);
+        } else if (crossMinType == CrossMinType.MODEL_ORDER) {
+            ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
+            initializables.add(constraintResolver);
+            crossMinimizer = new ModelOrderBarycenterHeuristic(constraintResolver, random,
+                    (AbstractBarycenterPortDistributor) portDistributor, currentNodeOrder);
         } else {
             crossMinimizer = new GreedySwitchHeuristic(crossMinType, this);
         }

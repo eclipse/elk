@@ -24,7 +24,7 @@ public final class GreedyRectangleStripOverlapRemover implements IRectangleStrip
 
     @Override
     public double removeOverlaps(final RectangleStripOverlapRemover overlapRemover) {
-        final double gap = overlapRemover.getGap();
+        final double verticalGap = overlapRemover.getVerticalGap();
         Set<RectangleNode> alreadyPlacedNodes = Sets.newHashSet();
         double stripSize = 0;
         
@@ -43,10 +43,10 @@ public final class GreedyRectangleStripOverlapRemover implements IRectangleStrip
                     ElkRectangle overlapRect = overlapNode.getRectangle();
                     
                     // Check if the current y coordinate would cause an overlap with the overlap node
-                    if (yPos < overlapRect.y + overlapRect.height + gap
-                            && yPos + currRect.height + gap > overlapRect.y) {
+                    if (yPos < overlapRect.y + overlapRect.height + verticalGap
+                            && yPos + currRect.height + verticalGap > overlapRect.y) {
                         
-                        yPos = overlapRect.y + overlapRect.height + gap;
+                        yPos = overlapRect.y + overlapRect.height + verticalGap;
                     }
                 }
             }

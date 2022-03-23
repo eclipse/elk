@@ -95,7 +95,8 @@ public final class PortLabelPlacementCalculator {
         
         // Some spacings we may need later
         double labelBorderOffset = portLabelBorderOffsetForPortSide(nodeContext, portSide);
-        double portLabelSpacing = nodeContext.portLabelSpacing;
+        double portLabelSpacingHorizontal = nodeContext.portLabelSpacingHorizontal;
+        double portLabelSpacingVertical = nodeContext.portLabelSpacingVertical;
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             // If the port doesn't have labels, skip
@@ -122,7 +123,7 @@ public final class PortLabelPlacementCalculator {
             case NORTH:
                 portLabelCellRect.x = portContext.labelsNextToPort
                         ? (portSize.x - portLabelCellRect.width) / 2
-                        : portSize.x + portLabelSpacing;
+                        : portSize.x + portLabelSpacingHorizontal;
                 portLabelCellRect.y = portSize.y + portBorderOffset + labelBorderOffset;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.TOP);
@@ -131,7 +132,7 @@ public final class PortLabelPlacementCalculator {
             case SOUTH:
                 portLabelCellRect.x = portContext.labelsNextToPort
                         ? (portSize.x - portLabelCellRect.width) / 2
-                        : portSize.x + portLabelSpacing;
+                        : portSize.x + portLabelSpacingHorizontal;
                 portLabelCellRect.y = -portBorderOffset - labelBorderOffset - portLabelCellRect.height;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
@@ -145,7 +146,7 @@ public final class PortLabelPlacementCalculator {
                             : portLabelCell.getLabels().get(0).getSize().y;
                     portLabelCellRect.y = (portSize.y - labelHeight) / 2;
                 } else {
-                    portLabelCellRect.y = portSize.y + portLabelSpacing;
+                    portLabelCellRect.y = portSize.y + portLabelSpacingVertical;
                 }
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
@@ -159,7 +160,7 @@ public final class PortLabelPlacementCalculator {
                             : portLabelCell.getLabels().get(0).getSize().y;
                     portLabelCellRect.y = (portSize.y - labelHeight) / 2;
                 } else {
-                    portLabelCellRect.y = portSize.y + portLabelSpacing;
+                    portLabelCellRect.y = portSize.y + portLabelSpacingVertical;
                 }
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
@@ -188,16 +189,16 @@ public final class PortLabelPlacementCalculator {
     private static double portLabelBorderOffsetForPortSide(final NodeContext nodeContext, final PortSide portSide) {
         switch (portSide) {
         case NORTH:
-            return nodeContext.nodeContainer.getPadding().top + nodeContext.portLabelSpacing;
+            return nodeContext.nodeContainer.getPadding().top + nodeContext.portLabelSpacingVertical;
 
         case SOUTH:
-            return nodeContext.nodeContainer.getPadding().bottom + nodeContext.portLabelSpacing;
+            return nodeContext.nodeContainer.getPadding().bottom + nodeContext.portLabelSpacingVertical;
 
         case EAST:
-            return nodeContext.nodeContainer.getPadding().right + nodeContext.portLabelSpacing;
+            return nodeContext.nodeContainer.getPadding().right + nodeContext.portLabelSpacingHorizontal;
 
         case WEST:
-            return nodeContext.nodeContainer.getPadding().left + nodeContext.portLabelSpacing;
+            return nodeContext.nodeContainer.getPadding().left + nodeContext.portLabelSpacingHorizontal;
         
         default:
             assert false;
@@ -247,7 +248,7 @@ public final class PortLabelPlacementCalculator {
         // Obtain a rectangle strip overlap remover, which will actually do most of the work
         RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
                 .createForDirection(overlapRemovalDirection)
-                .withGap(nodeContext.portLabelSpacing);
+                .withGap(nodeContext.portLabelSpacingHorizontal, nodeContext.portLabelSpacingVertical);
         
         // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
         double startCoordinate = portSide == PortSide.NORTH
@@ -285,8 +286,8 @@ public final class PortLabelPlacementCalculator {
         
         // The start coordinate needs to be offset by the port-label space
         startCoordinate += portSide == PortSide.NORTH
-                ? nodeContext.portLabelSpacing
-                : -nodeContext.portLabelSpacing;
+                ? nodeContext.portLabelSpacingVertical
+                : -nodeContext.portLabelSpacingVertical;
         
         // Invoke the overlap remover
         double stripHeight = overlapRemover
@@ -372,13 +373,13 @@ public final class PortLabelPlacementCalculator {
                     portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
                 } else if (placeFirstPortDifferently) {
-                    portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacing;
+                    portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacingHorizontal;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 } else {
-                    portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacing;
+                    portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacingHorizontal;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);
                 }
-                portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacing;
+                portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacingVertical;
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 break;
                 
@@ -387,13 +388,13 @@ public final class PortLabelPlacementCalculator {
                     portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
                 } else if (placeFirstPortDifferently) {
-                    portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacing;
+                    portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacingHorizontal;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 } else {
-                    portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacing;
+                    portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacingHorizontal;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);
                 }
-                portLabelCellRect.y = portSize.y + nodeContext.portLabelSpacing;
+                portLabelCellRect.y = portSize.y + nodeContext.portLabelSpacingVertical;
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.TOP);
                 break;
                 
@@ -405,13 +406,13 @@ public final class PortLabelPlacementCalculator {
                     portLabelCellRect.y = (portSize.y - labelHeight) / 2;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
                 } else if (placeFirstPortDifferently) {
-                    portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacing;
+                    portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacingVertical;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 } else {
-                    portLabelCellRect.y = portSize.y + nodeContext.portLabelSpacing;
+                    portLabelCellRect.y = portSize.y + nodeContext.portLabelSpacingVertical;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.TOP);
                 }
-                portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacing;
+                portLabelCellRect.x = portSize.x + nodeContext.portLabelSpacingHorizontal;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);
                 break;
                 
@@ -423,13 +424,13 @@ public final class PortLabelPlacementCalculator {
                     portLabelCellRect.y = (portSize.y - labelHeight) / 2;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
                 } else if (placeFirstPortDifferently) {
-                    portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacing;
+                    portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacingVertical;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 } else {
-                    portLabelCellRect.y = portSize.y + nodeContext.portLabelSpacing;
+                    portLabelCellRect.y = portSize.y + nodeContext.portLabelSpacingVertical;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.TOP);
                 }
-                portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacing;
+                portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacingHorizontal;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 break;
             }
@@ -472,7 +473,7 @@ public final class PortLabelPlacementCalculator {
         // Obtain a rectangle strip overlap remover, which will actually do most of the work
         RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
                 .createForDirection(overlapRemovalDirection)
-                .withGap(nodeContext.portLabelSpacing);
+                .withGap(nodeContext.portLabelSpacingVertical, nodeContext.portLabelSpacingHorizontal);
         
         // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
         double startCoordinate = portSide == PortSide.NORTH
@@ -493,10 +494,11 @@ public final class PortLabelPlacementCalculator {
             portLabelCellRect.width = portLabelCell.getMinimumWidth();
             portLabelCellRect.height = portLabelCell.getMinimumHeight();
             if (portWithSpecialNeeds) {
-                portLabelCellRect.x = portPosition.x - portLabelCell.getMinimumWidth() - nodeContext.portLabelSpacing;
+                portLabelCellRect.x =
+                        portPosition.x - portLabelCell.getMinimumWidth() - nodeContext.portLabelSpacingHorizontal;
                 portWithSpecialNeeds = false;
             } else {
-                portLabelCellRect.x = portPosition.x + portSize.x + nodeContext.portLabelSpacing;
+                portLabelCellRect.x = portPosition.x + portSize.x + nodeContext.portLabelSpacingHorizontal;
             }
             
             portLabelCell.setVerticalAlignment(verticalLabelAlignment);
@@ -513,8 +515,8 @@ public final class PortLabelPlacementCalculator {
         
         // The start coordinate needs to be offset by the port-label space
         startCoordinate += portSide == PortSide.NORTH
-                ? -nodeContext.portLabelSpacing
-                : nodeContext.portLabelSpacing;
+                ? -nodeContext.portLabelSpacingVertical
+                : nodeContext.portLabelSpacingVertical;
         
         // Invoke the overlap remover
         overlapRemover
