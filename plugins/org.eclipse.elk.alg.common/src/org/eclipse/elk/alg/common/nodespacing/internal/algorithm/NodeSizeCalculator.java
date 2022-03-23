@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -64,7 +65,11 @@ public final class NodeSizeCalculator {
         }
         
         // Set the node's width
-        nodeSize.x = width;
+        if (nodeContext.node.getGraph().getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            nodeSize.x = Math.max(nodeSize.x, width);
+        } else {
+            nodeSize.x = width;
+        }
         
         // Set the cell system's width and tell it to compute horizontal coordinates and widths
         ElkRectangle nodeCellRectangle = nodeContext.nodeContainer.getCellRectangle();
@@ -121,7 +126,11 @@ public final class NodeSizeCalculator {
         }
         
         // Set the node's height
-        nodeSize.y = height;
+        if (nodeContext.node.getGraph().getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            nodeSize.y = Math.max(nodeSize.y, height);
+        } else {
+            nodeSize.y = height;
+        }
         
         // Set the cell system's height and tell it to compute vertical coordinates and heights
         ElkRectangle nodeCellRectangle = nodeContext.nodeContainer.getCellRectangle();
