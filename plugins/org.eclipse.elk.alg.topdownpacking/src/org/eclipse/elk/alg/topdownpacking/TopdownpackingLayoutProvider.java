@@ -1,14 +1,10 @@
 package org.eclipse.elk.alg.topdownpacking;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.alg.topdownpacking.options.TopdownpackingOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.ElkPadding;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -22,25 +18,30 @@ import org.eclipse.elk.graph.ElkNode;
  */
 public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
 
-    private final AlgorithmAssembler<TopdownPackingPhases, ElkNode> algorithmAssembler =
-            AlgorithmAssembler.<TopdownPackingPhases, ElkNode>create(TopdownPackingPhases.class);
+    private final AlgorithmAssembler<TopdownPackingPhases, GridElkNode> algorithmAssembler =
+            AlgorithmAssembler.<TopdownPackingPhases, GridElkNode>create(TopdownPackingPhases.class);
     
     @Override
     public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
         
-        List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(layoutGraph);
+        // convert graph to GridElkNode
+        GridElkNode wrappedGraph = new GridElkNode(layoutGraph);
+        
+        // assemble algorithm
+        List<ILayoutProcessor<GridElkNode>> algorithm = assembleAlgorithm(wrappedGraph);
+        
         
         progressMonitor.begin("Topdown Packing", algorithm.size());
         
-        for (ILayoutProcessor<ElkNode> processor : algorithm) {
-            processor.process(layoutGraph, progressMonitor.subTask(1));
+        for (ILayoutProcessor<GridElkNode> processor : algorithm) {
+            processor.process(wrappedGraph, progressMonitor.subTask(1));
         }
         
         progressMonitor.done();
         
     }
     
-    public List<ILayoutProcessor<ElkNode>> assembleAlgorithm(ElkNode graph) {
+    public List<ILayoutProcessor<GridElkNode>> assembleAlgorithm(GridElkNode graph) {
         algorithmAssembler.reset();
         
         algorithmAssembler.setPhase(TopdownPackingPhases.P1_NODE_PLACEMENT, NodePlacementStrategy.NODE_PLACER);

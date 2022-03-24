@@ -14,21 +14,20 @@ package org.eclipse.elk.alg.topdownpacking;
 
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
-import org.eclipse.elk.graph.ElkNode;
 
 /**
  * @author mka
  *
  */
 public enum WhitespaceEliminationStrategy
-        implements ILayoutPhaseFactory<TopdownPackingPhases, ElkNode> {
+        implements ILayoutPhaseFactory<TopdownPackingPhases, GridElkNode> {
     WHITESPACE_ELIMINATOR;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ILayoutPhase<TopdownPackingPhases, ElkNode> create() {
+    public ILayoutPhase<TopdownPackingPhases, GridElkNode> create() {
         switch (this) {
         case WHITESPACE_ELIMINATOR:
             return new WhitespaceEliminator();

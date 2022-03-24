@@ -14,20 +14,19 @@ package org.eclipse.elk.alg.topdownpacking;
 
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
-import org.eclipse.elk.graph.ElkNode;
 
 /**
  * @author mka
  *
  */
-public enum NodePlacementStrategy implements ILayoutPhaseFactory<TopdownPackingPhases, ElkNode> {
+public enum NodePlacementStrategy implements ILayoutPhaseFactory<TopdownPackingPhases, GridElkNode> {
     NODE_PLACER;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ILayoutPhase<TopdownPackingPhases, ElkNode> create() {
+    public ILayoutPhase<TopdownPackingPhases, GridElkNode> create() {
         switch (this) {
         case NODE_PLACER:
             return new NodePlacer();

@@ -15,19 +15,18 @@ package org.eclipse.elk.alg.topdownpacking;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.ElkNode;
 
 /**
  * @author mka
  *
  */
-public class WhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, ElkNode> {
+public class WhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void process(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
+    public void process(GridElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
         // Start progress monitor
         progressMonitor.begin("Whitespace elimination", 1);
         progressMonitor.log("Whitespace elimination began for node " + layoutGraph.getIdentifier());
@@ -41,9 +40,9 @@ public class WhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, 
      * {@inheritDoc}
      */
     @Override
-    public LayoutProcessorConfiguration<TopdownPackingPhases, ElkNode> getLayoutProcessorConfiguration(
-            ElkNode graph) {
-        return LayoutProcessorConfiguration.<TopdownPackingPhases, ElkNode>create();
+    public LayoutProcessorConfiguration<TopdownPackingPhases, GridElkNode> getLayoutProcessorConfiguration(
+            GridElkNode graph) {
+        return LayoutProcessorConfiguration.<TopdownPackingPhases, GridElkNode>create();
     }
 
 }

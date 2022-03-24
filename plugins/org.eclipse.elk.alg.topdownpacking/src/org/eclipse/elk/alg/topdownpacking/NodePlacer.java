@@ -27,13 +27,13 @@ import org.eclipse.elk.graph.ElkNode;
  * @author mka
  *
  */
-public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, ElkNode> {
+public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void process(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
+    public void process(GridElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
         
         // Start progress monitor
         progressMonitor.begin("Node placement", 1);
@@ -129,9 +129,9 @@ public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, ElkNode> {
      * {@inheritDoc}
      */
     @Override
-    public LayoutProcessorConfiguration<TopdownPackingPhases, ElkNode> getLayoutProcessorConfiguration(
-            ElkNode graph) {
-        return LayoutProcessorConfiguration.<TopdownPackingPhases, ElkNode>create();
+    public LayoutProcessorConfiguration<TopdownPackingPhases, GridElkNode> getLayoutProcessorConfiguration(
+            GridElkNode graph) {
+        return LayoutProcessorConfiguration.<TopdownPackingPhases, GridElkNode>create();
     }
 
 }
