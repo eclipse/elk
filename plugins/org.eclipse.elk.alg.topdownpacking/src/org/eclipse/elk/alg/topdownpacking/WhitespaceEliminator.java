@@ -27,8 +27,13 @@ public class WhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, 
      * {@inheritDoc}
      */
     @Override
-    public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
+    public void process(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
+        // Start progress monitor
+        progressMonitor.begin("Whitespace elimination", 1);
+        progressMonitor.log("Whitespace elimination began for node " + layoutGraph.getIdentifier());
+        
+        progressMonitor.logGraph(layoutGraph, "Graph after whitespace elimination");
+        progressMonitor.done();
         
     }
 
