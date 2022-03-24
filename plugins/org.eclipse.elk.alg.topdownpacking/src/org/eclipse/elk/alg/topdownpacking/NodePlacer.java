@@ -91,31 +91,9 @@ public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNod
                 currentRow += 1;
             }
         }
+        // TODO: as nodes are being placed, store their positions in the grid so the info can be
+        //       accessed by later phases, in particular the whitespace elimination phase
         
-        // TODO: later this stuff should be covered by white space elimination anyway so can be removed here
-        /** REMOVE THIS, IT'S A LITTLE MORE COMPLICATED NOW, BECAUSE SCALING IS DONE EXTERNALLY
-        // if the last row is not full, do some adjustments to the nodes
-        // currentCol is at this point the position after the last placed node
-        if (currentCol < cols && currentCol > 0) {
-            // determine center of placed nodes
-            double occupiedWidth = 0;
-            for (int i = nodes.size() - currentCol; i < nodes.size(); i++ ) {
-                occupiedWidth += nodes.get(i).getWidth() + nodeNodeSpacing;
-            }
-            // remove last spacing
-            occupiedWidth -= nodeNodeSpacing;
-            double midPoint = padding.left + (occupiedWidth/2);
-            
-            // move nodes so that center matches graph center
-            double xShift = (layoutGraph.getWidth()/2) - midPoint;
-            nodePlacingMonitor.log("occupiedWidth: " + occupiedWidth);
-            nodePlacingMonitor.log("midPoint: " + midPoint);
-            nodePlacingMonitor.log("Shifting last row by: " + xShift);
-            for (int i = nodes.size() - currentCol; i < nodes.size(); i++ ) {
-                nodes.get(i).setX(nodes.get(i).getX() + xShift);
-            }
-        }
-        */
         
         progressMonitor.log("Node Placing done!");
         
