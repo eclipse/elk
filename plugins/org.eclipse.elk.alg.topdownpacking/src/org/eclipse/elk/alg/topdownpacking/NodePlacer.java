@@ -51,6 +51,14 @@ public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNod
         // Compute number of rows and columns to use to arrange nodes to maintain the aspect ratio
         // TODO: 0 nodes are forbidden, need to error check this or don't I because isn't called for 0 nodes anyway?
         int cols = (int) Math.ceil(Math.sqrt(nodes.size()));
+        int rows;
+        if (nodes.size() > cols * cols - cols) {
+            rows = cols;
+        } else { // N <= W^2 - W
+            rows = cols - 1;
+        }
+        // set size of grid
+        layoutGraph.setGridSize(cols, rows);
         
         progressMonitor.log(layoutGraph.getIdentifier() + "\nPlacing " + nodes.size() + " nodes in " + cols + " columns.");
         progressMonitor.done();
@@ -75,6 +83,8 @@ public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNod
             node.setY(currY);
             progressMonitor.log("currX: " + currX);
             progressMonitor.log("currY: " + currY);
+            // Store node's grid position
+            layoutGraph.put(currentCol, currentRow, node);
             
             progressMonitor.logGraph(layoutGraph, node.getIdentifier() + " placed in (" + currentCol + "|" + currentRow + ")");
             
@@ -91,9 +101,6 @@ public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNod
                 currentRow += 1;
             }
         }
-        // TODO: as nodes are being placed, store their positions in the grid so the info can be
-        //       accessed by later phases, in particular the whitespace elimination phase
-        
         
         progressMonitor.log("Node Placing done!");
         
