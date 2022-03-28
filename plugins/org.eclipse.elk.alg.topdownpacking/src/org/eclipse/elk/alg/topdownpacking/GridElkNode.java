@@ -138,6 +138,7 @@ public class GridElkNode implements ElkNode, Grid<ElkNode> {
         // initialize the backing arraylists and fill them with null
         this.cols = cols;
         this.rows = rows;
+        this.grid = new ArrayList<List<ElkNode>>(rows);
         
         for (int i = 0; i < rows; i++) {
             grid.add(new ArrayList<ElkNode>());
