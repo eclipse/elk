@@ -17,23 +17,12 @@ bundle {
     idPrefix org.eclipse.elk.alg.topdownpacking
 }
 
-output option gridDimension: int {
-    label "Number of child nodes in one row and column"
-    description
-        "This algorithm places nodes within a dynamically created grid. This value provides the width and height of that 
-         grid and is necessary to correctly compute the scale factor later.
-         TODO: This is the simple case where all nodes have the same size and the grid has the same number of rows and columns.
-               Eventually we want more flexibility here and will need to adjust the scale calculation accordingly."
-    default = 1
-    targets nodes
-}
-
 algorithm Topdownpacking(TopdownpackingLayoutProvider) {
     label "Topdownpacking"
-    description "Please insert a short but informative description here"
+    description "An algorithm for placing boxes of fixed sizes. Requires its {@link CoreOptions.TOPDOWN_NODE_TYPE} 
+                 to be set to {@link TopdownNodeTypes.PARALLEL_NODE}. Expands boxes horizontally to fill empty 
+                 whitespace."
     metadataClass options.TopdownpackingOptions
     supports org.eclipse.elk.padding = new ElkPadding(10)
-    supports org.eclipse.elk.spacing.edgeEdge = 5
-    supports org.eclipse.elk.spacing.edgeNode = 10
     supports org.eclipse.elk.spacing.nodeNode = 10
 }
