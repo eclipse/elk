@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * Copyright (c) 2022 Kiel University and others.
+ * 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ * 
+ * SPDX-License-Identifier: EPL-2.0  
+ *******************************************************************************/
 package org.eclipse.elk.alg.topdownpacking;
 
 import java.util.List;
@@ -9,6 +18,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
+ * TODO: improve this documentation
  * A simple box packing algorithm that places nodes as evenly sized rectangles. This algorithm uses fixed sizes and 
  * therefore requires the option 'Topdown Layout to be set to true to result in a correct layout.
  * 
