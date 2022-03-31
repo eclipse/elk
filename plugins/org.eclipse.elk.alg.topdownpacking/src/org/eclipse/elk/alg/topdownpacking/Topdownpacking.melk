@@ -13,11 +13,11 @@ import org.eclipse.elk.alg.topdownpacking.TopdownpackingLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 
 bundle {
-    metadataClass TopdownpackingMetadataProvider
-    idPrefix org.eclipse.elk.alg.topdownpacking
+    metadataClass options.TopdownpackingMetadataProvider
+    idPrefix org.eclipse.elk.topdownpacking
 }
 
-algorithm Topdownpacking(TopdownpackingLayoutProvider) {
+algorithm topdownpacking(TopdownpackingLayoutProvider) {
     label "Topdownpacking"
     description "An algorithm for placing boxes of fixed sizes. Requires its {@link CoreOptions.TOPDOWN_NODE_TYPE} 
                  to be set to {@link TopdownNodeTypes.PARALLEL_NODE}. Expands boxes horizontally to fill empty 
