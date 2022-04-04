@@ -229,7 +229,7 @@ class ElkGraphImporter {
                         || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
                             == CycleBreakingStrategy.MODEL_ORDER
                         || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER))
-                    && child.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
+                    && !child.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
                     child.setProperty(InternalProperties.MODEL_ORDER, index);
                     index++;
                 }
@@ -309,7 +309,7 @@ class ElkGraphImporter {
                     || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
                     == CycleBreakingStrategy.MODEL_ORDER
                     || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER))
-                && elknode.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
+                && !elknode.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
                 // Assign a model order to the nodes as they are read
                 elknode.setProperty(InternalProperties.MODEL_ORDER, index++);
             }
