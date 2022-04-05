@@ -194,7 +194,7 @@ public final class ComponentGroup {
      * @param component the component to be added to the group.
      */
     public ComponentGroup(final LGraph component) {
-        add(component);
+        add(component, null);
     }
 
     
@@ -202,18 +202,39 @@ public final class ComponentGroup {
     // Component Management
     
     /**
+    * Tries to add the given component to the group. Before adding the component, a call to
+    * {@link #canAdd(LGraph)} determines if the component can actually be added to this
+    * group.
+    * 
+    * @param component the component to be added to this group.
+    * @return {@code true} if the component was successfully added, {@code false} otherwise.
+    */
+   public boolean add(final LGraph component) {
+       return this.add(component, null);
+   }
+    
+    /**
      * Tries to add the given component to the group. Before adding the component, a call to
      * {@link #canAdd(LGraph)} determines if the component can actually be added to this
      * group.
      * 
      * @param component the component to be added to this group.
+     * @param lastComponent the last component added needed.
      * @return {@code true} if the component was successfully added, {@code false} otherwise.
      */
-    public boolean add(final LGraph component) {
+    public boolean add(final LGraph component, final LGraph lastComponent) {
         if (canAdd(component)) {
+            // If the last component is not does not have the same port connections create a different group
+            // containing it.
+            if (lastComponent != null && !lastComponent.getProperty(InternalProperties.EXT_PORT_CONNECTIONS)
+                    .equals(component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS))
+                    && components.containsKey(component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS))) {
+                return false;
+            }
             components.put(
-                    component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS),
-                    component);
+                component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS),
+                component);
+            
             return true;
         } else {
             return false;
@@ -241,6 +262,15 @@ public final class ComponentGroup {
         
         // We haven't found any conflicting components
         return true;
+    }
+    
+    /**
+     * Returns all port sides in this component group.
+     * 
+     * @return all port sides in this component group.
+     */
+    public Collection<Set<PortSide>> getPortSides() {
+        return components.keys();
     }
     
     /**

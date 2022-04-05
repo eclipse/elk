@@ -65,6 +65,9 @@ public final class ComponentsProcessor {
     
     /** Cached instance of a {@link ComponentGroupGraphPlacer}. */
     private final ComponentGroupGraphPlacer componentGroupGraphPlacer = new ComponentGroupGraphPlacer();
+    /** Cached instance of a {@link ComponentGroupGraphPlacer}. */
+    private final ComponentGroupModelOrderGraphPlacer componentGroupModelOrderGraphPlacer =
+            new ComponentGroupModelOrderGraphPlacer();
     /** Cached instance of a {@link SimpleRowGraphPlacer}. */
     private final SimpleRowGraphPlacer simpleRowGraphPlacer = new SimpleRowGraphPlacer();
     /** Graph placer to be used to combine the different components back into a single graph. */
@@ -135,7 +138,11 @@ public final class ComponentsProcessor {
             if (extPorts) {
                 // With external port connections, we want to use the more complex components
                 // placement algorithm
-                graphPlacer = componentGroupGraphPlacer;
+                if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)) {
+                    graphPlacer = componentGroupModelOrderGraphPlacer;
+                } else {
+                    graphPlacer = componentGroupGraphPlacer;
+                }
             }
         } else {
             result = Arrays.asList(graph);
