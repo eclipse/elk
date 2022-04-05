@@ -1139,5 +1139,20 @@ public final class LGraphUtil {
         }
         return direction;
     }
+
+    /**
+     * Determines the minimal node order of an unlayered graph.
+     * 
+     * @return model order or Integer.MAX_VALUE if no node with a model order could be found.
+     */
+    public static int getMinimalModelOrder(final LGraph graph) {
+        int order = Integer.MAX_VALUE;
+        for (LNode node : graph.getLayerlessNodes()) {
+            if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                order = Math.min(order, node.getProperty(InternalProperties.MODEL_ORDER));
+            }
+        }
+        return order;
+    }
     
 }
