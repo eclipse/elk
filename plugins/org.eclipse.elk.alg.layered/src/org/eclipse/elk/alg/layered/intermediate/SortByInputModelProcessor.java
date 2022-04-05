@@ -51,6 +51,8 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
 
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("Sort By Input Model "
+                + graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY), 1);
         int layerIndex = 0;
         for (Layer layer : graph) {
             final int previousLayerIndex = layerIndex == 0 ? 0 : layerIndex - 1;
@@ -67,6 +69,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer, 
                                     longEdgeTargetNodePreprocessing(node)));
+                    progressMonitor.log("Node " + node + " ports: " + node.getPorts());
                 }
             }
             // Sort nodes.
@@ -74,8 +77,10 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     new ModelOrderNodeComparator(previousLayer,
                             graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
                             graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY)));
+            progressMonitor.log("Layer " + layerIndex + ": " + layer);
             layerIndex++;
         }
+        progressMonitor.done();
     }
     
     /**
@@ -83,7 +88,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
      * @param node the node
      * @return A map of all long edge targets of a node
      */
-    public static Map<LNode, Integer> longEdgeTargetNodePreprocessing(LNode node) {
+    public static Map<LNode, Integer> longEdgeTargetNodePreprocessing(final LNode node) {
         Map<LNode, Integer> targetNodeModelOrder = new HashMap<>();
         if (node.hasProperty(InternalProperties.TARGET_NODE_MODEL_ORDER)) {
             return node.getProperty(InternalProperties.TARGET_NODE_MODEL_ORDER);

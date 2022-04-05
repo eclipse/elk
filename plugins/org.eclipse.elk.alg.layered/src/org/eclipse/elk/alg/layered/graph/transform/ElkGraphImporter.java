@@ -738,8 +738,10 @@ class ElkGraphImporter {
         
         // Remember the relevant spacings that will apply to the labels here. It's not the spacings in the graph, but
         // in the parent
-        dummy.setProperty(LayeredOptions.SPACING_LABEL_PORT,
-                elkgraph.getParent().getProperty(LayeredOptions.SPACING_LABEL_PORT));
+        dummy.setProperty(LayeredOptions.SPACING_LABEL_PORT_HORIZONTAL,
+                elkgraph.getParent().getProperty(LayeredOptions.SPACING_LABEL_PORT_HORIZONTAL));
+        dummy.setProperty(LayeredOptions.SPACING_LABEL_PORT_VERTICAL,
+                elkgraph.getParent().getProperty(LayeredOptions.SPACING_LABEL_PORT_VERTICAL));
         dummy.setProperty(LayeredOptions.SPACING_LABEL_LABEL,
                 elkgraph.getParent().getProperty(LayeredOptions.SPACING_LABEL_LABEL));
         

@@ -814,7 +814,7 @@ public final class LGraphUtil {
         if (!portConstraints.isSideFixed()) {
             // we need some layout direction here, use RIGHT as default in case it is undefined
             assert layoutDirection != Direction.UNDEFINED;
-            if (netFlow > 0) {
+            if (netFlow >= 0) {
                 finalExternalPortSide = PortSide.fromDirection(layoutDirection);
             } else {
                 finalExternalPortSide = PortSide.fromDirection(layoutDirection).opposed();

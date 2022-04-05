@@ -69,8 +69,10 @@ public final class RectangleStripOverlapRemover {
 
     /** The direction in which to move rectangles to remove overlaps. */
     private OverlapRemovalDirection overlapRemovalDirection;
-    /** Gap to be left between labels for them to not be considered overlapping. */
-    private double gap = DEFAULT_GAP;
+    /** Vertical gap to be left between labels for them to not be considered overlapping. */
+    private double gapVertical = DEFAULT_GAP;
+    /** Horizontal gap to be left between labels for them to not be considered overlapping. */
+    private double gapHorizontal = DEFAULT_GAP;
     /** The coordinate where the first rectangles, viewed along the overlap removal direction, are placed. */
     private double startCoordinate = 0;
     /** The overlap strategy to use to actually remove overlaps. */
@@ -102,8 +104,9 @@ public final class RectangleStripOverlapRemover {
     /**
      * Configures the gap to be left between rectangles. Returns this instance to enable method chaining.
      */
-    public RectangleStripOverlapRemover withGap(final double theGap) {
-        gap = theGap;
+    public RectangleStripOverlapRemover withGap(final double theHorizontalGap, final double theVerticalGap) {
+        gapHorizontal = theHorizontalGap;
+        gapVertical = theVerticalGap;
         return this;
     }
     
@@ -141,10 +144,17 @@ public final class RectangleStripOverlapRemover {
     // Getters
     
     /**
-     * Returns the gap to be left between rectangles.
+     * Returns the horizontal gap to be left between rectangles.
      */
-    public double getGap() {
-        return gap;
+    public double getHorizontalGap() {
+        return gapHorizontal;
+    }
+    
+    /**
+     * Returns the horizontal gap to be left between rectangles.
+     */
+    public double getVerticalGap() {
+        return gapVertical;
     }
     
     /**

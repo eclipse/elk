@@ -696,7 +696,9 @@ public final class ElkLayered {
             adjustedSize.y = Math.max(calculatedSize.y, minSize.y);
         }
 
-        resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
+        if (!lgraph.getProperty(LayeredOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
+        }
     }
 
 

@@ -383,14 +383,22 @@ group spacing {
         lowerBound = 0.0
         targets parents
     }
-
-    option labelPort: double {
-        label "Label Port Spacing"
+    
+    option labelPortHorizontal: double {
+        label "Horizontal spacing between Label and Port"
         description
-            "Spacing to be preserved between labels and the ports they are associated with. 
+            "Horizontal spacing to be preserved between labels and the ports they are associated with.
             Note that the placement of a label is influenced by the 'portlabels.placement' option."
         default = 1
-        lowerBound = 0.0
+        targets parents
+    }
+    
+    option labelPortVertical: double {
+        label "Vertical spacing between Label and Port"
+        description
+            "Vertical spacing to be preserved between labels and the ports they are associated with.
+            Note that the placement of a label is influenced by the 'portlabels.placement' option."
+        default = 1
         targets parents
     }
 

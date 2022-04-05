@@ -91,7 +91,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
     private void placeExternalPortDummyLabels(final LNode dummy, final Set<PortLabelPlacement> graphPortLabelPlacement,
             final boolean placeNextToPortIfPossible, final boolean treatAsGroup) {
     
-        double labelPortSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT);
+        double labelPortSpacingHorizontal = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT_HORIZONTAL);
+        double labelPortSpacingVertical =
+                dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT_VERTICAL);
         double labelLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
         
         KVector dummySize = dummy.getSize();
@@ -112,12 +114,12 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
             switch (dummy.getProperty(InternalProperties.EXT_PORT_SIDE)) {
             case NORTH:
                 portLabelBox.x = (dummySize.x - portLabelBox.width) / 2 - dummyPortPos.x;
-                portLabelBox.y = labelPortSpacing;
+                portLabelBox.y = labelPortSpacingVertical;
                 break;
                 
             case SOUTH:
                 portLabelBox.x = (dummySize.x - portLabelBox.width) / 2 - dummyPortPos.x;
-                portLabelBox.y = -labelPortSpacing - portLabelBox.height;
+                portLabelBox.y = -labelPortSpacingVertical - portLabelBox.height;
                 break;
                 
             case EAST:
@@ -127,9 +129,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                             : dummyPort.getLabels().get(0).getSize().y;
                     portLabelBox.y = (dummySize.y - labelHeight) / 2 - dummyPortPos.y;
                 } else {
-                    portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
+                    portLabelBox.y = dummySize.y + labelPortSpacingVertical - dummyPortPos.y;
                 }
-                portLabelBox.x = -labelPortSpacing - portLabelBox.width;
+                portLabelBox.x = -labelPortSpacingHorizontal - portLabelBox.width;
                 break;
                 
             case WEST:
@@ -139,16 +141,16 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                             : dummyPort.getLabels().get(0).getSize().y;
                     portLabelBox.y = (dummySize.y - labelHeight) / 2 - dummyPortPos.y;
                 } else {
-                    portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
+                    portLabelBox.y = dummySize.y + labelPortSpacingVertical - dummyPortPos.y;
                 }
-                portLabelBox.x = labelPortSpacing;
+                portLabelBox.x = labelPortSpacingHorizontal;
                 break;
             }
         } else if (graphPortLabelPlacement.contains(PortLabelPlacement.OUTSIDE)) {
             switch (dummy.getProperty(InternalProperties.EXT_PORT_SIDE)) {
             case NORTH:
             case SOUTH:
-                portLabelBox.x = dummyPortPos.x + labelPortSpacing;
+                portLabelBox.x = dummyPortPos.x + labelPortSpacingHorizontal;
                 break;
                 
             case EAST:
@@ -159,7 +161,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
                             : dummyPort.getLabels().get(0).getSize().y;
                     portLabelBox.y = (dummySize.y - labelHeight) / 2 - dummyPortPos.y;
                 } else {
-                    portLabelBox.y = dummyPortPos.y + labelPortSpacing;
+                    portLabelBox.y = dummyPortPos.y + labelPortSpacingVertical;
                 }
                 break;
             }

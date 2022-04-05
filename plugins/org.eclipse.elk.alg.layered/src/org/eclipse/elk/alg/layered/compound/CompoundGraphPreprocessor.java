@@ -176,7 +176,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                         if (dummyNode == null) {
                             dummyNode = LGraphUtil.createExternalPortDummy(port,
                                     portConstraints, port.getSide(), -port.getNetFlow(),
-                                    null, null, port.getSize(),
+                                    null, new KVector(), port.getSize(),
                                     nestedGraph.getProperty(LayeredOptions.DIRECTION), nestedGraph);
                             dummyNode.setProperty(InternalProperties.ORIGIN, port);
                             dummyNodeMap.put(port, dummyNode);
@@ -813,6 +813,60 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
     }
     
     /**
+     * Adapted from {@code ElkGraphImporter}.
+     * Count how many edges want the port to be an output port of the parent and how many want it to
+     * be an input port. An edge coming into the port from the inside votes for the port to be an
+     * output port of the parent, as does an edge leaving the port for the outside. The result returned
+     * by this method is the so-called net flow as fed into {@code createExternalPortDummy(..)}.
+     * 
+     * @return the port's net flow.
+     */
+    private int calculateNetFlow(final LPort port) {
+        final LNode node = port.getNode();
+        final boolean insideSelfLoopsEnabled = node.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
+
+        int outputPortVote = 0, inputPortVote = 0;
+        
+        // Iterate over outgoing edges
+        for (LEdge outgoingEdge : port.getOutgoingEdges()) {
+            final boolean isSelfLoop = outgoingEdge.isSelfLoop();
+            final boolean isInsideSelfLoop = isSelfLoop && insideSelfLoopsEnabled
+                    && outgoingEdge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
+            final LNode targetNode = outgoingEdge.getTarget().getNode();
+
+            if (isSelfLoop && isInsideSelfLoop) {
+                inputPortVote++;
+            } else if (isSelfLoop && !isInsideSelfLoop) {
+                outputPortVote++;
+            } else if (targetNode.getGraph().getParentNode()  == node) {
+                inputPortVote++;
+            } else {
+                outputPortVote++;
+            }
+        }
+        
+        // Iterate over incoming edges
+        for (LEdge incomingEdge : port.getIncomingEdges()) {
+            final boolean isSelfLoop = incomingEdge.isSelfLoop();
+            final boolean isInsideSelfLoop = isSelfLoop && insideSelfLoopsEnabled
+                    && incomingEdge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
+            final LNode sourceNode = incomingEdge.getSource().getNode();
+
+            if (isSelfLoop && isInsideSelfLoop) {
+                outputPortVote++;
+            } else if (isSelfLoop && !isInsideSelfLoop) {
+                inputPortVote++;
+            } else if (sourceNode.getGraph().getParentNode() == node) {
+                outputPortVote++;
+            } else {
+                inputPortVote++;
+            }
+        }
+        
+        return outputPortVote - inputPortVote;
+    }
+    
+    /**
      * Retrieves a dummy node to be used to represent a new external port of the parent node and to
      * connect a new segment of the given hierarchical edge to. A proper dummy node might already
      * have been created; if so, that one is returned.
@@ -847,7 +901,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                         outsidePort,
                         parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
                         portSide,
-                        portType == PortType.INPUT ? -1 : 1,
+                        calculateNetFlow(outsidePort),
                         null,
                         outsidePort.getPosition(),
                         outsidePort.getSize(),
@@ -861,7 +915,6 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
             // We create a new dummy node in any case, and since there is no port yet we have to create one as well. We
             // do need to pass a position vector to keep an NPE from being thrown (#160), but it is questionable
             // whether this part of the code should actually be used with anything other than fixed port constraints.
-            double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
                     parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
@@ -869,7 +922,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                     portType == PortType.INPUT ? -1 : 1,
                     null,
                     new KVector(),
-                    new KVector(thickness, thickness),
+                    new KVector(0, 0), // A dummy port is not considered to have a size (#766)
                     layoutDirection,
                     graph
             );

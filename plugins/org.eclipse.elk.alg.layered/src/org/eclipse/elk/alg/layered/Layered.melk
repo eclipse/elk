@@ -49,7 +49,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.edgeLabel
     supports org.eclipse.elk.spacing.edgeNode
     supports org.eclipse.elk.spacing.labelLabel
-    supports org.eclipse.elk.spacing.labelPort
+    supports org.eclipse.elk.spacing.labelPortHorizontal
+    supports org.eclipse.elk.spacing.labelPortVertical
     supports org.eclipse.elk.spacing.labelNode
     supports org.eclipse.elk.spacing.nodeNode
     supports org.eclipse.elk.spacing.nodeSelfLoop
@@ -112,6 +113,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.insideSelfLoops.yo
     supports org.eclipse.elk.nodeSize.constraints
     supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeSize.fixedGraphSize
     supports org.eclipse.elk.direction = Direction.UNDEFINED
     supports org.eclipse.elk.nodeLabels.placement
     supports org.eclipse.elk.nodeLabels.padding
@@ -188,6 +190,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.crossingCounterNodeInfluence
     supports considerModelOrder.crossingCounterPortInfluence
     supports considerModelOrder.noModelOrder
+    supports generatePositionAndLayerIds
 }
 
 /* ------------------------
@@ -248,7 +251,8 @@ group layering {
     output option layerId: int {
         label "Layer ID"
         description
-            "Layer identifier that was calculated by ELK Layered for a node"
+            "Layer identifier that was calculated by ELK Layered for a node.
+            This is only generated if interactiveLayot or generatePositionAndLayerIds is set."
         default = -1
         lowerBound = -1
         targets nodes
@@ -427,7 +431,8 @@ group crossingMinimization {
     output option positionId: int {
         label "Position ID"
         description
-            "Position within a layer that was determined by ELK Layered for a node."
+            "Position within a layer that was determined by ELK Layered for a node.
+            This is only generated if interactiveLayot or generatePositionAndLayerIds is set."
         default = -1
         lowerBound = -1
         targets nodes
@@ -1068,4 +1073,14 @@ advanced option unnecessaryBendpoints: boolean {
         where an edge changes direction."
     default = false
     targets parents
+}
+
+advanced option generatePositionAndLayerIds: boolean {
+    label "Generate Position and Layer IDs"
+    description
+        "If enabled position id and layer id are generated, which are usually only used internally
+        when setting the interactiveLayout option. This option should be specified on the root node."
+    default = false
+    targets parents
+        
 }

@@ -188,4 +188,12 @@ public enum PortSide {
         }
     }
     
+    public static boolean isVertical(final PortSide side) {
+        return side == NORTH || side == SOUTH;
+    }
+    
+    public static boolean isHorizontal(final PortSide side) {
+        return side == WEST || side == EAST;
+    }
+    
 }

@@ -369,12 +369,14 @@ class ElkGraphLayoutTransferrer {
                         true);
             } else {
                 // Ports have not been positioned yet - leave this for next layouter
-                ElkUtil.resizeNode(
-                        elknode,
-                        actualGraphSize.x,
-                        actualGraphSize.y,
-                        true,
-                        true);
+                if (!elknode.getProperty(LayeredOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+                    ElkUtil.resizeNode(
+                            elknode,
+                            actualGraphSize.x,
+                            actualGraphSize.y,
+                            true,
+                            true);
+                }
             }
         }
         
