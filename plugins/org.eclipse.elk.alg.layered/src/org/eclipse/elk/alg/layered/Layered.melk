@@ -189,6 +189,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.longEdgeStrategy
     supports considerModelOrder.crossingCounterNodeInfluence
     supports considerModelOrder.crossingCounterPortInfluence
+    supports considerModelOrder.noModelOrder
     supports generatePositionAndLayerIds
 }
 
@@ -938,6 +939,13 @@ group considerModelOrder {
              conflicting."
         default = OrderingStrategy.NONE
         targets parents
+    }
+    option noModelOrder: boolean {
+        label "No Model Order"
+        description
+            "Set on a node to not set a model order for this node even though it is a real node."
+        default = false
+        targets nodes
     }
     option longEdgeStrategy: LongEdgeOrderingStrategy {
         label "Long Edge Ordering Strategy"
