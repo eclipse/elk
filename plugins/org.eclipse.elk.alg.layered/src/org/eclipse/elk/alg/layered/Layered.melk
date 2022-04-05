@@ -190,6 +190,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.crossingCounterNodeInfluence
     supports considerModelOrder.crossingCounterPortInfluence
     supports considerModelOrder.noModelOrder
+    supports considerModelOrder.components
     supports generatePositionAndLayerIds
 }
 
@@ -946,6 +947,14 @@ group considerModelOrder {
             "Set on a node to not set a model order for this node even though it is a real node."
         default = false
         targets nodes
+    }
+    option components: boolean {
+        label "Consider Model Order for Components"
+        description
+            "If enabled orders components by their minimal node model order."
+        targets parents
+        default = false
+        requires org.eclipse.elk.separateConnectedComponents
     }
     option longEdgeStrategy: LongEdgeOrderingStrategy {
         label "Long Edge Ordering Strategy"
