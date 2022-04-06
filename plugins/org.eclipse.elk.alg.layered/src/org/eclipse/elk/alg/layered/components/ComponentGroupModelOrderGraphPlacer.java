@@ -25,14 +25,11 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlacer {
     
-    private LGraph lastComponent = null;
-    
     ///////////////////////////////////////////////////////////////////////////////
     // AbstractGraphPlacer
 
     @Override
     public void combine(final List<LGraph> components, final LGraph target) {
-        lastComponent = null;
         componentGroups.clear();
         assert !components.contains(target);
         target.getLayerlessNodes().clear();
@@ -134,15 +131,13 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
         if (this.componentGroups.size() > 0) {
             ModelOrderComponentGroup group =
                     (ModelOrderComponentGroup) this.componentGroups.get(componentGroups.size() - 1);
-            if (group.add(component, lastComponent)) {
-                this.lastComponent = component;
+            if (group.add(component)) {
                 return;
             }
         }
         
         // Create a new component group for the component
         componentGroups.add(new ModelOrderComponentGroup(component));
-        this.lastComponent = component;
     }   
 
 }
