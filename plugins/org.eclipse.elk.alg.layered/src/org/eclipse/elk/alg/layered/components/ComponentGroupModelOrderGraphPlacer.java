@@ -98,12 +98,12 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
             }
             for (Set<PortSide> side : group.getPortSides()) {
                 if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
-                    if (side.contains(PortSide.WEST)) {
+                    if (side.contains(PortSide.WEST) || side.isEmpty()) {
                         offset.y += groupSize.y;
                         break;
                     }
                 } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
-                    if (side.contains(PortSide.NORTH)) {
+                    if (side.contains(PortSide.NORTH) || side.isEmpty()) {
                         offset.x += groupSize.x;
                         break;
                     }
