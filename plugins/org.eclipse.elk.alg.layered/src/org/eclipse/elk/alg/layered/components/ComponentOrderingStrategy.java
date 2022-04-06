@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.components;
 
-import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
-
 /**
  * Strategy to order components by model order.
  */
@@ -29,7 +27,6 @@ public enum ComponentOrderingStrategy {
      * Components are ordered by their minimal node model order. This may still have some bugs and may create worse
      * drawings in terms of size compared to INSIDE_PORT_SIDE_GROUPS.
      */
-    @AdvancedPropertyValue
     FORCE_MODEL_ORDER;    
 
 }

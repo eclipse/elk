@@ -165,6 +165,17 @@ public class ModelOrderComponentGroup extends ComponentGroup {
         MODEL_ORDER_CONSTRAINTS.put(SIDES_NORTH_WEST, SIDES_NORTH_EAST_SOUTH_WEST);
         MODEL_ORDER_CONSTRAINTS.put(SIDES_NORTH_EAST, SIDES_NORTH_EAST_SOUTH_WEST);
         
+        // Conflicts that seem solvable but that arise since the order of C, EW, W, E is fix
+        // EW is before C and W and E
+        MODEL_ORDER_CONSTRAINTS.put(SIDES_EAST_WEST, SIDES_NONE);
+        MODEL_ORDER_CONSTRAINTS.put(SIDES_EAST_WEST, SIDES_WEST);
+        MODEL_ORDER_CONSTRAINTS.put(SIDES_EAST_WEST, SIDES_EAST);
+        
+        // Conflicts that seem solvable but that arise since the order of C, NS, N, S is fix
+        MODEL_ORDER_CONSTRAINTS.put(SIDES_NORTH_SOUTH, SIDES_NONE);
+        MODEL_ORDER_CONSTRAINTS.put(SIDES_NORTH_SOUTH, SIDES_NORTH);
+        MODEL_ORDER_CONSTRAINTS.put(SIDES_NORTH_SOUTH, SIDES_SOUTH);
+        
     }
     
     
@@ -226,11 +237,17 @@ public class ModelOrderComponentGroup extends ComponentGroup {
         // Check if we have a component with incompatible external port sides
         Set<PortSide> candidateSides = component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS);
         Collection<Set<PortSide>> constraints = CONSTRAINTS.get(candidateSides);
-        constraints.addAll(MODEL_ORDER_CONSTRAINTS.get(candidateSides));
+        Collection<Set<PortSide>> modelOrderConstraints = MODEL_ORDER_CONSTRAINTS.get(candidateSides);
         
         for (Set<PortSide> constraint : constraints) {
             if (!components.get(constraint).isEmpty()) {
                 // A component with a conflicting external port side combination exists
+                return false;
+            }
+        }
+        for (Set<PortSide> constraint : modelOrderConstraints) {
+            if (!components.get(constraint).isEmpty()) {
+                // A component with a conflicting external port side combination exists considering model order
                 return false;
             }
         }

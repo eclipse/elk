@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -53,32 +54,60 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
         // Place components in each group
         KVector offset = new KVector();
         KVector maxSize = new KVector();
+        KVector maxGroupSize = new KVector();
         double componentSpacing = firstComponent.getProperty(LayeredOptions.SPACING_COMPONENT_COMPONENT);
 
+        // The current free y has to be calculated based on that constraints the current graph has.
+        // The offset has to be readded if a NORTH edges is present.
+        // All previous component that might have different sizes have to be taken into account here.
         for (ComponentGroup group : componentGroups) {
             // Place the components
+            for (Set<PortSide> side : group.getPortSides()) {
+                if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
+                    if (side.contains(PortSide.NORTH)) {
+                        offset.x = maxGroupSize.x;
+                        break;
+                    }
+                } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
+                    if (side.contains(PortSide.EAST)) {
+                        offset.y = maxGroupSize.y;
+                        break;
+                    }
+                }
+            }
             KVector groupSize = this.placeComponents((ModelOrderComponentGroup) group, componentSpacing);
             offsetGraphs(group.getComponents(), offset.x, offset.y);
             maxSize.x = Math.max(maxSize.x, groupSize.x + offset.x);
             maxSize.y = Math.max(maxSize.y, groupSize.y + offset.y);
-            if (target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
-                // Compute the new offset. The previous component might not be in vertical or horizontal conflict.
-                // Normally this cannot occur but here graphs with the same port sides may be in different groups.
-                for (Set<PortSide> side : group.getPortSides()) {
+            // Compute the new offset. The previous component might not be in vertical or horizontal conflict.
+            // Normally this cannot occur but here graphs with the same port sides may be in different groups.
+            maxGroupSize = new KVector(Math.max(maxGroupSize.x, groupSize.x + offset.x),
+                    Math.max(maxGroupSize.y, groupSize.y + offset.y));
+            for (Set<PortSide> side : group.getPortSides()) {
+                if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
                     if (side.contains(PortSide.SOUTH)) {
                         offset.x += groupSize.x;
                         break;
                     }
-                }
-                for (Set<PortSide> side : group.getPortSides()) {
-                    if (side.contains(PortSide.EAST)) {
+                } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
+                    if (side.contains(PortSide.WEST)) {
                         offset.y += groupSize.y;
                         break;
                     }
                 }
-            } else {
-                offset.x += groupSize.x;
-                offset.y += groupSize.y;
+            }
+            for (Set<PortSide> side : group.getPortSides()) {
+                if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
+                    if (side.contains(PortSide.WEST)) {
+                        offset.y += groupSize.y;
+                        break;
+                    }
+                } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
+                    if (side.contains(PortSide.NORTH)) {
+                        offset.x += groupSize.x;
+                        break;
+                    }
+                }
             }
         }
         
