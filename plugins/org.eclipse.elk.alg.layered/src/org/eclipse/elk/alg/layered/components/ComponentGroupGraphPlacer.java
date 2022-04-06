@@ -293,7 +293,7 @@ class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @return the space used by the component placement, including spacing to the right and to the
      *         bottom of the components.
      */
-    private KVector placeComponentsHorizontally(final Collection<LGraph> components,
+    protected KVector placeComponentsHorizontally(final Collection<LGraph> components,
             final double spacing) {
         
         KVector size = new KVector();
@@ -321,7 +321,7 @@ class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
-    private KVector placeComponentsVertically(final Collection<LGraph> components,
+    protected KVector placeComponentsVertically(final Collection<LGraph> components,
             final double spacing) {
         
         KVector size = new KVector();
@@ -349,7 +349,7 @@ class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
-    private KVector placeComponentsInRows(final Collection<LGraph> components,
+    protected KVector placeComponentsInRows(final Collection<LGraph> components,
             final double spacing) {
         
         /* This code is basically taken from the SimpleRowGraphPlacer. */

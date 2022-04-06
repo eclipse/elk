@@ -19,13 +19,9 @@ import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * A graph placer that tries to place the components of a graph with taking connections to external
- * ports into account. This graph placer should only be used if the constraints applying to the
+ * A graph placer that tries to place the components of a graph with taking the model order and the
+ * connections to external ports into account. This graph placer should only be used if the constraints applying to the
  * external ports are either {@code FREE} or {@code FIXED_SIDES}.
- * 
- * <p>This placer assumes t</p>
- * 
- * <p>The target graph must not be contained in the list of components.</p>
  */
 public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlacer {
     
@@ -64,11 +60,11 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
 
         for (ComponentGroup group : componentGroups) {
             // Place the components
-            KVector groupSize = placeComponents(group, componentSpacing);
+            KVector groupSize = this.placeComponents((ModelOrderComponentGroup) group, componentSpacing);
             offsetGraphs(group.getComponents(), offset.x, offset.y);
             maxSize.x = Math.max(maxSize.x, groupSize.x + offset.x);
             maxSize.y = Math.max(maxSize.y, groupSize.y + offset.y);
-            if (target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)) {
+            if (target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
                 // Compute the new offset. The previous component might not be in vertical or horizontal conflict.
                 // Normally this cannot occur but here graphs with the same port sides may be in different groups.
                 for (Set<PortSide> side : group.getPortSides()) {
@@ -136,7 +132,8 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
     protected void addComponent(final LGraph component) {
         // Check if one of the existing component groups has some place left
         if (this.componentGroups.size() > 0) {
-            ComponentGroup group = this.componentGroups.get(componentGroups.size() - 1);
+            ModelOrderComponentGroup group =
+                    (ModelOrderComponentGroup) this.componentGroups.get(componentGroups.size() - 1);
             if (group.add(component, lastComponent)) {
                 this.lastComponent = component;
                 return;
@@ -144,9 +141,8 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
         }
         
         // Create a new component group for the component
-        componentGroups.add(new ComponentGroup(component));
+        componentGroups.add(new ModelOrderComponentGroup(component));
         this.lastComponent = component;
-    }
-    
+    }   
 
 }

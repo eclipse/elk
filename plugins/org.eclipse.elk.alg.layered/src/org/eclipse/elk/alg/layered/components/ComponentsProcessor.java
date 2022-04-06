@@ -138,7 +138,8 @@ public final class ComponentsProcessor {
             if (extPorts) {
                 // With external port connections, we want to use the more complex components
                 // placement algorithm
-                if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)) {
+                if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)
+                        == ComponentOrderingStrategy.FORCE_MODEL_ORDER) {
                     graphPlacer = componentGroupModelOrderGraphPlacer;
                 } else {
                     graphPlacer = componentGroupGraphPlacer;
@@ -149,7 +150,7 @@ public final class ComponentsProcessor {
         }
         // If model order should be preserved the connected components should be ordered by their elements.
         // The component with the node with the smallest order should be first.
-        if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)) {
+        if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
             Collections.sort(result, (g1, g2) -> {
                 int g1Order = LGraphUtil.getMinimalModelOrder(g1);
                 int g2Order = LGraphUtil.getMinimalModelOrder(g2);
