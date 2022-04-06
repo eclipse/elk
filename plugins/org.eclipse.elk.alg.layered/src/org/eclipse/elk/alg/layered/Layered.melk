@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.layered
 
 import java.util.List
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider
+import org.eclipse.elk.alg.layered.components.ComponentOrderingStrategy
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
@@ -948,12 +949,15 @@ group considerModelOrder {
         default = false
         targets nodes
     }
-    option components: boolean {
+    option components: ComponentOrderingStrategy {
         label "Consider Model Order for Components"
         description
-            "If enabled orders components by their minimal node model order."
+            "If set to NONE the usual ordering strategy (by cumulative node priority and size of nodes) is used.
+             INSIDE_PORT_SIDES orders the components with external ports only inside the groups with the same port side.
+             FORCE_MODEL_ORDER enforces the mode order on components. This option might produce bad alignments and sub
+             optimal drawings in terms of used area since the ordering should be respected."
         targets parents
-        default = false
+        default = ComponentOrderingStrategy.NONE
         requires org.eclipse.elk.separateConnectedComponents
     }
     option longEdgeStrategy: LongEdgeOrderingStrategy {

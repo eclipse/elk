@@ -49,7 +49,7 @@ import com.google.common.collect.Lists;
  * 
  * <p>The target graph must not be contained in the list of components.</p>
  */
-final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
+class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -57,7 +57,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     /**
      * List of component groups holding the different components.
      */
-    private final List<ComponentGroup> componentGroups = Lists.newArrayList();
+    protected final List<ComponentGroup> componentGroups = Lists.newArrayList();
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * 
      * @param component the component to be placed.
      */
-    private void addComponent(final LGraph component) {
+    protected void addComponent(final LGraph component) {
         // Check if one of the existing component groups has some place left
         for (ComponentGroup group : componentGroups) {
             if (group.add(component)) {
@@ -176,7 +176,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the group's size.
      */
-    private KVector placeComponents(final ComponentGroup group, final double spacing) {
+    protected KVector placeComponents(final ComponentGroup group, final double spacing) {
         
         // Determine the spacing between two components
         // Place the different sector components and remember the amount of space their placement uses.
@@ -293,7 +293,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @return the space used by the component placement, including spacing to the right and to the
      *         bottom of the components.
      */
-    private KVector placeComponentsHorizontally(final Collection<LGraph> components,
+    protected KVector placeComponentsHorizontally(final Collection<LGraph> components,
             final double spacing) {
         
         KVector size = new KVector();
@@ -321,7 +321,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
-    private KVector placeComponentsVertically(final Collection<LGraph> components,
+    protected KVector placeComponentsVertically(final Collection<LGraph> components,
             final double spacing) {
         
         KVector size = new KVector();
@@ -349,7 +349,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
      * @param spacing the amount of space to leave between two components.
      * @return the space used by the component placement.
      */
-    private KVector placeComponentsInRows(final Collection<LGraph> components,
+    protected KVector placeComponentsInRows(final Collection<LGraph> components,
             final double spacing) {
         
         /* This code is basically taken from the SimpleRowGraphPlacer. */
