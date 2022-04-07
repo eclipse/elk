@@ -52,62 +52,61 @@ public class ComponentGroupModelOrderGraphPlacer extends ComponentGroupGraphPlac
         }
         
         // Place components in each group
+        KVector spaceBlockedBySouthEdges = new KVector();
+        KVector spaceBlockedByComponents = new KVector();
         KVector offset = new KVector();
         KVector maxSize = new KVector();
-        KVector maxGroupSize = new KVector();
         double componentSpacing = firstComponent.getProperty(LayeredOptions.SPACING_COMPONENT_COMPONENT);
 
-        // The current free y has to be calculated based on that constraints the current graph has.
-        // The offset has to be readded if a NORTH edges is present.
-        // All previous component that might have different sizes have to be taken into account here.
+        // In horizontal mode the next component is placed below the last one.
+        // If it has a connection to NORTH, it has to be placed at an x-coordinate to not hit the other components.
+        // Otherwise will be placed as far WEST as possible without potentially hitting SOUTH edges.
         for (ComponentGroup group : componentGroups) {
             // Place the components
-            for (Set<PortSide> side : group.getPortSides()) {
-                if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
+            if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
+                offset.x = spaceBlockedBySouthEdges.x;
+                for (Set<PortSide> side : group.getPortSides()) {
                     if (side.contains(PortSide.NORTH)) {
-                        offset.x = maxGroupSize.x;
+                        offset.x = spaceBlockedByComponents.x;
                         break;
                     }
-                } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
-                    if (side.contains(PortSide.EAST)) {
-                        offset.y = maxGroupSize.y;
+                }
+            } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
+                offset.y = spaceBlockedBySouthEdges.y;
+                for (Set<PortSide> side : group.getPortSides()) {
+                    if (side.contains(PortSide.WEST)) {
+                        offset.y = spaceBlockedByComponents.y;
                         break;
                     }
                 }
             }
             KVector groupSize = this.placeComponents((ModelOrderComponentGroup) group, componentSpacing);
             offsetGraphs(group.getComponents(), offset.x, offset.y);
-            maxSize.x = Math.max(maxSize.x, groupSize.x + offset.x);
-            maxSize.y = Math.max(maxSize.y, groupSize.y + offset.y);
-            // Compute the new offset. The previous component might not be in vertical or horizontal conflict.
-            // Normally this cannot occur but here graphs with the same port sides may be in different groups.
-            maxGroupSize = new KVector(Math.max(maxGroupSize.x, groupSize.x + offset.x),
-                    Math.max(maxGroupSize.y, groupSize.y + offset.y));
-            for (Set<PortSide> side : group.getPortSides()) {
-                if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
-                    if (side.contains(PortSide.SOUTH)) {
-                        offset.x += groupSize.x;
-                        break;
-                    }
-                } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
-                    if (side.contains(PortSide.WEST)) {
-                        offset.y += groupSize.y;
-                        break;
-                    }
-                }
-            }
-            for (Set<PortSide> side : group.getPortSides()) {
-                if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
-                    if (side.contains(PortSide.WEST) || side.isEmpty()) {
-                        offset.y += groupSize.y;
-                        break;
-                    }
-                } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
-                    if (side.contains(PortSide.NORTH) || side.isEmpty()) {
-                        offset.x += groupSize.x;
-                        break;
-                    }
-                }
+            
+            if (target.getProperty(CoreOptions.DIRECTION).isHorizontal()) {
+                spaceBlockedByComponents.x = offset.x + groupSize.x;
+                maxSize.x = Math.max(maxSize.x, spaceBlockedByComponents.x);
+               for (Set<PortSide> side : group.getPortSides()) {
+                  if (side.contains(PortSide.SOUTH)) {
+                      spaceBlockedBySouthEdges.x = offset.x + groupSize.x;
+                      break;
+                  }
+               }
+               spaceBlockedByComponents.y = offset.y + groupSize.y;
+               offset.y = spaceBlockedByComponents.y;
+               maxSize.y = Math.max(maxSize.y, offset.y);
+            } else if (target.getProperty(CoreOptions.DIRECTION).isVertical()) {
+                spaceBlockedByComponents.y = offset.y + groupSize.y;
+                maxSize.y = Math.max(maxSize.y, spaceBlockedByComponents.y);
+               for (Set<PortSide> side : group.getPortSides()) {
+                  if (side.contains(PortSide.EAST)) {
+                      spaceBlockedBySouthEdges.y = offset.y + groupSize.y;
+                      break;
+                  }
+               }
+               spaceBlockedByComponents.x = offset.x + groupSize.x;
+               offset.x = spaceBlockedByComponents.x;
+               maxSize.x = Math.max(maxSize.x, offset.x);
             }
         }
         
