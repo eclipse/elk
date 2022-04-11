@@ -138,7 +138,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             maxWidth = Math.max(minSize.x, drawing.getDrawingWidth());
             
             // Run placement, compaction, and expansion (if enabled).
-            drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph);
+            drawing = secondIt.start(rectangles, maxWidth, minSize, progressMonitor, layoutGraph, padding);
         }
 
         // Final touch.
