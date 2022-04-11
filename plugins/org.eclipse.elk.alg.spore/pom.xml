@@ -13,14 +13,14 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.spore</artifactId>
   <name>ELK SPOrE</name>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.9.0-SNAPSHOT</version>
   <description>Algorithms for stable compaction and node overlap removal.</description>
   <packaging>eclipse-plugin</packaging>
 
@@ -28,17 +28,17 @@
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.core</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.9.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.graph</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.9.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.alg.common</artifactId>
-      <version>0.8.0-SNAPSHOT</version>
+      <version>0.9.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

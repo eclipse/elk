@@ -13,7 +13,7 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
@@ -21,7 +21,7 @@
   <artifactId>org.eclipse.elk.graph.json</artifactId>
   <name>ELK Graph JSON</name>
   <description>JSON Format of the ELK Graph</description>
-  <version>0.8.0-SNAPSHOT</version>
+  <version>0.9.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <dependencies>
