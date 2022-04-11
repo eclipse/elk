@@ -56,7 +56,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         }
         assert !components.contains(target);
         // Sort components
-        if (!target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)) {
+        if (target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) == ComponentOrderingStrategy.NONE) {
             // assign priorities
             for (LGraph graph : components) {
                 int priority = 0;
