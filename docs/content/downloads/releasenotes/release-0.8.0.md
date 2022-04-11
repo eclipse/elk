@@ -1,5 +1,5 @@
 ---
-title: "0.8.1"
+title: "0.8.0"
 menu:
   main:
     parent: "ReleaseNotes"
