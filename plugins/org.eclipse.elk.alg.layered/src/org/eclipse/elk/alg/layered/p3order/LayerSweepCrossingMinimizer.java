@@ -566,9 +566,6 @@ public class LayerSweepCrossingMinimizer
      * Traverses inclusion breadth-first and initializes each Graph.
      */
     private List<GraphInfoHolder> initialize(final LGraph rootGraph) {
-        if (rootGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
-            crossMinType = CrossMinType.MODEL_ORDER;
-        }
         graphInfoHolders = Lists.newArrayList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
@@ -623,8 +620,6 @@ public class LayerSweepCrossingMinimizer
     public enum CrossMinType {
         /** Use BarycenterHeuristic. */
         BARYCENTER,
-        /** Use ModelOrderBarycenterHeuristic. */
-        MODEL_ORDER,
         /** Use one-sided GreedySwitchHeuristic. */
         ONE_SIDED_GREEDY_SWITCH,
         /** Use two-sided GreedySwitchHeuristic. */
