@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchHeuristic;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
@@ -92,12 +93,14 @@ public class GraphInfoHolder implements IInitializable {
         List<IInitializable> initializables =
                 Lists.newArrayList(this, crossingsCounter, layerSweepTypeDecider, portDistributor);
         
-        if (crossMinType == CrossMinType.BARYCENTER) {
+        if (crossMinType == CrossMinType.BARYCENTER
+                && !graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
             ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
             initializables.add(constraintResolver);
             crossMinimizer = new BarycenterHeuristic(constraintResolver, random,
                     (AbstractBarycenterPortDistributor) portDistributor, currentNodeOrder);
-        } else if (crossMinType == CrossMinType.MODEL_ORDER) {
+        } else if (crossMinType == CrossMinType.BARYCENTER
+                && graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
             ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
             initializables.add(constraintResolver);
             crossMinimizer = new ModelOrderBarycenterHeuristic(constraintResolver, random,
