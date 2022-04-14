@@ -47,7 +47,12 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
      * Reacts to the input model by respecting the initial ordering in the model file.
      * This ordering is used to identify backwards edges.
      */
-    MODEL_ORDER;
+    MODEL_ORDER,
+    
+    /**
+     * Applies a greedy heuristic to minimize the number of reversed edges but uses the model order as a tie-breaker.
+     */
+    GREEDY_MODEL_ORDER;
     
 
     @Override
@@ -63,6 +68,9 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
             return new InteractiveCycleBreaker();
             
         case MODEL_ORDER:
+            return new ModelOrderCycleBreaker();
+            
+        case GREEDY_MODEL_ORDER:
             return new ModelOrderCycleBreaker();
             
         default:
