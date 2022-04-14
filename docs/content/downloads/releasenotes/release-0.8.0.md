@@ -72,3 +72,6 @@ This is mainly a bugfix release. See GitHub for the full [list of resolved issue
 
 * [#694](https://github.com/eclipse/elk/pull/694), [#704:](https://github.com/eclipse/elk/pull/704) Cleanup.
 
+### Known Bugs
+
+- If `forceNodeModelOrder` is enabled once, it is still applied after it was disabled
