@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
@@ -404,26 +405,33 @@ public final class ElkUtil {
      * @param node the node whose child area should be computed
      */
     public static void computeChildAreaDimensions(final ElkNode node) {
-        // iterate over all nodes and get their coordinate bounds
+        // TODO: currently only node bounds are checked, but other things, 
+        //       such as edges, labels, maybe more need to checked as well
+        //       anything that can graphically extend the bounds of the drawing
         
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = 0.0;
         double maxY = 0.0;
         
+        // iterate over all nodes and get their coordinate bounds
         for (ElkNode child : node.getChildren()) {
-            
-            if (minX > child.getX()) {
-                minX = child.getX();
+            // TODO: test this with some graphs that actually have margins
+            //       this should ensure that margins on the edges of the layout
+            //       are considered when determining how large the area that needs to be 
+            //       scaled down is
+            ElkMargin margins = child.getProperty(CoreOptions.MARGINS);
+            if (minX > child.getX() - margins.left) {
+                minX = child.getX() - margins.left;
             }
-            if (minY > child.getY()) {
-                minY = child.getY();
+            if (minY > child.getY() - margins.top) {
+                minY = child.getY() - margins.top;
             }
-            if (maxX < child.getX() + child.getWidth()) {
-                maxX = child.getX() + child.getWidth(); 
+            if (maxX < child.getX() + child.getWidth() + margins.right) {
+                maxX = child.getX() + child.getWidth() + margins.right; 
             }
-            if (maxY < child.getY() + child.getHeight()) {
-                maxY = child.getY() + child.getHeight(); 
+            if (maxY < child.getY() + child.getHeight() + margins.bottom) {
+                maxY = child.getY() + child.getHeight() + margins.bottom; 
             }
         }
 
