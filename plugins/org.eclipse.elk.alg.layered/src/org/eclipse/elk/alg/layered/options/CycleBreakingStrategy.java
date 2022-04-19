@@ -13,6 +13,7 @@ import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p1cycles.DepthFirstCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.GreedyCycleBreaker;
+import org.eclipse.elk.alg.layered.p1cycles.GreedyModelOrderCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.InteractiveCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.ModelOrderCycleBreaker;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -71,7 +72,7 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
             return new ModelOrderCycleBreaker();
             
         case GREEDY_MODEL_ORDER:
-            return new ModelOrderCycleBreaker();
+            return new GreedyModelOrderCycleBreaker();
             
         default:
             throw new IllegalArgumentException(
