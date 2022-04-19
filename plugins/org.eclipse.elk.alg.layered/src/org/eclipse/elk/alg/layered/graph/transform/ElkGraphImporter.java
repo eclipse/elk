@@ -229,6 +229,8 @@ class ElkGraphImporter {
                 if ((elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
                         || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
                             == CycleBreakingStrategy.MODEL_ORDER
+                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                            == CycleBreakingStrategy.GREEDY_MODEL_ORDER
                         || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
                         || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE)
                     && !child.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
@@ -246,6 +248,8 @@ class ElkGraphImporter {
             if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
                     || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
                         == CycleBreakingStrategy.MODEL_ORDER
+                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                        == CycleBreakingStrategy.GREEDY_MODEL_ORDER
                     || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
                     || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
                 elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
@@ -310,7 +314,9 @@ class ElkGraphImporter {
             
             if ((elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
                     || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                    == CycleBreakingStrategy.MODEL_ORDER
+                        == CycleBreakingStrategy.MODEL_ORDER
+                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                        == CycleBreakingStrategy.GREEDY_MODEL_ORDER
                     || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
                     || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE)
                 && !elknode.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
@@ -382,7 +388,9 @@ class ElkGraphImporter {
                 
                 if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
                         || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                        == CycleBreakingStrategy.MODEL_ORDER
+                            == CycleBreakingStrategy.MODEL_ORDER
+                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
+                            == CycleBreakingStrategy.GREEDY_MODEL_ORDER
                         || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
                         || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
                     // Assign a model order to the edges as they are read

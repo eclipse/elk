@@ -54,7 +54,7 @@ import com.google.common.collect.Lists;
  * @see org.eclipse.elk.alg.layered.intermediate.LayerConstraintProcessor
  * @author msp
  */
-public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
+public class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
     
     /** intermediate processing configuration. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
@@ -71,6 +71,8 @@ public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGr
     private final LinkedList<LNode> sources = Lists.newLinkedList();
     /** list of sink nodes. */
     private final LinkedList<LNode> sinks = Lists.newLinkedList();
+    
+    private Random random;
     
     @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
@@ -132,7 +134,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGr
 
         // assign marks to all nodes
         List<LNode> maxNodes = Lists.newArrayList();
-        Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
+        random = layeredGraph.getProperty(InternalProperties.RANDOM);
         
         while (unprocessedNodeCount > 0) {
             // sinks are put to the right --> assign negative rank, which is later shifted to positive
@@ -171,7 +173,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGr
                 assert maxOutflow > Integer.MIN_VALUE;
                 
                 // randomly select a node from the ones with maximal outflow and put it left
-                LNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
+                LNode maxNode = chooseNodeWithMaxOutflow(maxNodes);
                 mark[maxNode.id] = nextLeft++;
                 updateNeighbors(maxNode);
                 unprocessedNodeCount--;
@@ -205,6 +207,17 @@ public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGr
 
         dispose();
         monitor.done();
+    }
+    
+    /**
+     * Choose a node among all nodes with the same maximum outflow.
+     * In its default implementation this is done randomly.
+     * 
+     * @param nodes All nodes with the same outflow.
+     * @return The chosen node.
+     */
+    protected LNode chooseNodeWithMaxOutflow(final List<LNode> nodes) {
+        return nodes.get(random.nextInt(nodes.size()));
     }
     
     /**

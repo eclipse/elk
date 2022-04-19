@@ -73,6 +73,11 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
     }
     
     @ConfiguratorProvider
+    public LayoutConfigurator greedyModelOrderConfigurator() {
+        return configuratorFor(CycleBreakingStrategy.GREEDY_MODEL_ORDER);
+    }
+    
+    @ConfiguratorProvider
     public LayoutConfigurator modelOrderPreferEdgesConfigurator() {
         LayoutConfigurator config = configuratorFor(CycleBreakingStrategy.MODEL_ORDER);
         config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
