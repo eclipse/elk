@@ -405,36 +405,92 @@ public final class ElkUtil {
      * @param node the node whose child area should be computed
      */
     public static void computeChildAreaDimensions(final ElkNode node) {
-        // TODO: currently only node bounds are checked, but other things, 
-        //       such as edges, labels, maybe more need to checked as well
-        //       anything that can graphically extend the bounds of the drawing
+        // TODO: for some stuff like labels and maybe edges it might only be necessary
+        //       to check the max sides, because positioning of the layout already deals with
+        //       the min case, but better safe than sorry
         
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = 0.0;
         double maxY = 0.0;
         
-        // iterate over all nodes and get their coordinate bounds
-        for (ElkNode child : node.getChildren()) {
+        // iterate over all nodes and labels and get their coordinate bounds
+        Iterable<ElkLabel> edgeLabels = new ArrayList<>();
+        for (ElkEdge edge : node.getContainedEdges()) {
+            edgeLabels = Iterables.concat(edgeLabels, edge.getLabels());
+        }
+        for (ElkShape shape : Iterables.concat(node.getLabels(), node.getChildren(), edgeLabels)) {
             // TODO: test this with some graphs that actually have margins
             //       this should ensure that margins on the edges of the layout
             //       are considered when determining how large the area that needs to be 
             //       scaled down is
-            ElkMargin margins = child.getProperty(CoreOptions.MARGINS);
-            if (minX > child.getX() - margins.left) {
-                minX = child.getX() - margins.left;
+            ElkMargin margins = shape.getProperty(CoreOptions.MARGINS);
+            if (minX > shape.getX() - margins.left) {
+                minX = shape.getX() - margins.left;
             }
-            if (minY > child.getY() - margins.top) {
-                minY = child.getY() - margins.top;
+            if (minY > shape.getY() - margins.top) {
+                minY = shape.getY() - margins.top;
             }
-            if (maxX < child.getX() + child.getWidth() + margins.right) {
-                maxX = child.getX() + child.getWidth() + margins.right; 
+            if (maxX < shape.getX() + shape.getWidth() + margins.right) {
+                maxX = shape.getX() + shape.getWidth() + margins.right; 
             }
-            if (maxY < child.getY() + child.getHeight() + margins.bottom) {
-                maxY = child.getY() + child.getHeight() + margins.bottom; 
+            if (maxY < shape.getY() + shape.getHeight() + margins.bottom) {
+                maxY = shape.getY() + shape.getHeight() + margins.bottom; 
             }
         }
+        
+        // iterate over all contained edges and check their bounds
+        for (ElkEdge edge : node.getContainedEdges()) {
+            for (ElkEdgeSection section : edge.getSections()) {
+                double sX = section.getStartX();
+                double eX = section.getEndX();
+                double sY = section.getStartY();
+                double eY = section.getEndY();
+                
+                // I hate this, can this be done more elegantly?
+                if (minX > sX) {
+                    minX = sX;
+                }
+                if (minX > eX) {
+                    minX = eX;
+                }
+                if (maxX < sX) {
+                    maxX = sX;
+                }
+                if (maxX < eX) {
+                    maxX = eX;
+                }
+                
+                if (minY > sY) {
+                    minY = sY;
+                }
+                if (minY > eY) {
+                    minY = eY;
+                }
+                if (maxY < sY) {
+                    maxY = sY;
+                }
+                if (maxY < eY) {
+                    maxY = eY;
+                }
+                
+                for (ElkBendPoint bendpoint : section.getBendPoints()) {
+                    if (minX > bendpoint.getX()) {
+                        minX = bendpoint.getX();
+                    }
+                    if (maxX < bendpoint.getX()) {
+                        maxX = bendpoint.getX();
+                    }
+                    if (minY > bendpoint.getY()) {
+                        minY = bendpoint.getY();
+                    }
+                    if (maxY < bendpoint.getY()) {
+                        maxY = bendpoint.getY();
+                    }
 
+                }
+            }
+        }
         
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, maxX - minX);
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, maxY - minY);
