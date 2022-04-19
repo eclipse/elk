@@ -101,7 +101,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.topdown.scaleFactor
     supports org.eclipse.elk.topdown.hierarchicalNodeWidth
     supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio
-    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.PARALLEL_NODE
+    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.HIERARCHICAL_NODE
     
     // other options
     supports org.eclipse.elk.padding = new ElkPadding(12)

@@ -825,14 +825,20 @@ programmatic option scaleFactor: double {
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
-option topdownLayout: boolean {
+advanced option topdownLayout: boolean {
     label "Topdown Layout"
     description
         "Turns topdown layout on and off. If this option is enabled, hierarchical layout will be computed first for
          the root node and then for its children recursively. Layouts are then scaled down to fit the area provided by
-         their parents."
+         their parents. Graphs must follow a certain structure for topdown layout to work properly. 
+         {@link TopdownNodeTypes.PARALLEL_NODE} nodes must have children of type 
+         {@link TopdownNodeTypes.HIERARCHICAL_NODE} and must define {@link topdown.hierarchicalNodeWidth} and 
+         {@link topdown.hierarchicalNodeAspectRatio} for their children. Furthermore they need to be laid out using the 
+         algorithm {@link TopdownPacking}. Hierarchical nodes require the layout option {@link nodeSize.fixedGraphSize}
+         to be true to prevent the algorithm used there from resizing the hierarchical node."
     default = false
     targets parents
+    requires topdown.nodeType
 }
 
 group topdown {
@@ -872,7 +878,8 @@ group topdown {
         label "Topdown Node Type"
         description
             "The different node types used for topdown layout. If the node type is set 
-             to {@link TopdownNodeTypes.PARALLEL_NODE} the algorithm must be set to {@link TopdownPacking}."
+             to {@link TopdownNodeTypes.PARALLEL_NODE} the algorithm must be set to {@link TopdownPacking}.
+             The {@link nodeSize.fixedGraphSize} option is technically only required for hierarchical nodes." 
         default = TopdownNodeTypes.NONE
         targets nodes
         requires nodeSize.fixedGraphSize

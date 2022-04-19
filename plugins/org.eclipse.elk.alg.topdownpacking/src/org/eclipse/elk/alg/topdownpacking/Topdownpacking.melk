@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.topdownpacking
 
 import org.eclipse.elk.alg.topdownpacking.TopdownpackingLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.TopdownNodeTypes
 
 bundle {
     metadataClass options.TopdownpackingMetadataProvider
@@ -25,4 +26,8 @@ algorithm topdownpacking(TopdownpackingLayoutProvider) {
     metadataClass options.TopdownpackingOptions
     supports org.eclipse.elk.padding = new ElkPadding(10)
     supports org.eclipse.elk.spacing.nodeNode = 10
+    supports org.eclipse.elk.topdown.hierarchicalNodeWidth = 100
+    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio = 1.414
+    supports org.eclipse.elk.topdownLayout
+    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.PARALLEL_NODE
 }
