@@ -212,6 +212,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // then we need to step through the states and set the sizes of the states
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
                             || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
+                        
                         for (ElkNode parallelNode : layoutNode.getChildren()) {
                             // check if child has children, if yes its size needs to be pre-computed before computing the layout
                             if (parallelNode.getChildren().size() > 0) {
@@ -243,7 +244,17 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     }
                         
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
-
+                    // root node needs its size to be set manually
+                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
+                        // assume there is only one child and use that as the basis to determine diagram size
+                        // TODO: need to double check how this would work in the case of multiple disconnected nodes
+                        //       under the root, in that case could probably also use the util function computeChildAreaDimensions
+                        ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
+                        ElkNode child = layoutNode.getChildren().get(0);
+                        layoutNode.setDimensions(
+                                padding.left + child.getWidth() + padding.right, 
+                                padding.top + child.getHeight() + padding.bottom);
+                    }
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
