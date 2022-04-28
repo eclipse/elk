@@ -225,19 +225,24 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 ElkPadding padding = parallelNode.getProperty(CoreOptions.PADDING);
                                 double nodeNodeSpacing = parallelNode.getProperty(CoreOptions.SPACING_NODE_NODE);
                                 
-                                double hierarchicalNodeWidth = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
-                                double hierarchicalNodeAspectRatio = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+                                double hierarchicalNodeWidth 
+                                    = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+                                double hierarchicalNodeAspectRatio 
+                                    = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                                 
-                                int N = parallelNode.getChildren().size();
-                                int cols = (int) Math.ceil(Math.sqrt(N));
-                                double requiredWidth = cols * hierarchicalNodeWidth + padding.left + padding.right + (cols - 1)*nodeNodeSpacing; 
+                                int numberOfChildren = parallelNode.getChildren().size();
+                                int cols = (int) Math.ceil(Math.sqrt(numberOfChildren));
+                                double requiredWidth = cols * hierarchicalNodeWidth 
+                                        + padding.left + padding.right + (cols - 1) * nodeNodeSpacing; 
                                 int rows;
-                                if (N > cols * cols - cols) {
+                                if (numberOfChildren > cols * cols - cols) {
                                     rows = cols;
                                 } else { // N <= W^2 - W
                                     rows = cols - 1;
                                 }
-                                double requiredHeight = rows * hierarchicalNodeWidth/hierarchicalNodeAspectRatio + padding.top + padding.bottom + (rows - 1)*nodeNodeSpacing;
+                                double requiredHeight 
+                                    = rows * hierarchicalNodeWidth / hierarchicalNodeAspectRatio 
+                                    + padding.top + padding.bottom + (rows - 1) * nodeNodeSpacing;
                                 parallelNode.setDimensions(requiredWidth, requiredHeight);
                             }
                         }
