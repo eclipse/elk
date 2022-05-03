@@ -54,7 +54,7 @@ import com.google.common.collect.Lists;
  * @see org.eclipse.elk.alg.layered.intermediate.LayerConstraintProcessor
  * @author msp
  */
-public class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
+public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
     
     /** intermediate processing configuration. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
