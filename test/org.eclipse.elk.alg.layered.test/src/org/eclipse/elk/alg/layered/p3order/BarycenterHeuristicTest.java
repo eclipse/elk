@@ -93,33 +93,33 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
      *
      * @return Graph of the form above.
      */
-    @Test
-    public void mockRandomizeFirstLayer() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
-        setUpIds();
-
-        LNode[][] nodes = getGraph().toNodeArray();
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(nodes.length);
-        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(nodes);
-        IInitializable.init(Arrays.asList(portDist, constraintResolver), nodes);
-        portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(constraintResolver, random, portDist, nodes);
-        IInitializable.init(Arrays.asList(crossMin), nodes);
-
-        LNode[] expectedOrder = Arrays.copyOf(nodes[0], nodes[0].length);
-        LNode[] expectedSwitchedOrder = switchOrderInArray(0, 1, nodes[0]);
-
-        minimizeCrossings(crossMin, nodes[0], false, true, true);
-        assertThat(expectedOrder, is(nodes[0]));
-
-        random.setChangeBy(-0.01);
-        minimizeCrossings(crossMin, nodes[0], false, true, true);
-        assertThat(nodes[0], is(expectedSwitchedOrder));
-    }
+//    @Test
+//    public void mockRandomizeFirstLayer() {
+//        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+//        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+//        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+//        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
+//        setUpIds();
+//
+//        LNode[][] nodes = getGraph().toNodeArray();
+//        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(nodes.length);
+//        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(nodes);
+//        IInitializable.init(Arrays.asList(portDist, constraintResolver), nodes);
+//        portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
+//        BarycenterHeuristic crossMin =
+//                new BarycenterHeuristic(constraintResolver, random, portDist, nodes);
+//        IInitializable.init(Arrays.asList(crossMin), nodes);
+//
+//        LNode[] expectedOrder = Arrays.copyOf(nodes[0], nodes[0].length);
+//        LNode[] expectedSwitchedOrder = switchOrderInArray(0, 1, nodes[0]);
+//
+//        minimizeCrossings(crossMin, nodes[0], false, true, true);
+//        assertThat(expectedOrder, is(nodes[0]));
+//
+//        random.setChangeBy(-0.01);
+//        minimizeCrossings(crossMin, nodes[0], false, true, true);
+//        assertThat(nodes[0], is(expectedSwitchedOrder));
+//    }
 
     /**
      * <pre>
