@@ -72,7 +72,7 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
             return new ModelOrderCycleBreaker();
             
         case GREEDY_MODEL_ORDER:
-            return new GreedyModelOrderCycleBreaker();
+            return new ModelOrderCycleBreaker();
             
         default:
             throw new IllegalArgumentException(
