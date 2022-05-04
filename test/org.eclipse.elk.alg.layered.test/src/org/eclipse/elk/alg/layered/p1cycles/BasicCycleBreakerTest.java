@@ -72,10 +72,10 @@ public class BasicCycleBreakerTest extends TestGraphCreator {
         return configuratorFor(CycleBreakingStrategy.GREEDY);
     }
     
-    @ConfiguratorProvider
-    public LayoutConfigurator greedyModelOrderConfigurator() {
-        return configuratorFor(CycleBreakingStrategy.GREEDY_MODEL_ORDER);
-    }
+//    @ConfiguratorProvider
+//    public LayoutConfigurator greedyModelOrderConfigurator() {
+//        return configuratorFor(CycleBreakingStrategy.GREEDY_MODEL_ORDER);
+//    }
     
     @ConfiguratorProvider
     public LayoutConfigurator modelOrderPreferEdgesConfigurator() {
