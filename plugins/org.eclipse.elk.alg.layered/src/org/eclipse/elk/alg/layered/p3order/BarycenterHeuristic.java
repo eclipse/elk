@@ -33,18 +33,18 @@ import com.google.common.collect.Lists;
  * @author cds
  * @author ima
  */
-public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
+public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
-    protected float[] portRanks;
+    private float[] portRanks;
     /** the random number generator. */
-    protected final Random random;
+    private final Random random;
     /** the constraint resolver for ordering constraints. */
-    protected ForsterConstraintResolver constraintResolver;
+    private ForsterConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
-    protected BarycenterState[][] barycenterState;
+    private BarycenterState[][] barycenterState;
     /** The Barycenter PortDistributor is used to ask for the port ranks.*/
-    protected final AbstractBarycenterPortDistributor portDistributor;
+    private final AbstractBarycenterPortDistributor portDistributor;
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization.
@@ -84,12 +84,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
         if (layer.size() > 1) {
             // Sort the vertices according to their barycenters
-            if (layer.get(0).getGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)) {
-                ModelOrderBarycenterHeuristic.insertionSort(layer, barycenterStateComparator,
-                        (ModelOrderBarycenterHeuristic) this);
-            } else {
-                Collections.sort(layer, barycenterStateComparator);
-            }
+            Collections.sort(layer, barycenterStateComparator);
 
             // Resolve ordering constraints
             constraintResolver.processConstraints(layer);
@@ -272,7 +267,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
         }
     }
 
-    protected BarycenterState stateOf(final LNode node) {
+    private BarycenterState stateOf(final LNode node) {
         return barycenterState[node.getLayer().id][node.id];
     }
     
@@ -313,7 +308,7 @@ public class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
     /**
      * Compares two {@link LNode}s based on their barycenter values.
      */
-    protected Comparator<LNode> barycenterStateComparator = 
+    private Comparator<LNode> barycenterStateComparator = 
         (n1, n2) -> {
             BarycenterState s1 = stateOf(n1);
             BarycenterState s2 = stateOf(n2);
