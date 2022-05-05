@@ -208,29 +208,28 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     
-                    // if we are currently in a region and about to produce a layered layout,
-                    // then we need to step through the states and set the sizes of the states
+                    // if we are currently in a region and about to produce a child layout,
+                    // then we need to step through the states and set the sizes of the states 
+                    // only if their layout is topdownpacking
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
                             || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
                         
-                        for (ElkNode parallelNode : layoutNode.getChildren()) {
-                            // check if child has children, if yes its size needs to be pre-computed before computing the layout
-                            if (parallelNode.getChildren().size() > 0) {
-                                // TODO: predict required size of node depending on the algorithm that will be used
-                                // what is here now is specific to topdownpacking, and this should be externalized and included with the 
-                                // algorithms, this will result in clearly defined support of topdown layout by the algorithms
-                                // TODO: design sensible mechanism to facilitate this switching
+                        for (ElkNode childNode : layoutNode.getChildren()) {
+                            // check if child has children and whether it will be laid out with topdownpacking
+                            // if yes its size needs to be pre-computed before computing the layout
+                            if (childNode.getChildren().size() > 0
+                                    && childNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.topdownpacking")) {
                                 
                                 // get relevant properties
-                                ElkPadding padding = parallelNode.getProperty(CoreOptions.PADDING);
-                                double nodeNodeSpacing = parallelNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+                                ElkPadding padding = childNode.getProperty(CoreOptions.PADDING);
+                                double nodeNodeSpacing = childNode.getProperty(CoreOptions.SPACING_NODE_NODE);
                                 
                                 double hierarchicalNodeWidth 
-                                    = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+                                    = childNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
                                 double hierarchicalNodeAspectRatio 
-                                    = parallelNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+                                    = childNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                                 
-                                int numberOfChildren = parallelNode.getChildren().size();
+                                int numberOfChildren = childNode.getChildren().size();
                                 int cols = (int) Math.ceil(Math.sqrt(numberOfChildren));
                                 double requiredWidth = cols * hierarchicalNodeWidth 
                                         + padding.left + padding.right + (cols - 1) * nodeNodeSpacing; 
@@ -243,7 +242,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 double requiredHeight 
                                     = rows * hierarchicalNodeWidth / hierarchicalNodeAspectRatio 
                                     + padding.top + padding.bottom + (rows - 1) * nodeNodeSpacing;
-                                parallelNode.setDimensions(requiredWidth, requiredHeight);
+                                childNode.setDimensions(requiredWidth, requiredHeight);
                             }
                         }
                     }
