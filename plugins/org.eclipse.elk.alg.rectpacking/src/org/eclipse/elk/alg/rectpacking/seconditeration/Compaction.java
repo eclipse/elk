@@ -345,6 +345,15 @@ public final class Compaction {
         
         // Get total width of the current stack.
         double targetWidthOfNextBlock = boundingWidth - (block.getStack().getX() + currentBlockMinWidth - nodeNodeSpacing);
+        
+        // Get height of next block.
+        double nextBlockHeight = nextBlock.getHeightForTargetWidth(targetWidthOfNextBlock);
+        // If the height to fit in the current row is bigger than the minimum height the next block does not provide
+        // a node that will define the row height by its height.
+        if (shouldRowHeigthBeReevalauted && nextBlockHeight > nextBlock.getMinHeight()) {
+            return false;
+        }
+        
         // Check width of next block.
         if (targetWidthOfNextBlock < nextBlock.getMinWidth() && !shouldRowHeigthBeReevalauted) {
             return false;
@@ -358,8 +367,6 @@ public final class Compaction {
         boolean lastRowOptimization = nextRowIndex == rows.size() - 1
                 && targetWidthOfNextBlock >= rows.get(nextRowIndex).getWidth();
         
-        // Check height of next block.
-        double nextBlockHeight = nextBlock.getHeightForTargetWidth(targetWidthOfNextBlock);
         // If the next block does not contain a node that would dominate the row height and it would otherwise exceed
         // the row height if drawn in the available width, it cannot be placed in this row (if it is not the last row).
         if (!(shouldRowHeigthBeReevalauted)
