@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.rectpacking.seconditeration;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.util.Block;
 import org.eclipse.elk.alg.rectpacking.util.BlockStack;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;
@@ -97,7 +98,8 @@ public final class Compaction {
 
                 // Try to move as many rects as possible from the next block in this block.
                 // First flatten the current block.
-                if (!nextBlock.getChildren().isEmpty()) {
+                if (!nextBlock.getChildren().isEmpty()
+                        && !nextBlock.getChildren().get(0).getProperty(RectPackingOptions.IN_NEW_ROW)) {
                     useRowWidth(block, boundingWidth);
                     // Absorb all rectangles that fit in the current block form the next block if they fit the row.
                     somethingWasChanged |= absorbBlocks(row, block, nextBlock, boundingWidth, nodeNodeSpacing);
@@ -131,7 +133,8 @@ public final class Compaction {
                 // If it could compact the width of the current block and try to fit as much as possible in there
 
                 // Try to fit next block on top of the current block.
-                if (placeBelow(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex, nodeNodeSpacing)) {
+                if (!nextBlock.getChildren().get(0).getProperty(RectPackingOptions.IN_NEW_ROW)
+                        && placeBelow(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex, nodeNodeSpacing)) {
                     somethingWasChanged = true;
                     continue;
                 }
@@ -139,7 +142,8 @@ public final class Compaction {
                 if (wasFromNextRow) {
                     // Try to place the next block next to the current one.
                     // Draw the current block as slim as possible.
-                    if (placeBeside(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex, nodeNodeSpacing)) {
+                    if (!nextBlock.getChildren().get(0).getProperty(RectPackingOptions.IN_NEW_ROW)
+                            && placeBeside(rows, row, block, nextBlock, wasFromNextRow, boundingWidth, nextRowIndex, nodeNodeSpacing)) {
                         somethingWasChanged = true;
                         continue;
                     } else if (useRowHeight(row, block)) {
