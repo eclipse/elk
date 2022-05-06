@@ -47,6 +47,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports lastPlaceShift
     supports onlyFirstIteration
     supports rowCompaction
+    supports rowHeightReevaluation
     supports expandToAspectRatio
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.interactiveLayout
@@ -62,7 +63,7 @@ advanced option optimizationGoal: OptimizationGoal {
         "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
          sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
     documentation "@packingstrategy.md"
-    targets nodes
+    targets parents
     default = OptimizationGoal.MAX_SCALE_DRIVEN
 }
 
@@ -75,7 +76,7 @@ programmatic option lastPlaceShift: boolean {
          iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
          impossible to implement a size transformation of rectangles that will fill the bounding box and eliminate 
          empty spaces."
-    targets nodes
+    targets parents
     default = true
 }
 
@@ -105,7 +106,7 @@ programmatic option onlyFirstIteration: boolean {
         "If enabled only the width approximation step is executed and the nodes are placed accordingly.
          The nodes are layouted according to the packingStrategy.
          If set to true not expansion of nodes is taking place."
-    targets nodes
+    targets parents
     default = false
 }
 
@@ -115,8 +116,19 @@ programmatic option rowCompaction: boolean {
         "Enables compaction. Compacts blocks if they do not use the full height of the row.
          This option allows to have a smaller drawing.
          If this option is disabled all nodes are placed next to each other in rows."
-    targets nodes
+    targets parents
     default = true
+}
+
+option rowHeightReevaluation: boolean {
+    label "Row Height Reevaluation"
+    description
+        "During the compaction step the height of a row is normally not changed.
+         If this options is set, the blocks of other rows might be added if they exceed the row height.
+         If this is the case the whole row has to be packed again to be optimal regarding the new row height.
+         This option should, therefore, be used with care since it might be computation heavy."
+    targets parents
+    default = false
 }
 
 advanced option expandToAspectRatio: boolean {
@@ -125,7 +137,7 @@ advanced option expandToAspectRatio: boolean {
         "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
          The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
          in unreasonable ndoe expansion."
-    targets nodes
+    targets parents
     default = false
     requires org.eclipse.elk.expandNodes
 }
@@ -137,6 +149,6 @@ advanced option targetWidth: double {
          aspect ratio.
          The padding is not included in this. Meaning a drawing will have width of targetwidth +
          horizontal padding."
-    targets nodes
+    targets parents
     default = -1
 }

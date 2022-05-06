@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.rectpacking.seconditeration;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.util.Block;
 import org.eclipse.elk.alg.rectpacking.util.BlockStack;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
@@ -19,6 +20,7 @@ import org.eclipse.elk.alg.rectpacking.util.RectRow;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -86,10 +88,21 @@ public class RowFillingAndCompaction {
                     RectRow previousRow = rows.get(rowIdx - 1);
                     currentRow.setY(previousRow.getY() + previousRow.getHeight() + nodeNodeSpacing);
                 }
-                Compaction.compact(rowIdx, rows, maxWidth, nodeNodeSpacing);
-                adjustWidthAndHeight(currentRow);
-                // Log graph after first row compaction.
-                progressMonitor.logGraph(layoutGraph, "Compacted row " + rowIdx);
+                Pair<Boolean, Boolean> result = Compaction.compact(rowIdx, rows, maxWidth, nodeNodeSpacing, layoutGraph.getProperty(RectPackingOptions.ROW_HEIGHT_REEVALUATION));
+                if (result.getSecond()) {
+                    // Reset the row such that stacks are removed, blocks are not fixed and the width does not exceed
+                    // the bound.
+                    for (Block block : currentRow.getChildren()) {
+                        block.setFixed(false);
+                        block.setPositionFixed(false);
+                    }
+                    currentRow.resetStacks();
+                    rowIdx--;
+                } else {
+                    adjustWidthAndHeight(currentRow);
+                    // Log graph after first row compaction.
+                    progressMonitor.logGraph(layoutGraph, "Compacted row " + rowIdx);
+                }
             }
         } else {
             // Put every block in its own block stack.
