@@ -20,12 +20,11 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.PortType;
-import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic;
-import org.eclipse.elk.alg.layered.p3order.ForsterConstraintResolver;
-import org.eclipse.elk.alg.layered.p3order.NodeRelativePortDistributor;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.collect.LinkedListMultimap;
@@ -42,6 +41,11 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
     public void setUp() {
         random = new MockRandom();
 
+    }
+
+    @BeforeClass
+    public static void setup() {
+        LayoutMetaDataService.initElkReflect();
     }
 
     /**
