@@ -90,13 +90,15 @@ public class RowFillingAndCompaction {
                 }
                 Pair<Boolean, Boolean> result = Compaction.compact(rowIdx, rows, maxWidth, nodeNodeSpacing, layoutGraph.getProperty(RectPackingOptions.ROW_HEIGHT_REEVALUATION));
                 if (result.getSecond()) {
-                    // Reset the row such that stacks are removed, blocks are not fixed and the width does not exceed
-                    // the bound.
+                    // Reset the row such that stacks are removed, blocks are not fixed.
                     for (Block block : currentRow.getChildren()) {
                         block.setFixed(false);
                         block.setPositionFixed(false);
+                        // Reset precalculated min/max width/heights.
+                        block.resetBlock();
                     }
                     currentRow.resetStacks();
+                    currentRow.setWidth(maxWidth);
                     rowIdx--;
                 } else {
                     adjustWidthAndHeight(currentRow);

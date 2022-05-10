@@ -354,8 +354,21 @@ public final class Compaction {
             return false;
         }
         
+        // If the row height is increased the current row height must be increased to evaluate whether it could potentially fit.
+        // The following might be wrong since it does not for different stacks that might have formed
+        // if the row height was higher.
+        // It does, however, check whether it is possible to draw each stack less wide.
+        if (shouldRowHeigthBeReevalauted) {
+            // Calculate available width for next block.
+            double potentialWidth = 0.0;
+            for (BlockStack stack : row.getStacks()) {
+                potentialWidth += stack.getWidthForFixedHeight(nextBlock.getMinHeight()) + nodeNodeSpacing;
+            }
+            targetWidthOfNextBlock = boundingWidth - potentialWidth;
+        }
+    
         // Check width of next block.
-        if (targetWidthOfNextBlock < nextBlock.getMinWidth() && !shouldRowHeigthBeReevalauted) {
+        if (targetWidthOfNextBlock < nextBlock.getMinWidth()) {
             return false;
         }
         // Handle last layer case
