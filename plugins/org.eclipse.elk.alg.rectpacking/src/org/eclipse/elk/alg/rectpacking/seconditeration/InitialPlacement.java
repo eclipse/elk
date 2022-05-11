@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.rectpacking.seconditeration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.alg.rectpacking.util.Block;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;
 import org.eclipse.elk.graph.ElkNode;
@@ -62,7 +63,9 @@ public final class InitialPlacement {
                 currentWidth = 0;
             }
             
-            if (block.getChildren().isEmpty()) {
+            if (block.getChildren().isEmpty()
+                    || !rect.getParent().getProperty(RectPackingOptions.ROW_HEIGHT_REEVALUATION)
+                        && isSimilarHeight(block, rect, nodeNodeSpacing)) {
                 // Every rect is before compaction in its own block.
                 block.addChild(rect);
             } else {
