@@ -24,10 +24,10 @@ algorithm topdownpacking(TopdownpackingLayoutProvider) {
                  to be set to {@link TopdownNodeTypes.PARALLEL_NODE}. Expands boxes horizontally to fill empty 
                  whitespace."
     metadataClass options.TopdownpackingOptions
-    supports org.eclipse.elk.padding = new ElkPadding(10)
-    supports org.eclipse.elk.spacing.nodeNode = 10
-    supports org.eclipse.elk.topdown.hierarchicalNodeWidth = 150
-    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio = 1.414
+    supports org.eclipse.elk.padding
+    supports org.eclipse.elk.spacing.nodeNode
+    supports org.eclipse.elk.topdown.hierarchicalNodeWidth
+    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio
     supports org.eclipse.elk.topdownLayout
     supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.PARALLEL_NODE
 }

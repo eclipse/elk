@@ -859,7 +859,7 @@ group topdown {
         description
             "The fixed size of a hierarchical node when using topdown layout. This value has to be set on parallel 
              nodes."
-        default = 100
+        default = 150
         targets parents
         requires nodeType == TopdownNodeTypes.PARALLEL_NODE
     }
