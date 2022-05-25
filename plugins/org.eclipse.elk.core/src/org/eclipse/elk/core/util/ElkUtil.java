@@ -382,7 +382,7 @@ public final class ElkUtil {
         if (scalingFactor == 1) {
             return;
         }
-        
+
         node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
 
         final Iterable<ElkLabel> portLabels = Iterables.concat(
