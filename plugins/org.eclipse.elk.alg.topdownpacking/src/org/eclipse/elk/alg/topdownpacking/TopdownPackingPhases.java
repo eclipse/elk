@@ -10,7 +10,7 @@
 package org.eclipse.elk.alg.topdownpacking;
 
 /**
- * @author mka
+ * Topdown packing phases.
  *
  */
 public enum TopdownPackingPhases {

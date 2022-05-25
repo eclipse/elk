@@ -13,11 +13,15 @@ import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
- * @author mka
+ * During the white space elimination phase nodes are expanded beyond their initial size
+ * to completely fill the space provided by their parent.
  *
  */
 public enum WhitespaceEliminationStrategy
         implements ILayoutPhaseFactory<TopdownPackingPhases, GridElkNode> {
+    /**
+     * Equally expands nodes on the bottom row to fill up remaining space.
+     */
     WHITESPACE_ELIMINATOR;
 
     /**

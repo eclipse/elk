@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author mka
+ * An {@link ElkNode} that stores its children in a two-dimensional grid.
  *
  */
 public class GridElkNode implements ElkNode, Grid<ElkNode> {

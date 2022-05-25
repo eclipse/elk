@@ -19,7 +19,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author mka
+ * If there is additional space in the last row, the nodes are widened by an equal factor and shifted to
+ * the right to make use of that space.
  *
  */
 public class WhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {

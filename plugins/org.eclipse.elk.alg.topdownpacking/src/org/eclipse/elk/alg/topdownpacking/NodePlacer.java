@@ -21,7 +21,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author mka
+ * Places nodes in a grid using the sizes provided by their parent node.
  *
  */
 public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {

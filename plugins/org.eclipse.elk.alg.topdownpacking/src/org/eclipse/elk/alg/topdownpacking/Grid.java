@@ -15,8 +15,6 @@ import java.util.List;
  * Provides an interface to store and access items in a grid structure. The grid size is bounded
  * by the size set. The index for the first column and row begins at 0. Empty cells of the grid
  * contain null.
- * 
- * @author mka
  *
  */
 public interface Grid<T> {

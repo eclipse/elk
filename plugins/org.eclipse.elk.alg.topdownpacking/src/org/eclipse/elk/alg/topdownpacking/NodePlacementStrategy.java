@@ -13,10 +13,13 @@ import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
- * @author mka
+ * Node placement strategy to use during topdown packing algorithm.
  *
  */
 public enum NodePlacementStrategy implements ILayoutPhaseFactory<TopdownPackingPhases, GridElkNode> {
+    /**
+     * Places nodes from left to right, top to bottom in a grid.
+     */
     NODE_PLACER;
 
     /**

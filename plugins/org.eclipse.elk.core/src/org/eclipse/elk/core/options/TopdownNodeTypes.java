@@ -12,8 +12,6 @@ package org.eclipse.elk.core.options;
 /**
  * For general purpose topdown layout these node types specify how a node should be handled.
  * These properties only have an effect when {@link CoreOptions#TOPDOWN_LAYOUT} is set to true.
- * 
- * @author mka
  *
  */
 public enum TopdownNodeTypes {
