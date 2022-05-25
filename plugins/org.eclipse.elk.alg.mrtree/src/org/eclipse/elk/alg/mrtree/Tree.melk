@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.mrtree
 
 import org.eclipse.elk.alg.mrtree.TreeLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.TopdownNodeTypes
 
 /**
  * Declarations for the ELK Tree layout algorithm.
@@ -49,6 +50,13 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.portLabels.placement
     supports weighting
     supports searchOrder
+    
+    // topdown layout
+    supports org.eclipse.elk.topdownLayout
+    supports org.eclipse.elk.topdown.scaleFactor
+    supports org.eclipse.elk.topdown.hierarchicalNodeWidth
+    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio
+    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.HIERARCHICAL_NODE
 }
 
 option weighting: OrderWeighting {

@@ -37,4 +37,3 @@ Export-Package: org.eclipse.elk.alg.layered,
  org.eclipse.elk.alg.layered.p5edges;x-friends:="org.eclipse.elk.alg.layered.test",
  org.eclipse.elk.alg.layered.p5edges.orthogonal;x-friends:="org.eclipse.elk.alg.layered.test",
  org.eclipse.elk.alg.layered.p5edges.splines;x-friends:="org.eclipse.elk.alg.layered.test"
-Import-Package: org.eclipse.elk.alg.topdownpacking.options
