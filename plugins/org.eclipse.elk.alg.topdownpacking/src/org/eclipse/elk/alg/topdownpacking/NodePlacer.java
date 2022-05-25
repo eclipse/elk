@@ -46,7 +46,6 @@ public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNod
         List<ElkNode> nodes = new ArrayList<>(layoutGraph.getChildren());
         
         // Compute number of rows and columns to use to arrange nodes to maintain the aspect ratio
-        // TODO: 0 nodes are forbidden, need to error check this or don't I because isn't called for 0 nodes anyway?
         int cols = (int) Math.ceil(Math.sqrt(nodes.size()));
         int rows;
         if (nodes.size() > cols * cols - cols) {
