@@ -364,8 +364,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 selfLoop.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
-            if (!layoutNode.hasProperty(CoreOptions.TOPDOWN_LAYOUT) 
-                    || !layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+            if (!layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
                 executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
             }
             
