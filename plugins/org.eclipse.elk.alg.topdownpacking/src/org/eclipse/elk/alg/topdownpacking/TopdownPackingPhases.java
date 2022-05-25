@@ -15,7 +15,14 @@ package org.eclipse.elk.alg.topdownpacking;
  */
 public enum TopdownPackingPhases {
 
+    /**
+     * Place equally sized nodes where the size is defined by the parent.
+     */
     P1_NODE_PLACEMENT,
+    
+    /**
+     * Eliminate white space by increasing the size of some nodes to fully fill the space provided by the parent. 
+     */
     P2_WHITESPACE_ELIMINATION
     
 }
