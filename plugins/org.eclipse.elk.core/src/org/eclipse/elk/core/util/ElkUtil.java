@@ -495,15 +495,6 @@ public final class ElkUtil {
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, maxX - minX);
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, maxY - minY);
     }
-    
-    public static ElkPadding scaledPadding(ElkPadding padding, double scale) {
-        ElkPadding newPadding = new ElkPadding();
-        newPadding.left = padding.left * scale;
-        newPadding.bottom = padding.bottom * scale;
-        newPadding.right = padding.right * scale;
-        newPadding.top = padding.top * scale;
-        return newPadding;
-    }
 
     /**
      * Determine the junction points of the given edge. This is done by comparing the bend points
