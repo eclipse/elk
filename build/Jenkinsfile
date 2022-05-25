@@ -108,21 +108,21 @@ spec:
     string(
       name: 'BRANCH',
       description: 'The repository branch to checkout.',
-      defaultValue: 'master'
+      defaultValue: 'releases/0.8.1'
     )
 
     // For the version number
     string(
       name: 'VERSION',
       description: 'The build version number. Used to generate download file names.',
-      defaultValue: 'nightly'
+      defaultValue: '0.8.1'
     )
 
     // Regarding ELK proper...
     string(
       name: 'ELK_TARGET_DIR',
       description: 'Path to the directory the build will copy all downloadable artifacts to.',
-      defaultValue: '/home/data/httpd/download.eclipse.org/elk/updates/nightly/'
+      defaultValue: '/home/data/httpd/download.eclipse.org/elk/updates/releases/0.8.1/'
     )
   }
 
@@ -247,15 +247,6 @@ spec:
         container('hugo') {
           dir ('elk/docs') {
             sh "hugo"
-          }
-        }
-
-        container('jnlp') {
-          // Deploy the website
-          dir ('elk/build/releng') {
-            sshagent(['git.eclipse.org-bot-ssh']) {
-              sh "bash publish-website.sh"
-            }
           }
         }
       }
