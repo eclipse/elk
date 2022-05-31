@@ -229,6 +229,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 double hierarchicalNodeAspectRatio 
                                     = childNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
                                 
+                                // TODO: this following code snippet is dependent on the node placement strategy chosen
+                                //       for the topdown packing algorithm, however we cannot directly import that 
+                                //       package here into core, so need to find a solution that allows me to access
+                                //       it indirectly, perhaps an extension to AbstractLayoutProvider or an interface
+                                //       defined in Core
+                                
                                 int numberOfChildren = childNode.getChildren().size();
                                 int cols = (int) Math.ceil(Math.sqrt(numberOfChildren));
                                 double requiredWidth = cols * hierarchicalNodeWidth 
