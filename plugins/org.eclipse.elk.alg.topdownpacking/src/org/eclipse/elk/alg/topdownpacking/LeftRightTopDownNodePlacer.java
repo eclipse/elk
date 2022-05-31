@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.topdownpacking.options.TopdownpackingOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -24,7 +25,7 @@ import org.eclipse.elk.graph.ElkNode;
  * Places nodes in a grid using the sizes provided by their parent node.
  *
  */
-public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
+public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode>, INodePlacer {
 
     /**
      * {@inheritDoc}
@@ -113,6 +114,34 @@ public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPh
     public LayoutProcessorConfiguration<TopdownPackingPhases, GridElkNode> getLayoutProcessorConfiguration(
             GridElkNode graph) {
         return LayoutProcessorConfiguration.<TopdownPackingPhases, GridElkNode>create();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KVector getPredictedSize(ElkNode graph) {
+        
+        // get values for calculation
+        int numberOfChildren = graph.getChildren().size();
+        ElkPadding padding = graph.getProperty(TopdownpackingOptions.PADDING);
+        double nodeNodeSpacing = graph.getProperty(TopdownpackingOptions.SPACING_NODE_NODE);
+        double hierarchicalNodeWidth = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+        double hierarchicalNodeAspectRatio = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+        
+        int cols = (int) Math.ceil(Math.sqrt(numberOfChildren));
+        double requiredWidth = cols * hierarchicalNodeWidth 
+                + padding.left + padding.right + (cols - 1) * nodeNodeSpacing; 
+        int rows;
+        if (numberOfChildren > cols * cols - cols || cols == 0) {
+            rows = cols;
+        } else { // N <= W^2 - W
+            rows = cols - 1;
+        }
+        double requiredHeight 
+            = rows * hierarchicalNodeWidth / hierarchicalNodeAspectRatio 
+            + padding.top + padding.bottom + (rows - 1) * nodeNodeSpacing;
+        return new KVector(requiredWidth, requiredHeight);
     }
 
 }

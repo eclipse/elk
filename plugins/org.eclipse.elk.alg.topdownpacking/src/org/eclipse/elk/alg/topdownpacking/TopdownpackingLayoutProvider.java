@@ -13,8 +13,10 @@ import java.util.List;
 
 import org.eclipse.elk.alg.topdownpacking.options.TopdownpackingOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.ITopdownLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -24,7 +26,7 @@ import org.eclipse.elk.graph.ElkNode;
  * makes parallel nodes possible by allowing a node know its child layout size before the child layout is computed.
  * 
  */
-public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
+public class TopdownpackingLayoutProvider extends AbstractLayoutProvider implements ITopdownLayoutProvider {
 
     private final AlgorithmAssembler<TopdownPackingPhases, GridElkNode> algorithmAssembler =
             AlgorithmAssembler.<TopdownPackingPhases, GridElkNode>create(TopdownPackingPhases.class);
@@ -58,5 +60,15 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
                 graph.getProperty(TopdownpackingOptions.WHITESPACE_ELIMINATION_STRATEGY));
         
         return algorithmAssembler.build(graph);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public KVector getPredictedGraphSize(ElkNode graph) {
+        // FIXME: enforce that all node placement strategies implement INodePlacer
+        INodePlacer nodePlacer = (INodePlacer) graph.getProperty(TopdownpackingOptions.NODE_PLACEMENT_STRATEGY).create();
+        return nodePlacer.getPredictedSize(graph);
     }
 }

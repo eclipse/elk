@@ -12,11 +12,12 @@ package org.eclipse.elk.core;
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
+
 import org.eclipse.elk.core.data.DeprecatedLayoutOptionReplacer;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
-import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.TopdownNodeTypes;
@@ -219,36 +220,16 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             // if yes its size needs to be pre-computed before computing the layout
                             if (childNode.getChildren().size() > 0
                                     && childNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.topdownpacking")) {
+
+                                // FIXME: this is "safe" because we already know the algorithm that is being used, 
+                                //        nonetheless some type checking might be sensible here
+                                LayoutAlgorithmData localAlgorithmData = 
+                                        childNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
+                                ITopdownLayoutProvider topdownLayoutProvider = 
+                                        (ITopdownLayoutProvider) localAlgorithmData.getInstancePool().fetch();
                                 
-                                // get relevant properties
-                                ElkPadding padding = childNode.getProperty(CoreOptions.PADDING);
-                                double nodeNodeSpacing = childNode.getProperty(CoreOptions.SPACING_NODE_NODE);
-                                
-                                double hierarchicalNodeWidth 
-                                    = childNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
-                                double hierarchicalNodeAspectRatio 
-                                    = childNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
-                                
-                                // TODO: this following code snippet is dependent on the node placement strategy chosen
-                                //       for the topdown packing algorithm, however we cannot directly import that 
-                                //       package here into core, so need to find a solution that allows me to access
-                                //       it indirectly, perhaps an extension to AbstractLayoutProvider or an interface
-                                //       defined in Core
-                                
-                                int numberOfChildren = childNode.getChildren().size();
-                                int cols = (int) Math.ceil(Math.sqrt(numberOfChildren));
-                                double requiredWidth = cols * hierarchicalNodeWidth 
-                                        + padding.left + padding.right + (cols - 1) * nodeNodeSpacing; 
-                                int rows;
-                                if (numberOfChildren > cols * cols - cols || cols == 0) {
-                                    rows = cols;
-                                } else { // N <= W^2 - W
-                                    rows = cols - 1;
-                                }
-                                double requiredHeight 
-                                    = rows * hierarchicalNodeWidth / hierarchicalNodeAspectRatio 
-                                    + padding.top + padding.bottom + (rows - 1) * nodeNodeSpacing;
-                                childNode.setDimensions(requiredWidth, requiredHeight);
+                                KVector requiredSize = topdownLayoutProvider.getPredictedGraphSize(childNode);
+                                childNode.setDimensions(requiredSize.x, requiredSize.y);
                             }
                         }
                     }
