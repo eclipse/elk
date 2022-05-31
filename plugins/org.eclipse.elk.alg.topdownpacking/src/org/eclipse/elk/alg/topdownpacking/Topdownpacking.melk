@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.topdownpacking.NodePlacementStrategy
 import org.eclipse.elk.alg.topdownpacking.WhitespaceEliminationStrategy
 
 bundle {
-    metadataClass options.TopdownpackingMetadataProvider
+    metadataClass options.TopdownpackingMetaDataProvider
     idPrefix org.eclipse.elk.topdownpacking
 }
 
