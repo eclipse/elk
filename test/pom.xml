@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2019, 2020 Kiel University and others.
+  Copyright (c) 2019, 2020, 2022 Kiel University and others.
   This program and the accompanying materials are made available under the
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0.
@@ -30,6 +30,7 @@
     <module>org.eclipse.elk.alg.rectpacking.test</module>
     <module>org.eclipse.elk.alg.spore.test</module>
     <module>org.eclipse.elk.alg.test</module>
+    <module>org.eclipse.elk.alg.topdown.test</module>
     <module>org.eclipse.elk.core.test</module>
     <module>org.eclipse.elk.graph.json.test</module>
     <module>org.eclipse.elk.graph.test</module>
