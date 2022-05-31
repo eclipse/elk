@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="Generated from Eclipse Layout Kernel Xtext 2.25" sequenceNumber="6">
+<target name="Generated from Eclipse Layout Kernel" sequenceNumber="4">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="javax.websocket" version="0.0.0"/>
       <unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.lsp4j.sdk.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
+      <repository location="http://download.eclipse.org/releases/2019-12"/>
+    </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+      <unit id="com.google.gson" version="0.0.0"/>
+      <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
       <unit id="org.hamcrest.library" version="0.0.0"/>
-      <repository location="http://download.eclipse.org/releases/2021-03"/>
+      <repository location="http://download.eclipse.org/eclipse/updates/4.14/R-4.14-201912100610"/>
     </location>
   </locations>
 </target>
