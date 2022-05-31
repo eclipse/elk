@@ -240,7 +240,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 double requiredWidth = cols * hierarchicalNodeWidth 
                                         + padding.left + padding.right + (cols - 1) * nodeNodeSpacing; 
                                 int rows;
-                                if (numberOfChildren > cols * cols - cols) {
+                                if (numberOfChildren > cols * cols - cols || cols == 0) {
                                     rows = cols;
                                 } else { // N <= W^2 - W
                                     rows = cols - 1;

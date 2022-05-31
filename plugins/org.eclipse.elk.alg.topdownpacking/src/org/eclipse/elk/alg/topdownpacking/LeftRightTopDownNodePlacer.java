@@ -48,7 +48,7 @@ public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPh
         // Compute number of rows and columns to use to arrange nodes to maintain the aspect ratio
         int cols = (int) Math.ceil(Math.sqrt(nodes.size()));
         int rows;
-        if (nodes.size() > cols * cols - cols) {
+        if (nodes.size() > cols * cols - cols || cols == 0) {
             rows = cols;
         } else { // N <= W^2 - W
             rows = cols - 1;
