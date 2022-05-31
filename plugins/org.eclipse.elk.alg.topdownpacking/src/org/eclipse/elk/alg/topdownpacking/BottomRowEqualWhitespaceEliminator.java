@@ -23,7 +23,7 @@ import org.eclipse.elk.graph.ElkNode;
  * the right to make use of that space.
  *
  */
-public class WhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
+public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
 
     /**
      * {@inheritDoc}

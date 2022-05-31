@@ -22,7 +22,7 @@ public enum WhitespaceEliminationStrategy
     /**
      * Equally expands nodes on the bottom row to fill up remaining space.
      */
-    WHITESPACE_ELIMINATOR;
+    BOTTOM_ROW_EQUAL_WHITESPACE_ELIMINATOR;
 
     /**
      * {@inheritDoc}
@@ -30,8 +30,8 @@ public enum WhitespaceEliminationStrategy
     @Override
     public ILayoutPhase<TopdownPackingPhases, GridElkNode> create() {
         switch (this) {
-        case WHITESPACE_ELIMINATOR:
-            return new WhitespaceEliminator();
+        case BOTTOM_ROW_EQUAL_WHITESPACE_ELIMINATOR:
+            return new BottomRowEqualWhitespaceEliminator();
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the whitespace eliminator" + this.toString());

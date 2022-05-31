@@ -24,7 +24,7 @@ import org.eclipse.elk.graph.ElkNode;
  * Places nodes in a grid using the sizes provided by their parent node.
  *
  */
-public class NodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
+public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode> {
 
     /**
      * {@inheritDoc}

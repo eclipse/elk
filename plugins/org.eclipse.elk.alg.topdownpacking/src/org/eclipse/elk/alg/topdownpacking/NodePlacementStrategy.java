@@ -20,7 +20,7 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory<TopdownPackingP
     /**
      * Places nodes from left to right, top to bottom in a grid.
      */
-    NODE_PLACER;
+    LEFT_RIGHT_TOP_DOWN_NODE_PLACER;
 
     /**
      * {@inheritDoc}
@@ -28,8 +28,8 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory<TopdownPackingP
     @Override
     public ILayoutPhase<TopdownPackingPhases, GridElkNode> create() {
         switch (this) {
-        case NODE_PLACER:
-            return new NodePlacer();
+        case LEFT_RIGHT_TOP_DOWN_NODE_PLACER:
+            return new LeftRightTopDownNodePlacer();
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the node placer " + this.toString());
