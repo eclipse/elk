@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.topdownpacking;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.topdownpacking.options.TopdownpackingOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -51,8 +52,10 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider {
     public List<ILayoutProcessor<GridElkNode>> assembleAlgorithm(GridElkNode graph) {
         algorithmAssembler.reset();
         
-        algorithmAssembler.setPhase(TopdownPackingPhases.P1_NODE_PLACEMENT, NodePlacementStrategy.LEFT_RIGHT_TOP_DOWN_NODE_PLACER);
-        algorithmAssembler.setPhase(TopdownPackingPhases.P2_WHITESPACE_ELIMINATION, WhitespaceEliminationStrategy.BOTTOM_ROW_EQUAL_WHITESPACE_ELIMINATOR);
+        algorithmAssembler.setPhase(TopdownPackingPhases.P1_NODE_PLACEMENT, 
+                graph.getProperty(TopdownpackingOptions.NODE_PLACEMENT_STRATEGY));
+        algorithmAssembler.setPhase(TopdownPackingPhases.P2_WHITESPACE_ELIMINATION, 
+                graph.getProperty(TopdownpackingOptions.WHITESPACE_ELIMINATION_STRATEGY));
         
         return algorithmAssembler.build(graph);
     }
