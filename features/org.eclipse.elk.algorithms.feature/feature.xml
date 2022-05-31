@@ -36,7 +36,7 @@ SPDX-License-Identifier: EPL-2.0
    </license>
 
    <requires>
-      <import feature="org.eclipse.elk.feature" version="0.7.0.qualifier"/>
+      <import feature="org.eclipse.elk.feature" version="0.8.1"/>
    </requires>
 
    <plugin
