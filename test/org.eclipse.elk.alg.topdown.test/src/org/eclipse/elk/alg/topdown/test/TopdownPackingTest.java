@@ -20,6 +20,7 @@ import org.junit.Test;
 
 /**
  * Tests the topdown packing algorithm. The node sizes must be externally set and determine the layout results.
+ * Unless otherwise specified, the tests expect the default values of properties to be used.
  */
 public class TopdownPackingTest {
 
@@ -65,5 +66,16 @@ public class TopdownPackingTest {
     
     private static ElkNode createEmptyGraph() {
         return ElkGraphUtil.createGraph();
+    }
+    
+    private static ElkNode createGraph(int numberOfNodes) {
+        if (numberOfNodes < 0) {
+            fail();
+        }
+        ElkNode graph = ElkGraphUtil.createGraph();
+        for (int i = 0; i < numberOfNodes; i++) {
+            ElkGraphUtil.createNode(graph);
+        }
+        return graph;
     }
 }
