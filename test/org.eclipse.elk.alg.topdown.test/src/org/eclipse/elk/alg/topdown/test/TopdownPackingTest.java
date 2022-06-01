@@ -149,18 +149,63 @@ public class TopdownPackingTest {
     
     /**
      * Test topdown packing for a graph with five nodes. In this case there is both vertical
-     * compaction and whitespace elimination in the second row.
+     * compaction and whitespace elimination in the second row (involving two nodes).
      */
     @Test
     public void testFiveNodes() {
-        fail();
+        PlainJavaInitialization.initializePlainJavaLayout();
+        ElkNode graph = createGraph(5);
+        // property default values
+        double hierarchicalWidth = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+        double hierarchicalAspectRatio = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+        ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
+        double nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
+        TopdownpackingLayoutProvider layoutProvider = new TopdownpackingLayoutProvider();
+        
+        // test size prediction
+        KVector predictedSize = layoutProvider.getPredictedGraphSize(graph);
+        double expectedWidth = padding.left + 3 * hierarchicalWidth + 2 * nodeNodeSpacing + padding.right;
+        assertEquals(expectedWidth, predictedSize.x, 0.00001);
+        
+        double expectedHeight = padding.top + 2 * (hierarchicalWidth / hierarchicalAspectRatio) 
+                + nodeNodeSpacing + padding.bottom;
+        assertEquals(expectedHeight, predictedSize.y, 0.00001);
+        
+        // test white space expansion in bottom row is performed correctly
+        layoutProvider.layout(graph, new BasicProgressMonitor());
+        double childFourX = graph.getChildren().get(3).getX();
+        double childFourY = graph.getChildren().get(3).getY();
+        double childFourWidth = graph.getChildren().get(3).getWidth();
+        double childFourHeight = graph.getChildren().get(3).getHeight();
+        
+        // additional half of empty space
+        double expandedWidth = hierarchicalWidth + 0.5 * (hierarchicalWidth + nodeNodeSpacing);
+        
+        assertEquals(padding.left, childFourX, 0.00001);
+        assertEquals(padding.top + (hierarchicalWidth / hierarchicalAspectRatio) 
+                + nodeNodeSpacing, childFourY, 0.00001);
+        assertEquals(expandedWidth, childFourWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childFourHeight, 0.00001);
+        
+        layoutProvider.layout(graph, new BasicProgressMonitor());
+        double childFiveX = graph.getChildren().get(4).getX();
+        double childFiveY = graph.getChildren().get(4).getY();
+        double childFiveWidth = graph.getChildren().get(4).getWidth();
+        double childFiveHeight = graph.getChildren().get(4).getHeight();
+        
+        assertEquals(padding.left + expandedWidth + nodeNodeSpacing, childFiveX, 0.00001);
+        assertEquals(padding.top + (hierarchicalWidth / hierarchicalAspectRatio) 
+                + nodeNodeSpacing, childFiveY, 0.00001);
+        assertEquals(expandedWidth, childFiveWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childFiveHeight, 0.00001);
+        
     }
     
     private static ElkNode createEmptyGraph() {
         return ElkGraphUtil.createGraph();
     }
     
-    private static ElkNode createGraph(int numberOfNodes) {
+    private static ElkNode createGraph(final int numberOfNodes) {
         if (numberOfNodes < 0) {
             fail();
         }
