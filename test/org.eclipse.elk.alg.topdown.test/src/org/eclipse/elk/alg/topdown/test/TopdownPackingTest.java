@@ -9,10 +9,14 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.topdown.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.alg.topdownpacking.TopdownpackingLayoutProvider;
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -43,7 +47,45 @@ public class TopdownPackingTest {
      */
     @Test
     public void testTwoNodes() {
-        fail();
+        PlainJavaInitialization.initializePlainJavaLayout();
+        ElkNode graph = createGraph(2);
+        // property default values
+        double hierarchicalWidth = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+        double hierarchicalAspectRatio = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+        ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
+        double nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
+        TopdownpackingLayoutProvider layoutProvider = new TopdownpackingLayoutProvider();
+
+        // test size prediction
+        KVector predictedSize = layoutProvider.getPredictedGraphSize(graph);
+        double expectedWidth = padding.left + 2 * hierarchicalWidth + nodeNodeSpacing + padding.right;
+        assertEquals(expectedWidth, predictedSize.x, 0.00001);
+
+        double expectedHeight = padding.top + hierarchicalWidth / hierarchicalAspectRatio + padding.bottom;
+        assertEquals(expectedHeight, predictedSize.y, 0.00001);
+
+
+        // test actual layout
+        layoutProvider.layout(graph, new BasicProgressMonitor());
+        double childOneX = graph.getChildren().get(0).getX();
+        double childOneY = graph.getChildren().get(0).getY();
+        double childOneWidth = graph.getChildren().get(0).getWidth();
+        double childOneHeight = graph.getChildren().get(0).getHeight();
+        
+        assertEquals(padding.left, childOneX, 0.00001);
+        assertEquals(padding.top, childOneY, 0.00001);
+        assertEquals(hierarchicalWidth, childOneWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childOneHeight, 0.00001);
+        
+        double childTwoX = graph.getChildren().get(1).getX();
+        double childTwoY = graph.getChildren().get(1).getY();
+        double childTwoWidth = graph.getChildren().get(1).getWidth();
+        double childTwoHeight = graph.getChildren().get(1).getHeight();
+        
+        assertEquals(padding.left + hierarchicalWidth + nodeNodeSpacing, childTwoX, 0.00001);
+        assertEquals(padding.top, childTwoY, 0.00001);
+        assertEquals(hierarchicalWidth, childTwoWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childTwoHeight, 0.00001);
     }
     
     /**
@@ -52,7 +94,57 @@ public class TopdownPackingTest {
      */
     @Test
     public void testThreeNodes() {
-        fail();
+        PlainJavaInitialization.initializePlainJavaLayout();
+        ElkNode graph = createGraph(3);
+        // property default values
+        double hierarchicalWidth = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH);
+        double hierarchicalAspectRatio = graph.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO);
+        ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
+        double nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
+        TopdownpackingLayoutProvider layoutProvider = new TopdownpackingLayoutProvider();
+        
+        // test size prediction
+        KVector predictedSize = layoutProvider.getPredictedGraphSize(graph);
+        double expectedWidth = padding.left + 2 * hierarchicalWidth + nodeNodeSpacing + padding.right;
+        assertEquals(expectedWidth, predictedSize.x, 0.00001);
+        
+        double expectedHeight = padding.top + 2 * (hierarchicalWidth / hierarchicalAspectRatio) 
+                + nodeNodeSpacing + padding.bottom;
+        assertEquals(expectedHeight, predictedSize.y, 0.00001);
+        
+        // test actual layout
+        layoutProvider.layout(graph, new BasicProgressMonitor());
+        double childOneX = graph.getChildren().get(0).getX();
+        double childOneY = graph.getChildren().get(0).getY();
+        double childOneWidth = graph.getChildren().get(0).getWidth();
+        double childOneHeight = graph.getChildren().get(0).getHeight();
+        
+        assertEquals(padding.left, childOneX, 0.00001);
+        assertEquals(padding.top, childOneY, 0.00001);
+        assertEquals(hierarchicalWidth, childOneWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childOneHeight, 0.00001);
+        
+        double childTwoX = graph.getChildren().get(1).getX();
+        double childTwoY = graph.getChildren().get(1).getY();
+        double childTwoWidth = graph.getChildren().get(1).getWidth();
+        double childTwoHeight = graph.getChildren().get(1).getHeight();
+        
+        assertEquals(padding.left + hierarchicalWidth + nodeNodeSpacing, childTwoX, 0.00001);
+        assertEquals(padding.top, childTwoY, 0.00001);
+        assertEquals(hierarchicalWidth, childTwoWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childTwoHeight, 0.00001);
+        
+        // test third node is expanded correctly
+        double childThreeX = graph.getChildren().get(2).getX();
+        double childThreeY = graph.getChildren().get(2).getY();
+        double childThreeWidth = graph.getChildren().get(2).getWidth();
+        double childThreeHeight = graph.getChildren().get(2).getHeight();
+        
+        assertEquals(padding.left, childThreeX, 0.00001);
+        assertEquals(padding.top + (hierarchicalWidth / hierarchicalAspectRatio) 
+                + nodeNodeSpacing, childThreeY, 0.00001);
+        assertEquals(2 * hierarchicalWidth + nodeNodeSpacing, childThreeWidth, 0.00001);
+        assertEquals(hierarchicalWidth / hierarchicalAspectRatio, childThreeHeight, 0.00001);
     }
     
     /**

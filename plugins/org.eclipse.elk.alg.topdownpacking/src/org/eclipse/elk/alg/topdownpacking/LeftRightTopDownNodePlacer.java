@@ -40,8 +40,9 @@ public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPh
         ElkPadding padding = layoutGraph.getProperty(TopdownpackingOptions.PADDING);
         double nodeNodeSpacing = layoutGraph.getProperty(TopdownpackingOptions.SPACING_NODE_NODE);
         
-        progressMonitor.log("Graph Width: " + layoutGraph.getWidth());
-        progressMonitor.log("Graph Height: " + layoutGraph.getHeight());    
+        // In case the graph dimensions have not been set yet, set them now, this is needed for the standalone usage
+        KVector graphSize = getPredictedSize(layoutGraph);
+        layoutGraph.setDimensions(graphSize.x, graphSize.y);
         
         // Get the list of nodes to lay out
         List<ElkNode> nodes = new ArrayList<>(layoutGraph.getChildren());
