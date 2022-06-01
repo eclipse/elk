@@ -835,7 +835,8 @@ advanced option topdownLayout: boolean {
          {@link TopdownNodeTypes.HIERARCHICAL_NODE} and must define {@link topdown.hierarchicalNodeWidth} and 
          {@link topdown.hierarchicalNodeAspectRatio} for their children. Furthermore they need to be laid out using the 
          algorithm {@link TopdownPacking}. Hierarchical nodes require the layout option {@link nodeSize.fixedGraphSize}
-         to be true to prevent the algorithm used there from resizing the hierarchical node."
+         to be true to prevent the algorithm used there from resizing the hierarchical node. This option is not 
+         supported if 'Hierarchy Handling' is set to 'INCLUDE_CHILDREN'"
     default = false
     targets parents
     requires topdown.nodeType
