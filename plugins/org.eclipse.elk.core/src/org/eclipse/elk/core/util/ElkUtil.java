@@ -405,12 +405,9 @@ public final class ElkUtil {
      * @param node the node whose child area should be computed
      */
     public static void computeChildAreaDimensions(final ElkNode node) {
-        // TODO: for some stuff like labels and maybe edges it might only be necessary
-        //       to check the max sides, because positioning of the layout already deals with
-        //       the min case, but better safe than sorry
-        
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
+
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
         double maxX = 0.0;
         double maxY = 0.0;
         
@@ -420,10 +417,7 @@ public final class ElkUtil {
             edgeLabels = Iterables.concat(edgeLabels, edge.getLabels());
         }
         for (ElkShape shape : Iterables.concat(node.getLabels(), node.getChildren(), edgeLabels)) {
-            // TODO: test this with some graphs that actually have margins
-            //       this should ensure that margins on the edges of the layout
-            //       are considered when determining how large the area that needs to be 
-            //       scaled down is
+
             ElkMargin margins = shape.getProperty(CoreOptions.MARGINS);
             if (minX > shape.getX() - margins.left) {
                 minX = shape.getX() - margins.left;
@@ -446,52 +440,31 @@ public final class ElkUtil {
                 double eX = section.getEndX();
                 double sY = section.getStartY();
                 double eY = section.getEndY();
-                
-                // I hate this, can this be done more elegantly?
-                if (minX > sX) {
-                    minX = sX;
-                }
-                if (minX > eX) {
-                    minX = eX;
-                }
-                if (maxX < sX) {
-                    maxX = sX;
-                }
-                if (maxX < eX) {
-                    maxX = eX;
-                }
-                
-                if (minY > sY) {
-                    minY = sY;
-                }
-                if (minY > eY) {
-                    minY = eY;
-                }
-                if (maxY < sY) {
-                    maxY = sY;
-                }
-                if (maxY < eY) {
-                    maxY = eY;
-                }
+
+                minX = Math.min(minX, sX);
+                minX = Math.min(minX, eX);
+
+                maxX = Math.max(maxX, sX);
+                maxX = Math.max(maxX, eX);
+
+                minY = Math.min(minY, sY);
+                minY = Math.min(minY, eY);
+
+                maxY = Math.max(maxY, sY);
+                maxY = Math.max(maxY, eY);
                 
                 for (ElkBendPoint bendpoint : section.getBendPoints()) {
-                    if (minX > bendpoint.getX()) {
-                        minX = bendpoint.getX();
-                    }
-                    if (maxX < bendpoint.getX()) {
-                        maxX = bendpoint.getX();
-                    }
-                    if (minY > bendpoint.getY()) {
-                        minY = bendpoint.getY();
-                    }
-                    if (maxY < bendpoint.getY()) {
-                        maxY = bendpoint.getY();
-                    }
+
+                    minX = Math.min(minX, bendpoint.getX());
+                    maxX = Math.max(maxX, bendpoint.getX());
+                    minY = Math.min(minY, bendpoint.getY());
+                    maxY = Math.max(maxY, bendpoint.getX());
 
                 }
             }
         }
         
+        // max and min value represent outermost bounds of the layout
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, maxX - minX);
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, maxY - minY);
     }
