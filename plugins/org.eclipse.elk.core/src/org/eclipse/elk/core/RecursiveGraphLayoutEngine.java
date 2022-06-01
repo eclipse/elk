@@ -290,11 +290,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" 
                                 + scaleFactorX + "|" + scaleFactorY + ")");
-                        
-                        // TODO: this shift doesn't center anything, it only preserves the intended paddings
-                        //       is a centering shift desired? and how does it relate to white space elimination?
-                        // TODO: this shifts everything a little too far, need to rethink what I'm calculating here
-                        // double xShift = (padding.left - padding.left * scaleFactor) / scaleFactor;
+
                         double xShift = padding.left / scaleFactor - padding.left * scaleFactor;
                         double yShift = (padding.top - padding.top * scaleFactor) / scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
@@ -318,7 +314,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 label.setLocation(label.getX() + xShift, label.getY() + yShift);
                             }
                         }
-                        // TODO: anything else that needs to be shifted?
                     }
                     topdownLayoutMonitor.done();
                 } else {
