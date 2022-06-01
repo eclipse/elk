@@ -283,14 +283,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         // compute scaleFactor
                         double scaleFactorX = childAreaAvailableWidth / childAreaDesiredWidth;
                         double scaleFactorY = childAreaAvailableHeight / childAreaDesiredHeight;
-                        // TODO: eventually the scale factor should always be capped at one, because we want to avoid upscaling
-                        boolean CAP_SCALE = true;
-                        double scaleFactor = 0;
-                        if (CAP_SCALE) {
-                            scaleFactor = Math.min(scaleFactorX, Math.min(scaleFactorY, 1));
-                        } else {
-                            scaleFactor = Math.min(scaleFactorX, scaleFactorY);
-                        }
+
+                        double scaleFactor = 
+                                Math.min(scaleFactorX, Math.min(scaleFactorY, 
+                                        layoutNode.getProperty(CoreOptions.TOPDOWN_SCALE_CAP)));
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" 
                                 + scaleFactorX + "|" + scaleFactorY + ")");

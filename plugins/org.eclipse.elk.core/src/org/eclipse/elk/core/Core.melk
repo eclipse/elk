@@ -905,6 +905,18 @@ group topdown {
         targets parents
         requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
     }
+    
+    advanced option scaleCap: double {
+        label "Scale Cap"
+        description
+            "Determines the upper limit for the topdown scale factor. The default value is 1.0 which ensures
+             that nested children never end up appearing larger than their parents in terms of unit sizes such 
+             as the font size. If the limit is larger, nodes will fully utilize the available space, but it is 
+             counteriniuitive for inner nodes to have a larger scale than outer nodes."
+        targets parents
+        default = 1
+        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
 }
 
 // --- INSIDE SELF LOOPS
