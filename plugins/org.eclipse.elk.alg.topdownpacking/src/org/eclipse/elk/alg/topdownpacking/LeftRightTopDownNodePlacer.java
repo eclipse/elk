@@ -48,6 +48,7 @@ public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPh
         List<ElkNode> nodes = new ArrayList<>(layoutGraph.getChildren());
         
         // Compute number of rows and columns to use to arrange nodes to maintain the aspect ratio
+        // This corresponds to filling up a square grid and removing empty empty rows at the bottom
         int cols = (int) Math.ceil(Math.sqrt(nodes.size()));
         int rows;
         if (nodes.size() > cols * cols - cols || cols == 0) {
