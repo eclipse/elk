@@ -213,13 +213,15 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // then we need to step through the states and set the sizes of the states 
                     // only if their layout is topdownpacking
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
-                            || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
+                            || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(
+                                    TopdownNodeTypes.ROOT_NODE)) {
                         
                         for (ElkNode childNode : layoutNode.getChildren()) {
                             // check if child has children and whether it will be laid out with topdownpacking
                             // if yes its size needs to be pre-computed before computing the layout
                             if (childNode.getChildren().size() > 0
-                                    && childNode.getProperty(CoreOptions.ALGORITHM).equals("org.eclipse.elk.topdownpacking")) {
+                                    && childNode.getProperty(CoreOptions.ALGORITHM).equals(
+                                            "org.eclipse.elk.topdownpacking")) {
 
                                 // FIXME: this is "safe" because we already know the algorithm that is being used, 
                                 //        nonetheless some type checking might be sensible here
@@ -249,11 +251,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
                             + layoutNode.getProperty(CoreOptions.ALGORITHM)
                             + " on node " + layoutNode.getIdentifier());
-                    System.out.println("Executed layout algorithm: " 
-                            + layoutNode.getProperty(CoreOptions.ALGORITHM)
-                            + " on node " + layoutNode.getIdentifier());
                     
-                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
+                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(
+                            TopdownNodeTypes.HIERARCHICAL_NODE)) {
 
                         ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                         
@@ -263,9 +263,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         //       be doing weird things
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
                         double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
-                        topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
-                        System.out.println("Available Child Area: (" + childAreaAvailableWidth + "|" + childAreaAvailableHeight + ")");
-                        
+                        topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth 
+                                + "|" + childAreaAvailableHeight + ")");                        
                         
                         // check whether child area has been set, and if it hasn't run the util function 
                         // to determine the size of the area
@@ -278,8 +277,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH);
                         double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT);
 
-                        topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
-                        System.out.println("Desired Child Area: (" + childAreaDesiredWidth + "|" + childAreaDesiredHeight + ")");
+                        topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth 
+                                + "|" + childAreaDesiredHeight + ")");
                         
                         // compute scaleFactor
                         double scaleFactorX = childAreaAvailableWidth / childAreaDesiredWidth;
@@ -293,8 +292,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             scaleFactor = Math.min(scaleFactorX, scaleFactorY);
                         }
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
-                        topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
-                        System.out.println(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" + scaleFactorX + "|" + scaleFactorY + ")");
+                        topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" 
+                                + scaleFactorX + "|" + scaleFactorY + ")");
                         
                         // TODO: this shift doesn't center anything, it only preserves the intended paddings
                         //       is a centering shift desired? and how does it relate to white space elimination?
@@ -303,7 +302,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         double xShift = padding.left / scaleFactor - padding.left * scaleFactor;
                         double yShift = (padding.top - padding.top * scaleFactor) / scaleFactor;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
-                        System.out.println("Shift: (" + xShift + "|" + yShift + ")");
                         // shift all nodes in layout
                         for (ElkNode node : layoutNode.getChildren()) {
                             // shift all nodes in layout
