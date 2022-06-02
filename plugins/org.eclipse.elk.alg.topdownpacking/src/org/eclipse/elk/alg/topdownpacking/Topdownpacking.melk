@@ -21,9 +21,11 @@ bundle {
 
 algorithm topdownpacking(TopdownpackingLayoutProvider) {
     label "Topdownpacking"
-    description "An algorithm for placing boxes of fixed sizes. Requires its {@link CoreOptions.TOPDOWN_NODE_TYPE} 
-                 to be set to {@link TopdownNodeTypes.PARALLEL_NODE}. Expands boxes horizontally to fill empty 
-                 whitespace."
+    description "An algorithm for placing boxes of fixed sizes. Expands boxes horizontally to fill empty 
+                 whitespace. This algorithm can be used standalone or specifically for 
+                 {@link CoreOptions.TOPDOWN_LAYOUT}. In this use case it should be set for nodes whose
+                 {@link CoreOptions.TOPDOWN_NODE_TYPE} is set to {@link TopdownNodeTypes.PARALLEL_NODE}.
+                 This allows topdown layout to give children larger sizes based on their number of children."
     metadataClass options.TopdownpackingOptions
     supports org.eclipse.elk.padding
     supports org.eclipse.elk.spacing.nodeNode

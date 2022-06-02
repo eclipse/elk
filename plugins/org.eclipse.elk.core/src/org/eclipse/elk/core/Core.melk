@@ -879,8 +879,9 @@ group topdown {
         label "Topdown Node Type"
         description
             "The different node types used for topdown layout. If the node type is set 
-             to {@link TopdownNodeTypes.PARALLEL_NODE} the algorithm must be set to {@link TopdownPacking}.
-             The {@link nodeSize.fixedGraphSize} option is technically only required for hierarchical nodes." 
+             to {@link TopdownNodeTypes.PARALLEL_NODE} the algorithm must be set to a {@link TopdownLayoutProvider} such
+             as {@link TopdownPacking}. The {@link nodeSize.fixedGraphSize} option is technically only required for 
+             hierarchical nodes." 
         default = null
         targets nodes
         requires nodeSize.fixedGraphSize
