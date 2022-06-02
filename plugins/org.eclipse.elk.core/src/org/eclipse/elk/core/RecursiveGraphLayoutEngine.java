@@ -256,12 +256,15 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
 
                         ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                         
-                        // TODO: this value can become negative if the set node size becomes smaller than the padding of the node
-                        //       since we can't exactly no what padding will be set, the range for setting node sizes would have
-                        //       to dynamically check whether it works, or we just set it to some minimum here and users shouldn't
-                        //       be doing weird things
                         double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
                         double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
+                        if (childAreaAvailableWidth < 0 || childAreaAvailableHeight < 0) {
+                            // Hierarchical node width and/or aspect ratio of parent set to be smaller than paddings 
+                            // the current layout node, throw exception
+                            throw new UnsupportedConfigurationException("The size defined by the parent parallel node"
+                                    + " is too small for the space provided by the paddings of the child hierarchical"
+                                    + " node.");
+                        }
                         topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth 
                                 + "|" + childAreaAvailableHeight + ")");                        
                         
