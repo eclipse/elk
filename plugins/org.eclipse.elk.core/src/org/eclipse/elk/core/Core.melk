@@ -908,7 +908,7 @@ group topdown {
     }
     
     advanced option scaleCap: double {
-        label "Scale Cap"
+        label "Topdown Scale Cap"
         description
             "Determines the upper limit for the topdown scale factor. The default value is 1.0 which ensures
              that nested children never end up appearing larger than their parents in terms of unit sizes such 
