@@ -260,7 +260,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             // the current layout node, throw exception
                             throw new UnsupportedConfigurationException("The size defined by the parent parallel node"
                                     + " is too small for the space provided by the paddings of the child hierarchical"
-                                    + " node.");
+                                    + " node. " + layoutNode.getIdentifier());
                         }
                         topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth 
                                 + "|" + childAreaAvailableHeight + ")");                        
