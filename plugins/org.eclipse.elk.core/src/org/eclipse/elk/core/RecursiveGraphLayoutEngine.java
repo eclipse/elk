@@ -211,22 +211,19 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     // if we are currently in a region and about to produce a child layout,
                     // then we need to step through the states and set the sizes of the states 
-                    // only if their layout is topdownpacking
+                    // only if their layout is performed by a topdown layout provider
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
                             || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(
                                     TopdownNodeTypes.ROOT_NODE)) {
                         
                         for (ElkNode childNode : layoutNode.getChildren()) {
-                            // check if child has children and whether it will be laid out with topdownpacking
-                            // if yes its size needs to be pre-computed before computing the layout
+                            // check if child has children and whether it will be laid out with a topdown layout 
+                            // provider if yes its size needs to be pre-computed before computing the layout
+                            LayoutAlgorithmData localAlgorithmData = 
+                                    childNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
                             if (childNode.getChildren().size() > 0
-                                    && childNode.getProperty(CoreOptions.ALGORITHM).equals(
-                                            "org.eclipse.elk.topdownpacking")) {
-
-                                // FIXME: this is "safe" because we already know the algorithm that is being used, 
-                                //        nonetheless some type checking might be sensible here
-                                LayoutAlgorithmData localAlgorithmData = 
-                                        childNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
+                                    && localAlgorithmData.getInstancePool().fetch() instanceof ITopdownLayoutProvider) {
+                                
                                 ITopdownLayoutProvider topdownLayoutProvider = 
                                         (ITopdownLayoutProvider) localAlgorithmData.getInstancePool().fetch();
                                 
