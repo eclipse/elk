@@ -55,31 +55,30 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             return;
         }
         assert !components.contains(target);
-        
-        // assign priorities
-        for (LGraph graph : components) {
-            int priority = 0;
-            for (LNode node : graph.getLayerlessNodes()) {
-                priority += node.getProperty(LayeredOptions.PRIORITY);
+        // Sort components
+        if (target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) == ComponentOrderingStrategy.NONE) {
+            // assign priorities
+            for (LGraph graph : components) {
+                int priority = 0;
+                for (LNode node : graph.getLayerlessNodes()) {
+                    priority += node.getProperty(LayeredOptions.PRIORITY);
+                }
+                graph.id = priority;
             }
-            graph.id = priority;
-        }
 
-        // sort the components by their priority and size.
-        // If preserve order is set, we do not consider the size.
-        Collections.sort(components, new Comparator<LGraph>() {
-            public int compare(final LGraph graph1, final LGraph graph2) {
-                int prio = graph2.id - graph1.id;
-                if (prio == 0) {
-                    if (graph1.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE) {
+            // sort the components by their priority and size.
+            Collections.sort(components, new Comparator<LGraph>() {
+                public int compare(final LGraph graph1, final LGraph graph2) {
+                    int prio = graph2.id - graph1.id;
+                    if (prio == 0) {
                         double size1 = graph1.getSize().x * graph1.getSize().y;
                         double size2 = graph2.getSize().x * graph2.getSize().y;
                         return Double.compare(size1, size2);
                     }
+                    return prio;
                 }
-                return prio;
-            }
-        });
+            });
+        }
         
         LGraph firstComponent = components.get(0);
         target.getLayerlessNodes().clear();

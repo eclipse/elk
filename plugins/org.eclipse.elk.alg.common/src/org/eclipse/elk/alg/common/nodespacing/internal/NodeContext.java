@@ -80,8 +80,10 @@ public final class NodeContext {
     public final double labelCellSpacing;
     /** Space between a port and another port. */
     public final double portPortSpacing;
-    /** Space between a port and its labels. */
-    public final double portLabelSpacing;
+    /** Horizontal space between a port and its labels. */
+    public final double portLabelSpacingHorizontal;
+    /** Vertical space between a port and its labels. */
+    public final double portLabelSpacingVertical;
     /** Margin to leave around the set of ports on each side. */
     public final ElkMargin surroundingPortMargins;
 
@@ -152,7 +154,10 @@ public final class NodeContext {
         nodeLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_NODE);
         labelLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_LABEL);
         portPortSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_PORT_PORT);
-        portLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_PORT);
+        portLabelSpacingHorizontal =
+                IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
+        portLabelSpacingVertical =
+                IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_PORT_VERTICAL);
         surroundingPortMargins = IndividualSpacings.getIndividualOrInherited(
                 node, CoreOptions.SPACING_PORTS_SURROUNDING);
         

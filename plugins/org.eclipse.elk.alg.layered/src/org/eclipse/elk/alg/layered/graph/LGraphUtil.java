@@ -814,7 +814,7 @@ public final class LGraphUtil {
         if (!portConstraints.isSideFixed()) {
             // we need some layout direction here, use RIGHT as default in case it is undefined
             assert layoutDirection != Direction.UNDEFINED;
-            if (netFlow > 0) {
+            if (netFlow >= 0) {
                 finalExternalPortSide = PortSide.fromDirection(layoutDirection);
             } else {
                 finalExternalPortSide = PortSide.fromDirection(layoutDirection).opposed();
@@ -1138,6 +1138,21 @@ public final class LGraphUtil {
             }
         }
         return direction;
+    }
+
+    /**
+     * Determines the minimal node order of an unlayered graph.
+     * 
+     * @return model order or Integer.MAX_VALUE if no node with a model order could be found.
+     */
+    public static int getMinimalModelOrder(final LGraph graph) {
+        int order = Integer.MAX_VALUE;
+        for (LNode node : graph.getLayerlessNodes()) {
+            if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                order = Math.min(order, node.getProperty(InternalProperties.MODEL_ORDER));
+            }
+        }
+        return order;
     }
     
 }

@@ -41,12 +41,15 @@ public class EadesRadial implements ILayoutPhase<RadialLayoutPhases, ElkNode> {
 
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("Eades radial", 1);
+        progressMonitor.logGraph(graph, "After");
         root = graph.getProperty(InternalProperties.ROOT_NODE);
         radius = graph.getProperty(RadialOptions.RADIUS);
         sorter = graph.getProperty(RadialOptions.SORTER).create();
         annulusWedgeCriteria = graph.getProperty(RadialOptions.WEDGE_CRITERIA).create();
         optimizer = graph.getProperty(RadialOptions.OPTIMIZATION_CRITERIA).create();
         translate(graph);
+        progressMonitor.logGraph(graph, "After");
     }
 
     /**

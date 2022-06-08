@@ -31,6 +31,7 @@ import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.ContentAlignment;
@@ -336,7 +337,8 @@ public final class ElkLayered {
                 CrossingMinimizationStrategy childCms = 
                         child.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
                 if (childCms == CrossingMinimizationStrategy.LAYER_SWEEP) {
-                    child.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, parentCms);
+                    throw new UnsupportedGraphException("The hierarchy aware processor " + childCms + " in child node "
+                            + child + " is only allowed if the root node specifies the same hierarchical processor.");
                 }
             });
         }
@@ -693,6 +695,7 @@ public final class ElkLayered {
             adjustedSize.x = Math.max(calculatedSize.x, minSize.x);
             adjustedSize.y = Math.max(calculatedSize.y, minSize.y);
         }
+
         if (!lgraph.getProperty(LayeredOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
             resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
         }

@@ -71,7 +71,7 @@ import com.google.common.collect.Multimap;
  * 
  * <p>This class is not supposed to be public, but needs to be for JUnit tests to find it.</p>
  */
-public final class ComponentGroup {
+public class ComponentGroup {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Constants
@@ -88,7 +88,7 @@ public final class ComponentGroup {
      * port sides to a list of port side sets that must not already exist in this group for a
      * component to be added.</p>
      */
-    private static final Multimap<Set<PortSide>, Set<PortSide>> CONSTRAINTS = HashMultimap.create();
+    protected static final Multimap<Set<PortSide>, Set<PortSide>> CONSTRAINTS = HashMultimap.create();
     
     static {
         // Setup constraints
@@ -174,7 +174,7 @@ public final class ComponentGroup {
     /**
      * A map mapping external port side combinations to components in this group.
      */
-    private Multimap<Set<PortSide>, LGraph> components = ArrayListMultimap.create();
+    protected Multimap<Set<PortSide>, LGraph> components = ArrayListMultimap.create();
     
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -212,8 +212,8 @@ public final class ComponentGroup {
     public boolean add(final LGraph component) {
         if (canAdd(component)) {
             components.put(
-                    component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS),
-                    component);
+                component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS),
+                component);
             return true;
         } else {
             return false;
@@ -227,7 +227,7 @@ public final class ComponentGroup {
      * @return {@code true} if the group has enough space left to add the component, {@code false}
      *         otherwise.
      */
-    private boolean canAdd(final LGraph component) {
+    protected boolean canAdd(final LGraph component) {
         // Check if we have a component with incompatible external port sides
         Set<PortSide> candidateSides = component.getProperty(InternalProperties.EXT_PORT_CONNECTIONS);
         Collection<Set<PortSide>> constraints = CONSTRAINTS.get(candidateSides);
@@ -241,6 +241,15 @@ public final class ComponentGroup {
         
         // We haven't found any conflicting components
         return true;
+    }
+    
+    /**
+     * Returns all port sides in this component group.
+     * 
+     * @return all port sides in this component group.
+     */
+    public Collection<Set<PortSide>> getPortSides() {
+        return components.keys();
     }
     
     /**

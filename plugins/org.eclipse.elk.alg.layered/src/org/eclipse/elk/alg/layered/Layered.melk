@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.layered
 
 import java.util.List
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider
+import org.eclipse.elk.alg.layered.components.ComponentOrderingStrategy
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
@@ -50,7 +51,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.edgeLabel
     supports org.eclipse.elk.spacing.edgeNode
     supports org.eclipse.elk.spacing.labelLabel
-    supports org.eclipse.elk.spacing.labelPort
+    supports org.eclipse.elk.spacing.labelPortHorizontal
+    supports org.eclipse.elk.spacing.labelPortVertical
     supports org.eclipse.elk.spacing.labelNode
     supports org.eclipse.elk.spacing.nodeNode
     supports org.eclipse.elk.spacing.nodeSelfLoop
@@ -139,6 +141,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.layering.layerConstraint
     supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
     supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+    supports org.eclipse.elk.alg.layered.crossingMinimization.forceNodeModelOrder
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitchHierarchical.type
@@ -195,6 +198,9 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.longEdgeStrategy
     supports considerModelOrder.crossingCounterNodeInfluence
     supports considerModelOrder.crossingCounterPortInfluence
+    supports considerModelOrder.noModelOrder
+    supports considerModelOrder.components
+    supports generatePositionAndLayerIds
 }
 
 /* ------------------------
@@ -255,7 +261,8 @@ group layering {
     output option layerId: int {
         label "Layer ID"
         description
-            "Layer identifier that was calculated by ELK Layered for a node"
+            "Layer identifier that was calculated by ELK Layered for a node.
+            This is only generated if interactiveLayot or generatePositionAndLayerIds is set."
         default = -1
         lowerBound = -1
         targets nodes
@@ -336,6 +343,17 @@ group crossingMinimization {
         description
             "Strategy for crossing minimization."
         default = CrossingMinimizationStrategy.LAYER_SWEEP
+        targets parents
+    }
+    
+    option forceNodeModelOrder: boolean {
+        label "Force Node Model Order"
+        description
+            "The node order given by the model does not change to produce a better layout. E.g. if node A
+             is before node B in the model this is not changed during crossing minimization. This assumes that the
+             node model order is already respected before crossing minimization. This can be achieved by setting
+             considerModelOrder.strategy to NODES_AND_EDGES."
+        default = false
         targets parents
     }
 
@@ -423,7 +441,8 @@ group crossingMinimization {
     output option positionId: int {
         label "Position ID"
         description
-            "Position within a layer that was determined by ELK Layered for a node."
+            "Position within a layer that was determined by ELK Layered for a node.
+            This is only generated if interactiveLayot or generatePositionAndLayerIds is set."
         default = -1
         lowerBound = -1
         targets nodes
@@ -931,6 +950,24 @@ group considerModelOrder {
         default = OrderingStrategy.NONE
         targets parents
     }
+    option noModelOrder: boolean {
+        label "No Model Order"
+        description
+            "Set on a node to not set a model order for this node even though it is a real node."
+        default = false
+        targets nodes
+    }
+    option components: ComponentOrderingStrategy {
+        label "Consider Model Order for Components"
+        description
+            "If set to NONE the usual ordering strategy (by cumulative node priority and size of nodes) is used.
+             INSIDE_PORT_SIDES orders the components with external ports only inside the groups with the same port side.
+             FORCE_MODEL_ORDER enforces the mode order on components. This option might produce bad alignments and sub
+             optimal drawings in terms of used area since the ordering should be respected."
+        targets parents
+        default = ComponentOrderingStrategy.NONE
+        requires org.eclipse.elk.separateConnectedComponents
+    }
     option longEdgeStrategy: LongEdgeOrderingStrategy {
         label "Long Edge Ordering Strategy"
         description
@@ -1057,4 +1094,14 @@ advanced option unnecessaryBendpoints: boolean {
         where an edge changes direction."
     default = false
     targets parents
+}
+
+advanced option generatePositionAndLayerIds: boolean {
+    label "Generate Position and Layer IDs"
+    description
+        "If enabled position id and layer id are generated, which are usually only used internally
+        when setting the interactiveLayout option. This option should be specified on the root node."
+    default = false
+    targets parents
+        
 }

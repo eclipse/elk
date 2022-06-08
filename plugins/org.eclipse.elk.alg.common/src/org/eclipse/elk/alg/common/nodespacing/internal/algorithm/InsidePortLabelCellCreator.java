@@ -78,11 +78,19 @@ public final class InsidePortLabelCellCreator {
         
         switch (portSide) {
         case NORTH:
-            padding.top = nodeContext.portLabelSpacing;
+            // In case of negative port spacing, do not use it as a padding since this would increase the node size.
+            // Needed to ensure that negative label port spacing behaves the same as positive.
+            if (nodeContext.portLabelSpacingVertical >= 0) {
+                padding.top = nodeContext.portLabelSpacingVertical;
+            }
             break;
             
         case SOUTH:
-            padding.bottom = nodeContext.portLabelSpacing;
+            // In case of negative port spacing, do not use it as a padding since this would increase the node size.
+            // Needed to ensure that negative label port spacing behaves the same as positive.
+            if (nodeContext.portLabelSpacingVertical >= 0) {
+                padding.bottom = nodeContext.portLabelSpacingVertical;
+            }
             break;
         }
         
@@ -127,11 +135,11 @@ public final class InsidePortLabelCellCreator {
         if (minCellSize.x > 0) {
             switch (portSide) {
             case EAST:
-                theAppropriateCell.getPadding().right = nodeContext.portLabelSpacing;
+                theAppropriateCell.getPadding().right = nodeContext.portLabelSpacingHorizontal;
                 break;
                 
             case WEST:
-                theAppropriateCell.getPadding().left = nodeContext.portLabelSpacing;
+                theAppropriateCell.getPadding().left = nodeContext.portLabelSpacingHorizontal;
                 break;
             }
         }

@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.rectpacking.util.BlockStack;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -69,7 +70,7 @@ public class RowFillingAndCompaction {
      * @return Drawing data for a produced drawing.
      */
     public DrawingData start(final List<ElkNode> rectangles, final double maxWidth, final KVector minParentSize,
-            final IElkProgressMonitor progressMonitor, final ElkNode layoutGraph) {
+            final IElkProgressMonitor progressMonitor, final ElkNode layoutGraph, final ElkPadding padding) {
         // Initial placement for rectangles in blocks in each row.
         List<RectRow> rows = InitialPlacement.place(rectangles, maxWidth, nodeNodeSpacing);
         
@@ -107,8 +108,8 @@ public class RowFillingAndCompaction {
             progressMonitor.logGraph(layoutGraph, "After compaction");
         }
         
-        double totalWidth = Math.max(this.drawingWidth, minParentSize.x);
-        double minHeight = Math.max(this.drawingHeight, minParentSize.y);
+        double totalWidth = Math.max(this.drawingWidth, minParentSize.x - padding.getHorizontal());
+        double minHeight = Math.max(this.drawingHeight, minParentSize.y - padding.getVertical());
         double additionalHeight = minHeight - this.drawingHeight;
         if (expandNodes && expandToAspectRatio) {
             double aspectRatio = totalWidth / minHeight;

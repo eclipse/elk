@@ -53,6 +53,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports desiredPosition
     supports currentPosition
     supports targetWidth
+    supports inNewRow
 }
 
 // OPTIONS
@@ -139,4 +140,12 @@ advanced option targetWidth: double {
          horizontal padding."
     targets nodes
     default = -1
+}
+option inNewRow: boolean {
+    label "In new Row"
+    description
+        "If set to true this node begins in a new row. Consequently this node cannot be moved in a previous layer during
+         compaction. Width approximation does does not take this into account."
+    targets nodes
+    default = false
 }

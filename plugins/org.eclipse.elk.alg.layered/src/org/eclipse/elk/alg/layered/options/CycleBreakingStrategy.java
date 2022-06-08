@@ -13,6 +13,7 @@ import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p1cycles.DepthFirstCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.GreedyCycleBreaker;
+import org.eclipse.elk.alg.layered.p1cycles.GreedyModelOrderCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.InteractiveCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.ModelOrderCycleBreaker;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -47,7 +48,12 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
      * Reacts to the input model by respecting the initial ordering in the model file.
      * This ordering is used to identify backwards edges.
      */
-    MODEL_ORDER;
+    MODEL_ORDER,
+    
+    /**
+     * Applies a greedy heuristic to minimize the number of reversed edges but uses the model order as a tie-breaker.
+     */
+    GREEDY_MODEL_ORDER;
     
 
     @Override
@@ -64,6 +70,9 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
             
         case MODEL_ORDER:
             return new ModelOrderCycleBreaker();
+            
+        case GREEDY_MODEL_ORDER:
+            return new GreedyModelOrderCycleBreaker();
             
         default:
             throw new IllegalArgumentException(

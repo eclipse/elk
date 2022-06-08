@@ -87,7 +87,7 @@ public class LayerSweepCrossingMinimizer
     private Set<GraphInfoHolder> graphsWhoseNodeOrderChanged;
     private Random random;
     private long randomSeed;
-    private final CrossMinType crossMinType;
+    private CrossMinType crossMinType;
 
     /**
      * Creates LayerSweepHierarchicalCrossingMinimizer using given minimizer type.
@@ -295,7 +295,7 @@ public class LayerSweepCrossingMinimizer
 
         return oldNumberOfCrossings;
     }
-    
+
     /**
      * Compares all nodes in a each layer and counts how often they are not in model order.
      * This requires that the {@code SortByInputModelProcessor} ran previously.
@@ -311,7 +311,9 @@ public class LayerSweepCrossingMinimizer
                     previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL);
             for (int i = 0; i < layer.length; i++) {
                 for (int j = i + 1; j < layer.length; j++) {
-                    if (comp.compare(layer[i], layer[j]) > 0) {
+                    if (layer[i].hasProperty(InternalProperties.MODEL_ORDER)
+                            && layer[j].hasProperty(InternalProperties.MODEL_ORDER)
+                            && comp.compare(layer[i], layer[j]) > 0) {
                         wrongModelOrder++;
                     }
                 }

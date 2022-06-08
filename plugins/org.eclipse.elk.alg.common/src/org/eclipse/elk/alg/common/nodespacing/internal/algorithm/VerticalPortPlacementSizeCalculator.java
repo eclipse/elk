@@ -235,10 +235,13 @@ public final class VerticalPortPlacementSizeCalculator {
 
         boolean portLabelsOutside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE);
         boolean alwaysSameSide = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
+        boolean alwaysSameSideAbove =
+                nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_OTHER_SAME_SIDE);
         boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
         boolean uniformPortSpacing = nodeContext.sizeOptions.contains(SizeOptions.UNIFORM_PORT_SPACING);
 
-        boolean spaceEfficientPortLabels = !alwaysSameSide && (spaceEfficient || portContexts.size() == 2);
+        boolean spaceEfficientPortLabels = !alwaysSameSide && !alwaysSameSideAbove
+                && (spaceEfficient || portContexts.size() == 2);
 
         // Set the vertical port margins of all ports according to how their labels will be placed. We'll be
         // modifying the margins soon enough.
@@ -319,7 +322,7 @@ public final class VerticalPortPlacementSizeCalculator {
                     // The label is either placed outside (below the port) or possibly inside, but for a compound node,
                     // which means that it is placed below the port as well to keep it from overlapping with inside
                     // edges
-                    portContext.portMargin.bottom = nodeContext.portLabelSpacing + labelHeight;
+                    portContext.portMargin.bottom = nodeContext.portLabelSpacingVertical + labelHeight;
                 }
             } else if (PortLabelPlacement.isFixed(nodeContext.portLabelsPlacement)) {
                 // The fixed port label is not considered with portContext.portLabelCell. Nevertheless, a port margin

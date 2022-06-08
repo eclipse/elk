@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.elk.alg.layered
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Layered Layout Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.layered;singleton:=true
-Bundle-Version: 0.8.0.qualifier
+Bundle-Version: 0.9.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava,
@@ -16,7 +16,7 @@ Export-Package: org.eclipse.elk.alg.layered,
  org.eclipse.elk.alg.layered.compaction.oned;x-friends:="org.eclipse.elk.alg.layered.test",
  org.eclipse.elk.alg.layered.compaction.oned.algs;x-friends:="org.eclipse.elk.alg.layered.test",
  org.eclipse.elk.alg.layered.compaction.recthull;x-friends:="org.eclipse.elk.alg.layered.test",
- org.eclipse.elk.alg.layered.components;x-friends:="org.eclipse.elk.alg.layered.test",
+ org.eclipse.elk.alg.layered.components,
  org.eclipse.elk.alg.layered.compound;x-friends:="org.eclipse.elk.alg.layered.test",
  org.eclipse.elk.alg.layered.graph,
  org.eclipse.elk.alg.layered.graph.transform;x-friends:="org.eclipse.elk.alg.layered.test",

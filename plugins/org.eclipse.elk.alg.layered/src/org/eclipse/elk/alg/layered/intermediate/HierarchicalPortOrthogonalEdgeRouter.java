@@ -213,12 +213,13 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         // are not set acoordingly. That needs to be fixed (if port labels are to be taken into consideration)
         if (graph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).contains(SizeConstraint.PORT_LABELS)) {
             // The ElkGraphImporter has set the relevant spacings on the dummy node
-            double portLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT);
+            double portLabelSpacingHorizontal = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT_HORIZONTAL);
+            double portLabelSpacingVertical = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT_VERTICAL);
             double labelLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
             
             Set<PortLabelPlacement> portLabelPlacement = graph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
             if (portLabelPlacement.contains(PortLabelPlacement.INSIDE)) {
-                double currentY = portLabelSpacing;
+                double currentY = portLabelSpacingVertical;
                 double xCenterRelativeToPort = dummy.getSize().x / 2 - dummyPort.getPosition().x;
                 
                 for (LLabel label : dummyPort.getLabels()) {
@@ -231,7 +232,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             } else if (portLabelPlacement.contains(PortLabelPlacement.OUTSIDE)) {
                 // Port labels have a vertical size of 0, but we need to set their x coordinate
                 for (LLabel label : dummyPort.getLabels()) {
-                    label.getPosition().x = portLabelSpacing + dummy.getSize().x - dummyPort.getPosition().x;
+                    label.getPosition().x = portLabelSpacingHorizontal + dummy.getSize().x - dummyPort.getPosition().x;
                 }
             }
             
