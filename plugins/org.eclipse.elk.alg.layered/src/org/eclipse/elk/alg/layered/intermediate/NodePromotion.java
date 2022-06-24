@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -66,6 +68,9 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
     /** Holds all nodes of the graph that have incoming edges. */
     private List<LNode> nodesWithIncomingEdges;
 
+    /** Holds all nodes of the graph that have outgoing edges. */
+    private List<LNode> nodesWithOutgoingEdges;
+
     /** Stores all nodes of the graph. */
     private List<LNode> nodes;
 
@@ -113,6 +118,8 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
 
     /** Is the current height of the graph. */
     private int maxHeight;
+    /** Height that is additionally added by model order.*/
+    private int additionalHeight;
 
     /**
      * Approximated pixels that have to be added to the width (in pixels) for better estimation of
@@ -198,6 +205,9 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
             int promoteUntilD = (int) Math.ceil(dummyNodeCount * promoteUntil / 100.0);
             promotionMagic(pair -> pair.getFirst() < promoteUntilD);
             break;
+        case MODEL_ORDER_LEFT_TO_RIGHT:
+            modelOrderNodePromotion();
+            break;
         default:
             promotionMagic(funFunction);
             break;
@@ -249,6 +259,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         degreeDiff = new int[nodeID][3]; // SUPPRESS CHECKSTYLE MagicNumber
         nodes = Lists.newArrayList();
         nodesWithIncomingEdges = Lists.newArrayList();
+        nodesWithOutgoingEdges = Lists.newArrayList();
         int dummyBaggage = 0; // Will contain number of dummy nodes between the layers.
         dummyNodeCount = 0;
 
@@ -275,6 +286,9 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                 if (inDegree > 0) {
                     nodesWithIncomingEdges.add(node);
                 }
+                if (outDegree > 0) {
+                    nodesWithOutgoingEdges.add(node);
+                }
                 nodes.add(node);
             }
 
@@ -292,6 +306,91 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
             dummyBaggage += outcoming; // All outgoing edges of this layer might create dummy nodes
                                        // in other layers, so it's necessary to keep them in mind.
         }
+    }
+
+
+    /**
+     * A node that will be promoted by model order is identified if all nodes in the same layer as the node do have a
+     * smaller model order and there exists a node in the next layer with a smaller model order.
+     * Ndoes are only moved to a higher layer (a layer with a smaller id).
+     */
+    private void modelOrderNodePromotion() {
+        int maxHeight = this.maxHeight;
+        boolean somethingChanged = false;
+        do {
+            somethingChanged = false;
+            for (LNode node : nodesWithOutgoingEdges) {
+                if (!node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                    continue;
+                }
+                int currentLayerId = layers[node.id];
+                List<LNode> currentLayer = getLayer(currentLayerId);
+                if (currentLayer.size() <= 1) {
+                    continue;
+                }
+                boolean shallBePromoted = true;
+                for (LNode otherNode : currentLayer) {
+                    if (otherNode.hasProperty(InternalProperties.MODEL_ORDER)) {
+                        if (node.getProperty(InternalProperties.MODEL_ORDER)
+                                < otherNode.getProperty(InternalProperties.MODEL_ORDER)) {
+                            // If one node in the same layer as the current node exists with a bigger
+                            // model order the current node cannot be promoted.
+                            shallBePromoted = false;
+                        }
+                    }
+                }
+                if (!shallBePromoted) {
+                    continue;
+                }
+                // All nodes the current layer of the node have a smaller model order.
+                // If the next layer has a node with a smaller model order. Promote the current node.
+                int nextLayerId = currentLayerId - 1;
+                
+                // Check whether a next layer exists and...
+                List<LNode> nextLayer = getLayer(nextLayerId);
+                boolean smallerModelOrder = false;
+                // I cannot iterate over the original graph since the layers are only changed at the end.
+                for (LNode nextLayerNode : nextLayer) {
+                    if (nextLayerNode.hasProperty(InternalProperties.MODEL_ORDER)) {
+                        smallerModelOrder
+                                |= nextLayerNode.getProperty(InternalProperties.MODEL_ORDER)
+                                < node.getProperty(InternalProperties.MODEL_ORDER); 
+                    }
+                }
+                if (smallerModelOrder) {
+                    promoteNodeByModelOrder(node);
+                    somethingChanged = true;
+                }
+            }    
+        } while (somethingChanged); 
+    }
+    
+    private void promoteNodeByModelOrder(final LNode node) {
+        // Check whether the current node has connections to the next layer.
+        // If yes, the other nodes have to be promoted.
+        if (layers[node.id] <= 0) {
+            additionalHeight++;
+        }
+        layers[node.id] = layers[node.id] - 1;
+        for (LEdge edge : node.getOutgoingEdges()) {
+            LNode nextNode = edge.getTarget().getNode();
+            if (layers[nextNode.id] == layers[node.id]) {
+                promoteNodeByModelOrder(nextNode);
+                // Next node has to be moved too.
+            }
+        }
+    }
+    
+    private List<LNode> getLayer(int layerIndex) {
+        ArrayList<LNode> currentLayer = new ArrayList<>();
+        for (Layer layer : this.masterGraph) {
+            for (LNode node : layer) {
+                if (layers[node.id] == layerIndex) {
+                    currentLayer.add(node);
+                }
+            }
+        }
+        return currentLayer;
     }
 
     /**
@@ -448,7 +547,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         // stored in the nodes but can also be properly assigned compliant with the layering used in
         // ELK Layered.
         List<Layer> layList = Lists.newArrayList();
-        for (int i = 0; i <= maxHeight; i++) {
+        for (int i = 0; i <= maxHeight + additionalHeight; i++) {
             Layer laLaLayer = new Layer(layeredGraph);
             laLaLayer.id = maxHeight - i;
             layList.add(laLaLayer);
