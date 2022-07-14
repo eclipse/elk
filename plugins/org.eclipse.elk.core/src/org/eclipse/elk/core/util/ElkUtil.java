@@ -458,12 +458,11 @@ public final class ElkUtil {
                     minX = Math.min(minX, bendpoint.getX());
                     maxX = Math.max(maxX, bendpoint.getX());
                     minY = Math.min(minY, bendpoint.getY());
-                    maxY = Math.max(maxY, bendpoint.getX());
-
+                    maxY = Math.max(maxY, bendpoint.getY());
+                    
                 }
             }
         }
-        
         // max and min value represent outermost bounds of the layout
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, maxX - minX);
         node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, maxY - minY);
