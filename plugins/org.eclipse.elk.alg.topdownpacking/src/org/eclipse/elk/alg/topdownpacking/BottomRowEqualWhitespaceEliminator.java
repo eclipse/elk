@@ -65,7 +65,31 @@ public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownP
                     accumulatedShift += extraSpacePerNode;
                 }
             }
-             
+        }
+        // check whether there is vertical white space
+        for (int i = 0; i < layoutGraph.getColumns(); i++) {
+            List<ElkNode> col = layoutGraph.getColumn(i);
+            // check for whitespace below last node
+            ElkNode last = null;
+            int lastIndex = col.size();
+            while (last == null) {
+                last = col.get(--lastIndex);
+            }
+            double bottomBorder = last.getY() + last.getHeight();
+            
+            if (bottomBorder + padding.bottom < layoutGraph.getHeight()) {
+                progressMonitor.log("Eliminate white space in col " + i);
+                double extraSpace = layoutGraph.getHeight() - (bottomBorder + padding.bottom);
+                double extraSpacePerNode = extraSpace / (lastIndex + 1);
+                double accumulatedShift = 0;
+                // go through all nodes in col, shift and enlarge them
+                for (int j = 0; j <= lastIndex; j++) {
+                    ElkNode node = col.get(j);
+                    node.setY(node.getY() + accumulatedShift);
+                    node.setHeight(node.getHeight() + extraSpacePerNode);
+                    accumulatedShift += extraSpacePerNode;
+                }
+            }
         }
         
         progressMonitor.logGraph(layoutGraph, "Graph after whitespace elimination");
