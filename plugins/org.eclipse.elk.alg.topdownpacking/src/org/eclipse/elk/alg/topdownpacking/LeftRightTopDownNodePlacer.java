@@ -42,7 +42,8 @@ public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPh
         
         // In case the graph dimensions have not been set yet, set them now, this is needed for the standalone usage
         KVector graphSize = getPredictedSize(layoutGraph);
-        layoutGraph.setDimensions(graphSize.x, graphSize.y);
+        layoutGraph.setDimensions(Math.max(layoutGraph.getWidth(), graphSize.x), 
+                Math.max(layoutGraph.getHeight(), graphSize.y));
         
         // Get the list of nodes to lay out
         List<ElkNode> nodes = new ArrayList<>(layoutGraph.getChildren());

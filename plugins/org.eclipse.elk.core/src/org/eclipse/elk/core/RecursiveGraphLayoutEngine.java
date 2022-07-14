@@ -228,7 +228,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                         (ITopdownLayoutProvider) localAlgorithmData.getInstancePool().fetch();
                                 
                                 KVector requiredSize = topdownLayoutProvider.getPredictedGraphSize(childNode);
-                                childNode.setDimensions(requiredSize.x, requiredSize.y);
+                                childNode.setDimensions(Math.max(childNode.getWidth(), requiredSize.x), 
+                                        Math.max(childNode.getHeight(), requiredSize.y));
                             }
                         }
                     }
