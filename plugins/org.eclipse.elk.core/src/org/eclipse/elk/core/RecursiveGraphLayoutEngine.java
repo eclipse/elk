@@ -21,6 +21,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.TopdownNodeTypes;
+import org.eclipse.elk.core.options.TopdownSizeApproximator;
 import org.eclipse.elk.core.testing.TestController;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -230,6 +231,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 KVector requiredSize = topdownLayoutProvider.getPredictedGraphSize(childNode);
                                 childNode.setDimensions(Math.max(childNode.getWidth(), requiredSize.x), 
                                         Math.max(childNode.getHeight(), requiredSize.y));
+                            } else if (childNode.getProperty(CoreOptions.TOPDOWN_SIZE_APPROXIMATOR) != null) {
+                                TopdownSizeApproximator approximator = 
+                                        childNode.getProperty(CoreOptions.TOPDOWN_SIZE_APPROXIMATOR);
+                                KVector size = approximator.getSize(childNode);
+                                childNode.setDimensions(Math.max(childNode.getWidth(), size.x),
+                                        Math.max(childNode.getHeight(), size.y));
                             }
                         }
                     }

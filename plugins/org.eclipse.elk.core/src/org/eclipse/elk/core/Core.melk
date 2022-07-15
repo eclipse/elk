@@ -863,6 +863,17 @@ group topdown {
         requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
     }
     
+    advanced option sizeApproximator: TopdownSizeApproximator {
+        label "Topdown Size Approximator"
+        description
+            "The size approximator to be used to set sizes of hierarchical nodes during topdown layout. The default
+             value is null, which results in nodes keeping whatever size is defined for them e.g. through parent 
+             parallel node or by manually setting the size."
+             default = null
+             targets nodes
+             requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
+    
     advanced option hierarchicalNodeWidth: double {
         label "Topdown Hierarchical Node Width"
         description
