@@ -36,6 +36,8 @@ public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownP
         
         if (layoutGraph.getWidth() == 0) {
             progressMonitor.log("Parent node has no width, skipping phase");
+            progressMonitor.done();
+            return;
         }
         
         ElkPadding padding = layoutGraph.getProperty(CoreOptions.PADDING);
@@ -66,31 +68,33 @@ public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownP
                 }
             }
         }
+
+        
         // check whether there is vertical white space
-        for (int i = 0; i < layoutGraph.getColumns(); i++) {
-            List<ElkNode> col = layoutGraph.getColumn(i);
-            // check for whitespace below last node
-            ElkNode last = null;
-            int lastIndex = col.size();
-            while (last == null) {
-                last = col.get(--lastIndex);
-            }
-            double bottomBorder = last.getY() + last.getHeight();
-            
-            if (bottomBorder + padding.bottom < layoutGraph.getHeight()) {
-                progressMonitor.log("Eliminate white space in col " + i);
-                double extraSpace = layoutGraph.getHeight() - (bottomBorder + padding.bottom);
-                double extraSpacePerNode = extraSpace / (lastIndex + 1);
-                double accumulatedShift = 0;
-                // go through all nodes in col, shift and enlarge them
-                for (int j = 0; j <= lastIndex; j++) {
-                    ElkNode node = col.get(j);
+        List<ElkNode> col = layoutGraph.getColumn(0);
+        // check for whitespace below first column and expand all columns accordingly, 
+        // to prevent expanding into same space as horizontal expansion
+        ElkNode last = col.get(col.size() - 1);
+        double bottomBorder = last.getY() + last.getHeight();
+        double extraSpace = layoutGraph.getHeight() - (bottomBorder + padding.bottom);
+        double extraSpacePerNode = extraSpace / (col.size() + 1);
+        double accumulatedShift = 0;
+        progressMonitor.log("Eliminate vertical white space");
+        if (bottomBorder + padding.bottom < layoutGraph.getHeight()) {
+            for (int i = 0; i < layoutGraph.getRows(); i++) {
+                List<ElkNode> row = layoutGraph.getRow(i);
+                // go through all nodes in row, shift and enlarge them
+                for (ElkNode node : row) {
+                    if (node == null) {
+                        break;
+                    }
                     node.setY(node.getY() + accumulatedShift);
                     node.setHeight(node.getHeight() + extraSpacePerNode);
                     accumulatedShift += extraSpacePerNode;
                 }
             }
         }
+        
         
         progressMonitor.logGraph(layoutGraph, "Graph after whitespace elimination");
         progressMonitor.done();
