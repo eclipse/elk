@@ -69,6 +69,16 @@ public enum PortLabelPlacement {
     ALWAYS_SAME_SIDE,
 
     /**
+     * The port labels shall always be placed on the same side relative to their corresponding port. For
+     * {@link PortSide#WEST} and {@link PortSide#EAST} this is <i>above</i> the port and for {@link PortSide#NORTH} and
+     * {@link PortSide#SOUTH} it is <i>left</i> of the port.
+     * 
+     * <p>
+     * Note: the option does not apply to inside port labels (unless a hierarchical edge connects).
+     */
+    ALWAYS_OTHER_SAME_SIDE,
+
+    /**
      * Unless there are exactly two ports at a given port side, outside port labels are usually all placed to the same
      * side of their port. For example, if there are three northern ports, all of their labels will be placed to the
      * right of their ports. If this option is active, the leftmost label will be placed to the left of its port while
@@ -120,7 +130,9 @@ public enum PortLabelPlacement {
         }
 
         final Set<PortLabelPlacement> validPosition =
-                EnumSet.of(PortLabelPlacement.ALWAYS_SAME_SIDE, PortLabelPlacement.SPACE_EFFICIENT);
+                EnumSet.of(PortLabelPlacement.ALWAYS_SAME_SIDE,
+                        PortLabelPlacement.ALWAYS_OTHER_SAME_SIDE,
+                        PortLabelPlacement.SPACE_EFFICIENT);
         if (Sets.intersection(validPosition, placement).size() > 1) {
             return false;
         }

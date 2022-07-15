@@ -275,7 +275,7 @@ public final class NodeLabelAndSizeUtilities {
                     nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
             final boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
 
-            return !firstPort.labelsNextToPort && !alwaysSameSide 
+            return !firstPort.labelsNextToPort && !alwaysSameSide
                     && (portContexts.size() == 2 || spaceEfficient);
         } else {
             return false;

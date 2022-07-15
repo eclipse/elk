@@ -52,7 +52,7 @@ public final class InitialPlacement {
             Block block = row.getLastBlock();
             double potentialRowWidth = currentWidth + rect.getWidth() + 
                     (row.getChildren().get(0).getChildren().isEmpty() ? 0 : nodeNodeSpacing);
-            if (potentialRowWidth > boundingWidth) {
+            if (potentialRowWidth > boundingWidth || rect.getProperty(RectPackingOptions.IN_NEW_ROW)) {
                 // Add rect in new block in new row.
                 currentWidth = 0;
                 drawingHeight += row.getHeight() + nodeNodeSpacing;
