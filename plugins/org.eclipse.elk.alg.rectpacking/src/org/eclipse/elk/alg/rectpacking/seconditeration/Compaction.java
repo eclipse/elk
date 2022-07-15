@@ -119,7 +119,9 @@ public final class Compaction {
                 // From the previous step the next block and the next row might be empty.
                 // Delete all empty blocks and rows.
                 if (nextBlock.getChildren().isEmpty()) {
-                    rows.get(nextRowIndex).removeBlock(nextBlock);
+                    if (rows.size() > nextRowIndex) {
+                        rows.get(nextRowIndex).removeBlock(nextBlock);
+                    }
                     nextBlock = null;
                     while (rows.size() > nextRowIndex && rows.get(nextRowIndex).getChildren().isEmpty()) {
                         rows.remove(rows.get(nextRowIndex));
