@@ -209,8 +209,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     
-                    // if we are currently in a region and about to produce a child layout,
-                    // then we need to step through the states and set the sizes of the states 
+                    // if we are currently in a hierarchical and about to produce a child layout,
+                    // then we need to step through the chidren and set their sizes 
                     // only if their layout is performed by a topdown layout provider
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
                             || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(
