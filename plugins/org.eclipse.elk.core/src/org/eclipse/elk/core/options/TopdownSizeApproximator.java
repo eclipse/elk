@@ -24,7 +24,8 @@ public enum TopdownSizeApproximator {
         @Override
         public KVector getSize(final ElkNode node) {
             // TODO: implement size approximator
-            return new KVector(100, 100);
+            double size = 100 * Math.sqrt(node.getChildren().size());
+            return new KVector(size, size * 0.6);
         }
         
     };
