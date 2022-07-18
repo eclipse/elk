@@ -13,27 +13,32 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * TODO: write javadoc
+ * A size approximator is used to dynamically decide a size for a node to be used during topdown layout
+ * of hierarchical nodes. This allows the use of a size approximation strategy to minimize white space
+ * in the final result.
  */
 public enum TopdownSizeApproximator {
     
     /**
-     * TODO: write javadoc
+     * Computes the square root of the number of children and uses that as a multiplier for the base size
+     * of the node. Nodes with no children will have a resulting size of 0, which means any other factors
+     * determining the size will be dominant. Uses {@link CoreOptions#TOPDOWN_HIERARCHICAL_NODE_WIDTH} and 
+     * {@link CoreOptions#TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO} as the base size.
      */
     COUNT_CHILDREN {
         @Override
         public KVector getSize(final ElkNode node) {
-            // TODO: implement size approximator
-            double size = 100 * Math.sqrt(node.getChildren().size());
-            return new KVector(size, size * 0.6);
+            double size = node.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH) 
+                    * Math.sqrt(node.getChildren().size());
+            return new KVector(size, size / node.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO));
         }
         
     };
     
     /**
-     * TODO: write javadoc
-     * @param node
-     * @return
+     * Returns an approximated required size for a given node.
+     * @param node the node
+     * @return the size as a vector
      */
     public abstract KVector getSize(ElkNode node);
 
