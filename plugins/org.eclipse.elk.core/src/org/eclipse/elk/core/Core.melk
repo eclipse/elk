@@ -877,21 +877,22 @@ group topdown {
     advanced option hierarchicalNodeWidth: double {
         label "Topdown Hierarchical Node Width"
         description
-            "The fixed size of a hierarchical node when using topdown layout. This value has to be set on parallel 
-             nodes."
+            "The fixed size of a hierarchical node when using topdown layout. If this value is set on a parallel 
+             node it applies to its children, when set on a hierarchical node it applies to the node itself."
         default = 150
         targets parents
-        requires nodeType == TopdownNodeTypes.PARALLEL_NODE
+        requires nodeType
     }
     
     advanced option hierarchicalNodeAspectRatio: double {
         label "Topdown Hierarchical Node Aspect Ratio"
         description
-            "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1:sqrt(2). This value 
-             has to be set on parallel nodes."
+            "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1:sqrt(2). If this 
+             value is set on a parallel node it applies to its children, when set on a hierarchical node it applies to 
+             the node itself."
         default = 1.414
         targets parents
-        requires nodeType == TopdownNodeTypes.PARALLEL_NODE
+        requires nodeType
     }
     
     advanced option nodeType: TopdownNodeTypes{
