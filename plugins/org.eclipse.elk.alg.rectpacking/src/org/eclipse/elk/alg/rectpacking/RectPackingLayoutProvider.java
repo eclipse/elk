@@ -74,6 +74,8 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         boolean interactive = layoutGraph.getProperty(RectPackingOptions.INTERACTIVE);
         // A target width for the algorithm. If this is set the width approximation step is skipped.
         double targetWidth = layoutGraph.getProperty(RectPackingOptions.TARGET_WIDTH);
+        // Whether the size of the parent node shall not be changed.
+        boolean fixedGraphSize = layoutGraph.getProperty(RectPackingOptions.NODE_SIZE_FIXED_GRAPH_SIZE);
 
         List<ElkNode> rectangles = layoutGraph.getChildren();
         DrawingUtil.resetCoordinates(rectangles);
@@ -144,8 +146,10 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         // Final touch.
         applyPadding(rectangles, padding);
         
-        ElkUtil.resizeNode(layoutGraph, drawing.getDrawingWidth() + padding.getHorizontal(),
-                drawing.getDrawingHeight() + padding.getVertical(), false, true);
+        if (!fixedGraphSize) {
+            ElkUtil.resizeNode(layoutGraph, drawing.getDrawingWidth() + padding.getHorizontal(),
+                    drawing.getDrawingHeight() + padding.getVertical(), false, true);
+        }
 
         // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
         if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
