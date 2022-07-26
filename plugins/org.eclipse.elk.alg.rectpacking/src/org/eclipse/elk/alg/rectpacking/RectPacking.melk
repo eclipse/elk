@@ -33,6 +33,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     metadataClass options.RectPackingOptions
     supports org.eclipse.elk.aspectRatio = 1.3
     supports org.eclipse.elk.expandNodes
+    supports org.eclipse.elk.nodeSize.fixedGraphSize = false
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
     supports org.eclipse.elk.contentAlignment
