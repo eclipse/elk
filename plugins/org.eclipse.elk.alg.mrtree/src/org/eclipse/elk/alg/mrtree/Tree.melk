@@ -41,6 +41,7 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.debugMode
     // Common node micro layout
     supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.fixedGraphSize
     supports org.eclipse.elk.nodeSize.minimum
     supports org.eclipse.elk.nodeSize.options
     supports org.eclipse.elk.nodeLabels.placement
