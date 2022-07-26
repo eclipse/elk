@@ -1,13 +1,14 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.eclipse.elk.alg.topdownpacking
 Bundle-ManifestVersion: 2
-Bundle-Name: Topdownpacking
-Bundle-SymbolicName: org.eclipse.elk.alg.topdownpacking
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: ELK Topdown Rectangle Packing Algorithm
+Bundle-SymbolicName: org.eclipse.elk.alg.topdownpacking;singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.alg.common,
  com.google.guava
-Automatic-Module-Name: org.eclipse.elk.alg.topdownpacking
-Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.elk.alg.topdownpacking,
  org.eclipse.elk.alg.topdownpacking.options
