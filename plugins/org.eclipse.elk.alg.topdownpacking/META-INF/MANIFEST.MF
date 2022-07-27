@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.elk.alg.topdownpacking
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK Topdown Rectangle Packing Algorithm
+Bundle-Name: ELK Topdown Packing Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.topdownpacking;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
