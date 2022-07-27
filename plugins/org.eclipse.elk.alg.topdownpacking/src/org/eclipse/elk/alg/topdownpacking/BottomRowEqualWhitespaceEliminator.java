@@ -34,7 +34,7 @@ public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownP
         progressMonitor.begin("Whitespace elimination", 1);
         progressMonitor.log("Whitespace elimination began for node " + layoutGraph.getIdentifier());
         
-        if (layoutGraph.getWidth() == 0) {
+        if (layoutGraph.getWidth() == 0 || layoutGraph.getColumns() == 0) {
             progressMonitor.log("Parent node has no width, skipping phase");
             progressMonitor.done();
             return;
