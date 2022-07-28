@@ -69,7 +69,6 @@ public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownP
             }
         }
 
-        
         // check whether there is vertical white space
         List<ElkNode> col = layoutGraph.getColumn(0);
         // check for whitespace below first column and expand all columns accordingly, 
@@ -94,7 +93,6 @@ public class BottomRowEqualWhitespaceEliminator implements ILayoutPhase<TopdownP
                 }
             }
         }
-        
         
         progressMonitor.logGraph(layoutGraph, "Graph after whitespace elimination");
         progressMonitor.done();

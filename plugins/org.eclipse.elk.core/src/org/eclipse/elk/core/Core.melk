@@ -841,10 +841,15 @@ advanced option topdownLayout: boolean {
          their parents. Graphs must follow a certain structure for topdown layout to work properly. 
          {@link TopdownNodeTypes.PARALLEL_NODE} nodes must have children of type 
          {@link TopdownNodeTypes.HIERARCHICAL_NODE} and must define {@link topdown.hierarchicalNodeWidth} and 
-         {@link topdown.hierarchicalNodeAspectRatio} for their children. Furthermore they need to be laid out using the 
-         algorithm {@link TopdownPacking}. Hierarchical nodes require the layout option {@link nodeSize.fixedGraphSize}
-         to be true to prevent the algorithm used there from resizing the hierarchical node. This option is not 
-         supported if 'Hierarchy Handling' is set to 'INCLUDE_CHILDREN'"
+         {@link topdown.hierarchicalNodeAspectRatio} for their children. Furthermore they need to be laid out using an 
+         algorithm  that is a {@link TopdownLayoutProvider}. Hierarchical nodes can also be parents of other hierarchical
+         nodes and can optionally use a {@link TopdownSizeApproximator} to dynamically set sizes during topdown layout.
+         In this case {@link topdown.hierarchicalNodeWidth} and {@link topdown.hierarchicalNodeAspectRatio} should be set
+         on the node itself rather than the parent. The values are then used by the size approximator as base values.
+         Hierarchical nodes require the layout option {@link nodeSize.fixedGraphSize} to be true to prevent the algorithm 
+         used there from resizing the hierarchical node. This option is not supported if 'Hierarchy Handling' is set to 
+         'INCLUDE_CHILDREN'"
+    documentation "@topdownlayout.md"
     default = false
     targets parents
     requires topdown.nodeType
@@ -880,18 +885,18 @@ group topdown {
             "The fixed size of a hierarchical node when using topdown layout. If this value is set on a parallel 
              node it applies to its children, when set on a hierarchical node it applies to the node itself."
         default = 150
-        targets parents
+        targets parents, nodes
         requires nodeType
     }
     
     advanced option hierarchicalNodeAspectRatio: double {
         label "Topdown Hierarchical Node Aspect Ratio"
         description
-            "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1:sqrt(2). If this 
+            "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1/sqrt(2). If this 
              value is set on a parallel node it applies to its children, when set on a hierarchical node it applies to 
              the node itself."
         default = 1.414
-        targets parents
+        targets parents, nodes
         requires nodeType
     }
     

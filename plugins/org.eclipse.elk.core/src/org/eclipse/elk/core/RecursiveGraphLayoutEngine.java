@@ -166,6 +166,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             if (layoutNode.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
                     && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
                             || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
+                // Topdown layout and hierarchy handling are incompatible
+                if (layoutNode.getProperty(CoreOptions.TOPDOWN_LAYOUT)) {
+                    throw new UnsupportedConfigurationException(
+                            "Topdown layout cannot be used together with hierarchy handling.");
+                }
                 
                 // The layout algorithm will compute a layout for multiple levels of hierarchy under the current one
                 nodeCount = countNodesWithHierarchy(layoutNode);
@@ -210,7 +215,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     IElkProgressMonitor topdownLayoutMonitor = progressMonitor.subTask(1);
                     topdownLayoutMonitor.begin("Topdown Layout", 1);
                     
-                    // if we are currently in a hierarchical and about to produce a child layout,
+                    // If we are currently in a hierarchical node and about to produce a child layout,
                     // then we need to step through the chidren and set their sizes 
                     // only if their layout is performed by a topdown layout provider
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
@@ -224,7 +229,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                     childNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
                             if (childNode.getChildren().size() > 0
                                     && localAlgorithmData.getInstancePool().fetch() instanceof ITopdownLayoutProvider) {
-                                
+                                // topdownlayout providers should not be used on hierarchical nodes
+                                if (childNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE)
+                                        .equals(TopdownNodeTypes.HIERARCHICAL_NODE)) {
+                                    throw new UnsupportedConfigurationException(
+                                            "Topdown Layout Providers should only be used on parallel nodes.");
+                                }
                                 ITopdownLayoutProvider topdownLayoutProvider = 
                                         (ITopdownLayoutProvider) localAlgorithmData.getInstancePool().fetch();
                                 
@@ -323,8 +333,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         }
                     }
                     topdownLayoutMonitor.done();
-                } else {
-                    layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, 1.0);
                 }
                 
                 // Layout each compound node contained in this node separately
