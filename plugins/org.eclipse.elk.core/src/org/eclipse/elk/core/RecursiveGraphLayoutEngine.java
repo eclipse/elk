@@ -250,11 +250,21 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             }
                         }
                     }
+                    
+                    ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
+                    
+                    double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
+                    double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
+                    
+                    topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth 
+                            + "|" + childAreaAvailableHeight + ")");
+                    
+                    layoutNode.setProperty(CoreOptions.ASPECT_RATIO, 
+                            childAreaAvailableWidth / childAreaAvailableHeight);
                         
                     executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
                     // root node needs its size to be set manually
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
-                        ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                         ElkUtil.computeChildAreaDimensions(layoutNode);
                         layoutNode.setDimensions(
                                 padding.left + layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH) 
@@ -268,11 +278,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(
                             TopdownNodeTypes.HIERARCHICAL_NODE)) {
-
-                        ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                         
-                        double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
-                        double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
                         if (childAreaAvailableWidth < 0 || childAreaAvailableHeight < 0) {
                             // Hierarchical node width and/or aspect ratio of parent set to be smaller than paddings 
                             // the current layout node, throw exception
@@ -280,8 +286,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                     + " is too small for the space provided by the paddings of the child hierarchical"
                                     + " node. " + layoutNode.getIdentifier());
                         }
-                        topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth 
-                                + "|" + childAreaAvailableHeight + ")");                        
+                        
                         
                         // check whether child area has been set, and if it hasn't run the util function 
                         // to determine the size of the area
