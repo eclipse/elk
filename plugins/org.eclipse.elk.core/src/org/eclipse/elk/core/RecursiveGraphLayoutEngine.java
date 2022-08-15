@@ -12,12 +12,14 @@ package org.eclipse.elk.core;
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import org.eclipse.elk.core.data.DeprecatedLayoutOptionReplacer;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.ContentAlignment;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.TopdownNodeTypes;
@@ -316,9 +318,41 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         layoutNode.setProperty(CoreOptions.TOPDOWN_SCALE_FACTOR, scaleFactor);
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" 
                                 + scaleFactorX + "|" + scaleFactorY + ")");
+                        
+                        // content alignment
+                        Set<ContentAlignment> contentAlignment = layoutNode.getProperty(CoreOptions.CONTENT_ALIGNMENT);
+                        
+                        double alignmentShiftX = 0;
+                        double alignmentShiftY = 0;
+                        
+                        // horizontal alignment
+                        if (scaleFactor < scaleFactorX) {
+                            if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
+                                alignmentShiftX = (childAreaAvailableWidth / 2 
+                                        - (childAreaDesiredWidth * scaleFactor) / 2) 
+                                        / scaleFactor;
+                            } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
+                                alignmentShiftX = (childAreaAvailableWidth 
+                                        - childAreaDesiredWidth * scaleFactor) 
+                                        / scaleFactor;
+                            }
+                        }
+                        
+                        // vertical alignment
+                        if (scaleFactor < scaleFactorY) {
+                            if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
+                                alignmentShiftY = (childAreaAvailableHeight / 2 
+                                        - (childAreaDesiredHeight * scaleFactor) / 2) 
+                                        / scaleFactor;
+                            } else if (contentAlignment.contains(ContentAlignment.V_BOTTOM)) {
+                                alignmentShiftY = (childAreaAvailableHeight
+                                        - childAreaDesiredHeight * scaleFactor) 
+                                        / scaleFactor;
+                            }
+                        }
 
-                        double xShift = padding.left / scaleFactor - padding.left;
-                        double yShift = padding.top / scaleFactor - padding.top;
+                        double xShift = alignmentShiftX + (padding.left / scaleFactor - padding.left);
+                        double yShift = alignmentShiftY + (padding.top / scaleFactor - padding.top);
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
                         // shift all nodes in layout
                         for (ElkNode node : layoutNode.getChildren()) {
