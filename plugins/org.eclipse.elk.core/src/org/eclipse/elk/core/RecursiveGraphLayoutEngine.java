@@ -253,8 +253,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     
                     ElkPadding padding = layoutNode.getProperty(CoreOptions.PADDING);
                     
-                    double childAreaAvailableWidth = layoutNode.getWidth() - padding.left - padding.right;
-                    double childAreaAvailableHeight = layoutNode.getHeight() - padding.top - padding.bottom;
+                    double childAreaAvailableWidth = layoutNode.getWidth() - (padding.left + padding.right);
+                    double childAreaAvailableHeight = layoutNode.getHeight() - (padding.top + padding.bottom);
                     
                     topdownLayoutMonitor.log("Available Child Area: (" + childAreaAvailableWidth 
                             + "|" + childAreaAvailableHeight + ")");
@@ -313,8 +313,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         topdownLayoutMonitor.log(layoutNode.getIdentifier() + " -- Local Scale Factor (X|Y): (" 
                                 + scaleFactorX + "|" + scaleFactorY + ")");
 
-                        double xShift = padding.left / scaleFactor - padding.left * scaleFactor;
-                        double yShift = (padding.top - padding.top * scaleFactor) / scaleFactor;
+                        double xShift = padding.left / scaleFactor - padding.left;
+                        double yShift = padding.top / scaleFactor - padding.top;
                         topdownLayoutMonitor.log("Shift: (" + xShift + "|" + yShift + ")");
                         // shift all nodes in layout
                         for (ElkNode node : layoutNode.getChildren()) {
