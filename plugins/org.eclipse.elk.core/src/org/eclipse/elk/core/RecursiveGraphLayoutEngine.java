@@ -218,6 +218,10 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     // If we are currently in a hierarchical node and about to produce a child layout,
                     // then we need to step through the chidren and set their sizes 
                     // only if their layout is performed by a topdown layout provider
+                    if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE) == null) {
+                        throw new UnsupportedConfigurationException(
+                                layoutNode.getIdentifier() + " has not been assigned a top-down node type.");
+                    }
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.HIERARCHICAL_NODE)
                             || layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(
                                     TopdownNodeTypes.ROOT_NODE)) {
