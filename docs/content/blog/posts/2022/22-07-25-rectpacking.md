@@ -10,12 +10,16 @@ menu:
 The [`rectpacking`](https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-rectpacking.html) algorithm was introduced to solved common problems with the [`box`](https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-box.html) algorithm, which cannot stack boxes in a row.
 The idea is to form stacks with subrows inside rows, while the size of a row is always dominated by a highest rectangle to provide a visual anchor point to "read" the rows from left to right.
 
-{{< image src="scchartsregions-box-noexpand-annotated.svg" alt="Example graph with box algorithm." >}}
-
-{{< image src="scchartsregions-subrows-annotated.svg" alt="Better layout with rectpacking by using subrows inside rows." >}}
-
 Since it was a common use case of the `box` algorithm to add a priority to order the rectangles rectpacking uses the model order (which corresponds to the input order of the rectangles) as a criterion.
 By enabling [interactive layout](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-interactive.html) and setting [desired positions](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-rectpacking-desiredPosition.html) for nodes, this order can be changed without changing the order in the input graph.
+
+Box algorithm:
+
+{{< image src="scchartsregions-box-noexpand-annotated.svg" alt="Example graph with box algorithm." >}}
+
+Rectpacking algorithm:
+
+{{< image src="scchartsregions-subrows-annotated.svg" alt="Better layout with rectpacking by using subrows inside rows." >}}
 
 ## Algorithm
 
