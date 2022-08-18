@@ -10,6 +10,10 @@ menu:
 The [`rectpacking`](https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-rectpacking.html) algorithm was introduced to solved common problems with the [`box`](https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-box.html) algorithm, which cannot stack boxes in a row.
 The idea is to form stacks with subrows inside rows, while the size of a row is always dominated by a highest rectangle to provide a visual anchor point to "read" the rows from left to right.
 
+{{< image src="scchartsregions-box-noexpand-annotated.svg" alt="Example graph with box algorithm." >}}
+
+{{< image src="scchartsregions-subrows-annotated.svg" alt="Better layout with rectpacking by using subrows inside rows." >}}
+
 Since it was a common use case of the `box` algorithm to add a priority to order the rectangles rectpacking uses the model order (which corresponds to the input order of the rectangles) as a criterion.
 By enabling [interactive layout](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-interactive.html) and setting [desired positions](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-rectpacking-desiredPosition.html) for nodes, this order can be changed without changing the order in the input graph.
 
@@ -28,16 +32,33 @@ Different strategies can be chosen for width approximation based on which [goal]
 
 Since the approximated width is mainly responsible for the line breaks between the rows that are formed by rectpacking, one can make sure that a rectangle is placed [in a new row](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-rectpacking-inNewRow.html) (since ELK 0.9.0).
 
+Greedy width approximation may yield the following graph:
+
+{{< image src="scchartsregions-widthapproximation-annotated.svg" alt="Graph after width approximation." >}}
+
+
+
 ### Placement
 
 Rectangles are placed in rows similar to the `box` algorithm. Per default the row height does not change after this step. By enabling [row height re-evaluation](TODO) (since ELK 0.9.0) the row height might change by investing more computation time.
+
+After placement the graph looks like this:
+
+{{< image src="scchartsregions-placement-annotated.svg" alt="Graph after initial placement." >}}
 
 ### Compaction
 
 After placement the rectangles are compacted to from stack with subrows inside the rows. This can also be [disabled](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-rectpacking-rowCompaction.html), however, this is not recommended.
 
+{{< image src="scchartsregions-rectpacking-noexpand-annotated.svg" alt="graph after compaction." >}}
+
 ### Whitespace Elimination
 
-Rectangles can [fill potential whitespace](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-expandNodes.html). The drawing can also be configured to fill whitespace such that the drawing has the [desired aspect ratio](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-rectpacking-expandToAspectRatio.html).
+Rectangles can [fill potential whitespace](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-expandNodes.html). 
 
-TODO code example? TODO pictures
+{{< image src="scchartsregions-rectpacking-annotated.svg" alt="graph after whitespace elimination." >}}
+
+The drawing can also be configured to fill whitespace such that the drawing has the [desired aspect ratio](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-rectpacking-expandToAspectRatio.html).
+
+{{< image src="scchartsregions-rectpacking-toaspectratio2.svg" alt="Whitespace eliminated to fit the aspect ratio." >}}
+
