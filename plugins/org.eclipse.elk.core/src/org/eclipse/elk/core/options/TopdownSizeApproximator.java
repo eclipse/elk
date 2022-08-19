@@ -104,12 +104,16 @@ public enum TopdownSizeApproximator {
             
             // square root approximation for base size
             double baseSize = node.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH) 
-                    * 1;//Math.sqrt(node.getChildren().size());
+                    * Math.sqrt(node.getChildren().size());
+            
+            ElkPadding padding = node.getProperty(CoreOptions.PADDING);
+            double minWidth = padding.left + padding.right;
+            double minHeight = padding.top + padding.bottom;
                         
             // the alternative to this is to return the desired Size directly, in that case region scales are close
             // to the children, in this case on the other hand region scales are close to their parent
-            return new KVector(baseSize, 
-                    baseSize / childAreaDesiredAspectRatio);
+            return new KVector(Math.max(minWidth, baseSize), 
+                    Math.max(minHeight, baseSize) / childAreaDesiredAspectRatio);
             
         }
     };
