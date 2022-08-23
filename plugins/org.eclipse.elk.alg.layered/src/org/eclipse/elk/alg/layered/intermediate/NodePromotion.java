@@ -359,7 +359,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
      * 
      * @param leftToRight Whether the promotion is done left to right or not.
      */
-    private void modelOrderNodePromotion(boolean leftToRight) {
+    private void modelOrderNodePromotion(final boolean leftToRight) {
         // Sort descending/ascending by model order to minimize do-while loops.
         if (leftToRight) {
             realNodesWithOutgoingEdges.sort(MODEL_ORDER_NODE_COMPARATOR_DESC);
@@ -419,8 +419,8 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                             promoteThroughDummyLayer = false;
                         }
                     } else if (!modelOrderAllowsPromotion && promoteThroughDummyLayer) {
-                        // If the promotion status of the current node is unclear check whether the node can be promoted
-                        // through a label layer.
+                        // If the promotion status of the current node is unclear check whether the node can be
+                        // promoted through a label layer.
                         
                         // There are currently no dummy nodes, only label nodes.
                         if (nextLayerNode.getType() == NodeType.LABEL) {
@@ -436,16 +436,16 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                                         nextLayerNode.getOutgoingEdges().iterator().next().getTarget().getNode();
                             }
                             if (nodeConnectedToNextLayer.equals(node)) {
-                                // The next layer is a dummy layer. Check whether it is possible to promote the current
-                                // node over the label layer. This is possible if the connected node is more than 2
-                                // layers away.
+                                // The next layer is a dummy layer. Check whether it is possible to promote the
+                                // current node over the label layer. This is possible if the connected node is more
+                                // than 2 layers away.
                                 LNode connectedNode;
                                 if (leftToRight) {
-                                    connectedNode =
-                                            nextLayerNode.getOutgoingEdges().iterator().next().getTarget().getNode();
+                                    connectedNode = nextLayerNode.getOutgoingEdges().iterator().next().getTarget()
+                                            .getNode();
                                 } else {
-                                    connectedNode =
-                                            nextLayerNode.getIncomingEdges().iterator().next().getSource().getNode();
+                                    connectedNode = nextLayerNode.getIncomingEdges().iterator().next().getSource()
+                                            .getNode();
                                 }
                                 if ((leftToRight ? (layers[nodeConnectedToNextLayer.id] - layers[connectedNode.id])
                                         : (layers[connectedNode.id] - layers[nodeConnectedToNextLayer.id])) <= 2) {
@@ -464,7 +464,8 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                     } else {
                         connectedNode = node.getIncomingEdges().iterator().next().getSource().getNode();
                     }
-                    if (layers[node.id] - layers[connectedNode.id] <= 2 && connectedNode.getType() == NodeType.NORMAL) {
+                    if (layers[node.id] - layers[connectedNode.id] <= 2
+                            && connectedNode.getType() == NodeType.NORMAL) {
                         promoteThroughDummyLayer = false;
                     }
                 }
@@ -474,10 +475,17 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                     promoteNodeByModelOrder(node, leftToRight);
                     somethingChanged = true;
                 }
-            }    
+            }
         } while (somethingChanged); 
     }
     
+    /**
+     * Promotes a node and recursively promotes connected nodes if necessary.
+     * Used by the model order node promotion.
+     * 
+     * @param node The node
+     * @param leftToRight Whether the node is promoted left to right.
+     */
     private void promoteNodeByModelOrder(final LNode node, final boolean leftToRight) {
         // Check whether the current node has connections to the next layer.
         // If yes, the other nodes have to be promoted.
@@ -508,7 +516,13 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         }
     }
     
-    private List<LNode> getLayer(int layerIndex) {
+    /**
+     * Returns all nodes that are currently a layer given by the layers array.
+     * 
+     * @param layerIndex The index of the layer that should be returned.
+     * @return all nodes that are currently in the layer with the corresponding index.
+     */
+    private List<LNode> getLayer(final int layerIndex) {
         ArrayList<LNode> currentLayer = new ArrayList<>();
         for (Layer layer : this.masterGraph) {
             for (LNode node : layer) {
