@@ -7,11 +7,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.seconditeration;
+package org.eclipse.elk.alg.rectpacking.p3compaction;
 
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
+import org.eclipse.elk.alg.rectpacking.p2placement.InitialPlacement;
 import org.eclipse.elk.alg.rectpacking.util.Block;
 import org.eclipse.elk.alg.rectpacking.util.BlockStack;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;

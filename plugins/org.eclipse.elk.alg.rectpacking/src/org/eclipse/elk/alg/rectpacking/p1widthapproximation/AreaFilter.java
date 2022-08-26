@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.firstiteration;
+package org.eclipse.elk.alg.rectpacking.p1widthapproximation;
 
 import java.util.ArrayList;
 import java.util.List;

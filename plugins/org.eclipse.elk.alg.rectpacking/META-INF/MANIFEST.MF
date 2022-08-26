@@ -12,4 +12,9 @@ Require-Bundle: org.eclipse.elk.alg.common,
  com.google.guava,
  org.eclipse.xtext.xbase.lib;bundle-version="2.10.0"
 Export-Package: org.eclipse.elk.alg.rectpacking,
- org.eclipse.elk.alg.rectpacking.options
+ org.eclipse.elk.alg.rectpacking.options,
+ org.eclipse.elk.alg.rectpacking.intermediate,
+ org.eclipse.elk.alg.rectpacking.p1widthapproximation,
+ org.eclipse.elk.alg.rectpacking.p2placement,
+ org.eclipse.elk.alg.rectpacking.p3compaction,
+ org.eclipse.elk.alg.rectpacking.p4whitespaceelimination
