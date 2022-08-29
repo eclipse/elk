@@ -28,7 +28,7 @@ import org.eclipse.elk.graph.ElkNode;
  * area, or aspect ratio as its {@link OptimizationGoal}, to transform the rectangle packing problem into a strip
  * packing problem.
  * 
- * <dl><dl>
+ * <dl>
  *   <dt>Precondition:</dt>
  *   <dt>Postcondition:</dt>
  *     <dd>{@link InternalProperties#TARGET_WIDTH} is set on the graph.</dd>
@@ -62,8 +62,7 @@ public class GreedyWidthApproximator implements ILayoutPhase<RectPackingLayoutPh
         drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing, padding);
               
         // TODO Math.max should be an intermediate processor, since all p1 processors do this.
-        graph.setProperty(InternalProperties.TARGET_WIDTH, Math.max(graph.getProperty(InternalProperties.MIN_WIDTH),
-                drawing.getDrawingWidth()));
+        graph.setProperty(InternalProperties.TARGET_WIDTH, drawing.getDrawingWidth());
     }
 
     /* (non-Javadoc)

@@ -19,11 +19,10 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Sets a {@link InternalProperties#TARGET_WIDTH} to the maximum of given target width and the minimum size of the
- * parent.
+ * Sets a {@link InternalProperties#TARGET_WIDTH} based on the given target width.
  * 
- * <dl><dl>
- *   <dt>Precondition:</dt>
+ * <dl>
+ *   <dt>Precondition: {@link RectPackingOptions#WIDTH_APPROXIMATION_TARGET_WIDTH}</dt>
  *   <dt>Postcondition:</dt>
  *     <dd>{@link InternalProperties#TARGET_WIDTH} is set on the graph.</dd>
  * </dl>
@@ -37,11 +36,11 @@ public class TargetWidthWidthApproximator implements ILayoutPhase<RectPackingLay
     public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Target Width Setter", 1);
         if (graph.hasProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH)) {
-            double minWidth = graph.getProperty(InternalProperties.MIN_WIDTH);
             graph.setProperty(InternalProperties.TARGET_WIDTH,
-                    Math.max(minWidth, graph.getProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH)));
+                    graph.getProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH));
         } else {
-            throw new UnsupportedConfigurationException("A target width has to be set if the TargetWidthWidthApproximator should be used.");
+            throw new UnsupportedConfigurationException(
+                    "A target width has to be set if the TargetWidthWidthApproximator should be used.");
         }
     }
 

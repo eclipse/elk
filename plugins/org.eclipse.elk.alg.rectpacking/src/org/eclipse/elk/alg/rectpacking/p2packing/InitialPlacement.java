@@ -7,13 +7,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p2placement;
+package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
-import org.eclipse.elk.alg.rectpacking.p3compaction.RowFillingAndCompaction;
 import org.eclipse.elk.alg.rectpacking.util.Block;
 import org.eclipse.elk.alg.rectpacking.util.RectRow;
 import org.eclipse.elk.graph.ElkNode;

@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p3compaction;
+package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import java.util.List;
 
@@ -26,10 +26,22 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author sdo
- *
+ * Places the given rectangles next to each other to form rows.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>{@link InternalProperties#TARGET_WIDTH} is set.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>All child nodes have coordinates such that:</dd>
+ *     <dd>the next node is either right of the current one</dd>
+ *     <dd>or in a new row.</dd>
+ *     <dd>{@link InternalProperties#DRAWING_WIDTH},</dd>
+ *     <dd>{@link InternalProperties#DRAWING_HEIGHT},</dd>
+ *     <dd>{@link InternalProperties#ROWS},</dd>
+ *     <dd>and {@link InternalProperties#ADDITIONAL_HEIGHT} are set.</dd>
+ * </dl>
  */
-public class NoCompactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode> {
+public class SimplePlacement implements ILayoutPhase<RectPackingLayoutPhases, ElkNode> {
     /*
      * (non-Javadoc)
      * 
@@ -39,9 +51,14 @@ public class NoCompactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNod
     @Override
     public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("No Compaction", 1);
-        List<RectRow> rows = graph.getProperty(InternalProperties.ROWS);
+        double targetWidth = graph.getProperty(InternalProperties.TARGET_WIDTH);
         double nodeNodeSpacing = graph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
         ElkPadding padding = graph.getProperty(RectPackingOptions.PADDING);
+        // Reset coordinates potentially set by width approximation.
+        DrawingUtil.resetCoordinates(graph.getChildren());
+
+        // Initial placement for rectangles in blocks in each row.
+        List<RectRow> rows = InitialPlacement.place(graph.getChildren(), targetWidth, nodeNodeSpacing);
         KVector size;
         List<ElkNode> rectangles = graph.getChildren();
         if (rows == null) {
@@ -64,6 +81,7 @@ public class NoCompactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNod
         graph.setProperty(InternalProperties.ADDITIONAL_HEIGHT, additionalHeight);
         graph.setProperty(InternalProperties.DRAWING_WIDTH, width);
         graph.setProperty(InternalProperties.DRAWING_HEIGHT, height + additionalHeight);
+        graph.setProperty(InternalProperties.ROWS, rows);
     }
 
     /*
@@ -74,7 +92,6 @@ public class NoCompactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNod
     @Override
     public LayoutProcessorConfiguration<RectPackingLayoutPhases, ElkNode> getLayoutProcessorConfiguration(
             ElkNode graph) {
-        // TODO Auto-generated method stub
         return null;
     }
 }

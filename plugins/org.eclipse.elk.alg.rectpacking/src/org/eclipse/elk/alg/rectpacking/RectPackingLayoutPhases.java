@@ -10,18 +10,15 @@
 package org.eclipse.elk.alg.rectpacking;
 
 /**
- * This algorithm's layout phases. Since none of the phases have alternative implementations, this enumeration also
- * serves as a layout phase factory.
+ * This algorithm's layout phases. each phase has its own strategy factory.
  */
 public enum RectPackingLayoutPhases {
     
     /** Phase 1. */
     P1_WIDTH_APPROXIMATION,
     /** Phase 2. */
-    P2_NODE_PLACEMENT,
+    P2_PACKING,
     /** Phase 3. */
-    P3_COMPACTION,
-    /** Phase 4. */
     P4_WHITESPACE_ELIMINATION;
     
 }

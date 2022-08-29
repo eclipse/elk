@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p4whitespaceelimination;
+package org.eclipse.elk.alg.rectpacking.p3whitespaceelimination;
 
 import org.eclipse.elk.alg.rectpacking.options.InternalProperties;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
@@ -15,10 +15,16 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author sdo
- *
+ * Eliminates the whitespace in the placement of the child nodes by increasing the size of the children equally.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>The graph is divided into rows, stacks, blocks and subrows.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>The whitespace is eliminated</dd>
+ * </dl>
  */
-public class ToAspectratioNodeExpander extends EqualBetweenStructuresWhitespaceEliminator {
+public class ToAspectratioNodeExpander extends EqualWhitespaceEliminator {
 
     @Override
     public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {

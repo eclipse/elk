@@ -11,10 +11,9 @@ package org.eclipse.elk.alg.rectpacking
 
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider
 import org.eclipse.elk.alg.rectpacking.p1widthapproximation.WidthApproximationStrategy
-import org.eclipse.elk.alg.rectpacking.p2placement.PlacementStrategy
-import org.eclipse.elk.alg.rectpacking.p4whitespaceelimination.WhiteSpaceEliminationStrategy
+import org.eclipse.elk.alg.rectpacking.p3whitespaceelimination.WhiteSpaceEliminationStrategy
 import org.eclipse.elk.core.math.ElkPadding
-import org.eclipse.elk.alg.rectpacking.p3compaction.CompactionStrategy
+import org.eclipse.elk.alg.rectpacking.p2packing.PackingStrategy
 
 // BUNDLE
 bundle {
@@ -35,7 +34,6 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     documentation "@rectpacking.md"
     metadataClass options.RectPackingOptions
     supports org.eclipse.elk.aspectRatio = 1.3
-    supports org.eclipse.elk.expandNodes
     supports org.eclipse.elk.nodeSize.fixedGraphSize = false
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
@@ -51,12 +49,8 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports widthApproximation.lastPlaceShift
     supports widthApproximation.targetWidth
     supports widthApproximation.strategy
-    supports placement.strategy
-    supports compaction.strategy
+    supports packing.strategy
     supports whiteSpaceElimination.strategy
-    supports onlyFirstIteration
-    supports rowCompaction
-    supports expandToAspectRatio
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.interactiveLayout
     supports desiredPosition
@@ -116,33 +110,19 @@ group widthApproximation {
 /* ------------------------
  *    phase 2
  * ------------------------*/
-group placement {
+group packing {
 
-    option strategy: PlacementStrategy {
-        label "Node Placement Strategy"
+    option strategy: PackingStrategy {
+        label "Compaction Strategy"
         description
             "Strategy for finding an initial placement on nodes."
-        default = PlacementStrategy.SIMPLE
+        default = PackingStrategy.COMPACTION
         targets parents
     }
 }
 
 /* ------------------------
  *    phase 3
- * ------------------------*/
-group compaction {
-
-    option strategy: CompactionStrategy {
-        label "Compaction Strategy"
-        description
-            "Strategy for finding an initial placement on nodes."
-        default = CompactionStrategy.SIMPLE
-        targets parents
-    }
-}
-
-/* ------------------------
- *    phase 4
  * ------------------------*/
 group whiteSpaceElimination {
 
@@ -176,36 +156,6 @@ advanced option desiredPosition: int {
     targets nodes
 }
 
-programmatic option onlyFirstIteration: boolean {
-    label "Only Area Approximation"
-    description
-        "If enabled only the width approximation step is executed and the nodes are placed accordingly.
-         The nodes are layouted according to the packingStrategy.
-         If set to true not expansion of nodes is taking place."
-    targets nodes
-    default = false
-}
-
-programmatic option rowCompaction: boolean {
-    label "Compact Rows"
-    description
-        "Enables compaction. Compacts blocks if they do not use the full height of the row.
-         This option allows to have a smaller drawing.
-         If this option is disabled all nodes are placed next to each other in rows."
-    targets nodes
-    default = true
-}
-
-advanced option expandToAspectRatio: boolean {
-    label "Fit Aspect Ratio"
-    description
-        "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
-         The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
-         in unreasonable ndoe expansion."
-    targets nodes
-    default = false
-    requires org.eclipse.elk.expandNodes
-}
 option inNewRow: boolean {
     label "In new Row"
     description

@@ -15,8 +15,8 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Strategy factory to determine a target width to tranform the rectangle placement problem into a strip-packing
- * problem.
+ * Strategy factory to determine a target width to transform the rectangle placement problem into a strip-packing
+ * problem. Each strategy needs to set the target width property to a sensible value.
  */
 public enum WidthApproximationStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhases, ElkNode> {
     GREEDY,

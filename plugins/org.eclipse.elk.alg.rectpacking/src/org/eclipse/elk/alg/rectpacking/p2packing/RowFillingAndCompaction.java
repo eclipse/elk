@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p3compaction;
+package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import java.util.List;
 
@@ -61,8 +61,11 @@ public class RowFillingAndCompaction {
         double targetWidth = layoutGraph.getProperty(InternalProperties.TARGET_WIDTH);
         double minWidth = layoutGraph.getProperty(InternalProperties.MIN_WIDTH);
         double minHeight = layoutGraph.getProperty(InternalProperties.MIN_HEIGHT);
+        // Reset coordinates potentially set by width approximation.
+        DrawingUtil.resetCoordinates(layoutGraph.getChildren());
+
         // Initial placement for rectangles in blocks in each row.
-        List<RectRow> rows = layoutGraph.getProperty(InternalProperties.ROWS);
+        List<RectRow> rows = InitialPlacement.place(layoutGraph.getChildren(), targetWidth, nodeNodeSpacing);
         
         // Compaction of blocks.
         for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
@@ -85,6 +88,7 @@ public class RowFillingAndCompaction {
         double height = Math.max(size.y, minHeight - padding.getVertical());
         double additionalHeight = height - size.y;
         layoutGraph.setProperty(InternalProperties.ADDITIONAL_HEIGHT, additionalHeight);
+        layoutGraph.setProperty(InternalProperties.ROWS, rows);
 
         return new DrawingData(this.aspectRatio, totalWidth, size.y + additionalHeight, DrawingDataDescriptor.WHOLE_DRAWING);
     }

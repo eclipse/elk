@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p3compaction;
+package org.eclipse.elk.alg.rectpacking.p3whitespaceelimination;
 
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutPhases;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -15,25 +15,25 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author sdo
+ * Strategy factory for whitespace elimination.
  *
  */
-public enum CompactionStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhases, ElkNode> {
-    SIMPLE,
-    NONE;
-    
+public enum WhiteSpaceEliminationStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhases, ElkNode> {
+    EQUAL_BETWEEN_STRUCTURES,
+    TO_ASPECT_RATIO;
+
     /* (non-Javadoc)
      * @see org.eclipse.elk.core.alg.ILayoutPhaseFactory#create()
      */
     @Override
     public ILayoutPhase<RectPackingLayoutPhases, ElkNode> create() {
         switch (this) {
-        case SIMPLE:
-            return new Compactor();
-        case NONE:
-            return new NoCompactor();
+        case EQUAL_BETWEEN_STRUCTURES:
+            return new EqualWhitespaceEliminator();
+        case TO_ASPECT_RATIO:
+            return new EqualWhitespaceEliminator();
         default:
-            return new NoCompactor();
+            return null;
         }
     }
 

@@ -21,7 +21,7 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Sorts all child nodes by their desired position.
  * 
- * <dl><dl>
+ * <dl>
  *   <dt>Precondition:</dt>
  *   <dt>Postcondition:</dt>
  *     <dd>Children are sorted as specified by their desired position in relation to their original order.</dd>

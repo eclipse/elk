@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p3compaction;
+package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import java.util.List;
 
@@ -22,8 +22,22 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author sdo
- *
+ * Places and compact the given rectangles by forming rows of stacks of blocks of subrows to maintain a common
+ * reading direction inside a target width.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>{@link InternalProperties#TARGET_WIDTH} is set.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>All child nodes have coordinates such that:</dd>
+ *     <dd>the next node is either in the same subrows/row,</dd>
+ *     <dd>a new subrows/row,</dd>
+ *     <dd>or in a new stack in the same row.</dd>
+ *     <dd>{@link InternalProperties#DRAWING_WIDTH},</dd>
+ *     <dd>{@link InternalProperties#DRAWING_HEIGHT},</dd>
+ *     <dd>{@link InternalProperties#ROWS},</dd>
+ *     <dd>and {@link InternalProperties#ADDITIONAL_HEIGHT} are set.</dd>
+ * </dl>
  */
 public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode> {
 

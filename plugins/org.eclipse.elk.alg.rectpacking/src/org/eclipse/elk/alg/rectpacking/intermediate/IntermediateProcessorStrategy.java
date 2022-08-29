@@ -30,11 +30,12 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
      * Before Phase 1
      */
     INTERACTIVE_NODE_REORDERER,
+    MIN_SIZE_PRE_PROCESSOR,
     
     /*
      * Before Phase 2
      */
-    MIN_SIZE_PROCESSOR;
+    MIN_SIZE_POST_PROCESSOR;
 
     /* (non-Javadoc)
      * @see org.eclipse.elk.core.alg.ILayoutProcessorFactory#create()
@@ -44,8 +45,10 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
         switch (this) {
         case INTERACTIVE_NODE_REORDERER:
             return new InteractiveNodeReorderer();
-        case MIN_SIZE_PROCESSOR:
-            return new MinSizeProcessor();
+        case MIN_SIZE_PRE_PROCESSOR:
+            return new MinSizePreProcessor();
+        case MIN_SIZE_POST_PROCESSOR:
+            return new MinSizePostProcessor();
 
         default:
             break;

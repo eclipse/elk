@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.p2placement;
+package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutPhases;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -15,25 +15,27 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author sdo
- *
+ * Packing strategy and factory for strip packing algorithms.
  */
-public enum PlacementStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhases, ElkNode> {
+public enum PackingStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhases, ElkNode> {
+    COMPACTION,
     SIMPLE,
     NONE;
-
+    
     /* (non-Javadoc)
      * @see org.eclipse.elk.core.alg.ILayoutPhaseFactory#create()
      */
     @Override
     public ILayoutPhase<RectPackingLayoutPhases, ElkNode> create() {
         switch (this) {
+        case COMPACTION:
+            return new Compactor();
         case SIMPLE:
-            return new SimpleNodePlacer();
+            return new SimplePlacement();
         case NONE:
-            return new NoNodePlacer();
+            return new NoPlacement();
         default:
-            return null;
+            return new NoPlacement();
         }
     }
 
