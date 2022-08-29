@@ -3,7 +3,7 @@ ports:
 
 tasks:
 - init: |
-    cd doc
+    cd docs
     hugo
     hugo server
   command
