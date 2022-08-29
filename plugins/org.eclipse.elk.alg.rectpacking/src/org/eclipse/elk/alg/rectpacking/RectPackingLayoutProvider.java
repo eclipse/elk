@@ -20,6 +20,9 @@ import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.BoxLayoutProvider;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -51,6 +54,43 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
 
         ElkPadding padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
         boolean fixedGraphSize = layoutGraph.getProperty(RectPackingOptions.NODE_SIZE_FIXED_GRAPH_SIZE);
+        double nodeNodeSpacing = layoutGraph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
+        boolean tryBox = layoutGraph.getProperty(RectPackingOptions.TRYBOX);
+        List<ElkNode> rectangles = layoutGraph.getChildren();
+        
+        // Check whether regions are stackable and do box layout instead.
+        boolean stackable = false;
+        if (tryBox && rectangles.size() >= 3) {
+            ElkNode region1;
+            ElkNode region2 = rectangles.get(0);
+            ElkNode region3 = rectangles.get(1);
+            int counter = 0;
+            while (counter + 2 < rectangles.size()) {
+                region1 = region2;
+                region2 = region3;
+                region3 = rectangles.get(counter + 2);
+                if (region1.getHeight() >= region2.getHeight() + region3.getHeight() + nodeNodeSpacing
+                        || region3.getHeight() >= region1.getHeight() + region2.getHeight() + nodeNodeSpacing) {
+                    stackable = true;
+                    break;
+                } else {
+                    counter++;
+                }
+            }
+        } else {
+            stackable = true;
+        }
+        if (!stackable) {
+            // Set priority to invoke box layout.
+            int priority = rectangles.size();
+            for (ElkNode elkNode : rectangles) {
+                elkNode.setProperty(CoreOptions.PRIORITY, priority);
+                priority--;
+            }
+            new BoxLayoutProvider().layout(layoutGraph, new BasicProgressMonitor());
+            progressMonitor.done();
+            return;
+        }
 
         List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(layoutGraph);
         float monitorProgress = 1.0f / algorithm.size();
@@ -80,8 +120,6 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             progressMonitor.logGraph(layoutGraph, slotIndex + "-Finished");
         }
         // elkjs-exclude-end
-        
-        List<ElkNode> rectangles = layoutGraph.getChildren();
 
         // Final touch.
         applyPadding(rectangles, padding);

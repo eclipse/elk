@@ -57,6 +57,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports desiredPosition
     supports currentPosition
     supports inNewRow
+    supports trybox
 }
 
 
@@ -149,6 +150,16 @@ group whiteSpaceElimination {
 }
 
 // OPTIONS
+
+advanced option trybox: boolean {
+    label "Try box layout first"
+    description
+        "Whether one should check whether the regions are stackable to see whether box layout would do the job.
+         For example, nodes with the same height are not stackable inside a row. Therefore, box layout will perform
+         better and faster."
+    targets parents
+    default = true
+}
 
 output option currentPosition: int {
     label "Current position of a node in the order of nodes"
