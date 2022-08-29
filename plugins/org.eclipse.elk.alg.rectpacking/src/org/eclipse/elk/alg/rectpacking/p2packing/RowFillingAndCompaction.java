@@ -12,6 +12,8 @@ package org.eclipse.elk.alg.rectpacking.p2packing;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.options.InternalProperties;
+import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
+import org.eclipse.elk.alg.rectpacking.util.Block;
 import org.eclipse.elk.alg.rectpacking.util.BlockStack;
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.alg.rectpacking.util.DrawingDataDescriptor;
@@ -20,6 +22,7 @@ import org.eclipse.elk.alg.rectpacking.util.RectRow;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -74,11 +77,25 @@ public class RowFillingAndCompaction {
                 RectRow previousRow = rows.get(rowIdx - 1);
                 currentRow.setY(previousRow.getY() + previousRow.getHeight() + nodeNodeSpacing);
             }
-            Compaction.compact(rowIdx, rows, targetWidth, nodeNodeSpacing);
-            adjustWidthAndHeight(currentRow);
-            // Log graph after first row compaction.
-            if (progressMonitor.isLoggingEnabled()) {
-                progressMonitor.logGraph(layoutGraph, "Compacted row " + rowIdx);
+            Pair<Boolean, Boolean> result = Compaction.compact(rowIdx, rows, targetWidth, nodeNodeSpacing,
+                    layoutGraph.getProperty(RectPackingOptions.PACKING_COMPACTION_ROW_HEIGHT_REEVALUATION));
+            if (result.getSecond()) {
+                // Reset the row such that stacks are removed, blocks are not fixed.
+                for (Block block : currentRow.getChildren()) {
+                    block.setFixed(false);
+                    block.setPositionFixed(false);
+                    // Reset precalculated min/max width/heights.
+                    block.resetBlock();
+                }
+                currentRow.resetStacks();
+                currentRow.setWidth(targetWidth);
+                rowIdx--;
+            } else {
+                adjustWidthAndHeight(currentRow);
+                // Log graph after first row compaction.
+                if (progressMonitor.isLoggingEnabled()) {
+                    progressMonitor.logGraph(layoutGraph, "Compacted row " + rowIdx);
+                }
             }
         }
          

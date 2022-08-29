@@ -50,6 +50,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports widthApproximation.targetWidth
     supports widthApproximation.strategy
     supports packing.strategy
+    supports packing.compaction.rowHeightReevaluation
     supports whiteSpaceElimination.strategy
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.interactiveLayout
@@ -79,7 +80,7 @@ group widthApproximation {
              aspect ratio.
              The padding is not included in this. Meaning a drawing will have width of targetwidth +
              horizontal padding."
-        targets nodes
+        targets parents
         default = -1
     }
     
@@ -89,7 +90,7 @@ group widthApproximation {
             "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
              sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
         documentation "@packingstrategy.md"
-        targets nodes
+        targets parents
         default = OptimizationGoal.MAX_SCALE_DRIVEN
     }
     
@@ -102,7 +103,7 @@ group widthApproximation {
              iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
              impossible to implement a size transformation of rectangles that will fill the bounding box and eliminate 
              empty spaces."
-        targets nodes
+        targets parents
         default = true
     }
 }
@@ -118,6 +119,19 @@ group packing {
             "Strategy for finding an initial placement on nodes."
         default = PackingStrategy.COMPACTION
         targets parents
+    }
+    
+    group compaction {
+        option rowHeightReevaluation: boolean {
+            label "Row Height Reevaluation"
+            description
+                "During the compaction step the height of a row is normally not changed.
+                 If this options is set, the blocks of other rows might be added if they exceed the row height.
+                 If this is the case the whole row has to be packed again to be optimal regarding the new row height.
+                 This option should, therefore, be used with care since it might be computation heavy."
+            targets parents
+            default = false
+        }
     }
 }
 
