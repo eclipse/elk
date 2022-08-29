@@ -31,7 +31,7 @@ public enum WhiteSpaceEliminationStrategy implements ILayoutPhaseFactory<RectPac
         case EQUAL_BETWEEN_STRUCTURES:
             return new EqualWhitespaceEliminator();
         case TO_ASPECT_RATIO:
-            return new EqualWhitespaceEliminator();
+            return new ToAspectratioNodeExpander();
         default:
             return null;
         }

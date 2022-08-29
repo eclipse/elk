@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 sdo and others.
+ * Copyright (c) 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -22,6 +22,7 @@ import org.eclipse.elk.graph.ElkNode;
  *     <dd>The graph is divided into rows, stacks, blocks and subrows.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>The whitespace is eliminated</dd>
+ *     <dd>The drawing has the desired aspect ratio.</dd>
  * </dl>
  */
 public class ToAspectratioNodeExpander extends EqualWhitespaceEliminator {
@@ -31,15 +32,16 @@ public class ToAspectratioNodeExpander extends EqualWhitespaceEliminator {
         progressMonitor.begin("To Aspect Ratio Whitesapce Eliminator", 1);
         double width = graph.getProperty(InternalProperties.DRAWING_WIDTH);
         double height = graph.getProperty(InternalProperties.DRAWING_HEIGHT);
-        double desiredAspeceRatio = graph.getProperty(RectPackingOptions.ASPECT_RATIO);
+        double desiredAspectRatio = graph.getProperty(RectPackingOptions.ASPECT_RATIO);
         double additionalHeight = graph.getProperty(InternalProperties.ADDITIONAL_HEIGHT);
         double aspectRatio = width / height;
-        if (aspectRatio < desiredAspeceRatio) {
-            width = height * desiredAspeceRatio;
+        if (aspectRatio < desiredAspectRatio) {
+            width = height * desiredAspectRatio;
             graph.setProperty(InternalProperties.DRAWING_WIDTH, width);
         } else {
-            additionalHeight += (width / desiredAspeceRatio) - height;
+            additionalHeight += (width / desiredAspectRatio) - height;
             graph.setProperty(InternalProperties.ADDITIONAL_HEIGHT, additionalHeight);
+            graph.setProperty(InternalProperties.DRAWING_HEIGHT, height + additionalHeight);
         }
         super.process(graph, progressMonitor);
     }

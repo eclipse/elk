@@ -26,7 +26,6 @@ import org.eclipse.elk.graph.ElkNode;
  *     <dd>The graph is divided into rows, stacks, blocks and subrows.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>The whitespace is eliminated and</dd>
- *     <dd>The drawing has the desired aspect ratio.</dd>
  * </dl>
  */
 public class EqualWhitespaceEliminator implements ILayoutPhase<RectPackingLayoutPhases, ElkNode> {
