@@ -39,4 +39,15 @@ public final class InternalProperties {
     /** The target width of the graph. */
     public static final IProperty<Double> TARGET_WIDTH = new Property<Double>("targetWidth");
 
+    public static final IProperty<Double> MIN_ROW_INCREASE = new Property<Double>("minRowIncrease", 0.0);
+    public static final IProperty<Double> MAX_ROW_INCREASE = new Property<Double>("maxRowIncrease", 0.0);
+    public static final IProperty<Double> MIN_ROW_DECREASE = new Property<Double>("minRowDecrease", 0.0);
+    public static final IProperty<Double> MAX_ROW_DECREASE = new Property<Double>("maxRowDecrease", 0.0);
+
+    /**
+     * hidden default constructor.
+     */
+    private InternalProperties() {
+
+    }
 }

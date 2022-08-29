@@ -18,8 +18,11 @@ import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * Places and compact the given rectangles by forming rows of stacks of blocks of subrows to maintain a common
@@ -48,19 +51,64 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
     public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Compaction", 1);
         List<ElkNode> rectangles = graph.getChildren();
-        // The desired aspect ratio.
         double aspectRatio = graph.getProperty(RectPackingOptions.ASPECT_RATIO);
-        //  The spacing between two nodes.
         double nodeNodeSpacing = graph.getProperty(RectPackingOptions.SPACING_NODE_NODE);
-        // The padding surrounding the drawing.
         ElkPadding padding = graph.getProperty(RectPackingOptions.PADDING);
-        // Reset coordinates after width approximation step.
-        RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, nodeNodeSpacing);
         
-        // Run placement, compaction, and expansion (if enabled).
+        RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, nodeNodeSpacing);
         DrawingData drawing = secondIt.start(rectangles, progressMonitor, graph, padding);
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(graph, "Compacted");
+        }
+        copyRowWidthChangeValues(graph, secondIt);
+        
+        // Begin more compaction iterations if more than one iteration is specified.
+        int iterations = graph.getProperty(RectPackingOptions.PACKING_COMPACTION_ITERATIONS);
+        iterations--;
+        while (iterations > 0) {
+            ElkNode clone = clone(graph);
+            // Calculate new target width and configure clone.
+            double oldSM = drawing.getScaleMeasure();
+            configureSecondIteration(graph, clone, drawing);
+            if (oldSM == 0) {
+                break;
+            }
+            secondIt = new RowFillingAndCompaction(aspectRatio, nodeNodeSpacing);
+            DrawingData newDrawing = secondIt.start(rectangles, progressMonitor, clone, padding);
+
+            if (progressMonitor.isLoggingEnabled()) {
+                progressMonitor.logGraph(clone, "Layouted clone " + iterations);
+            }
+            copyRowWidthChangeValues(graph, secondIt);
+            double newSM = newDrawing.getScaleMeasure();
+
+            if (newSM >= oldSM && newSM == (double) newSM) {
+                for (int i = 0; i < clone.getChildren().size(); i++) {
+                    copyPosition(clone.getChildren().get(i), graph.getChildren().get(i));
+                }
+                drawing.setDrawingWidth(newDrawing.getDrawingWidth());
+                drawing.setDrawingHeight(newDrawing.getDrawingHeight());
+
+            }
+            iterations--;
+        }
+        
         graph.setProperty(InternalProperties.DRAWING_HEIGHT, drawing.getDrawingHeight());
         graph.setProperty(InternalProperties.DRAWING_WIDTH, drawing.getDrawingWidth());
+    }
+
+    /**
+     * Copies the row width increase and decrease to the graph.
+     * 
+     * @param graph The graph
+     * @param compaction Compaction data
+     */
+    private void copyRowWidthChangeValues(ElkNode graph, RowFillingAndCompaction compaction) {
+        graph.setProperty(InternalProperties.MIN_ROW_INCREASE, compaction.potentialRowWidthIncreaseMin);
+        graph.setProperty(InternalProperties.MAX_ROW_INCREASE, compaction.potentialRowWidthIncreaseMax);
+        graph.setProperty(InternalProperties.MIN_ROW_DECREASE, compaction.potentialRowWidthDecreaseMin);
+        graph.setProperty(InternalProperties.MAX_ROW_DECREASE, compaction.potentialRowWidthDecreaseMax);
+        
     }
 
     /* (non-Javadoc)
@@ -70,6 +118,62 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
     public LayoutProcessorConfiguration<RectPackingLayoutPhases, ElkNode> getLayoutProcessorConfiguration(
             ElkNode graph) {
         return null;
+    }
+    
+    /**
+     * Set new target width on clone.
+     * 
+     * @param layoutGraph The original graph.
+     * @param clone The clone.
+     * @param drawing The initial drawing.
+     */
+    private void configureSecondIteration(ElkNode layoutGraph, ElkNode clone, DrawingData drawing) {
+        ElkPadding padding = layoutGraph.getProperty(RectPackingOptions.PADDING);
+        double aspectRatio = layoutGraph.getProperty(RectPackingOptions.ASPECT_RATIO);
+        // Try to layout again if the aspect ratio seems to be bad
+        if (layoutGraph.getChildren().size() > 1
+                && layoutGraph.getProperty(InternalProperties.MIN_ROW_INCREASE) != Double.POSITIVE_INFINITY
+                && (drawing.getDrawingWidth() + padding.getHorizontal())
+                        / (drawing.getDrawingHeight() + padding.getVertical()) < aspectRatio) {
+            // The drawing is too high, this means the approximated target width is too low
+            clone.setProperty(InternalProperties.TARGET_WIDTH, layoutGraph.getProperty(InternalProperties.TARGET_WIDTH)
+                    + layoutGraph.getProperty(InternalProperties.MIN_ROW_INCREASE));
+        } else if (layoutGraph.getChildren().size() > 1
+                && layoutGraph.getProperty(InternalProperties.MIN_ROW_DECREASE) != Double.POSITIVE_INFINITY
+                && (drawing.getDrawingWidth() + padding.getHorizontal())
+                        / (drawing.getDrawingHeight() + padding.getVertical()) > aspectRatio) {
+            // The drawing is too high, this means the approximated target width is too high
+            clone.setProperty(InternalProperties.TARGET_WIDTH,
+                    Math.max(layoutGraph.getProperty(InternalProperties.MIN_WIDTH),
+                    clone.getProperty(InternalProperties.TARGET_WIDTH)
+                    - layoutGraph.getProperty(InternalProperties.MIN_ROW_DECREASE)));
+        }
+    }
+    
+    private ElkNode clone(ElkNode node) {
+        ElkNode clone = ElkGraphUtil.createNode(null);
+        for (IProperty property : node.getAllProperties().keySet()) {
+            clone.setProperty(property, node.getProperty(property));
+        }
+        for (ElkNode child : node.getChildren()) {
+            ElkNode newChild = ElkGraphUtil.createNode(clone);
+            newChild.setDimensions(child.getWidth(), child.getHeight());
+            newChild.setIdentifier(child.getIdentifier());
+            newChild.setLocation(child.getX(), child.getY());
+            clone.getChildren().add(newChild);
+            for (IProperty property : child.getAllProperties().keySet()) {
+                newChild.setProperty(property, child.getProperty(property));
+            }
+        }
+        return clone;
+    }
+
+    private void copyPosition(ElkNode clone, ElkNode original) {
+        original.setDimensions(clone.getWidth(), clone.getHeight());
+        original.setLocation(clone.getX(), clone.getY());
+        for (int i = 0; i < clone.getChildren().size(); i++) {
+            copyPosition(clone.getChildren().get(i), original.getChildren().get(i));
+        }
     }
 
 }

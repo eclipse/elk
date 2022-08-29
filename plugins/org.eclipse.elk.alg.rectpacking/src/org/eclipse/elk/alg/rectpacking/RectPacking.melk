@@ -51,6 +51,7 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports widthApproximation.strategy
     supports packing.strategy
     supports packing.compaction.rowHeightReevaluation
+    supports packing.compaction.iterations
     supports whiteSpaceElimination.strategy
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.interactiveLayout
@@ -132,6 +133,18 @@ group packing {
                  This option should, therefore, be used with care since it might be computation heavy."
             targets parents
             default = false
+        }
+        
+        option iterations: int {
+            label "Compaction iterations"
+            description
+                "Defines the number of compaction iterations. E.g. if set to 2 the width is initially approximated,
+                 then the drawing is compacted and based on the resulting drawing the target width is decreased or
+                 increased and a second compaction step is executed and the result compared to the first one. The best
+                 run is used based on the scale measure."
+            targets parents
+            lowerBound = 1
+            default = 1
         }
     }
 }
