@@ -1,10 +1,13 @@
+image:
+  file: .gitpod.Dockerfile
+
 ports:
 - port: 1313
 
 tasks:
-- init: |
-    cd docs
-    hugo
-    hugo server
-  command: |
-    gp preview $(gp url 1313)/elk/
+- name: Maven Build
+  init: mvn -f build/pom.xml package
+- name: Hugo Website
+  before: cd docs
+  init: hugo
+  command: hugo server
