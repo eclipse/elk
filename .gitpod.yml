@@ -6,5 +6,5 @@ tasks:
     cd docs
     hugo
     hugo server
-  command
+  command: |
     gp preview $(gp url 1313)/elk/
