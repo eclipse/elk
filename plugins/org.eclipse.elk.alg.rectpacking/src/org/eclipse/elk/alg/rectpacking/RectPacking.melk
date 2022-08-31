@@ -171,7 +171,7 @@ advanced option trybox: boolean {
          For example, nodes with the same height are not stackable inside a row. Therefore, box layout will perform
          better and faster."
     targets parents
-    default = true
+    default = false
 }
 
 output option currentPosition: int {
