@@ -2,7 +2,7 @@
 title: "Rectpacking"
 menu:
   main:
-    identifier: "22-07-25-rectpacking"
+    identifier: "22-08-31-rectpacking"
     parent: "2022"
     weight: 10
 ---
