@@ -19,6 +19,6 @@ public enum RectPackingLayoutPhases {
     /** Phase 2. */
     P2_PACKING,
     /** Phase 3. */
-    P4_WHITESPACE_ELIMINATION;
+    P3_WHITESPACE_ELIMINATION;
     
 }

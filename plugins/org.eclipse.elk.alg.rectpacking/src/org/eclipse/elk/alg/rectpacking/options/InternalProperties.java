@@ -16,8 +16,8 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 /**
- * @author sdo
- *
+ * Container for property definitions for internal use of the algorithm. These properties should
+ * not be accessed from outside.
  */
 public final class InternalProperties {
 
@@ -41,22 +41,22 @@ public final class InternalProperties {
 
     /**
      * The minimum width that has to be added to the target width to allow an element from the next row to be placed
-     * the previous one.
+     * the previous row.
      */
     public static final IProperty<Double> MIN_ROW_INCREASE = new Property<Double>("minRowIncrease", 0.0);
     /**
      * The maximum width that has to be added to the target width to allow an element from the next row to be placed
-     * the previous one.
+     * the previous row.
      */
     public static final IProperty<Double> MAX_ROW_INCREASE = new Property<Double>("maxRowIncrease", 0.0);
 
     /**
-     * The minimum width that has to be removed from the target width not allow the last element of a row in it.
+     * The minimum width that has to be removed from the target width to not allow the last element of a row in it.
      */
     public static final IProperty<Double> MIN_ROW_DECREASE = new Property<Double>("minRowDecrease", 0.0);
 
     /**
-     * The maximum width that has to be removed from the target width not allow the last element of a row in it.
+     * The maximum width that has to be removed from the target width to not allow the last element of a row in it.
      */
     public static final IProperty<Double> MAX_ROW_DECREASE = new Property<Double>("maxRowDecrease", 0.0);
 

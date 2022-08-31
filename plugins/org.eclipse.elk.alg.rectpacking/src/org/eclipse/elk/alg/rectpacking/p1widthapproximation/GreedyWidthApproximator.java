@@ -61,7 +61,6 @@ public class GreedyWidthApproximator implements ILayoutPhase<RectPackingLayoutPh
         AreaApproximation firstIt = new AreaApproximation(aspectRatio, goal, lastPlaceShift);
         drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing, padding);
               
-        // TODO Math.max should be an intermediate processor, since all p1 processors do this.
         graph.setProperty(InternalProperties.TARGET_WIDTH, drawing.getDrawingWidth());
     }
 

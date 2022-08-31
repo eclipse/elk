@@ -131,7 +131,6 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         }
 
         // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
-        // Since node sizes might change during the algorithm, this has to be done at the end?
         if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
             NodeMicroLayout.forGraph(layoutGraph).execute();
         }
@@ -158,7 +157,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
     /**
      * Configure the layout provider by assembling different layout processors.
      * 
-     * @param layoutGraph The graph which shall be layout.
+     * @param layoutGraph The graph which shall be layouted.
      * @return The list of assembled layout processors.
      */
     private List<ILayoutProcessor<ElkNode>> assembleAlgorithm(final ElkNode layoutGraph) {
@@ -167,7 +166,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
                 layoutGraph.getProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY));
         algorithmAssembler.setPhase(RectPackingLayoutPhases.P2_PACKING,
                 layoutGraph.getProperty(RectPackingOptions.PACKING_STRATEGY));
-        algorithmAssembler.setPhase(RectPackingLayoutPhases.P4_WHITESPACE_ELIMINATION,
+        algorithmAssembler.setPhase(RectPackingLayoutPhases.P3_WHITESPACE_ELIMINATION,
                 layoutGraph.getProperty(RectPackingOptions.WHITE_SPACE_ELIMINATION_STRATEGY));
         
         algorithmAssembler.addProcessorConfiguration(getPhaseIndependentLayoutProcessorConfiguration(layoutGraph));

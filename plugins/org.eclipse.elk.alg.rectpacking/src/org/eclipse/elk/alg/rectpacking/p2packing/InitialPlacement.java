@@ -66,7 +66,7 @@ public final class InitialPlacement {
             if (block.getChildren().isEmpty()
                     || !rect.getParent().getProperty(RectPackingOptions.PACKING_COMPACTION_ROW_HEIGHT_REEVALUATION)
                         && isSimilarHeight(block, rect, nodeNodeSpacing)) {
-                // Every rect is before compaction in its own block.
+                // Every rect is in its own block before comapction.
                 block.addChild(rect);
             } else {
                 // Case rect does not fit in block. Add new block to the right of it.
