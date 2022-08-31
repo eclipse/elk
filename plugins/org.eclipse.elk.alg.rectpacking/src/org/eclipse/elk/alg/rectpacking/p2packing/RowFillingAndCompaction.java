@@ -38,9 +38,23 @@ public class RowFillingAndCompaction {
     /** Spacing between two nodes. */
     private double nodeNodeSpacing;
 
+    /**
+     * The minimum width that has to be removed from the target width not allow the last element of a row in it.
+     */
     public double potentialRowWidthDecreaseMin = Double.POSITIVE_INFINITY;
+    /**
+     * The maximum width that has to be removed from the target width not allow the last element of a row in it.
+     */
     public double potentialRowWidthDecreaseMax = 0;
+    /**
+     * The minimum width that has to be added to the target width to allow an element from the next row to be placed
+     * the previous one.
+     */
     public double potentialRowWidthIncreaseMin = Double.POSITIVE_INFINITY;
+    /**
+     * The maximum width that has to be added to the target width to allow an element from the next row to be placed
+     * the previous one.
+     */
     public double potentialRowWidthIncreaseMax = 0;
 
     //////////////////////////////////////////////////////////////////

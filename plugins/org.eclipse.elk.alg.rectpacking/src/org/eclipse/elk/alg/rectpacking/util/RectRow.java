@@ -35,6 +35,9 @@ public class RectRow {
      */
     private List<BlockStack> stacks = new ArrayList<BlockStack>();
 
+    /**
+     * The width that was missing to add the first block of the next row into this one.
+     */
     private double potentialAdditionalWidthToGetLastBlock = 0;
 
     //////////////////////////////////////////////////////////////////

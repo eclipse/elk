@@ -60,32 +60,33 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(graph, "Compacted");
         }
+        // Begin possible iterations to improve rectpacking by setting a new target width and repeating the compaction.
         copyRowWidthChangeValues(graph, secondIt);
         
         // Begin more compaction iterations if more than one iteration is specified.
         int iterations = graph.getProperty(RectPackingOptions.PACKING_COMPACTION_ITERATIONS);
-        iterations--;
-        while (iterations > 0) {
+        while (iterations > 1) {
+            // Create a shallow clone based on properties and sizes of children (not grandchildren).
             ElkNode clone = clone(graph);
-            // Calculate new target width and configure clone.
             double oldSM = drawing.getScaleMeasure();
+            // Calculate new target width and configure clone.
             configureSecondIteration(graph, clone, drawing);
-            if (oldSM == 0) {
-                break;
-            }
+            // Run additional compaction step.
             secondIt = new RowFillingAndCompaction(aspectRatio, nodeNodeSpacing);
             DrawingData newDrawing = secondIt.start(rectangles, progressMonitor, clone, padding);
 
             if (progressMonitor.isLoggingEnabled()) {
                 progressMonitor.logGraph(clone, "Layouted clone " + iterations);
             }
-            copyRowWidthChangeValues(graph, secondIt);
+            // Compare scale measure and choose the best packing.
             double newSM = newDrawing.getScaleMeasure();
 
             if (newSM >= oldSM && newSM == (double) newSM) {
+                // If the new packing is better apply packing to original graph.
                 for (int i = 0; i < clone.getChildren().size(); i++) {
                     copyPosition(clone.getChildren().get(i), graph.getChildren().get(i));
                 }
+                copyRowWidthChangeValues(graph, secondIt);
                 drawing.setDrawingWidth(newDrawing.getDrawingWidth());
                 drawing.setDrawingHeight(newDrawing.getDrawingHeight());
 
@@ -124,7 +125,6 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
      * Set new target width on clone.
      * 
      * @param layoutGraph The original graph.
-     * @param clone The clone.
      * @param drawing The initial drawing.
      */
     private void configureSecondIteration(ElkNode layoutGraph, ElkNode clone, DrawingData drawing) {
@@ -136,13 +136,15 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
                 && (drawing.getDrawingWidth() + padding.getHorizontal())
                         / (drawing.getDrawingHeight() + padding.getVertical()) < aspectRatio) {
             // The drawing is too high, this means the approximated target width is too low
+            // The new target width will be set to the next higher value that would change something.
             clone.setProperty(InternalProperties.TARGET_WIDTH, layoutGraph.getProperty(InternalProperties.TARGET_WIDTH)
                     + layoutGraph.getProperty(InternalProperties.MIN_ROW_INCREASE));
         } else if (layoutGraph.getChildren().size() > 1
                 && layoutGraph.getProperty(InternalProperties.MIN_ROW_DECREASE) != Double.POSITIVE_INFINITY
                 && (drawing.getDrawingWidth() + padding.getHorizontal())
                         / (drawing.getDrawingHeight() + padding.getVertical()) > aspectRatio) {
-            // The drawing is too high, this means the approximated target width is too high
+            // The drawing is too high, this means the approximated target width is too high.
+            // The new target width will be set to the next smaller value that would change something.
             clone.setProperty(InternalProperties.TARGET_WIDTH,
                     Math.max(layoutGraph.getProperty(InternalProperties.MIN_WIDTH),
                     clone.getProperty(InternalProperties.TARGET_WIDTH)
@@ -150,6 +152,12 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
         }
     }
     
+    /**
+     * Clones a node including all properties and its children with their properties.
+     * 
+     * @param node The node to clone
+     * @return
+     */
     private ElkNode clone(ElkNode node) {
         ElkNode clone = ElkGraphUtil.createNode(null);
         for (IProperty property : node.getAllProperties().keySet()) {
@@ -168,11 +176,17 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
         return clone;
     }
 
-    private void copyPosition(ElkNode clone, ElkNode original) {
-        original.setDimensions(clone.getWidth(), clone.getHeight());
-        original.setLocation(clone.getX(), clone.getY());
-        for (int i = 0; i < clone.getChildren().size(); i++) {
-            copyPosition(clone.getChildren().get(i), original.getChildren().get(i));
+    /**
+     * Copy the position of dimension of a node to the other and does the same for its children.
+     * 
+     * @param node The node to copy from.
+     * @param other The node to copy to.
+     */
+    private void copyPosition(ElkNode node, ElkNode other) {
+        other.setDimensions(node.getWidth(), node.getHeight());
+        other.setLocation(node.getX(), node.getY());
+        for (int i = 0; i < node.getChildren().size(); i++) {
+            copyPosition(node.getChildren().get(i), other.getChildren().get(i));
         }
     }
 
