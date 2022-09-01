@@ -23,8 +23,8 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Works the same as {@code LongestPathLayerer} but takes the model order into account
- * if a node can be in a different layer.
+ * Works the same as {@code LongestPathLayerer} but builds a trivial layering beginning with the sources and not the
+ * sinks.
  * 
  * <dl>
  * <dt>Precondition:</dt>
@@ -136,6 +136,4 @@ public class LongestPathSourceLayerer implements ILayoutPhase<LayeredPhases, LGr
         node.setLayer(layers.get(height - 1));
         nodeHeights[node.id] = height;
     }
-
-
 }
