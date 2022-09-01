@@ -82,6 +82,7 @@ public class SimplePlacement implements ILayoutPhase<RectPackingLayoutPhases, El
         graph.setProperty(InternalProperties.DRAWING_WIDTH, width);
         graph.setProperty(InternalProperties.DRAWING_HEIGHT, height + additionalHeight);
         graph.setProperty(InternalProperties.ROWS, rows);
+        progressMonitor.done();
     }
 
     /*

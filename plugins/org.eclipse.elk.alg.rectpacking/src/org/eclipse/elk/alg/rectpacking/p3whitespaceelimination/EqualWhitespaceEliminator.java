@@ -44,6 +44,7 @@ public class EqualWhitespaceEliminator implements ILayoutPhase<RectPackingLayout
         } else {
             throw new UnsupportedConfigurationException("The graph does not contain rows.");
         }
+        progressMonitor.done();
         
     }
 

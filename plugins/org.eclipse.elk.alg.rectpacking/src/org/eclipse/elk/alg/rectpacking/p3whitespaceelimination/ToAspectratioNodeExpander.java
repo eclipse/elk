@@ -44,6 +44,7 @@ public class ToAspectratioNodeExpander extends EqualWhitespaceEliminator {
             graph.setProperty(InternalProperties.DRAWING_HEIGHT, height + additionalHeight);
         }
         super.process(graph, progressMonitor);
+        progressMonitor.done();
     }
 
 }

@@ -62,6 +62,7 @@ public class GreedyWidthApproximator implements ILayoutPhase<RectPackingLayoutPh
         drawing = firstIt.approxBoundingBox(rectangles, nodeNodeSpacing, padding);
               
         graph.setProperty(InternalProperties.TARGET_WIDTH, drawing.getDrawingWidth());
+        progressMonitor.done();
     }
 
     /* (non-Javadoc)

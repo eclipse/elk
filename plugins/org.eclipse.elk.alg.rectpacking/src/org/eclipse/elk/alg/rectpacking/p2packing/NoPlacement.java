@@ -56,6 +56,7 @@ public class NoPlacement implements ILayoutPhase<RectPackingLayoutPhases, ElkNod
         graph.setProperty(InternalProperties.ADDITIONAL_HEIGHT, additionalHeight);
         graph.setProperty(InternalProperties.DRAWING_WIDTH, width);
         graph.setProperty(InternalProperties.DRAWING_HEIGHT, height + additionalHeight);
+        progressMonitor.done();
     }
 
     /*

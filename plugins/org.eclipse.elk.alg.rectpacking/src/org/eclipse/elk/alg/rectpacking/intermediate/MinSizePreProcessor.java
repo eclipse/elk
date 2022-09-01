@@ -41,6 +41,7 @@ public class MinSizePreProcessor implements ILayoutProcessor<ElkNode> {
         KVector minSize = ElkUtil.effectiveMinSizeConstraintFor(graph);
         graph.setProperty(InternalProperties.MIN_WIDTH, minSize.x);
         graph.setProperty(InternalProperties.MIN_HEIGHT, minSize.y);
+        progressMonitor.done();
     }
 
 }

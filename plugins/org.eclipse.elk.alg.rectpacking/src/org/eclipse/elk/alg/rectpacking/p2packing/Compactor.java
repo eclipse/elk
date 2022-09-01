@@ -57,9 +57,11 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
         
         RowFillingAndCompaction secondIt = new RowFillingAndCompaction(aspectRatio, nodeNodeSpacing);
         DrawingData drawing = secondIt.start(rectangles, progressMonitor, graph, padding);
+        // elkjs-exclude-start
         if (progressMonitor.isLoggingEnabled()) {
             progressMonitor.logGraph(graph, "Compacted");
         }
+        // elkjs-exclude-end
         // Begin possible iterations to improve rectpacking by setting a new target width and repeating the compaction.
         copyRowWidthChangeValues(graph, secondIt);
         
@@ -75,9 +77,11 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
             secondIt = new RowFillingAndCompaction(aspectRatio, nodeNodeSpacing);
             DrawingData newDrawing = secondIt.start(rectangles, progressMonitor, clone, padding);
 
+            // elkjs-exclude-start
             if (progressMonitor.isLoggingEnabled()) {
                 progressMonitor.logGraph(clone, "Layouted clone " + iterations);
             }
+            // elkjs-exclude-end
             // Compare scale measure and choose the best packing.
             double newSM = newDrawing.getScaleMeasure();
 
@@ -96,6 +100,7 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
         
         graph.setProperty(InternalProperties.DRAWING_HEIGHT, drawing.getDrawingHeight());
         graph.setProperty(InternalProperties.DRAWING_WIDTH, drawing.getDrawingWidth());
+        progressMonitor.done();
     }
 
     /**
@@ -158,6 +163,7 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
      * @param node The node to clone
      * @return
      */
+    @SuppressWarnings("unchecked")
     private ElkNode clone(ElkNode node) {
         ElkNode clone = ElkGraphUtil.createNode(null);
         for (IProperty property : node.getAllProperties().keySet()) {

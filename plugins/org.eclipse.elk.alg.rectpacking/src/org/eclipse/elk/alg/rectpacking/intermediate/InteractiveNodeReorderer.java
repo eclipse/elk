@@ -68,6 +68,7 @@ public class InteractiveNodeReorderer implements ILayoutProcessor<ElkNode> {
             elkNode.setProperty(RectPackingOptions.CURRENT_POSITION, index);
             index++;
         }
+        progressMonitor.done();
     }
 
 }

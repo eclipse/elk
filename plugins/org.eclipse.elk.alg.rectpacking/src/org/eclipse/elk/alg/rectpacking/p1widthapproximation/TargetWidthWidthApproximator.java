@@ -42,6 +42,7 @@ public class TargetWidthWidthApproximator implements ILayoutPhase<RectPackingLay
             throw new UnsupportedConfigurationException(
                     "A target width has to be set if the TargetWidthWidthApproximator should be used.");
         }
+        progressMonitor.done();
     }
 
     /* (non-Javadoc)

@@ -149,9 +149,11 @@ public class RowFillingAndCompaction {
                     }
                 }
                 // Log graph after first row compaction.
+                // elkjs-exclude-start
                 if (progressMonitor.isLoggingEnabled()) {
                     progressMonitor.logGraph(layoutGraph, "Compacted row " + rowIdx);
                 }
+                // elkjs-exclude-end
             }
         }
          

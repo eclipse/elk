@@ -41,6 +41,7 @@ public class MinSizePostProcessor implements ILayoutProcessor<ElkNode> {
         // Remove padding to get the space the algorithm can use.
         graph.setProperty(InternalProperties.TARGET_WIDTH, Math.max(graph.getProperty(InternalProperties.TARGET_WIDTH),
                 graph.getProperty(InternalProperties.MIN_WIDTH)));
+        progressMonitor.done();
     }
 
 }
