@@ -33,7 +33,12 @@ public class RectRow {
      * This row's stacks of blocks. 
      * Used during the compaction step for better handling and during the stuffing (expansion) process.
      */
-    private final List<BlockStack> stacks = new ArrayList<BlockStack>();
+    private List<BlockStack> stacks = new ArrayList<BlockStack>();
+
+    /**
+     * The width that was missing to add the first block of the next row into this one.
+     */
+    private double potentialAdditionalWidthToGetLastBlock = 0;
 
     //////////////////////////////////////////////////////////////////
     // Constructors.
@@ -217,5 +222,27 @@ public class RectRow {
      */
     public List<BlockStack> getStacks() {
         return stacks;
+    }
+
+    /**
+     * @return the potentialAdditionalWidthToGetLastBlock
+     */
+    public double getPotentialAdditionalWidthToGetLastBlock() {
+        return potentialAdditionalWidthToGetLastBlock;
+    }
+
+    /**
+     * @param potentialAdditionalWidthToGetLastBlock the potentialAdditionalWidthToGetLastBlock to set
+     */
+    public void setPotentialAdditionalWidthToGetLastBlock(double potentialAdditionalWidthToGetLastBlock) {
+        this.potentialAdditionalWidthToGetLastBlock = potentialAdditionalWidthToGetLastBlock;
+    }
+
+    /**
+     * Removes all created stacks. Should only be used when reevaluating the packing in a row.
+     */
+    public void resetStacks() {
+        this.stacks = new ArrayList<BlockStack>();
+
     }
 }

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
+import org.eclipse.elk.alg.rectpacking.p2packing.PackingStrategy;
 import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -59,7 +60,7 @@ public class Issue583Test {
         // ______
         //|______|
         // Expected drawing with width approximation only
-        parent.setProperty(RectPackingOptions.ONLY_FIRST_ITERATION, true);
+        parent.setProperty(RectPackingOptions.PACKING_STRATEGY, PackingStrategy.NONE);
         RectPackingLayoutProvider layoutProvider = new RectPackingLayoutProvider();
         layoutProvider.layout(parent, new BasicProgressMonitor());
         assertEquals("", 60.0, parent.getWidth(), 1);
@@ -73,7 +74,7 @@ public class Issue583Test {
         // ______  |
         //|______| |
         // Expected drawing with full algorithm
-        parent.setProperty(RectPackingOptions.ONLY_FIRST_ITERATION, false);
+        parent.setProperty(RectPackingOptions.PACKING_STRATEGY, PackingStrategy.COMPACTION);
         layoutProvider = new RectPackingLayoutProvider();
         layoutProvider.layout(parent, new BasicProgressMonitor());
         assertEquals("", 40.0, parent.getWidth(), 1);
