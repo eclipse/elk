@@ -93,9 +93,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         }
 
         List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(layoutGraph);
-        // elkjs-exclude-start
         float monitorProgress = 1.0f / algorithm.size();
-        // elkjs-exclude-end
         
         // Invoke each layout processor
         int slotIndex = 0;
@@ -109,9 +107,9 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             if (progressMonitor.isLoggingEnabled()) {
                 progressMonitor.logGraph(layoutGraph, slotIndex + "-Before " + processor.getClass().getSimpleName());
             }
+            // elkjs-exclude-end
             
             processor.process(layoutGraph, progressMonitor.subTask(monitorProgress));
-            // elkjs-exclude-end
             slotIndex++;
         }
 

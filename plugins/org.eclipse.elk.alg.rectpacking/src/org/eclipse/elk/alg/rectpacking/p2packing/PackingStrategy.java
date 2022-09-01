@@ -35,7 +35,7 @@ public enum PackingStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhas
         case NONE:
             return new NoPlacement();
         default:
-            return new NoPlacement();
+            return null;
         }
     }
 

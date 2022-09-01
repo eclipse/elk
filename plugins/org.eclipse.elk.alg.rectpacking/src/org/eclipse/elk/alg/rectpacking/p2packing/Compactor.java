@@ -18,11 +18,9 @@ import org.eclipse.elk.alg.rectpacking.util.DrawingData;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkPadding;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.properties.IProperty;
-import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * Places and compact the given rectangles by forming rows of stacks of blocks of subrows to maintain a common
@@ -161,23 +159,19 @@ public class Compactor implements ILayoutPhase<RectPackingLayoutPhases, ElkNode>
      * Clones a node including all properties and its children with their properties.
      * 
      * @param node The node to clone
-     * @return
+     * @return The clones node
      */
-    @SuppressWarnings("unchecked")
     private ElkNode clone(ElkNode node) {
-        ElkNode clone = ElkGraphUtil.createNode(null);
-        for (IProperty property : node.getAllProperties().keySet()) {
-            clone.setProperty(property, node.getProperty(property));
-        }
+        ElkNode clone = ElkGraphFactory.eINSTANCE.createElkNode();
+        clone.copyProperties(node);
         for (ElkNode child : node.getChildren()) {
-            ElkNode newChild = ElkGraphUtil.createNode(clone);
+            ElkNode newChild = ElkGraphFactory.eINSTANCE.createElkNode();
+            newChild.setParent(clone);
             newChild.setDimensions(child.getWidth(), child.getHeight());
             newChild.setIdentifier(child.getIdentifier());
             newChild.setLocation(child.getX(), child.getY());
             clone.getChildren().add(newChild);
-            for (IProperty property : child.getAllProperties().keySet()) {
-                newChild.setProperty(property, child.getProperty(property));
-            }
+            newChild.copyProperties(child);
         }
         return clone;
     }

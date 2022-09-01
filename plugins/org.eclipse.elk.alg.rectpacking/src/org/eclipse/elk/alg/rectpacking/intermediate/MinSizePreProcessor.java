@@ -10,9 +10,7 @@
 package org.eclipse.elk.alg.rectpacking.intermediate;
 
 import org.eclipse.elk.alg.rectpacking.options.InternalProperties;
-import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
