@@ -24,6 +24,10 @@ public enum OrderingStrategy {
     /**
      * The node ordering is only used as a secondary criterion. Edge order shall be preserved.
      */
-    PREFER_EDGES;
+    PREFER_EDGES,
+    /**
+     * Prefers node order.
+     */
+    PREFER_NODES;
 
 }

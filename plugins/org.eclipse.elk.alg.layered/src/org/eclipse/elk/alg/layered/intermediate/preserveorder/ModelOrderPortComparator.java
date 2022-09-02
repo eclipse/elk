@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 
 /**
  * Orders {@link LPort}s in the same layer by their edges {@link InternalProperties#MODEL_ORDER}
@@ -35,6 +36,8 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
      * The previous layer.
      */
     private LNode[] previousLayer;
+    
+    private OrderingStrategy strategy;
 
     /**
      * Creates a comparator to compare {@link LPort}s in the same layer.
@@ -42,8 +45,9 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
      * @param previousLayer The previous layer
      * @param targetNodeModelOrder The minimal model order connecting to a target node.
      */
-    public ModelOrderPortComparator(final Layer previousLayer, final Map<LNode, Integer> targetNodeModelOrder) {
+    public ModelOrderPortComparator(final Layer previousLayer, OrderingStrategy strategy, final Map<LNode, Integer> targetNodeModelOrder) {
         this.previousLayer = new LNode[previousLayer.getNodes().size()];
+        this.strategy = strategy;
         previousLayer.getNodes().toArray(this.previousLayer);
         this.targetNodeModelOrder = targetNodeModelOrder;
     }
@@ -54,8 +58,9 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
      * @param previousLayer The previous layer
      * @param targetNodeModelOrder The minimal model order connecting to a target node.
      */
-    public ModelOrderPortComparator(final LNode[] previousLayer, final Map<LNode, Integer> targetNodeModelOrder) {
+    public ModelOrderPortComparator(final LNode[] previousLayer, OrderingStrategy strategy, final Map<LNode, Integer> targetNodeModelOrder) {
         this.previousLayer = previousLayer;
+        this.strategy = strategy;
         this.targetNodeModelOrder = targetNodeModelOrder;
     }
 
@@ -83,6 +88,14 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         if (!p1.getOutgoingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
             LNode p1TargetNode = p1.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
             LNode p2TargetNode = p2.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
+            
+
+            
+            if (this.strategy == OrderingStrategy.PREFER_NODES) {
+                return Integer.compare(p1TargetNode.getProperty(InternalProperties.MODEL_ORDER),
+                        p2TargetNode.getProperty(InternalProperties.MODEL_ORDER));
+            }
+            
             int p1Order = 0;
             int p2Order = 0;
             if (p1.getOutgoingEdges().get(0).hasProperty(InternalProperties.MODEL_ORDER)) {
