@@ -10,8 +10,10 @@
 package org.eclipse.elk.alg.rectpacking
 
 import org.eclipse.elk.alg.rectpacking.RectPackingLayoutProvider
+import org.eclipse.elk.alg.rectpacking.p1widthapproximation.WidthApproximationStrategy
+import org.eclipse.elk.alg.rectpacking.p3whitespaceelimination.WhiteSpaceEliminationStrategy
 import org.eclipse.elk.core.math.ElkPadding
-import org.eclipse.elk.alg.rectpacking.options.OptimizationGoal
+import org.eclipse.elk.alg.rectpacking.p2packing.PackingStrategy
 
 // BUNDLE
 bundle {
@@ -32,7 +34,6 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     documentation "@rectpacking.md"
     metadataClass options.RectPackingOptions
     supports org.eclipse.elk.aspectRatio = 1.3
-    supports org.eclipse.elk.expandNodes
     supports org.eclipse.elk.nodeSize.fixedGraphSize = false
     supports org.eclipse.elk.padding = new ElkPadding(15)
     supports org.eclipse.elk.spacing.nodeNode = 15
@@ -44,41 +45,133 @@ algorithm rectpacking(RectPackingLayoutProvider) {
     supports org.eclipse.elk.nodeLabels.placement
     supports org.eclipse.elk.omitNodeMicroLayout
     supports org.eclipse.elk.portLabels.placement
-    supports optimizationGoal
-    supports lastPlaceShift
-    supports onlyFirstIteration
-    supports rowCompaction
-    supports expandToAspectRatio
+    supports widthApproximation.optimizationGoal
+    supports widthApproximation.lastPlaceShift
+    supports widthApproximation.targetWidth
+    supports widthApproximation.strategy
+    supports packing.strategy
+    supports packing.compaction.rowHeightReevaluation
+    supports packing.compaction.iterations
+    supports whiteSpaceElimination.strategy
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.interactiveLayout
     supports desiredPosition
     supports currentPosition
-    supports targetWidth
     supports inNewRow
+    supports trybox
+}
+
+
+/* ------------------------
+ *    phase 1
+ * ------------------------*/
+group widthApproximation {
+
+    option strategy: WidthApproximationStrategy {
+        label "Width Approximation Strategy"
+        description
+            "Strategy for finding an initial width of the drawing."
+        default = WidthApproximationStrategy.GREEDY
+        targets parents
+    }
+
+    option targetWidth: double {
+        label "Target Width"
+        description
+            "Option to place the rectangles in the given target width instead of approximating the width using the desired
+             aspect ratio.
+             The padding is not included in this. Meaning a drawing will have width of targetwidth +
+             horizontal padding."
+        targets parents
+        default = -1
+    }
+    
+    option optimizationGoal: OptimizationGoal {
+        label "Optimization Goal"
+        description
+            "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
+             sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
+        documentation "@packingstrategy.md"
+        targets parents
+        default = OptimizationGoal.MAX_SCALE_DRIVEN
+    }
+    
+    option lastPlaceShift: boolean {
+        label "Shift Last Placed."
+        description
+            "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
+             possible to shift the rectangle further to the left or right, resulting in less whitespace. True (default) 
+             enables the shift and false disables it. Disabling the shift produces a greater approximated area by the first 
+             iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
+             impossible to implement a size transformation of rectangles that will fill the bounding box and eliminate 
+             empty spaces."
+        targets parents
+        default = true
+    }
+}
+
+/* ------------------------
+ *    phase 2
+ * ------------------------*/
+group packing {
+
+    option strategy: PackingStrategy {
+        label "Compaction Strategy"
+        description
+            "Strategy for finding an initial placement on nodes."
+        default = PackingStrategy.COMPACTION
+        targets parents
+    }
+    
+    group compaction {
+        option rowHeightReevaluation: boolean {
+            label "Row Height Reevaluation"
+            description
+                "During the compaction step the height of a row is normally not changed.
+                 If this options is set, the blocks of other rows might be added if they exceed the row height.
+                 If this is the case the whole row has to be packed again to be optimal regarding the new row height.
+                 This option should, therefore, be used with care since it might be computation heavy."
+            targets parents
+            default = false
+        }
+        
+        option iterations: int {
+            label "Compaction iterations"
+            description
+                "Defines the number of compaction iterations. E.g. if set to 2 the width is initially approximated,
+                 then the drawing is compacted and based on the resulting drawing the target width is decreased or
+                 increased and a second compaction step is executed and the result compared to the first one. The best
+                 run is used based on the scale measure."
+            targets parents
+            lowerBound = 1
+            default = 1
+        }
+    }
+}
+
+/* ------------------------
+ *    phase 3
+ * ------------------------*/
+group whiteSpaceElimination {
+
+    option strategy: WhiteSpaceEliminationStrategy {
+        label "White Space Approximation Strategy"
+        description
+            "Strategy for expanding nodes such that whitespace in the parent is eliminated."
+        targets parents
+    }
 }
 
 // OPTIONS
-advanced option optimizationGoal: OptimizationGoal {
-    label "Optimization Goal"
-    description
-        "Optimization goal for approximation of the bounding box given by the first iteration. Determines whether layout is 
-         sorted by the maximum scaling, aspect ratio, or area. Depending on the strategy the aspect ratio might be nearly ignored."
-    documentation "@packingstrategy.md"
-    targets nodes
-    default = OptimizationGoal.MAX_SCALE_DRIVEN
-}
 
-programmatic option lastPlaceShift: boolean {
-    label "Shift Last Placed."
+advanced option trybox: boolean {
+    label "Try box layout first"
     description
-        "When placing a rectangle behind or below the last placed rectangle in the first iteration, it is sometimes 
-         possible to shift the rectangle further to the left or right, resulting in less whitespace. True (default) 
-         enables the shift and false disables it. Disabling the shift produces a greater approximated area by the first 
-         iteration and a layout, when using ONLY the first iteration (default not the case), where it is sometimes 
-         impossible to implement a size transformation of rectangles that will fill the bounding box and eliminate 
-         empty spaces."
-    targets nodes
-    default = true
+        "Whether one should check whether the regions are stackable to see whether box layout would do the job.
+         For example, nodes with the same height are not stackable inside a row. Therefore, box layout will perform
+         better and faster."
+    targets parents
+    default = false
 }
 
 output option currentPosition: int {
@@ -101,47 +194,6 @@ advanced option desiredPosition: int {
     targets nodes
 }
 
-programmatic option onlyFirstIteration: boolean {
-    label "Only Area Approximation"
-    description
-        "If enabled only the width approximation step is executed and the nodes are placed accordingly.
-         The nodes are layouted according to the packingStrategy.
-         If set to true not expansion of nodes is taking place."
-    targets nodes
-    default = false
-}
-
-programmatic option rowCompaction: boolean {
-    label "Compact Rows"
-    description
-        "Enables compaction. Compacts blocks if they do not use the full height of the row.
-         This option allows to have a smaller drawing.
-         If this option is disabled all nodes are placed next to each other in rows."
-    targets nodes
-    default = true
-}
-
-advanced option expandToAspectRatio: boolean {
-    label "Fit Aspect Ratio"
-    description
-        "Expands nodes if expandNodes is true to fit the aspect ratio instead of only in their bounds.
-         The option is only useful if the used packingStrategy is ASPECT_RATIO_DRIVEN, otherwise this may result
-         in unreasonable ndoe expansion."
-    targets nodes
-    default = false
-    requires org.eclipse.elk.expandNodes
-}
-
-advanced option targetWidth: double {
-    label "Target Width"
-    description
-        "Option to place the rectangles in the given target width instead of approximating the width using the desired
-         aspect ratio.
-         The padding is not included in this. Meaning a drawing will have width of targetwidth +
-         horizontal padding."
-    targets nodes
-    default = -1
-}
 option inNewRow: boolean {
     label "In new Row"
     description

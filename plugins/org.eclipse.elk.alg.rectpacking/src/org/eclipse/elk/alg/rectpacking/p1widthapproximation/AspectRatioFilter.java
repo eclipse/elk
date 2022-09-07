@@ -7,40 +7,38 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.firstiteration;
+package org.eclipse.elk.alg.rectpacking.p1widthapproximation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.rectpacking.util.DrawingData;
-import org.eclipse.elk.alg.rectpacking.util.DrawingUtil;
 import org.eclipse.elk.core.math.ElkPadding;
 
 /**
  * This class implements a concrete strategy in the strategy pattern given by {@link BestCandidateFilter}.
  * <p>
- * This class offers a method that filters the given list regarding the scale measure. The candidate or candidates with
- * equal scale measure with the biggest scale measure are returned in the filtered list.
+ * This class offers a method that filters the given list regarding the aspect ratio. The candidate or candidates with
+ * equal aspect ratio that are closest to the desired aspect ratio are returned in the filtered list.
  * </p>
  */
-public class ScaleMeasureFilter implements BestCandidateFilter {
+public class AspectRatioFilter implements BestCandidateFilter {
 
     @Override
     public List<DrawingData> filterList(final List<DrawingData> candidates, final double aspectRatio,
             final ElkPadding padding) {
         List<DrawingData> remainingCandidates = new ArrayList<DrawingData>();
-        double maxScale = Double.NEGATIVE_INFINITY;
+        double smallestDeviation = Double.POSITIVE_INFINITY;
         for (DrawingData opt : candidates) {
-            maxScale = Math.max(maxScale, DrawingUtil.computeScaleMeasure(
-                    opt.getDrawingWidth() + padding.getHorizontal(),
-                    opt.getDrawingHeight() + padding.getVertical(),
-                    opt.getDesiredAspectRatio()));
+            smallestDeviation = Math.min(smallestDeviation,
+                    Math.abs(((opt.getDrawingWidth() + padding.getHorizontal())
+                            / (opt.getDrawingHeight() + padding.getVertical()))
+                        - aspectRatio));
         }
         for (DrawingData candidate : candidates) {
-            if (DrawingUtil.computeScaleMeasure(
-                    candidate.getDrawingWidth() + padding.getHorizontal(),
-                    candidate.getDrawingHeight() + padding.getVertical(),
-                    candidate.getDesiredAspectRatio()) == maxScale) {
+            if (Math.abs(((candidate.getDrawingWidth() + padding.getHorizontal())
+                        / (candidate.getDrawingHeight() + padding.getVertical()))
+                    - aspectRatio) == smallestDeviation) {
                 remainingCandidates.add(candidate);
             }
         }

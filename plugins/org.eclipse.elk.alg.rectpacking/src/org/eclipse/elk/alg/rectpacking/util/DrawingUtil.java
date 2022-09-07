@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.rectpacking.util;
 
 import java.util.List;
 
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -44,5 +45,38 @@ public final class DrawingUtil {
         for (ElkNode node : graph) {
             node.setLocation(0, 0);
         }
+    }
+
+    /**
+     * Calculates the maximum width and height for the given list of {@link RectRow}s.
+     * Since the node node spacing is included in the width of a row, it has to be subtracted.
+     * @param rows The rows.
+     * @param nodeNodeSpacing The spacing between two nodes.
+     */
+    public static KVector calculateDimensions(final List<RectRow> rows, double nodeNodeSpacing) {
+        double maxWidth = 0;
+        double newHeight = 0;
+        int index = 0;
+        for (RectRow row : rows) {
+            maxWidth = Math.max(maxWidth, row.getWidth());
+            newHeight += row.getHeight() + (index > 0 ? nodeNodeSpacing : 0);
+            index++;
+        }
+        return new KVector(maxWidth, newHeight);
+    }
+
+    /**
+     * Calculates the maximum width and height for the given list of {@link RectRow}s.
+     * Since the node node spacing is included in the width of a row, it has to be subtracted.
+     * @param rectangles The rectangles.
+     */
+    public static KVector calculateDimensions(final List<ElkNode> rectangles) {
+        double maxWidth = 0;
+        double maxHeight = 0;
+        for (ElkNode node : rectangles) {
+            maxWidth = Math.max(node.getWidth() + node.getX(), maxWidth);
+            maxHeight = Math.max(node.getHeight() + node.getY(), maxHeight);
+        }
+        return new KVector(maxWidth, maxHeight);
     }
 }
