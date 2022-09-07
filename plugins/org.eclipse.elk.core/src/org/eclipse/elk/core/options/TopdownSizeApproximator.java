@@ -123,7 +123,7 @@ public enum TopdownSizeApproximator {
             // return new KVector(Math.max(minWidth, baseSize), Math.max(minHeight, baseSize / childAreaDesiredAspectRatio));
             
             // picture 3:
-            // return new KVector(Math.max(minWidth, childAreaDesiredWidth), Math.max(minHeight, childAreaDesiredHeighto));
+            // return new KVector(Math.max(minWidth, childAreaDesiredWidth), Math.max(minHeight, childAreaDesiredHeight));
             
         }
     };
