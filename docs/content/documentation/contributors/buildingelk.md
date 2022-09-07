@@ -64,6 +64,8 @@ mvn
 
 The documentation website is our source of documentation. The main build produces reference documentation which is part of the website from our metadata files. The documentation website itself is then built with [Hugo](https://gohugo.io/), a static website generator. The website is setup in a way to be browsable both online and offline.
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/eclipse/elk)
+
 To actually build the documentation website, go to the repository's `docs/` folder and simply execute the following command:
 
 ```bash

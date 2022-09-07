@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.elk.alg.rectpacking.seconditeration;
+package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +63,10 @@ public final class InitialPlacement {
                 currentWidth = 0;
             }
             
-            if (block.getChildren().isEmpty() || isSimilarHeight(block, rect, nodeNodeSpacing)) {
-                // Case add rect in current block to the right of last rect in block.
+            if (block.getChildren().isEmpty()
+                    || !rect.getParent().getProperty(RectPackingOptions.PACKING_COMPACTION_ROW_HEIGHT_REEVALUATION)
+                        && isSimilarHeight(block, rect, nodeNodeSpacing)) {
+                // Every rect is in its own block before comapction.
                 block.addChild(rect);
             } else {
                 // Case rect does not fit in block. Add new block to the right of it.
