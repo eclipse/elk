@@ -833,6 +833,20 @@ programmatic option scaleFactor: double {
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
+programmatic option childAreaWidth: double {
+    label "Child Area Width"
+    description
+        "The width of the area occupied by the laid out children of a node."
+    targets parents
+}
+
+programmatic option childAreaHeight: double {
+    label "Child Area Height"
+    description
+        "The height of the area occupied by the laid out children of a node."
+    targets parents
+}
+
 advanced option topdownLayout: boolean {
     label "Topdown Layout"
     description
@@ -910,26 +924,6 @@ group topdown {
         default = null
         targets nodes
         requires nodeSize.fixedGraphSize
-    }
-    
-    programmatic option childAreaWidth: double {
-        label "Child Area Width"
-        description
-            "The width of the area occupied by the laid out children of a node. This value is necessary to compute the 
-             correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
-             be set for topdown layout to function."
-        targets parents
-        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
-    }
-    
-    programmatic option childAreaHeight: double {
-        label "Child Area Height"
-        description
-            "The height of the area occupied by the laid out children of a node. This value is necessary to compute the 
-             correct scale factor in topdown layout and must be computed and set by the layout algorithm. This property must
-             be set for topdown layout to function."
-        targets parents
-        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
     }
     
     advanced option scaleCap: double {
