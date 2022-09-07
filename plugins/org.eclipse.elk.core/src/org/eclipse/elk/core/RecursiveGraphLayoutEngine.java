@@ -273,9 +273,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     if (layoutNode.getProperty(CoreOptions.TOPDOWN_NODE_TYPE).equals(TopdownNodeTypes.ROOT_NODE)) {
                         ElkUtil.computeChildAreaDimensions(layoutNode);
                         layoutNode.setDimensions(
-                                padding.left + layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH) 
+                                padding.left + layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH) 
                                     + padding.right, 
-                                padding.top + layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT) 
+                                padding.top + layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT) 
                                     + padding.bottom);
                     }
                     topdownLayoutMonitor.log("Executed layout algorithm: " 
@@ -296,14 +296,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         
                         // check whether child area has been set, and if it hasn't run the util function 
                         // to determine the size of the area
-                        if (!(layoutNode.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH) 
-                                || layoutNode.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT))) {
+                        if (!(layoutNode.hasProperty(CoreOptions.CHILD_AREA_WIDTH) 
+                                || layoutNode.hasProperty(CoreOptions.CHILD_AREA_HEIGHT))) {
                             // compute child area if it hasn't been set by the layout algorithm
                             ElkUtil.computeChildAreaDimensions(layoutNode);
                         }
                         
-                        double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH);
-                        double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT);
+                        double childAreaDesiredWidth = layoutNode.getProperty(CoreOptions.CHILD_AREA_WIDTH);
+                        double childAreaDesiredHeight = layoutNode.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
 
                         topdownLayoutMonitor.log("Desired Child Area: (" + childAreaDesiredWidth 
                                 + "|" + childAreaDesiredHeight + ")");

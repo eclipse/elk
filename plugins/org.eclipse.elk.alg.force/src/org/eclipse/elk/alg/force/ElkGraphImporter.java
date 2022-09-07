@@ -210,8 +210,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         if (!kgraph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
             ElkUtil.resizeNode(kgraph, width, height, false, true);
         }
-        kgraph.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, width);
-        kgraph.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, height);
+        kgraph.setProperty(CoreOptions.CHILD_AREA_WIDTH, width);
+        kgraph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, height);
     }
     
 }

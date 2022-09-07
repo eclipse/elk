@@ -464,8 +464,8 @@ public final class ElkUtil {
             }
         }
         // max and min value represent outermost bounds of the layout
-        node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH, maxX - minX);
-        node.setProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT, maxY - minY);
+        node.setProperty(CoreOptions.CHILD_AREA_WIDTH, maxX - minX);
+        node.setProperty(CoreOptions.CHILD_AREA_HEIGHT, maxY - minY);
     }
 
     /**
