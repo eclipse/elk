@@ -91,14 +91,14 @@ public enum TopdownSizeApproximator {
                 throw exception;
             }
             
-            if (!(node.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH) 
-                    || node.hasProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT))) {
+            if (!(node.hasProperty(CoreOptions.CHILD_AREA_WIDTH) 
+                    || node.hasProperty(CoreOptions.CHILD_AREA_HEIGHT))) {
                 // compute child area if it hasn't been set by the layout algorithm
                 ElkUtil.computeChildAreaDimensions(node);
             }
             
-            double childAreaDesiredWidth = node.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_WIDTH);
-            double childAreaDesiredHeight = node.getProperty(CoreOptions.TOPDOWN_CHILD_AREA_HEIGHT);
+            double childAreaDesiredWidth = node.getProperty(CoreOptions.CHILD_AREA_WIDTH);
+            double childAreaDesiredHeight = node.getProperty(CoreOptions.CHILD_AREA_HEIGHT);
             
             double childAreaDesiredAspectRatio = childAreaDesiredWidth / childAreaDesiredHeight;
             
