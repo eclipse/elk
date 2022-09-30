@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.loops.ordering;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -135,6 +136,17 @@ public class PortRestorer {
                 addToTargetArea(sortedPorts.subList(0, splitIndex), side, PortSideArea.MIDDLE, AddMode.PREPEND);
                 addToTargetArea(
                         sortedPorts.subList(splitIndex, sortedPorts.size()), side, PortSideArea.MIDDLE, AddMode.APPEND);
+                break;
+                
+            case REVERSE_STACKED:
+//                Collections.reverse(sortedPorts);
+                // Compute which ports we want to have in the first group and which in the second group
+                splitIndex = computePortListSplitIndex(sortedPorts);
+                
+                // Prepend the first group to the middle list, and append the second group to that same list
+                addToTargetArea(sortedPorts.subList(0, splitIndex), side, PortSideArea.MIDDLE, AddMode.APPEND);
+                addToTargetArea(
+                        sortedPorts.subList(splitIndex, sortedPorts.size()), side, PortSideArea.MIDDLE, AddMode.PREPEND);
                 break;
                 
             default:
@@ -312,12 +324,13 @@ public class PortRestorer {
      */
     private void addToTargetArea(final Collection<SelfLoopPort> slPorts, final PortSide portSide,
             final PortSideArea area, final AddMode addMode) {
-        
+
         // Gather those ports that are currently hidden (if they're not hidden, there's no point restoring them)
         List<SelfLoopPort> hiddenPorts = slPorts.stream()
                 .filter(slPort -> slPort.isHidden())
                 .collect(Collectors.toList());
-        
+
+        Collections.reverse(hiddenPorts);
         List<SelfLoopPort> targetArea = targetAreas.get(portSide, area);
         if (addMode == AddMode.PREPEND) {
             targetArea.addAll(0, hiddenPorts);
