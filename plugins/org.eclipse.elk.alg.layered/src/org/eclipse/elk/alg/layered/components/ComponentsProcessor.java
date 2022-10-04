@@ -68,6 +68,9 @@ public final class ComponentsProcessor {
     /** Cached instance of a {@link ComponentGroupGraphPlacer}. */
     private final ComponentGroupModelOrderGraphPlacer componentGroupModelOrderGraphPlacer =
             new ComponentGroupModelOrderGraphPlacer();
+    /** Cached instance of a {@link ComponentGroupGraphPlacer}. */
+    private final ModelOrderRowGraphPlacer modelOrderRowGraphPlacer =
+            new ModelOrderRowGraphPlacer();
     /** Cached instance of a {@link SimpleRowGraphPlacer}. */
     private final SimpleRowGraphPlacer simpleRowGraphPlacer = new SimpleRowGraphPlacer();
     /** Graph placer to be used to combine the different components back into a single graph. */
@@ -141,6 +144,9 @@ public final class ComponentsProcessor {
                 if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)
                         == ComponentOrderingStrategy.FORCE_MODEL_ORDER) {
                     graphPlacer = componentGroupModelOrderGraphPlacer;
+                } else if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)
+                        == ComponentOrderingStrategy.MODEL_ORDER) {
+                    graphPlacer = modelOrderRowGraphPlacer;
                 } else {
                     graphPlacer = componentGroupGraphPlacer;
                 }

@@ -27,6 +27,10 @@ public enum ComponentOrderingStrategy {
      * Components are ordered by their minimal node model order. This may still have some bugs and may create worse
      * drawings in terms of size compared to INSIDE_PORT_SIDE_GROUPS.
      */
-    FORCE_MODEL_ORDER;    
+    FORCE_MODEL_ORDER,
+    /**
+     * Does not use component groups but just places components to create rows of components without subrows.
+     */
+    MODEL_ORDER;
 
 }
