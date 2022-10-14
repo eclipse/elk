@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p2layers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -146,6 +147,8 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
     private void checkNode(final LNode node1, final LGraph graph) {
         node1.id = 1;
         Layer layer1 = node1.getLayer();
+        List<LNode> shiftNodes = new ArrayList<>();
+        boolean violation = false;
         for (LPort port : node1.getPorts(PortType.OUTPUT)) {
             for (LEdge edge : port.getOutgoingEdges()) {
                 LNode node2 = edge.getTarget().getNode();
@@ -153,21 +156,57 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
                     Layer layer2 = node2.getLayer();
                     if (layer2.id <= layer1.id) {
                         // a violation was detected - move the target node to the next layer
-                        int newIndex = layer1.id + 1;
-                        if (newIndex == graph.getLayers().size()) {
-                            Layer newLayer = new Layer(graph);
-                            newLayer.id = newIndex;
-                            graph.getLayers().add(newLayer);
-                            node2.setLayer(newLayer);
-                        } else {
-                            Layer newLayer = graph.getLayers().get(newIndex);
-                            node2.setLayer(newLayer);
+                        shiftNodes.add(node2);
+                        if (!violation) {
+                            // check whether a violation occurs if node2 is shifted to next layer
+                            for (LPort port2 : node2.getPorts(PortType.OUTPUT)) {
+                                for (LEdge edge2 : port2.getOutgoingEdges()) {
+                                    LNode node3 = edge2.getTarget().getNode();
+                                    if (node2 != node3) {
+                                        Layer layer3 = node3.getLayer();
+                                        if (layer3.id <= layer2.id + 1) {
+                                            violation = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        checkNode(node2, graph);
+                    }
+                }
+            }
+        }
+        
+        if (!shiftNodes.isEmpty()) {
+            if (violation) {
+                // create new layer - increase the ids of the following layers
+                int newIndex = layer1.id + 1;
+                for (Layer l : graph.getLayers()) {
+                    if (l.id >= newIndex) {
+                        l.id++;
+                    }
+                }
+                Layer newLayer = new Layer(graph);
+                newLayer.id = newIndex;
+                graph.getLayers().add(newIndex, newLayer);
+                for (LNode node : shiftNodes) {
+                    node.setLayer(newLayer);
+                }
+            } else {
+                // shift nodes in next layer
+                int newIndex = layer1.id + 1;
+                for (LNode node : shiftNodes) {
+                    if (newIndex == graph.getLayers().size()) {
+                        Layer newLayer = new Layer(graph);
+                        newLayer.id = newIndex;
+                        graph.getLayers().add(newLayer);
+                        node.setLayer(newLayer);
+                    } else {
+                        Layer newLayer = graph.getLayers().get(newIndex);
+                        node.setLayer(newLayer);
                     }
                 }
             }
         }
     }
-
 }

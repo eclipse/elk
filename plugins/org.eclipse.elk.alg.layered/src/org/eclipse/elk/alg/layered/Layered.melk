@@ -181,6 +181,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports directionCongruency
     supports portSortingStrategy
     supports edgeRouting.polyline.slopedEdgeZoneWidth
+    supports crossingMinimization.inLayerPredOf
+    supports crossingMinimization.inLayerSuccOf
     supports layering.layerChoiceConstraint
     supports crossingMinimization.positionChoiceConstraint
     supports org.eclipse.elk.interactiveLayout
@@ -412,6 +414,28 @@ group crossingMinimization {
         default = false
         targets parents
         requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
+    }    
+    
+    option inLayerPredOf: String {
+        label "In Layer Predecessor of"
+        description 
+            "Allows to set a constraint which specifies of which node 
+             the current node is the predecessor.
+             If set to 's' then the node is the predecessor of 's' and is in the same layer"
+        default = null
+        targets nodes
+        requires org.eclipse.elk.interactiveLayout
+    }
+    
+    advanced option inLayerSuccOf: String {
+        label "In Layer Successor of"
+        description 
+            "Allows to set a constraint which specifies of which node 
+             the current node is the successor.
+             If set to 's' then the node is the successor of 's' and is in the same layer"
+        default = null
+        targets nodes
+        requires org.eclipse.elk.interactiveLayout
     }
 
     advanced option positionChoiceConstraint: int {

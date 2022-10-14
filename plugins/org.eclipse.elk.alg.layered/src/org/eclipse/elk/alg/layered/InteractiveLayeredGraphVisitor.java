@@ -26,6 +26,7 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.properties.IProperty;
 
 /**
  * Graph visitor which visits only the root node and recursively steps through the graph
@@ -144,24 +145,163 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
      *            The nodes of the graph for which the layers should be calculated.
      */
     private List<List<ElkNode>> calcLayerNodes(final List<ElkNode> nodes) {
-        ArrayList<ElkNode> allNodes = new ArrayList<ElkNode>();
+        ArrayList<ElkNode> nodesWithoutC = new ArrayList<ElkNode>();
         ArrayList<ElkNode> nodesWithLayerConstraint = new ArrayList<ElkNode>();
-        // Save the nodes which layer constraint are set in a separate list
+        List<ElkNode> nodesWithRC = new ArrayList<ElkNode>();
+        List<ElkNode> nodesWithRCAndLC = new ArrayList<ElkNode>();
+        
+        // Save the nodes in corresponding lists
         for (ElkNode node : nodes) {
-            allNodes.add(node);
-            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) != -1) {
+            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) != -1
+                    && (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
+                            || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null)) {
+                nodesWithRCAndLC.add(node);
+            } else if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) != -1) {
                 nodesWithLayerConstraint.add(node);
+            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
+                    || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+                nodesWithRC.add(node);
+            } else {
+                nodesWithoutC.add(node);
             }
         }
 
+        // handle nodes with rc and lc
+        updateListsForLayerAssignment(nodesWithRCAndLC, nodes, nodesWithLayerConstraint, nodesWithRC, nodesWithoutC);
+        
+        nodesWithRC = sortRCNodes(nodesWithRC, nodes, nodesWithoutC);
+        
         // Calculate layers for nodes without constraints based on their layerID,
         // which is set by the previous layout run.
-        List<List<ElkNode>> layerNodes = initialLayers(allNodes);
+        List<List<ElkNode>> layerNodes = initialLayers(nodesWithoutC);
 
         // Assign layers to nodes with constraints.
         assignLayersToNodesWithProperty(nodesWithLayerConstraint, layerNodes);
 
+        // add nodes with rC to the correct layer
+        assignLayersToNodesWithRC(nodesWithRC, layerNodes, nodes);
+
         return layerNodes;
+    }
+
+    /**
+     * Sets layer constraints for nodes that are referred by the nodes in {@code nodesWithRCAndLC} 
+     * and adjusts the lists.
+     * 
+     * @param nodesWithRCAndLC
+     *          nodes that have relative and layer constraints
+     * @param nodes
+     *          all nodes of the graph
+     * @param nodesWithRC 
+     *          nodes that have only relative constraints
+     * @param nodesWithLayerConstraint 
+     *          nodes that have only layer constraints
+     * @param nodesWithoutC 
+     *          nodes without any constraint
+     */
+    private void updateListsForLayerAssignment(final List<ElkNode> nodesWithRCAndLC, final List<ElkNode> nodes, 
+            final ArrayList<ElkNode> nodesWithLayerConstraint, final List<ElkNode> nodesWithRC, 
+            final ArrayList<ElkNode> nodesWithoutC) {        
+        for (int i = 0; i < nodesWithRCAndLC.size(); i++) {
+            ElkNode node = nodesWithRCAndLC.get(i);
+            nodesWithLayerConstraint.add(node);
+            List<ElkNode> targets = new ArrayList<ElkNode>();
+            // get target nodes
+            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                targets.add(getElkNode(nodes, 
+                        node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)));
+            } 
+            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+                targets.add(getElkNode(nodes, 
+                        node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)));
+            }
+            
+            for (ElkNode target : targets) {
+                // set layer constraint of target node
+                if (target.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                    int val = node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT);
+                    target.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, val);
+                    // node should be in the correct lists
+                    if (!nodesWithRC.contains(target)) {
+                        nodesWithLayerConstraint.add(target);
+                        nodesWithoutC.remove(target);
+                    } else {
+                        nodesWithRCAndLC.add(target);
+                        nodesWithRC.remove(target);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Assign the nodes with relative constraints to layers.
+     * 
+     * @param nodesWithRC
+     *          Nodes with relative constraints.
+     * @param layering
+     *          List that contains the layers with their corresponding nodes.
+     * @param allNodes
+     *          All nodes of the graph.
+     */
+    private void assignLayersToNodesWithRC(final List<ElkNode> nodesWithRC, final List<List<ElkNode>> layering, 
+            final List<ElkNode> allNodes) {
+        for (int i = 0; i < nodesWithRC.size(); i++) {
+            ElkNode node = nodesWithRC.get(i);
+            ElkNode succNode = null;
+            ElkNode predNode = null;
+            String succName = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF);
+            String predName = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF);
+            if (succName != null) {
+                succNode = getElkNode(allNodes, succName);
+            } 
+            if (predName != null) {
+                predNode = getElkNode(allNodes, predName);
+            }
+            
+            IProperty<Integer> layProp = LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT;
+            
+            if (succNode != null && predNode != null) {
+                // if both rel cons are set, it may be that the layer ids of 
+                // some nodes of the chain must be uptdated too
+                List<ElkNode> chain = getChainByAllNodes(node, allNodes);
+                int succVal = succNode.getProperty(layProp) != -1 ? succNode.getProperty(layProp) 
+                        : succNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
+                int predVal = predNode.getProperty(layProp) != -1 ? predNode.getProperty(layProp) 
+                        : predNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
+                int val = succVal > predVal ? succVal : predVal;
+                // update layer ids
+                for (ElkNode n : chain) {
+                    int oldVal = n.getProperty(LayeredOptions.LAYERING_LAYER_ID); 
+                    if (oldVal != val) {
+                        n.setProperty(LayeredOptions.LAYERING_LAYER_ID, val);
+                        shiftOtherNodes(n, val, layering, true);
+                        shiftOtherNodes(n, val, layering, false);
+                    }
+                    layering.get(oldVal).remove(n);
+                    layering.get(val).add(n);
+                }
+            } else {
+                // determine layer of referenced node
+                int succVal = -1;
+                if (succNode != null) {
+                    succVal = succNode.getProperty(layProp) != -1 ? succNode.getProperty(layProp) 
+                            : succNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
+                }
+                int predVal = -1;
+                if (predNode != null) {
+                    predVal = predNode.getProperty(layProp) != -1 ? predNode.getProperty(layProp) 
+                            : predNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
+                }
+                
+                // update layer id of the current node
+                int val = succVal > predVal ? succVal : predVal;
+                node.setProperty(LayeredOptions.LAYERING_LAYER_ID, val);
+                shiftOtherNodes(node, val, layering, true);
+                shiftOtherNodes(node, val, layering, false);
+                layering.get(val).add(node);
+            }
+        }
     }
 
     /**
@@ -261,6 +401,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             if (nodesOfLayer.contains(node)) {
                 nodesOfLayer.remove(node);
                 List<ElkNode> newLayer;
+                node.setProperty(LayeredOptions.LAYERING_LAYER_ID, layer + 1);
                 if (layer + 1 < layerNodes.size()) {
                     newLayer = layerNodes.get(layer + 1);
                     newLayer.add(node);
@@ -288,6 +429,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
 
         List<List<ElkNode>> layerNodes = new ArrayList<List<ElkNode>>();
         List<ElkNode> nodesOfLayer = new ArrayList<ElkNode>();
+        int layerId = 0;
         int currentLayer = -1;
         // Assign nodes to layers.
         for (ElkNode node : nodes) {
@@ -296,6 +438,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 // Check if a node is added to a new layer.
                 if (!nodesOfLayer.isEmpty()) {
                     layerNodes.add(nodesOfLayer);
+                    layerId++;
                 }
                 nodesOfLayer = new ArrayList<ElkNode>();
                 currentLayer = layer;
@@ -303,6 +446,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
 
             // Nodes with layer constraint should be ignored, since they are added later.
             if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                node.setProperty(LayeredOptions.LAYERING_LAYER_ID, layerId);
                 nodesOfLayer.add(node);
             }
         }
@@ -373,26 +517,121 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
      */
     private void setCoordinatesOrthogonalToLayoutDirection(final List<ElkNode> nodesOfLayer, final int layerId,
             final Direction direction) {
-        // Separate nodes with and without position constraints.
-        List<ElkNode> nodesWithPositionConstraint = new ArrayList<ElkNode>();
-        List<ElkNode> nodes = new ArrayList<ElkNode>();
+        // Separate nodes with and without constraints.
+        List<ElkNode> allNodes = new ArrayList<ElkNode>();
+        List<ElkNode> nodesWithoutC = new ArrayList<ElkNode>();
+        List<ElkNode> nodesWithPCAndRC = new ArrayList<ElkNode>();
+        List<ElkNode> nodesWithPC = new ArrayList<ElkNode>();
+        List<ElkNode> nodesWithOneRC = new ArrayList<ElkNode>();
+        List<ElkNode> nodesWithBothRC = new ArrayList<ElkNode>();
+        
         for (ElkNode node : nodesOfLayer) {
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT) != -1) {
-                nodesWithPositionConstraint.add(node);
+            allNodes.add(node);
+            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT) != -1
+                    && (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
+                            || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null)) {
+                nodesWithPCAndRC.add(node);
+            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT) != -1) {
+                nodesWithPC.add(node);
+            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
+                    && node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+                nodesWithBothRC.add(node);
+            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
+                    || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+                nodesWithOneRC.add(node);
             } else {
-                nodes.add(node);
+                nodesWithoutC.add(node);
             }
         }
+        
+        // Sort nodes with constraint by their position id.
+        nodesWithPC.sort((ElkNode a, ElkNode b) -> {
+            return a.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_ID)
+                    - b.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_ID);
+        });
+        
+        // each node should only have one relative constraint
+        for (int n = 0; n < nodesWithBothRC.size(); n++) {
+            // pred cons is translated to succ cons for the following node
+            ElkNode node = nodesWithBothRC.get(n);
+            String t = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF);
+            ElkNode target = getElkNode(allNodes, t);
+            node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF, null);
+            int posCosTarget = target.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);   
+            if (posCosTarget != -1) {
+                node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, posCosTarget - 1);
+                nodesWithPCAndRC.add(node);
+            } else {
+                target.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF, node.getIdentifier());
+                nodesWithOneRC.add(node);
+                if (target.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) == null) {
+                    nodesWithoutC.remove(target);
+                    nodesWithOneRC.add(target);
+                } else {
+                    nodesWithOneRC.remove(target);
+                    nodesWithBothRC.add(n + 1, target);
+                }
+            }
+        }
+        
+        // handle nodes with relative and position constraint
+        // all nodes the are connected to the ones with the pos cons through relative constraints get also a pc
+        handleNodesWithPCAndRC(allNodes, nodesWithoutC, nodesWithOneRC, nodesWithPC, nodesWithPCAndRC);
 
         // Determine the order of the nodes.
-        sortNodesInLayer(nodesWithPositionConstraint, nodes, direction);
-        // Add the nodes with position constraint at the desired position in their layer.
-        for (ElkNode node : nodesWithPositionConstraint) {
-            int pos = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
-            if (pos < nodes.size()) {
-                nodes.add(pos, node);
+        nodesWithOneRC = sortRCNodes(nodesWithOneRC, allNodes, nodesWithoutC);
+        sortNodesInLayer(nodesWithPC, nodesWithoutC, direction);
+        
+        // Add nodes with relative constraint
+        for (ElkNode node : nodesWithOneRC) {
+            ElkNode[] targets = new ElkNode[2];
+            
+            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                // pred is defined
+                IProperty<String> nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF;
+                targets[0] = getElkNode(allNodes, node.getProperty(nodeProp));
             } else {
-                nodes.add(node);
+                // succ is defined
+                IProperty<String> nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF;
+                targets[1] = getElkNode(allNodes, node.getProperty(nodeProp));
+            }
+            
+            for (int t = 0; t < targets.length; t++) {
+                if (targets[t] != null) {
+                    int val = targets[t].getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
+                    if (val == -1) {
+                        // add node at correct position
+                        int index = t == 0 ? nodesWithoutC.indexOf(targets[t]) : nodesWithoutC.indexOf(targets[t]) + 1;
+                        nodesWithoutC.add(index, node);
+                    } else {
+                        // set pos cons on node because target has pos cons 
+                        int value = t == 0 ? val - 1 : val + 1;
+                        IProperty<String> nodeProp = t == 0 ? LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF 
+                                : LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF;
+                        node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, value);
+                        node.setProperty(nodeProp, null);
+                        nodesWithPC.add(node);
+                    }
+                }
+            }
+        }
+        
+        // Sort nodes with constraint by their position constraint.
+        nodesWithPC.sort((ElkNode a, ElkNode b) -> {
+            return a.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)
+                    - b.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
+        });
+            
+        // Add the nodes with position constraint at the desired position in their layer.
+        for (ElkNode node : nodesWithPC) {
+            int pos = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
+            if (pos < nodesWithoutC.size()) {
+                if (pos > 0) {
+                    swapNodes(nodesWithoutC, pos);
+                }
+                nodesWithoutC.add(pos, node);
+            } else {
+                nodesWithoutC.add(node);
             }
         }
 
@@ -401,21 +640,177 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         case UNDEFINED:
         case RIGHT:
         case LEFT:
-            double yPos = nodes.get(0).getY();
-            for (ElkNode node : nodes) {
+            double yPos = nodesWithoutC.get(0).getY();
+            for (ElkNode node : nodesWithoutC) {
                 node.setProperty(LayeredOptions.POSITION, new KVector(node.getX(), yPos));
                 yPos += node.getHeight() + PSEUDO_POSITION_SPACING;
             }
             break;
         case DOWN:
         case UP:
-            double xPos = nodes.get(0).getX() + 2 * layerId * PSEUDO_POSITION_SPACING;
-            for (ElkNode node : nodes) {
+            double xPos = nodesWithoutC.get(0).getX() + 2 * layerId * PSEUDO_POSITION_SPACING;
+            for (ElkNode node : nodesWithoutC) {
                 node.setProperty(LayeredOptions.POSITION, new KVector(xPos, node.getY()));
                 xPos += node.getWidth() + PSEUDO_POSITION_SPACING;
             }
             break;
         }
+    }
+
+    /**
+     * Handles nodes with pos and rel cons by adding pos cons to all nodes that are connected to them by rel cons.
+     * @param allNodes
+     *          all nodes of the graph
+     * @param nodes
+     *          nodes without any constraint
+     * @param nodesWithRC
+     *          nodes with only relative constraints
+     * @param nodesWithPositionConstraint
+     *          nodes with only position constraints
+     * @param nodesWithPCAndRC
+     *          nodes with pos and rel constraints
+     */
+    private void handleNodesWithPCAndRC(final List<ElkNode> allNodes, final List<ElkNode> nodes, 
+            final List<ElkNode> nodesWithRC, final List<ElkNode> nodesWithPositionConstraint, 
+            final List<ElkNode> nodesWithPCAndRC) {
+        for (int i = 0; i < nodesWithPCAndRC.size(); i++) {
+            ElkNode node = nodesWithPCAndRC.get(i);
+            nodesWithPositionConstraint.add(node);
+            
+            IProperty<String> nodeProp = null;
+            List<ElkNode> targets = new ArrayList<>();
+            List<Integer> vals = new ArrayList<>();
+            int val = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
+            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                // pred is defined
+                nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF;
+                targets.add(getElkNode(allNodes, node.getProperty(nodeProp)));
+                vals.add(val + 1);
+                node.setProperty(nodeProp, null);
+            } 
+            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+                // succ is defined
+                nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF;
+                targets.add(getElkNode(allNodes, node.getProperty(nodeProp)));
+                vals.add(val - 1);
+                node.setProperty(nodeProp, null);
+            }
+            
+            // targets should be in the correct lists
+            for (int t = 0; t < targets.size(); t++) {
+                ElkNode target = targets.get(t);
+                if (!nodesWithPositionConstraint.contains(target)) {
+                    target.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, vals.get(t));
+                    if (!nodesWithRC.contains(target)) {
+                        nodesWithPositionConstraint.add(target);
+                        nodes.remove(target);
+                    } else {
+                        nodesWithPCAndRC.add(target);
+                        nodesWithRC.remove(target);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Swaps nodes such that a node that should be placed at {@code pos} does not interrupt nodes that
+     * are connected with a relative constraint.
+     * 
+     * @param nodes
+     *          Nodes in the current layer.
+     * @param pos
+     *          Position a node should be placed at in the current layer.
+     */
+    private void swapNodes(final List<ElkNode> nodes, final int pos) {
+        ElkNode pred = nodes.get(pos - 1);
+        ElkNode succ = nodes.get(pos);
+        List<ElkNode> chain = getChainByLayerNodes(pred, nodes);
+        if (chain.contains(succ)) {
+            // nodes only must be shifted if a relation between pred and succ exists
+
+            // number nodes that must be swapped
+            int count = chain.indexOf(succ);
+            // end of relative constraints chain
+            int end = pos + (chain.size() - count);
+            
+            // determine nodes to swap
+            List<ElkNode> swapNodes = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                if (end >= nodes.size()) {
+                    break;
+                }
+                ElkNode cur = nodes.get(end);
+                chain = getChainByLayerNodes(cur, nodes);
+                if (chain.size() <= count - i) {
+                    nodes.removeAll(chain);
+                    swapNodes.addAll(chain);
+                    i += chain.size() - 1;
+                } else {
+                    // skip chains of relative constraints
+                    end += chain.size();
+                }
+            }
+            
+            // add swapNodes 
+            nodes.addAll(pos - count, swapNodes);
+        }
+    }
+
+    /**
+     * sorts {@code nodesWithRC} such that referred nodes that have also relative constraints come first.
+     * 
+     * @param nodesWithRC
+     *          nodes with relative constraints
+     * @param allNodes 
+     *          all nodes of the graph
+     * @param nodesWithoutC 
+     *          nodes without any constraints
+     * @return sorted nodes that have relative constraints
+     */
+    private List<ElkNode> sortRCNodes(final List<ElkNode> nodesWithRC, final List<ElkNode> allNodes, 
+            final List<ElkNode> nodesWithoutC) {
+        List<ElkNode> nodes = new ArrayList<>();
+        while (!nodesWithRC.isEmpty()) {
+            boolean circle = true;
+            for (int i = 0; i < nodesWithRC.size(); i++) {
+                ElkNode cur = nodesWithRC.get(i);
+                if (cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                    // predecessor is defined
+                    ElkNode target = getElkNode(allNodes, 
+                            cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF));
+                    if (!nodesWithRC.contains(target)) {
+                        nodes.add(cur);
+                        nodesWithRC.remove(i);
+                        i--;
+                        circle = false;
+                    }
+                } else {
+                    // successor is defined
+                    ElkNode target = getElkNode(allNodes, 
+                            cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF));
+                    if (!nodesWithRC.contains(target)) {
+                        nodes.add(cur);
+                        nodesWithRC.remove(i);
+                        i--;
+                        circle = false;
+                    }
+                }
+            }
+            
+            // if relative constraints create a circle, remove one of the constraints
+            if (circle) {
+                ElkNode cur = nodesWithRC.get(0);
+                if (cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                    cur.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF, null);
+                } else {
+                    cur.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF, null);
+                }
+                nodesWithRC.remove(0);
+                nodesWithoutC.add(cur);
+            }
+        }
+        return nodes;
     }
 
     /**
@@ -463,5 +858,90 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         parent.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.INTERACTIVE);
         parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.INTERACTIVE);
     }
+    
+    /**
+     * gets the elknode with {@code id}.
+     * 
+     * @param nodes
+     *          all nodes of the graph
+     * @param id
+     *          id of the elknode that is searched
+     * @return the elknode with the corresponding {@code id}
+     */
+    private ElkNode getElkNode(final List<ElkNode> nodes, final String id) {
+        // TODO: ElkNode direkt über id holen?
+        ElkNode n = null;
+        for (ElkNode eN : nodes) {
+            if (id.equals(eN.getIdentifier())) {
+                n = eN;
+            }
+        }
+        return n;
+    }
 
+    /**
+     * Determines the nodes that are connected to {@code node} by relative constraints.
+     * The returned list of nodes is sorted based on the position of the nodes.
+     * 
+     * @param node One node of the chain
+     * @param layerNodes Nodes that are in the same layer as {@code node}
+     */
+    private List<ElkNode> getChainByLayerNodes(final ElkNode node, final List<ElkNode> layerNodes) {
+        int pos = layerNodes.indexOf(node);
+        List<ElkNode> chainNodes = new ArrayList<ElkNode>();
+        chainNodes.add(node);
+        
+        // from node to the start
+        for (int i = pos - 1; i >= 0; i--) {
+            if (layerNodes.get(i).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
+                || layerNodes.get(i + 1).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+                    chainNodes.add(0, layerNodes.get(i));
+            } else {
+                break;
+            }
+        }
+        
+        // count from node to the end
+        for (int i = pos + 1; i < layerNodes.size(); i++) {
+            if (layerNodes.get(i).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null
+                || layerNodes.get(i - 1).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                    chainNodes.add(layerNodes.get(i));
+            } else {
+                break;
+            }
+        }
+        
+        return chainNodes;
+    }
+    
+    /**
+     * Determines nodes that are connected to {@code node} by relative constraints.
+     * @param node
+     *          A node of the graph
+     * @param allNodes
+     *          All nodes of the graph
+     * @return The nodes that are connected to {@code node} (unsorted).
+     */
+    private List<ElkNode> getChainByAllNodes(final ElkNode node, final List<ElkNode> allNodes) {
+        List<ElkNode> chain = new ArrayList<>();
+        chain.add(node);
+        
+        ElkNode succNode = null;
+        ElkNode predNode = null;
+        String succName = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF);
+        String predName = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF);
+        while (succName != null) {
+            succNode = getElkNode(allNodes, succName);
+            chain.add(succNode);
+            succName = succNode.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF);
+        }
+        while (predName != null) {
+            predNode = getElkNode(allNodes, predName);
+            chain.add(predNode);
+            predName = predNode.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF);
+        }
+        
+        return chain;
+    }
+    
 }
