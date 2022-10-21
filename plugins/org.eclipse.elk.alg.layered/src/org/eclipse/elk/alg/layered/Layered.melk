@@ -236,7 +236,7 @@ group layering {
         targets nodes
     }
 
-    advanced option layerChoiceConstraint: int {
+    advanced option layerChoiceConstraint: Integer {
         label "Layer Choice Constraint"
         description
             "Allows to set a constraint regarding the layer placement of a node. 
@@ -247,7 +247,7 @@ group layering {
              Note that this option is not part of any of ELK Layered's default configurations 
              but is only evaluated as part of the `InteractiveLayeredGraphVisitor`,
              which must be applied manually or used via the `DiagramLayoutEngine."
-        default = -1
+        default = null
         lowerBound = -1
         targets nodes
     }
@@ -424,7 +424,6 @@ group crossingMinimization {
              If set to 's' then the node is the predecessor of 's' and is in the same layer"
         default = null
         targets nodes
-        requires org.eclipse.elk.interactiveLayout
     }
     
     advanced option inLayerSuccOf: String {
@@ -435,10 +434,9 @@ group crossingMinimization {
              If set to 's' then the node is the successor of 's' and is in the same layer"
         default = null
         targets nodes
-        requires org.eclipse.elk.interactiveLayout
     }
 
-    advanced option positionChoiceConstraint: int {
+    advanced option positionChoiceConstraint: Integer {
         label "Position Choice Constraint"
         description
             "Allows to set a constraint regarding the position placement of a node in a layer. 
@@ -449,7 +447,7 @@ group crossingMinimization {
              Note that this option is not part of any of ELK Layered's default configurations 
              but is only evaluated as part of the `InteractiveLayeredGraphVisitor`,
              which must be applied manually or used via the `DiagramLayoutEngine. "
-        default = -1
+        default = null
         lowerBound = -1
         targets nodes
     }

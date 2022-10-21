@@ -100,12 +100,12 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                         node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.NONE);
                         switch (constraint) {
                         case FIRST:
-                            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                            if (!node.hasProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)) {
                                 node.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, 0);
                             }
                             break;
                         case LAST:
-                            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                            if (!node.hasProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)) {
                                 node.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, LAST_LAYER_INDEX);
                             }
                             break;
@@ -149,17 +149,16 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         ArrayList<ElkNode> nodesWithLayerConstraint = new ArrayList<ElkNode>();
         List<ElkNode> nodesWithRC = new ArrayList<ElkNode>();
         List<ElkNode> nodesWithRCAndLC = new ArrayList<ElkNode>();
-        
         // Save the nodes in corresponding lists
         for (ElkNode node : nodes) {
-            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) != -1
-                    && (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
-                            || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null)) {
+            if (node.hasProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)
+                    && (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)
+                            || node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF))) {
                 nodesWithRCAndLC.add(node);
-            } else if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) != -1) {
+            } else if (node.hasProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)) {
                 nodesWithLayerConstraint.add(node);
-            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
-                    || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+            } else if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)
+                    || node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)) {
                 nodesWithRC.add(node);
             } else {
                 nodesWithoutC.add(node);
@@ -207,18 +206,18 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             nodesWithLayerConstraint.add(node);
             List<ElkNode> targets = new ArrayList<ElkNode>();
             // get target nodes
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+            if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                 targets.add(getElkNode(nodes, 
                         node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)));
             } 
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+            if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)) {
                 targets.add(getElkNode(nodes, 
                         node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)));
             }
             
             for (ElkNode target : targets) {
                 // set layer constraint of target node
-                if (target.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+                if (!target.hasProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)) {
                     int val = node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT);
                     target.setProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT, val);
                     // node should be in the correct lists
@@ -265,9 +264,9 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 // if both rel cons are set, it may be that the layer ids of 
                 // some nodes of the chain must be uptdated too
                 List<ElkNode> chain = getChainByAllNodes(node, allNodes);
-                int succVal = succNode.getProperty(layProp) != -1 ? succNode.getProperty(layProp) 
+                int succVal = succNode.hasProperty(layProp) ? succNode.getProperty(layProp) 
                         : succNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
-                int predVal = predNode.getProperty(layProp) != -1 ? predNode.getProperty(layProp) 
+                int predVal = predNode.hasProperty(layProp) ? predNode.getProperty(layProp) 
                         : predNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
                 int val = succVal > predVal ? succVal : predVal;
                 // update layer ids
@@ -285,12 +284,12 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 // determine layer of referenced node
                 int succVal = -1;
                 if (succNode != null) {
-                    succVal = succNode.getProperty(layProp) != -1 ? succNode.getProperty(layProp) 
+                    succVal = succNode.hasProperty(layProp) ? succNode.getProperty(layProp) 
                             : succNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
                 }
                 int predVal = -1;
                 if (predNode != null) {
-                    predVal = predNode.getProperty(layProp) != -1 ? predNode.getProperty(layProp) 
+                    predVal = predNode.hasProperty(layProp) ? predNode.getProperty(layProp) 
                             : predNode.getProperty(LayeredOptions.LAYERING_LAYER_ID);
                 }
                 
@@ -329,12 +328,14 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         int diff = 0;
         for (ElkNode node : nodesWithLayerConstraint) {
             int currentLayer = node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) - diff;
-            if (currentLayer < layering.size()) {
+            if (currentLayer < layering.size() && currentLayer >= 0) {
                 List<ElkNode> nodesOfLayer = layering.get(currentLayer);
                 // Shift nodes to remove in-layer edges.
                 shiftOtherNodes(node, currentLayer, layering, true);
                 shiftOtherNodes(node, currentLayer, layering, false);
                 nodesOfLayer.add(node);
+            } else if (currentLayer == -1) {
+                layering.add(0, new ArrayList<>(Arrays.asList(node)));
             } else {
                 diff = diff + currentLayer - layering.size();
                 layering.add(new ArrayList<>(Arrays.asList(node)));
@@ -445,7 +446,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             }
 
             // Nodes with layer constraint should be ignored, since they are added later.
-            if (node.getProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT) == -1) {
+            if (!node.hasProperty(LayeredOptions.LAYERING_LAYER_CHOICE_CONSTRAINT)) {
                 node.setProperty(LayeredOptions.LAYERING_LAYER_ID, layerId);
                 nodesOfLayer.add(node);
             }
@@ -527,17 +528,17 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         
         for (ElkNode node : nodesOfLayer) {
             allNodes.add(node);
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT) != -1
-                    && (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
-                            || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null)) {
+            if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)
+                    && (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)
+                            || node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF))) {
                 nodesWithPCAndRC.add(node);
-            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT) != -1) {
+            } else if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)) {
                 nodesWithPC.add(node);
-            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
-                    && node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+            } else if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)
+                    && node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)) {
                 nodesWithBothRC.add(node);
-            } else if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
-                    || node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+            } else if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)
+                    || node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)) {
                 nodesWithOneRC.add(node);
             } else {
                 nodesWithoutC.add(node);
@@ -557,14 +558,14 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             String t = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF);
             ElkNode target = getElkNode(allNodes, t);
             node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF, null);
-            int posCosTarget = target.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);   
-            if (posCosTarget != -1) {
+            if (target.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)) {
+                int posCosTarget = target.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
                 node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT, posCosTarget - 1);
                 nodesWithPCAndRC.add(node);
             } else {
                 target.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF, node.getIdentifier());
                 nodesWithOneRC.add(node);
-                if (target.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) == null) {
+                if (!target.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                     nodesWithoutC.remove(target);
                     nodesWithOneRC.add(target);
                 } else {
@@ -586,7 +587,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         for (ElkNode node : nodesWithOneRC) {
             ElkNode[] targets = new ElkNode[2];
             
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+            if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                 // pred is defined
                 IProperty<String> nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF;
                 targets[0] = getElkNode(allNodes, node.getProperty(nodeProp));
@@ -598,13 +599,14 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             
             for (int t = 0; t < targets.length; t++) {
                 if (targets[t] != null) {
-                    int val = targets[t].getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
-                    if (val == -1) {
+                    if (!targets[t].hasProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT)) {
                         // add node at correct position
                         int index = t == 0 ? nodesWithoutC.indexOf(targets[t]) : nodesWithoutC.indexOf(targets[t]) + 1;
                         nodesWithoutC.add(index, node);
                     } else {
                         // set pos cons on node because target has pos cons 
+                        int val =
+                                targets[t].getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
                         int value = t == 0 ? val - 1 : val + 1;
                         IProperty<String> nodeProp = t == 0 ? LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF 
                                 : LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF;
@@ -681,14 +683,14 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             List<ElkNode> targets = new ArrayList<>();
             List<Integer> vals = new ArrayList<>();
             int val = node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_POSITION_CHOICE_CONSTRAINT);
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+            if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                 // pred is defined
                 nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF;
                 targets.add(getElkNode(allNodes, node.getProperty(nodeProp)));
                 vals.add(val + 1);
                 node.setProperty(nodeProp, null);
             } 
-            if (node.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+            if (node.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)) {
                 // succ is defined
                 nodeProp = LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF;
                 targets.add(getElkNode(allNodes, node.getProperty(nodeProp)));
@@ -775,7 +777,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             boolean circle = true;
             for (int i = 0; i < nodesWithRC.size(); i++) {
                 ElkNode cur = nodesWithRC.get(i);
-                if (cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                if (cur.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                     // predecessor is defined
                     ElkNode target = getElkNode(allNodes, 
                             cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF));
@@ -801,7 +803,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             // if relative constraints create a circle, remove one of the constraints
             if (circle) {
                 ElkNode cur = nodesWithRC.get(0);
-                if (cur.getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+                if (cur.hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                     cur.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF, null);
                 } else {
                     cur.setProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF, null);
@@ -893,8 +895,8 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         
         // from node to the start
         for (int i = pos - 1; i >= 0; i--) {
-            if (layerNodes.get(i).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null
-                || layerNodes.get(i + 1).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null) {
+            if (layerNodes.get(i).hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)
+                || layerNodes.get(i + 1).hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)) {
                     chainNodes.add(0, layerNodes.get(i));
             } else {
                 break;
@@ -903,8 +905,8 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         
         // count from node to the end
         for (int i = pos + 1; i < layerNodes.size(); i++) {
-            if (layerNodes.get(i).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF) != null
-                || layerNodes.get(i - 1).getProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF) != null) {
+            if (layerNodes.get(i).hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_SUCC_OF)
+                || layerNodes.get(i - 1).hasProperty(LayeredOptions.CROSSING_MINIMIZATION_IN_LAYER_PRED_OF)) {
                     chainNodes.add(layerNodes.get(i));
             } else {
                 break;
