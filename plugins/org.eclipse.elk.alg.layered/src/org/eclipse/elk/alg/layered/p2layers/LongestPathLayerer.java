@@ -114,6 +114,29 @@ public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGr
         }
     }
     
+    private int visitIterative(final LNode node) {
+        int height = nodeHeights[node.id];
+        if (height >= 0) {
+            return height;
+        } else {
+            int maxHeight = 1;
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    LNode targetNode = edge.getTarget().getNode();
+                    
+                    if (node != targetNode) {
+                        // recursive call with return
+                        // need to defer the execution with own stack to prevent stackoverflow 
+                        int targetHeight = visit(targetNode);
+                        maxHeight = Math.max(maxHeight, targetHeight + 1);
+                    }
+                }
+            }
+            putNode(node, maxHeight);
+            return maxHeight;
+        }
+    }
+    
     /**
      * Puts the given node into the layered graph, adding new layers as necessary.
      * 
