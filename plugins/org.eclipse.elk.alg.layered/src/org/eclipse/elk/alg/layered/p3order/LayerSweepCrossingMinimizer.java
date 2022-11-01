@@ -229,8 +229,7 @@ public class LayerSweepCrossingMinimizer
         
         if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
                 && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))
-                || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE
-                || gData.lGraph().getProperty(LayeredOptions.INTERACTIVE_LAYOUT) /* FIXME */) {
+                || gData.lGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) == OrderingStrategy.NONE) {
             gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         } else {
             isForwardSweep = gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER);

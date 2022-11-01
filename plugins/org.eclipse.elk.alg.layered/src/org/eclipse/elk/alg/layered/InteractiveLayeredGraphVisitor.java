@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.layered.options.LayerConstraint;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.LayeringStrategy;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
@@ -85,8 +88,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
     /**
      * Sets pseudo positions and interactive strategies for the given graph.
      * 
-     * @param root
-     *            Root of the graph
+     * @param root Root of the graph
      */
     private void setInteractiveOptionsAndPseudoPositions(final ElkNode root) {
         if (!root.getChildren().isEmpty()) {
@@ -121,8 +123,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
     /**
      * Sets the coordinates of the nodes in the graph {@code root} according to the set constraints.
      * 
-     * @param root
-     *            The root of the graph that should be layouted.
+     * @param root The root of the graph that should be layouted.
      */
     private void setCoordinates(final ElkNode root) {
         List<List<ElkNode>> layers = calcLayerNodes(root.getChildren());
@@ -141,8 +142,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
     /**
      * Calculates the layers the {@code nodes} belong to.
      * 
-     * @param nodes
-     *            The nodes of the graph for which the layers should be calculated.
+     * @param nodes The nodes of the graph for which the layers should be calculated.
      */
     private List<List<ElkNode>> calcLayerNodes(final List<ElkNode> nodes) {
         ArrayList<ElkNode> nodesWithoutC = new ArrayList<ElkNode>();
@@ -165,7 +165,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             }
         }
 
-        // handle nodes with rc and lc
+        // Handle nodes with relative constraint and and layer constraint
         updateListsForLayerAssignment(nodesWithRCAndLC, nodes, nodesWithLayerConstraint, nodesWithRC, nodesWithoutC);
         
         nodesWithRC = sortRCNodes(nodesWithRC, nodes, nodesWithoutC);
@@ -859,26 +859,26 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
         parent.setProperty(LayeredOptions.LAYERING_STRATEGY, LayeringStrategy.INTERACTIVE);
         parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.INTERACTIVE);
+        // Disable model order for the final run, since it destroys the ordering created by the constraints.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER, false);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.LAYER_SWEEP);
     }
     
     /**
-     * gets the elknode with {@code id}.
+     * Gets the ElkNode with {@code id} as identifier.
      * 
-     * @param nodes
-     *          all nodes of the graph
-     * @param id
-     *          id of the elknode that is searched
-     * @return the elknode with the corresponding {@code id}
+     * @param nodes All nodes of the graph
+     * @param id Id of the ElkNode that is searched
+     * @return the ElkNode with the corresponding {@code id} or null if it could not be found.
      */
     private ElkNode getElkNode(final List<ElkNode> nodes, final String id) {
-        // TODO: ElkNode direkt über id holen?
-        ElkNode n = null;
         for (ElkNode eN : nodes) {
             if (id.equals(eN.getIdentifier())) {
-                n = eN;
+                return eN;
             }
         }
-        return n;
+        return null;
     }
 
     /**
