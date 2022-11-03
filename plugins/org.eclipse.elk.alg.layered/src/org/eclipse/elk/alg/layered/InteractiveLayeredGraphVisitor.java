@@ -719,32 +719,34 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
      * Swaps nodes such that a node that should be placed at {@code pos} does not interrupt nodes that
      * are connected with a relative constraint.
      * 
-     * @param nodes
-     *          Nodes in the current layer.
-     * @param pos
-     *          Position a node should be placed at in the current layer.
+     * @param nodes Nodes in the current layer.
+     * @param position Position a node should be placed at in the current layer.
      */
-    private void swapNodes(final List<ElkNode> nodes, final int pos) {
-        ElkNode pred = nodes.get(pos - 1);
-        ElkNode succ = nodes.get(pos);
+    private void swapNodes(final List<ElkNode> nodes, final int position) {
+        // Get surrounding nodes for node put at the given position.
+        ElkNode pred = nodes.get(position - 1);
+        ElkNode succ = nodes.get(position);
+        
+        // Get all nodes that are connected by relative constraints to the predecessor.
         List<ElkNode> chain = getChainByLayerNodes(pred, nodes);
         if (chain.contains(succ)) {
-            // nodes only must be shifted if a relation between pred and succ exists
+            // Nodes only must be shifted if a relation between pred and succ exists
 
-            // number nodes that must be swapped
+            // Number nodes that must be swapped
             int count = chain.indexOf(succ);
-            // end of relative constraints chain
-            int end = pos + (chain.size() - count);
+            // End of relative constraints chain
+            int end = position + (chain.size() - count);
             
-            // determine nodes to swap
+            // Determine nodes to swap
             List<ElkNode> swapNodes = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 if (end >= nodes.size()) {
                     break;
                 }
-                ElkNode cur = nodes.get(end);
-                chain = getChainByLayerNodes(cur, nodes);
-                if (chain.size() <= count - i) {
+                ElkNode currentNode = nodes.get(end);
+                chain = getChainByLayerNodes(currentNode, nodes);
+                // Check whether the number of nodes linked by relative constraints
+                if (chain.size() + i <= count) {
                     nodes.removeAll(chain);
                     swapNodes.addAll(chain);
                     i += chain.size() - 1;
@@ -755,7 +757,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
             }
             
             // add swapNodes 
-            nodes.addAll(pos - count, swapNodes);
+            nodes.addAll(position - count, swapNodes);
         }
     }
 
