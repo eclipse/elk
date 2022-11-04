@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p2layers;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
