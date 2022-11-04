@@ -10,8 +10,10 @@
 package org.eclipse.elk.alg.layered.p2layers;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -121,11 +123,12 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
         // correct the layering respecting the graph topology, so edges point from left to right
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             if (node.id == 0) {
-                List<LNode> shiftedNodes = checkNode(node, layeredGraph);
+                LinkedHashSet<LNode> shiftedNodes = checkNode(node, layeredGraph);
                 // Since shiftedNodes might require other nodes to be shifted, do it again until all shiftedNodes
                 // do no longer require another shift.
                 while (!shiftedNodes.isEmpty()) {
-                    LNode nodeToCheck = shiftedNodes.remove(0);
+                    LNode nodeToCheck = shiftedNodes.iterator().next();
+                    shiftedNodes.remove(nodeToCheck);
                     shiftedNodes.addAll(checkNode(nodeToCheck, layeredGraph));
                 } 
             }
@@ -150,10 +153,10 @@ public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGr
      * @param node1 a node
      * @param graph the layered graph
      */
-    private List<LNode> checkNode(final LNode node1, final LGraph graph) {
+    private LinkedHashSet<LNode> checkNode(final LNode node1, final LGraph graph) {
         node1.id = 1;
         Layer layer1 = node1.getLayer();
-        List<LNode> shiftNodes = new ArrayList<>();
+        LinkedHashSet<LNode> shiftNodes = new LinkedHashSet<>();
         for (LPort port : node1.getPorts(PortType.OUTPUT)) {
             for (LEdge edge : port.getOutgoingEdges()) {
                 LNode node2 = edge.getTarget().getNode();
