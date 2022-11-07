@@ -115,14 +115,16 @@ public enum TopdownSizeApproximator {
             return new KVector(Math.max(minWidth, baseSize), 
                     Math.max(minHeight, baseSize / childAreaDesiredAspectRatio));
             
-            // picture 1 (current):
+            // ALTERNATE WAYS TO APPROXIMATE SIZES BELOW
+            
+            // alternative 1 (current):
             // return new KVector(Math.max(minWidth, baseSize), Math.max(minHeight, baseSize / childAreaDesiredAspectRatio));
             
-            // picture 2:
+            // alternative 2:
             // double baseSize = node.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH)
             // return new KVector(Math.max(minWidth, baseSize), Math.max(minHeight, baseSize / childAreaDesiredAspectRatio));
             
-            // picture 3:
+            // alternative 3:
             // return new KVector(Math.max(minWidth, childAreaDesiredWidth), Math.max(minHeight, childAreaDesiredHeight));
             
         }
