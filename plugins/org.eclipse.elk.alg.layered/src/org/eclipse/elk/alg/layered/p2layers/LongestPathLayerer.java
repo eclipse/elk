@@ -109,7 +109,7 @@ public final class LongestPathLayerer implements ILayoutPhase<LayeredPhases, LGr
                         // push unsolved problem back onto stack
                         stack.push(top);
                         stack.push(targetNode);
-                    } else if (internalNodeHeights[targetNode.id] > 0) {
+                    } else {
                         internalNodeHeights[top.id] = 
                                 Math.max(internalNodeHeights[top.id], internalNodeHeights[targetNode.id] + 1);
                     }
