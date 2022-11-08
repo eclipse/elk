@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,15 +9,19 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.intermediate;
 
+import java.io.Console;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
+import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A processor which sets the final coordinates for each node in a given graph. The property XCOOR
@@ -25,13 +29,16 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
 
     /** number of nodes in the graph. */
     private int numberOfNodes;
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor set coordinates", 1);
 
@@ -47,13 +54,18 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
                 root = tNode;
                 KVector pos = tNode.getPosition();
                 pos.x = tNode.getProperty(InternalProperties.XCOOR).doubleValue();
-                pos.y = 0;
+                pos.y = tNode.getProperty(InternalProperties.YCOOR).doubleValue();
             }
         }
 
         /** start with the root and level down by bsf */
-        setCoordinates(root.getChildrenCopy(), progressMonitor.subTask(1.0f));
-
+        setCoordinates(root.getChildrenCopy(), 0, progressMonitor.subTask(1.0f));
+        
+        // Move node positions to their middle to achieve the same spacing between all nodes
+        for (TNode n : tGraph.getNodes()) {
+            n.getPosition().sub(new KVector(n.getSize().x / 2, n.getSize().y / 2));
+        }
+        
         progressMonitor.done();
     }
 
@@ -67,7 +79,7 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
      * @param progressMonitor
      *            the current progress monitor
      */
-    private void setCoordinates(final LinkedList<TNode> currentLevel,
+    private void setCoordinates(final LinkedList<TNode> currentLevel, final int level,
             final IElkProgressMonitor progressMonitor) {
 
         /** if the level is empty there is nothing to do */
@@ -87,8 +99,7 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
             }
 
             /** go to the next level */
-            setCoordinates(nextLevel, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
+            setCoordinates(nextLevel, level + 1, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
         }
     }
-    
 }

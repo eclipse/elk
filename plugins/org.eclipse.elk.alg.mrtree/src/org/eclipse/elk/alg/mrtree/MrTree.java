@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
@@ -38,6 +40,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public final class MrTree {
 
@@ -65,7 +68,12 @@ public final class MrTree {
      */
     public TGraph doLayout(final TGraph tgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Tree layout", 1);
-
+        
+        if (tgraph.getProperty(MrTreeOptions.DEBUG_MODE)) {
+            System.out.println("MrTree! called at "
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        }
+        
         // set up the phases and processors depending on user options
         updateModules(tgraph);
 
@@ -161,7 +169,7 @@ public final class MrTree {
             monitor = new BasicProgressMonitor();
         }
         monitor.begin("Layout", algorithm.size());
-
+        
         if (graph.getProperty(MrTreeOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
@@ -169,8 +177,7 @@ public final class MrTree {
 
             System.out.println("ELK MrTree uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
-                String slot = (i < 10 ? "0" : "") + (i++); // SUPPRESS CHECKSTYLE MagicNumber
-                System.out.println("   Slot " + slot + ": " + algorithm.get(i).getClass().getName());
+                System.out.println("   Slot " + i + ": " + algorithm.get(i).getClass().getName());
             }
         }
         // invoke each layout processor

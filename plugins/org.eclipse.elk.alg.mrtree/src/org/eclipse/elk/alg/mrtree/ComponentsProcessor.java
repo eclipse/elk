@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -17,12 +17,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -37,6 +39,7 @@ import com.google.common.collect.Lists;
  * @author sgu
  * @author msp
  * @author cds
+ * @author sdo
  */
 public class ComponentsProcessor {
 
@@ -155,6 +158,7 @@ public class ComponentsProcessor {
     @SuppressWarnings("unchecked")
     public TGraph pack(final List<TGraph> components) {
         if (components.size() == 1) {
+            applyPaddingAndNormalizePositions(components.get(0));
             return components.get(0);
         } else if (components.size() <= 0) {
             return new TGraph();
@@ -253,9 +257,27 @@ public class ComponentsProcessor {
                 }
             }
         }
+        
+        // Move the resulting graph to 0,0 and apply padding
+        applyPaddingAndNormalizePositions(result);
+
 
         return result;
     }
+    
+    
+    /**
+     * Move the nodes so that minX and minY node coords are zero and apply padding.
+     * 
+     * @param g the graph to work on
+     */
+    private void applyPaddingAndNormalizePositions(final TGraph g) {
+        ElkPadding padding = g.getNodes().get(0).getProperty(MrTreeOptions.PADDING);
+        g.setProperty(InternalProperties.BB_UPLEFT, new KVector(0, 0));
+        moveGraph(new TGraph(), g, padding.getHorizontal() - g.getProperty(InternalProperties.GRAPH_XMIN), 
+                padding.getVertical() - g.getProperty(InternalProperties.GRAPH_YMIN));
+    }
+
 
     /**
      * Move the source graph into the destination graph using a specified offset.
@@ -279,7 +301,8 @@ public class ComponentsProcessor {
             destGraph.getNodes().add(node);
         }
 
-        for (TEdge edge : sourceGraph.getEdges()) {
+        // FIXME why is this necessary instead of only getEdges?
+        for (TEdge edge : sourceGraph.getEdges().stream().distinct().collect(Collectors.toList())) {
             for (KVector bendpoint : edge.getBendPoints()) {
                 bendpoint.add(graphOffset);
             }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -35,15 +35,18 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sor
  * @author sgu
  * @author msp
+ * @author sdo
  */
 public class DFSTreeifyer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
 
     /** intermediate processing configuration. */
     private static final LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> INTERMEDIATE_PROCESSING_CONFIG =
             LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create()
-                    .addAfter(TreeLayoutPhases.P4_EDGE_ROUTING, IntermediateProcessorStrategy.DETREEIFYING_PROC);
+                    .addAfter(TreeLayoutPhases.P3_NODE_PLACEMENT, IntermediateProcessorStrategy.DETREEIFYING_PROC);
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("DFS Treeifying phase", 1);
 
@@ -55,6 +58,9 @@ public class DFSTreeifyer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
         progressMonitor.done();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;

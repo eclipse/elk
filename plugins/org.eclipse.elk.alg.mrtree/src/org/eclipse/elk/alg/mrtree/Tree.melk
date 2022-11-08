@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2020 Kiel University and others.
+ * Copyright (c) 2015 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -10,7 +10,10 @@
 package org.eclipse.elk.alg.mrtree
 
 import org.eclipse.elk.alg.mrtree.TreeLayoutProvider
+import org.eclipse.elk.alg.mrtree.options.OrderWeighting
+import org.eclipse.elk.alg.mrtree.options.TreeifyingOrder
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.Direction
 
 /**
  * Declarations for the ELK Tree layout algorithm.
@@ -22,7 +25,7 @@ bundle {
 
 algorithm mrtree(TreeLayoutProvider) {
     label "ELK Mr. Tree"
-    description
+    description 
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
         the input graph and arranges all nodes according to the resulting parent-children
         hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
@@ -32,37 +35,76 @@ algorithm mrtree(TreeLayoutProvider) {
     preview images/mrtree_layout.png
     supports org.eclipse.elk.padding = new ElkPadding(20)
     supports org.eclipse.elk.spacing.nodeNode = 20
+    supports org.eclipse.elk.spacing.edgeNode = 3
     supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.priority = 1
-    documentation "Priorities set on nodes determine the order in which connected components are placed:
+       documentation 
+           "Priorities set on nodes determine the order in which connected components are placed:
             components with a higher sum of node priorities will end up
             before components with a lower sum."
-    supports org.eclipse.elk.separateConnectedComponents = true
+    supports org.eclipse.elk.separateConnectedComponents = true 
     supports org.eclipse.elk.debugMode
-    // Common node micro layout
-    supports org.eclipse.elk.nodeSize.constraints
-    supports org.eclipse.elk.nodeSize.fixedGraphSize
-    supports org.eclipse.elk.nodeSize.minimum
-    supports org.eclipse.elk.nodeSize.options
-    supports org.eclipse.elk.nodeLabels.placement
-    supports org.eclipse.elk.omitNodeMicroLayout
-    supports org.eclipse.elk.portLabels.placement
+    supports org.eclipse.elk.direction = Direction.UNDEFINED
+    supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.interactiveLayout
     supports weighting
     supports searchOrder
+    supports positionConstraint
+    supports edgeRoutingMode
+    supports treeLevel
+    supports compaction
+    supports edgeEndTextureLength
+}
+
+option compaction: boolean {
+    label "Position Constraint"
+    description "Turns on Tree compaction which decreases the size of the whole tree by placing nodes of multiple 
+        levels in one large level"
+    default = false
+    targets parents
+}
+
+option edgeEndTextureLength: double {
+    label "Edge End Texture Length"
+    description "Should be set to the length of the texture at the end of an edge. 
+        This value can be used to improve the Edge Routing."
+    default = 7
+    targets parents
+}
+
+output option treeLevel: int {
+    label "Tree Level"
+    description "The index for the tree level the node is in"
+    default = 0
+    lowerBound = 0
+    targets nodes
+}
+
+option positionConstraint: int {
+    label "Position Constraint"
+    description "When set to a positive number this option will force the algorithm to place the node to the 
+        specified position within the trees layer if weighting is set to constraint"
+    default = -1
+    targets nodes
 }
 
 option weighting: OrderWeighting {
     label "Weighting of Nodes"
-    description
-        "Which weighting to use when computing a node order."
-    default = OrderWeighting.DESCENDANTS
+    description "Which weighting to use when computing a node order."
+    default = OrderWeighting.CONSTRAINT
+    targets parents
+}
+
+option edgeRoutingMode: EdgeRoutingMode {
+    label "Edge Routing Mode"
+    description "Chooses an Edge Routing algorithm."
+    default = EdgeRoutingMode.AvoidOverlap
     targets parents
 }
 
 option searchOrder: TreeifyingOrder {
     label "Search Order"
-    description
-        "Which search order to use when computing a spanning tree."
+    description "Which search order to use when computing a spanning tree."
     default = TreeifyingOrder.DFS
     targets parents
 }
