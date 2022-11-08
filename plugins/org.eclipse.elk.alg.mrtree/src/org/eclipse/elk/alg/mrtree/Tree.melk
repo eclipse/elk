@@ -42,11 +42,19 @@ algorithm mrtree(TreeLayoutProvider) {
            "Priorities set on nodes determine the order in which connected components are placed:
             components with a higher sum of node priorities will end up
             before components with a lower sum."
-    supports org.eclipse.elk.separateConnectedComponents = true 
+    supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.debugMode
     supports org.eclipse.elk.direction = Direction.UNDEFINED
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.interactiveLayout
+    // Common node micro layout
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.fixedGraphSize
+    supports org.eclipse.elk.nodeSize.minimum
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.omitNodeMicroLayout
+    supports org.eclipse.elk.portLabels.placement
     supports weighting
     supports searchOrder
     supports positionConstraint

@@ -11,7 +11,9 @@ package org.eclipse.elk.alg.mrtree;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
+import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -43,12 +45,18 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+        
+        // If requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!layoutGraph.getProperty(MrTreeOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(layoutGraph)
+                           .execute();
+        }
         // build tGraph
         IElkProgressMonitor pm = progressMonitor.subTask(defaultWork);
         pm.begin("build tGraph", 1);
         IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
-        TGraph tGraph = graphImporter.importGraph(kgraph);
+        TGraph tGraph = graphImporter.importGraph(layoutGraph);
         pm.done();
 
         // split the input graph into components
