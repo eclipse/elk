@@ -181,6 +181,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports directionCongruency
     supports portSortingStrategy
     supports edgeRouting.polyline.slopedEdgeZoneWidth
+    supports crossingMinimization.inLayerPredOf
+    supports crossingMinimization.inLayerSuccOf
     supports layering.layerChoiceConstraint
     supports crossingMinimization.positionChoiceConstraint
     supports org.eclipse.elk.interactiveLayout
@@ -234,7 +236,7 @@ group layering {
         targets nodes
     }
 
-    advanced option layerChoiceConstraint: int {
+    advanced option layerChoiceConstraint: Integer {
         label "Layer Choice Constraint"
         description
             "Allows to set a constraint regarding the layer placement of a node. 
@@ -245,7 +247,7 @@ group layering {
              Note that this option is not part of any of ELK Layered's default configurations 
              but is only evaluated as part of the `InteractiveLayeredGraphVisitor`,
              which must be applied manually or used via the `DiagramLayoutEngine."
-        default = -1
+        default = null
         lowerBound = -1
         targets nodes
     }
@@ -412,9 +414,29 @@ group crossingMinimization {
         default = false
         targets parents
         requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
+    }    
+    
+    option inLayerPredOf: String {
+        label "In Layer Predecessor of"
+        description 
+            "Allows to set a constraint which specifies of which node 
+             the current node is the predecessor.
+             If set to 's' then the node is the predecessor of 's' and is in the same layer"
+        default = null
+        targets nodes
+    }
+    
+    advanced option inLayerSuccOf: String {
+        label "In Layer Successor of"
+        description 
+            "Allows to set a constraint which specifies of which node 
+             the current node is the successor.
+             If set to 's' then the node is the successor of 's' and is in the same layer"
+        default = null
+        targets nodes
     }
 
-    advanced option positionChoiceConstraint: int {
+    advanced option positionChoiceConstraint: Integer {
         label "Position Choice Constraint"
         description
             "Allows to set a constraint regarding the position placement of a node in a layer. 
@@ -425,7 +447,7 @@ group crossingMinimization {
              Note that this option is not part of any of ELK Layered's default configurations 
              but is only evaluated as part of the `InteractiveLayeredGraphVisitor`,
              which must be applied manually or used via the `DiagramLayoutEngine. "
-        default = -1
+        default = null
         lowerBound = -1
         targets nodes
     }
