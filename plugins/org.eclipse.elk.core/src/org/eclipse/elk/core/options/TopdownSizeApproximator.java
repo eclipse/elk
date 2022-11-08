@@ -19,8 +19,8 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.NullElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * A size approximator is used to dynamically decide a size for a node to be used during topdown layout
@@ -57,12 +57,15 @@ public enum TopdownSizeApproximator {
             final LayoutAlgorithmData algorithmData = originalGraph.getProperty(CoreOptions.RESOLVED_ALGORITHM);
             
             // clone the current hierarchy
-            ElkNode node = ElkGraphUtil.createGraph();
+//            ElkNode node = ElkGraphUtil.createGraph();
+            ElkNode node = ElkGraphFactory.eINSTANCE.createElkNode();
             node.copyProperties(originalGraph);
             Map<ElkNode, ElkNode> oldToNewNodeMap = new HashMap<>();
             // copy children
             for (ElkNode child : originalGraph.getChildren()) {
-                ElkNode newChild = ElkGraphUtil.createNode(node);
+//                ElkNode newChild = ElkGraphUtil.createNode(node);
+                ElkNode newChild = ElkGraphFactory.eINSTANCE.createElkNode();
+                newChild.setParent(node);
                 newChild.copyProperties(child);
                 // set size according to microlayout or node count approximator
                 KVector size = TopdownSizeApproximator.COUNT_CHILDREN.getSize(child);
@@ -75,7 +78,11 @@ public enum TopdownSizeApproximator {
                 for (ElkEdge edge : child.getOutgoingEdges()) {
                     ElkNode newSrc = oldToNewNodeMap.get(child);
                     ElkNode newTar = oldToNewNodeMap.get(edge.getTargets().get(0));
-                    ElkEdge newEdge = ElkGraphUtil.createSimpleEdge(newSrc, newTar);
+//                    ElkEdge newEdge = ElkGraphUtil.createSimpleEdge(newSrc, newTar);
+                    ElkEdge newEdge = ElkGraphFactory.eINSTANCE.createElkEdge();
+                    edge.getSources().add(newSrc);
+                    edge.getTargets().add(newTar);
+                    edge.setContainingNode(newSrc.getParent());
                     newEdge.copyProperties(edge);
                 }
             }
