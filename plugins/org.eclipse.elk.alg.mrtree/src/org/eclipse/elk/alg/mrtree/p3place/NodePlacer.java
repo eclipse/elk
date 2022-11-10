@@ -77,10 +77,10 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
     private double spacing;
 
     /** Determine how to adjust all the nodes with respect to the location of the root. */
-    private double xTopAdjustment = 0d;
+    private double xTopAdjustment = 0d; 
     private double yTopAdjustment = 0d;
     
-    private Direction d;
+    private Direction direction;
 
     /**
      * {@inheritDoc}
@@ -95,15 +95,15 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
      */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor order nodes", 2);
-        
+
         /** set the settings according to the user inputs */
         spacing = tGraph.getProperty(MrTreeOptions.SPACING_NODE_NODE).doubleValue();
-        d = tGraph.getProperty(MrTreeOptions.DIRECTION);
+        direction = tGraph.getProperty(MrTreeOptions.DIRECTION);
         
         // Set Direction to DOWN if its UNDEFINED
-        if (d == Direction.UNDEFINED) {
-            d = Direction.DOWN;
-            tGraph.setProperty(MrTreeOptions.DIRECTION, d);
+        if (direction == Direction.UNDEFINED) {
+            direction = Direction.DOWN;
+            tGraph.setProperty(MrTreeOptions.DIRECTION, direction);
         }
 
         /** find the root node of this component */
@@ -114,7 +114,7 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
             }
         }
         TNode root = roots.getFirst();
-        
+
         /** Do the preliminary positioning with a postorder walk. */
         firstWalk(root, 0);
         progressMonitor.worked(1);
@@ -122,7 +122,7 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
         /** Do the final positioning with a preorder walk. */
         secondWalk(root, yTopAdjustment - (root.getProperty(InternalProperties.LEVELHEIGHT) / 2), xTopAdjustment);
         progressMonitor.worked(1);
-        
+
         progressMonitor.done();
     }
 
@@ -285,14 +285,14 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
     private double meanNodeWidth(final TNode leftNode, final TNode rightNode) {
         double nodeWidth = 0d;
         if (leftNode != null) {
-            if (d.isVertical()) {
+            if (direction.isVertical()) {
                 nodeWidth += leftNode.getSize().x / 2d;
             } else {
                 nodeWidth += leftNode.getSize().y / 2d;
             }
         }
         if (rightNode != null) {
-            if (d.isVertical()) {
+            if (direction.isVertical()) {
                 nodeWidth += rightNode.getSize().x / 2d;
             } else {
                 nodeWidth += rightNode.getSize().y / 2d;

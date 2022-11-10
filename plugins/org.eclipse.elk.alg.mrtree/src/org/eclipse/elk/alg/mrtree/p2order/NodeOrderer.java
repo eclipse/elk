@@ -72,9 +72,12 @@ public class NodeOrderer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
         progressMonitor.begin("Processor arrange node", 1);
         
         debug = tGraph.getProperty(MrTreeOptions.DEBUG_MODE);
+
+        // elkjs-exclude-start
         if (debug) {
-            System.out.println("NodeOrderer!");
+            progressMonitor.log("NodeOrderer!");
         }
+        // elkjs-exclude-end
 
         // find the root node and add it to the root list, assuming that: 1. There is a root, 2. There is only one root
         TNode root = tGraph.getNodes().stream().
@@ -194,10 +197,12 @@ public class NodeOrderer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
      */
     private void orderLevelConstraint(final List<TNode> currentLevel, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor arrange level", 1);
-        
+
+        // elkjs-exclude-start
         if (debug) {
-            System.out.println("OrderLevelConstraint!");
+            progressMonitor.log("OrderLevelConstraint!");
         }
+        // elkjs-exclude-end
         
         List<TNode> undefinedNodes = currentLevel.stream().
                 filter(x -> x.getProperty(MrTreeOptions.POSITION_CONSTRAINT) < 0).

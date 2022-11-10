@@ -68,11 +68,13 @@ public final class MrTree {
      */
     public TGraph doLayout(final TGraph tgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Tree layout", 1);
-        
+
+        // elkjs-exclude-start
         if (tgraph.getProperty(MrTreeOptions.DEBUG_MODE)) {
-            System.out.println("MrTree! called at "
+            progressMonitor.log("MrTree! called at "
                     + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
         }
+        // elkjs-exclude-end
         
         // set up the phases and processors depending on user options
         updateModules(tgraph);
@@ -169,17 +171,18 @@ public final class MrTree {
             monitor = new BasicProgressMonitor();
         }
         monitor.begin("Layout", algorithm.size());
-        
+
+        // elkjs-exclude-start
         if (graph.getProperty(MrTreeOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
-
-            System.out.println("ELK MrTree uses the following " + algorithm.size() + " modules:");
+            themonitor.log("ELK MrTree uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
-                System.out.println("   Slot " + i + ": " + algorithm.get(i).getClass().getName());
+                themonitor.log("   Slot " + i + ": " + algorithm.get(i).getClass().getName());
             }
         }
+        // elkjs-exclude-end
         // invoke each layout processor
         for (ILayoutProcessor<TGraph> processor : algorithm) {
             if (monitor.isCanceled()) {

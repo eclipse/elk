@@ -20,7 +20,7 @@ public enum OrderWeighting {
     
     /** Doesn't change node ordering. 
      * When using this nodes will be in the order of the definition of their incoming edges */
-    NONE,
+    MODEL_ORDER,
     /** Chooses the number of descendants for the weighting. */
     DESCENDANTS,
     /** Chooses maximal number of descendants at the same level. */

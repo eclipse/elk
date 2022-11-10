@@ -9,19 +9,15 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.intermediate;
 
-import java.io.Console;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
-import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A processor which sets the final coordinates for each node in a given graph. The property XCOOR
@@ -59,7 +55,12 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
         }
 
         /** start with the root and level down by bsf */
-        setCoordinates(root.getChildrenCopy(), 0, progressMonitor.subTask(1.0f));
+        LinkedList<TNode> nextLevel = root.getChildrenCopy();
+        float subTasks = 1.0f;
+        do {
+            nextLevel = setCoordinates(nextLevel, progressMonitor.subTask(subTasks));
+            subTasks = nextLevel.size() / this.numberOfNodes;
+        } while (!nextLevel.isEmpty());
         
         // Move node positions to their middle to achieve the same spacing between all nodes
         for (TNode n : tGraph.getNodes()) {
@@ -70,16 +71,15 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
     }
 
     /**
-     * Set the coordinate for each node in a given level and all underlying levels.
+     * Set the coordinate for each node in a given level.
      * 
      * @param currentLevel
-     *            the list of TNode for which the neighbors should be calculated
-     * @param level
-     *            the level index
+     *            The list of TNode for which the neighbors should be calculated
      * @param progressMonitor
-     *            the current progress monitor
+     *            The current progress monitor
+     * @return The next level to set the coordinates for.
      */
-    private void setCoordinates(final LinkedList<TNode> currentLevel, final int level,
+    private LinkedList<TNode> setCoordinates(final LinkedList<TNode> currentLevel,
             final IElkProgressMonitor progressMonitor) {
 
         /** if the level is empty there is nothing to do */
@@ -97,9 +97,8 @@ public class NodePositionProcessor implements ILayoutProcessor<TGraph> {
                 pos.x = tNode.getProperty(InternalProperties.XCOOR).doubleValue();
                 pos.y = tNode.getProperty(InternalProperties.YCOOR).doubleValue();
             }
-
-            /** go to the next level */
-            setCoordinates(nextLevel, level + 1, progressMonitor.subTask(nextLevel.size() / numberOfNodes));
+            return nextLevel;
         }
+        return new LinkedList<>();
     }
 }

@@ -75,9 +75,9 @@ public class EdgeRouter implements ILayoutPhase<TreeLayoutPhases, TGraph> {
         progressMonitor.begin("Edge routing", 1);
 
         EdgeRoutingMode mode = tGraph.getProperty(MrTreeOptions.EDGE_ROUTING_MODE);
-        if (mode == EdgeRoutingMode.MiddleToMiddle) {
+        if (mode == EdgeRoutingMode.MIDDLE_TO_MIDDLE) {
             middleToMiddle(tGraph);
-        } else if (mode == EdgeRoutingMode.AvoidOverlap) {
+        } else if (mode == EdgeRoutingMode.AVOID_OVERLAP) {
             avoidOverlap(tGraph);
             
             // fallback

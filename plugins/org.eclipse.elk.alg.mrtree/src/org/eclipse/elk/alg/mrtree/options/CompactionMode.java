@@ -15,10 +15,10 @@ package org.eclipse.elk.alg.mrtree.options;
  */
 public enum CompactionMode {
     /** No Compaction. */
-    None,
+    NONE,
     /** One dimensional Compaction that preserves the spacings between levels. */
-    LevelPreserving,
+    LEVEL_PRESERVING,
     /** One dimensional Compaction that does not preserve the spacings between levels. 
      * WARNING: Do not use with EdgeRoutingMode AvoidOverlap */
-    Aggressive
+    AGGRESSIVE
 }

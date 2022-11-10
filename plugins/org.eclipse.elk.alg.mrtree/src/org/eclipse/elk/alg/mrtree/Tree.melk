@@ -25,7 +25,7 @@ bundle {
 
 algorithm mrtree(TreeLayoutProvider) {
     label "ELK Mr. Tree"
-    description 
+    description
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
         the input graph and arranges all nodes according to the resulting parent-children
         hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
@@ -99,14 +99,14 @@ option positionConstraint: int {
 option weighting: OrderWeighting {
     label "Weighting of Nodes"
     description "Which weighting to use when computing a node order."
-    default = OrderWeighting.CONSTRAINT
+    default = OrderWeighting.MODEL_ORDER
     targets parents
 }
 
 option edgeRoutingMode: EdgeRoutingMode {
     label "Edge Routing Mode"
     description "Chooses an Edge Routing algorithm."
-    default = EdgeRoutingMode.AvoidOverlap
+    default = EdgeRoutingMode.AVOID_OVERLAP
     targets parents
 }
 

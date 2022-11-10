@@ -301,7 +301,6 @@ public class ComponentsProcessor {
             destGraph.getNodes().add(node);
         }
 
-        // FIXME why is this necessary instead of only getEdges?
         for (TEdge edge : sourceGraph.getEdges().stream().distinct().collect(Collectors.toList())) {
             for (KVector bendpoint : edge.getBendPoints()) {
                 bendpoint.add(graphOffset);

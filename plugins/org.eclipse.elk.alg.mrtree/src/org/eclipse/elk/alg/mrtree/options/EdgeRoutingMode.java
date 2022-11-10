@@ -15,9 +15,9 @@ package org.eclipse.elk.alg.mrtree.options;
  */
 public enum EdgeRoutingMode {
     /** Does nothing. */
-    None,
+    NONE,
     /** Routes edges from node middle to node middle. */
-    MiddleToMiddle,
+    MIDDLE_TO_MIDDLE,
     /** Similar to MiddleToMiddle but avoids edge node overlaps. */
-    AvoidOverlap
+    AVOID_OVERLAP
 }

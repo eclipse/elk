@@ -69,10 +69,12 @@ public class OrderBalance implements ILayoutPhase<TreeLayoutPhases, TGraph> {
      */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor arrange node", 1);
-        
+
+        // elkjs-exclude-start
         if (tGraph.getProperty(MrTreeOptions.DEBUG_MODE)) {
-            System.out.println("OrderBalance!");
+            progressMonitor.log("OrderBalance!");
         }
+        // elkjs-exclude-end
 
         /** get the weighting from the userinterface */
         if (!tGraph.getProperty(MrTreeOptions.WEIGHTING).equals(OrderWeighting.FAN)) {

@@ -125,7 +125,7 @@ public class CompactionProcessor implements ILayoutProcessor<TGraph> {
                     }
                 }
                 
-                if (tGraph.getProperty(MrTreeOptions.EDGE_ROUTING_MODE) == EdgeRoutingMode.AvoidOverlap) {
+                if (tGraph.getProperty(MrTreeOptions.EDGE_ROUTING_MODE) == EdgeRoutingMode.AVOID_OVERLAP) {
                     final double finalNewPos = newPos, finalNewPosSize = newPosSize;
                     Optional<Pair<Double, Double>> level = levels.stream().
                             filter(x -> x.getFirst() <= finalNewPos && x.getSecond() >= finalNewPosSize).
