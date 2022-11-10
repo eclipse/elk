@@ -332,16 +332,14 @@ public final class ElkLayered {
         // Crossing minimization
         //  overwrite invalid child configuration (only layer sweep is hierarchical)
         CrossingMinimizationStrategy parentCms = root.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
-        if (parentCms != CrossingMinimizationStrategy.LAYER_SWEEP) {
-            graphs.forEach(child -> {
-                CrossingMinimizationStrategy childCms = 
-                        child.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
-                if (childCms == CrossingMinimizationStrategy.LAYER_SWEEP) {
-                    throw new UnsupportedGraphException("The hierarchy aware processor " + childCms + " in child node "
-                            + child + " is only allowed if the root node specifies the same hierarchical processor.");
-                }
-            });
-        }
+        graphs.forEach(child -> {
+            CrossingMinimizationStrategy childCms = 
+                    child.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
+            if (childCms != parentCms) {
+                throw new UnsupportedGraphException("The hierarchy aware processor " + childCms + " in child node "
+                        + child + " is only allowed if the root node specifies the same hierarchical processor.");
+            }
+        });
         
         // Greedy switch (simply copy the behavior of the root to all children)
         final GreedySwitchType rootType =
