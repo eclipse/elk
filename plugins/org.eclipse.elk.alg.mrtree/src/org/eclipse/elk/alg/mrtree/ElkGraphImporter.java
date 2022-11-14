@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -149,6 +150,22 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         // get the corresponding kGraph
         ElkNode elkgraph = (ElkNode) tGraph.getProperty(InternalProperties.ORIGIN);
         
+        // calculate the offset from border spacing and node distribution
+        double minXPos = Integer.MAX_VALUE;
+        double minYPos = Integer.MAX_VALUE;
+        double maxXPos = Integer.MIN_VALUE;
+        double maxYPos = Integer.MIN_VALUE;
+        for (TNode tNode : tGraph.getNodes()) {
+            KVector pos = tNode.getPosition();
+            KVector size = tNode.getSize();
+            minXPos = Math.min(minXPos, pos.x - size.x / 2);
+            minYPos = Math.min(minYPos, pos.y - size.y / 2);
+            maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
+            maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
+        }
+
+        ElkPadding padding = elkgraph.getProperty(MrTreeOptions.PADDING);
+        
         // apply tNode positions to elkNodes
         for (TNode tNode : tGraph.getNodes()) {
             Object object = tNode.getProperty(InternalProperties.ORIGIN);
@@ -168,19 +185,35 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
                 ElkUtil.applyVectorChain(bendPoints, edgeSection);
             }
         }
-        
-        // calculate the lower right corner of the graph
-        double maxXPos = Integer.MIN_VALUE;
-        double maxYPos = Integer.MIN_VALUE;
-        for (TNode tNode : tGraph.getNodes()) {
-            KVector pos = tNode.getPosition();
-            KVector size = tNode.getSize();
-            maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
-            maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
-        }
 
-        // set up the graph
-        ElkPadding padding = tGraph.getProperty(MrTreeOptions.PADDING);
-        ElkUtil.resizeNode(elkgraph, maxXPos + padding.getHorizontal(), maxYPos + padding.getVertical(), false, false);
+        if (!elkgraph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            // set up the graph
+            double width = maxXPos - minXPos + padding.getHorizontal();
+            double height = maxYPos - minYPos + padding.getVertical();
+            ElkUtil.resizeNode(elkgraph, width, height, false, false);
+        }
+    }
+
+
+    /**
+     * Modify the given center position to the border of the node.
+     * 
+     * @param center the node center position (modified by this method)
+     * @param next the next point of the edge vector chain
+     * @param size the node size
+     */
+    private static void toNodeBorder(final KVector center, final KVector next, final KVector size) {
+        double wh = size.x / 2, hh = size.y / 2;
+        double absx = Math.abs(next.x - center.x), absy = Math.abs(next.y - center.y);
+        double xscale = 1, yscale = 1;
+        if (absx > wh) {
+            xscale = wh / absx;
+        }
+        if (absy > hh) {
+            yscale = hh / absy;
+        }
+        double scale = Math.min(xscale, yscale);
+        center.x += scale * (next.x - center.x);
+        center.y += scale * (next.y - center.y);
     }
 }
