@@ -272,6 +272,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         dummySize = masterGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
 
         maxHeight = masterGraph.getLayers().size();
+        minimalLayer = 0;
         maximalLayer = maxHeight;
         int layerID = maxHeight - 1;
         int nodeID = 0;
@@ -325,11 +326,14 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                 outcoming += outDegree; // and all outgoing edges
                 if (inDegree > 0) {
                     nodesWithIncomingEdges.add(node);
-                    if (node.getType() == NodeType.NORMAL) {
-                        realNodesWithIncomingEdges.add(node);
-                    }
                 }
-                if (outDegree > 0 && node.getType() == NodeType.NORMAL) {
+                if (inDegree <= 0
+                        && promotionStrategy == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT
+                        && node.getType() == NodeType.NORMAL) {
+                    realNodesWithIncomingEdges.add(node);
+                }
+                if ((promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
+                        || outDegree > 0) && node.getType() == NodeType.NORMAL) {
                     realNodesWithOutgoingEdges.add(node);
                 }
                 nodes.add(node);
@@ -364,7 +368,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         if (leftToRight) {
             realNodesWithOutgoingEdges.sort(MODEL_ORDER_NODE_COMPARATOR_DESC);
         } else {
-            realNodesWithOutgoingEdges.sort(MODEL_ORDER_NODE_COMPARATOR_ASC);
+            realNodesWithIncomingEdges.sort(MODEL_ORDER_NODE_COMPARATOR_ASC);
         }
         boolean somethingChanged = false;
         do {
@@ -377,8 +381,10 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                 int currentLayerId = layers[node.id];
                 List<LNode> currentLayer = getLayer(currentLayerId);
                 // The last/first node shall not be promoted if no other node is there to compare it to.
-                if (currentLayer.size() <= 1 && (layers[node.id] == minimalLayer
-                        || layers[node.id] == maximalLayer - 1)) {
+                if (layers[node.id] == minimalLayer
+                        && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
+                    || layers[node.id] == maximalLayer - 1
+                        && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT) {
                     continue;
                 }
                 // Check whether this layer has a model order that prevents node promotion.
