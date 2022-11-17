@@ -29,6 +29,7 @@
     <module>org.eclipse.elk.gmf.feature</module>
     <module>org.eclipse.elk.graph.json.feature</module>
     <module>org.eclipse.elk.graphviz.feature</module>
+    <module>org.eclipse.elk.libavoid.feature</module>
     <module>org.eclipse.elk.ui.feature</module>
   </modules>
 
