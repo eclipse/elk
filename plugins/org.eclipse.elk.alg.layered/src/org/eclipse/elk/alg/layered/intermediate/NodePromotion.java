@@ -174,10 +174,25 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         progressMonitor.begin("Node promotion heuristic", 1);
 
         masterGraph = layeredGraph;
-
-        precalculateAndSetInformation();
-
+        
         promotionStrategy = layeredGraph.getProperty(LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY);
+
+        if (promotionStrategy != NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
+                && promotionStrategy != NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT) {
+            precalculateAndSetInformation();
+        } else {
+            int nodeID = 0;
+            int layerID = 0;
+            for (Layer layer : masterGraph.getLayers()) {
+                layer.id = layerID;
+                for (LNode node : layer.getNodes()) {
+                    node.id = nodeID;
+                    nodeID++;
+                }
+                layerID++;
+            }
+        }
+
 
         // If the promotion strategy is set to DUMMYNODE_PERCENTAGE or NODECOUNT_PERCENTAGE this
         // value will have an effect on the termination criterion of the node promotion.
@@ -242,10 +257,12 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
             break;
         case MODEL_ORDER_LEFT_TO_RIGHT:
             modelOrderNodePromotion(true);
-            break;
+            progressMonitor.done();
+            return;
         case MODEL_ORDER_RIGHT_TO_LEFT:
             modelOrderNodePromotion(false);
-            break;
+            progressMonitor.done();
+            return;
         default:
             promotionMagic(funFunction);
             break;
@@ -366,120 +383,128 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
     private void modelOrderNodePromotion(final boolean leftToRight) {
         // Sort descending/ascending by model order to minimize do-while loops.
         if (leftToRight) {
-            realNodesWithOutgoingEdges.sort(MODEL_ORDER_NODE_COMPARATOR_DESC);
+            for (Layer layer : masterGraph.getLayers()) {
+                layer.getNodes().sort(MODEL_ORDER_NODE_COMPARATOR_DESC);
+            }
         } else {
-            realNodesWithIncomingEdges.sort(MODEL_ORDER_NODE_COMPARATOR_ASC);
+            for (Layer layer : masterGraph.getLayers()) {
+                layer.getNodes().sort(MODEL_ORDER_NODE_COMPARATOR_ASC);
+            }
         }
         boolean somethingChanged = false;
         do {
             somethingChanged = false;
-            for (LNode node : leftToRight ? realNodesWithOutgoingEdges : realNodesWithIncomingEdges) {
-                // Only nodes that have a model order can sensibly be promoted using model order.
-                if (!node.hasProperty(InternalProperties.MODEL_ORDER)) {
-                    continue;
-                }
-                int currentLayerId = layers[node.id];
-                List<LNode> currentLayer = getLayer(currentLayerId);
-                // The last/first node shall not be promoted if no other node is there to compare it to.
-                if (layers[node.id] == minimalLayer
-                        && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
-                    || layers[node.id] == maximalLayer - 1
-                        && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT) {
-                    continue;
-                }
-                // Check whether this layer has a model order that prevents node promotion.
-                boolean shallBePromoted = true;
-                for (LNode otherNode : currentLayer) {
-                    if (otherNode.hasProperty(InternalProperties.MODEL_ORDER)) {
-                        if (leftToRight && node.getProperty(InternalProperties.MODEL_ORDER)
-                                < otherNode.getProperty(InternalProperties.MODEL_ORDER)
-                                || !leftToRight && node.getProperty(InternalProperties.MODEL_ORDER)
-                                > otherNode.getProperty(InternalProperties.MODEL_ORDER)) {
-                            // If one node in the same layer as the current node exists with a bigger
-                            // model order the current node cannot be promoted.
-                            shallBePromoted = false;
+            for (int i = masterGraph.getLayers().size() - 2; i >= 0; i--) {
+                Layer currentLayer = masterGraph.getLayers().get(i);
+                for (int nodeIndex = 0; nodeIndex < currentLayer.getNodes().size(); nodeIndex++) {
+                    LNode node = currentLayer.getNodes().get(nodeIndex);
+                    // Only nodes that have a model order can sensibly be promoted using model order.
+                    if (!node.hasProperty(InternalProperties.MODEL_ORDER)) {
+                        continue;
+                    }
+                    int currentLayerId = currentLayer.id;
+                    // The last/first node shall not be promoted if no other node is there to compare it to.
+                    if (currentLayerId == masterGraph.getLayers().size() - 1
+                            && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
+                        || currentLayerId == 0
+                            && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT) {
+                        continue;
+                    }
+                    // Check whether this layer has a model order that prevents node promotion.
+                    boolean shallBePromoted = true;
+                    for (int otherNodeIndex = 0; otherNodeIndex < currentLayer.getNodes().size(); otherNodeIndex++) {
+                        LNode otherNode = currentLayer.getNodes().get(otherNodeIndex);
+                        if (otherNode.hasProperty(InternalProperties.MODEL_ORDER)) {
+                            if (leftToRight && node.getProperty(InternalProperties.MODEL_ORDER)
+                                    < otherNode.getProperty(InternalProperties.MODEL_ORDER)
+                                    || !leftToRight && node.getProperty(InternalProperties.MODEL_ORDER)
+                                    > otherNode.getProperty(InternalProperties.MODEL_ORDER)) {
+                                // If one node in the same layer as the current node exists with a bigger
+                                // model order the current node cannot be promoted.
+                                shallBePromoted = false;
+                            }
                         }
                     }
-                }
-                if (!shallBePromoted) {
-                    continue;
-                }                
-                // All nodes of the current layer of the node have a smaller/bigger model order.
-                // If the next layer has a node with a smaller/bigger model order. Promote the current node.
-                int nextLayerId = leftToRight ? currentLayerId - 1 : currentLayerId + 1;
-                
-                // Layer is extracted from the layers array since current layering might be changed due promotion.
-                List<LNode> nextLayer = getLayer(nextLayerId);
-                boolean modelOrderAllowsPromotion = false;
-                boolean promoteThroughDummyLayer = true;
-                boolean containsLabels = false;
-                // I cannot iterate over the original graph since the layers are only changed at the end.
-                for (LNode nextLayerNode : nextLayer) {
-                    if (nextLayerNode.hasProperty(InternalProperties.MODEL_ORDER)) {
-                        if (nextLayerNode.id != node.id) {
-                            modelOrderAllowsPromotion |= leftToRight
-                                    ? nextLayerNode.getProperty(InternalProperties.MODEL_ORDER) < node
-                                            .getProperty(InternalProperties.MODEL_ORDER)
-                                    : nextLayerNode.getProperty(InternalProperties.MODEL_ORDER) > node
-                                            .getProperty(InternalProperties.MODEL_ORDER);
+                    if (!shallBePromoted) {
+                        continue;
+                    }                
+                    // All nodes of the current layer of the node have a smaller/bigger model order.
+                    // If the next layer has a node with a smaller/bigger model order. Promote the current node.
+                    int nextLayerId = leftToRight ? currentLayerId + 1 : currentLayerId - 1;
+                    Layer nextLayer = masterGraph.getLayers().get(nextLayerId);
+                    boolean modelOrderAllowsPromotion = false;
+                    boolean promoteThroughDummyLayer = true;
+                    boolean containsLabels = false;
+                    // I cannot iterate over the original graph since the layers are only changed at the end.
+                    for (LNode nextLayerNode : nextLayer) {
+                        if (nextLayerNode.hasProperty(InternalProperties.MODEL_ORDER)) {
+                            if (nextLayerNode.id != node.id) {
+                                modelOrderAllowsPromotion |= leftToRight
+                                        ? nextLayerNode.getProperty(InternalProperties.MODEL_ORDER) < node
+                                                .getProperty(InternalProperties.MODEL_ORDER)
+                                        : nextLayerNode.getProperty(InternalProperties.MODEL_ORDER) > node
+                                                .getProperty(InternalProperties.MODEL_ORDER);
+                                promoteThroughDummyLayer = false;
+                            }
+                        } else if (!modelOrderAllowsPromotion && promoteThroughDummyLayer) {
+                            // If the promotion status of the current node is unclear check whether the node can be
+                            // promoted through a label layer.
+                            
+                            // There are currently no dummy nodes, only label nodes.
+                            if (nextLayerNode.getType() == NodeType.LABEL) {
+                                containsLabels = true;
+                                // Check whether this label node is connected to the current node and whether it cannot
+                                // be moved. I.e. its target is the the next layer and the node is in the previous one. 
+                                LNode nodeConnectedToNextLayer;
+                                if (leftToRight) {
+                                    nodeConnectedToNextLayer =
+                                            nextLayerNode.getIncomingEdges().iterator().next().getSource().getNode();
+                                } else {
+                                    nodeConnectedToNextLayer =
+                                            nextLayerNode.getOutgoingEdges().iterator().next().getTarget().getNode();
+                                }
+                                if (nodeConnectedToNextLayer.equals(node)) {
+                                    // The next layer is a dummy layer. Check whether it is possible to promote the
+                                    // current node over the label layer. This is possible if the connected node is more
+                                    // than 2 layers away.
+                                    LNode connectedNode;
+                                    if (leftToRight) {
+                                        connectedNode = nextLayerNode.getOutgoingEdges().iterator().next().getTarget()
+                                                .getNode();
+                                    } else {
+                                        connectedNode = nextLayerNode.getIncomingEdges().iterator().next().getSource()
+                                                .getNode();
+                                    }
+                                    if ((leftToRight ? connectedNode.getLayer().id - nodeConnectedToNextLayer.getLayer().id
+                                            : nodeConnectedToNextLayer.getLayer().id - connectedNode.getLayer().id) <= 2) {
+                                        promoteThroughDummyLayer = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (containsLabels && promoteThroughDummyLayer) {
+                        // Check whether this is a good idea. I.e. whether the current node has a long enough edge to
+                        // move through the whole label layer.
+                        LNode connectedNode;
+                        if (leftToRight) {
+                            connectedNode = node.getOutgoingEdges().iterator().next().getTarget().getNode();
+                        } else {
+                            connectedNode = node.getIncomingEdges().iterator().next().getSource().getNode();
+                        }
+                        if ((leftToRight ? connectedNode.getLayer().id - node.getLayer().id
+                                : node.getLayer().id - connectedNode.getLayer().id) <= 2
+                                && connectedNode.getType() == NodeType.NORMAL) {
                             promoteThroughDummyLayer = false;
                         }
-                    } else if (!modelOrderAllowsPromotion && promoteThroughDummyLayer) {
-                        // If the promotion status of the current node is unclear check whether the node can be
-                        // promoted through a label layer.
-                        
-                        // There are currently no dummy nodes, only label nodes.
-                        if (nextLayerNode.getType() == NodeType.LABEL) {
-                            containsLabels = true;
-                            // Check whether this label node is connected to the current node and whether it cannot
-                            // be moved. I.e. its target is the the next layer and the node is in the previous one. 
-                            LNode nodeConnectedToNextLayer;
-                            if (leftToRight) {
-                                nodeConnectedToNextLayer =
-                                        nextLayerNode.getIncomingEdges().iterator().next().getSource().getNode();
-                            } else {
-                                nodeConnectedToNextLayer =
-                                        nextLayerNode.getOutgoingEdges().iterator().next().getTarget().getNode();
-                            }
-                            if (nodeConnectedToNextLayer.equals(node)) {
-                                // The next layer is a dummy layer. Check whether it is possible to promote the
-                                // current node over the label layer. This is possible if the connected node is more
-                                // than 2 layers away.
-                                LNode connectedNode;
-                                if (leftToRight) {
-                                    connectedNode = nextLayerNode.getOutgoingEdges().iterator().next().getTarget()
-                                            .getNode();
-                                } else {
-                                    connectedNode = nextLayerNode.getIncomingEdges().iterator().next().getSource()
-                                            .getNode();
-                                }
-                                if ((leftToRight ? (layers[nodeConnectedToNextLayer.id] - layers[connectedNode.id])
-                                        : (layers[connectedNode.id] - layers[nodeConnectedToNextLayer.id])) <= 2) {
-                                    promoteThroughDummyLayer = false;
-                                }
-                            }
-                        }
                     }
-                }
-                if (containsLabels && promoteThroughDummyLayer) {
-                    // Check whether this is a good idea. I.e. whether the current node has a long enough edge to
-                    // move through the whole label layer.
-                    LNode connectedNode;
-                    if (leftToRight) {
-                        connectedNode = node.getOutgoingEdges().iterator().next().getTarget().getNode();
-                    } else {
-                        connectedNode = node.getIncomingEdges().iterator().next().getSource().getNode();
+                    // If either the node can be promoted from a normal or mixed layer or from a label layer it shall be
+                    // promoted.
+                    if (modelOrderAllowsPromotion || promoteThroughDummyLayer) {
+                        promoteNodeByModelOrder(node, leftToRight);
+                        nodeIndex--;
+                        somethingChanged = true;
                     }
-                    if (layers[node.id] - layers[connectedNode.id] <= 2
-                            && connectedNode.getType() == NodeType.NORMAL) {
-                        promoteThroughDummyLayer = false;
-                    }
-                }
-                // If either the node can be promoted from a normal or mixed layer or from a label layer it shall be
-                // promoted.
-                if (modelOrderAllowsPromotion || promoteThroughDummyLayer) {
-                    promoteNodeByModelOrder(node, leftToRight);
-                    somethingChanged = true;
                 }
             }
         } while (somethingChanged); 
@@ -493,19 +518,35 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
      * @param leftToRight Whether the node is promoted left to right.
      */
     private void promoteNodeByModelOrder(final LNode node, final boolean leftToRight) {
-        // Check whether the current node has connections to the next layer.
-        // If yes, the other nodes have to be promoted.
-        if (layers[node.id] <= 0 - additionalHeight) {
-            // In case left to right the layer id might get lower than 0.
-            additionalHeight++;
-            minimalLayer--;
-        }
         // Promote the node
-        layers[node.id] = layers[node.id] + (leftToRight ? -1 : 1);
-        if (layers[node.id] == maxHeight + additionalHeight) {
-            // In case right to left the maximum height might be exceeded.
-            additionalHeight++;
-            maximalLayer++;
+        int oldLayerId = node.getLayer().id;
+        if (leftToRight) {
+            if (oldLayerId == masterGraph.getLayers().size() - 1) {
+                // In case left-to-right the layer id might get too high.
+                Layer newLayer = new Layer(masterGraph);
+                masterGraph.getLayers().add(newLayer);
+                newLayer.id = oldLayerId + 1;
+                node.setLayer(newLayer);
+            } else {
+                Layer newLayer = masterGraph.getLayers().get(oldLayerId + 1);
+                node.setLayer(newLayer);
+            }
+        } else {
+            if (oldLayerId == 0) {
+                // In case right-to-left the layer id might get lower than 0.
+                Layer newLayer = new Layer(masterGraph);
+                masterGraph.getLayers().add(0, newLayer);
+                newLayer.id = oldLayerId - 1;
+                node.setLayer(newLayer);
+                // Shift all layer ids by one.
+                for (Layer layer : masterGraph.getLayers()) {
+                    layer.id = layer.id + 1;
+                }
+            } else {
+                Layer newLayer = masterGraph.getLayers().get(oldLayerId - 1);
+                node.setLayer(newLayer);
+            }
+            
         }
         // Recursively promote connected nodes if necessary.
         for (LEdge edge : leftToRight ? node.getOutgoingEdges() : node.getIncomingEdges()) {
@@ -516,7 +557,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                 nextNode = edge.getSource().getNode();
             }
             // If the current node is now in the same layer as a node connected to it promote the connected node.
-            if (layers[nextNode.id] == layers[node.id]) {
+            if (nextNode.getLayer().id == node.getLayer().id) {
                 promoteNodeByModelOrder(nextNode, leftToRight);
             }
         }
