@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -501,7 +502,15 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                     // If either the node can be promoted from a normal or mixed layer or from a label layer it shall be
                     // promoted.
                     if (modelOrderAllowsPromotion || promoteThroughDummyLayer) {
-                        promoteNodeByModelOrder(node, leftToRight);
+                        
+                        LinkedHashSet<LNode> nodesToPromote = promoteNodeByModelOrder(node, leftToRight);
+                        // Promote nodes to promote, which again create other nodes to promote until all
+                        // nodes are promoted
+                        while (!nodesToPromote.isEmpty()) {
+                            LNode nodeToPromote = nodesToPromote.iterator().next();
+                            nodesToPromote.remove(nodeToPromote);
+                            nodesToPromote.addAll(promoteNodeByModelOrder(nodeToPromote, leftToRight));
+                        }
                         nodeIndex--;
                         somethingChanged = true;
                     }
@@ -517,7 +526,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
      * @param node The node
      * @param leftToRight Whether the node is promoted left to right.
      */
-    private void promoteNodeByModelOrder(final LNode node, final boolean leftToRight) {
+    private LinkedHashSet<LNode> promoteNodeByModelOrder(final LNode node, final boolean leftToRight) {
         // Promote the node
         int oldLayerId = node.getLayer().id;
         if (leftToRight) {
@@ -549,6 +558,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
             
         }
         // Recursively promote connected nodes if necessary.
+        LinkedHashSet<LNode> nodesToPromote = new LinkedHashSet<>();
         for (LEdge edge : leftToRight ? node.getOutgoingEdges() : node.getIncomingEdges()) {
             LNode nextNode; 
             if (leftToRight) {
@@ -558,9 +568,10 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
             }
             // If the current node is now in the same layer as a node connected to it promote the connected node.
             if (nextNode.getLayer().id == node.getLayer().id) {
-                promoteNodeByModelOrder(nextNode, leftToRight);
+                nodesToPromote.add(nextNode);
             }
         }
+        return nodesToPromote;
     }
     
     /**
