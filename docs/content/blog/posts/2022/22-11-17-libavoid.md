@@ -54,7 +54,6 @@ The new layout algorithm has the identifier `org.eclipse.elk.alg.libavoid`. Its 
  * If your graph uses ports:
     * Every port must have a position on the border of its parent node.
     * `org.eclipse.elk.port.side` must be set to either `NORTH`, `EAST`, `SOUTH` or `WEST` for each port.
-    * `org.eclipse.elk.portConstraints` should be set to `FIXED_POS` for each node.
 
 The libavoid algorithm also brings its own configuration options.
 They are included in ELK's [reference documentation](/reference.html), but you can find documentation on the Doxygen pages of libavoid as well:
