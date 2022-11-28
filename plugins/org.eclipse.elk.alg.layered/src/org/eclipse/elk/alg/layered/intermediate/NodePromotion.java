@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -719,7 +720,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
     private void setNewLayeringModelOrder(final LGraph layeredGraph) {
         List<Layer> layerList = Lists.newArrayList();
         layeredGraph.getLayers().clear();
-        List<Integer> keySet = biLayerMap.keySet().stream().sorted().toList();
+        List<Integer> keySet = biLayerMap.keySet().stream().sorted().collect(Collectors.toList());
         for (Integer layerIndex : keySet) {
             LinkedList<LNode> layerNodes = biLayerMap.getValues(layerIndex);
             if (layerNodes.isEmpty()) {
