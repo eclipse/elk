@@ -368,7 +368,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
     private void applyLabelSide(final LNode labelDummy, final LabelSide side) {
         // This method only does things to label dummy nodes
         if (labelDummy.getType() == NodeType.LABEL) {
-            LabelSide effectiveSide = areLabelsPlacedInline(labelDummy)
+            LabelSide effectiveSide = labelDummy.isInlineEdgeLabel()
                     ? LabelSide.INLINE
                     : side;
 
@@ -385,8 +385,12 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
                     portPos = labelDummy.getSize().y - Math.ceil(thickness / 2);
                 } else if (effectiveSide == LabelSide.INLINE) {
                     // The label dummy has a superfluous label-edge spacing
+                    portPos = Math.ceil((labelDummy.getSize().y
+                                - labelDummy.getGraph().getProperty(LayeredOptions.SPACING_EDGE_LABEL)
+                                - thickness))
+                            / 2.0;
                     labelDummy.getSize().y -= labelDummy.getGraph().getProperty(LayeredOptions.SPACING_EDGE_LABEL);
-                    portPos = (labelDummy.getSize().y - Math.ceil(thickness)) / 2;
+                    labelDummy.getSize().y -= thickness;
                 }
                 
                 for (LPort port : labelDummy.getPorts()) {
@@ -412,16 +416,6 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         for (LLabel label : labels) {
             label.setProperty(InternalProperties.LABEL_SIDE, side);
         }
-    }
-    
-    /**
-     * Checks if the labels represented by the given label dummy are to be placed inline.
-     */
-    private boolean areLabelsPlacedInline(final LNode labelDummy) {
-        assert labelDummy.getType() == NodeType.LABEL;
-        
-        return labelDummy.getProperty(InternalProperties.REPRESENTED_LABELS).stream()
-                .allMatch(label -> label.getProperty(LayeredOptions.EDGE_LABELS_INLINE));
     }
     
     /**
