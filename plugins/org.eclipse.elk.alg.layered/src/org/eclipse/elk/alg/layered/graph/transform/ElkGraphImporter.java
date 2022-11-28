@@ -334,7 +334,7 @@ class ElkGraphImporter {
                 boolean hasHierarchyHandlingEnabled = elknode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
                         == HierarchyHandling.INCLUDE_CHILDREN;
                 boolean usesElkLayered = !elknode.hasProperty(CoreOptions.ALGORITHM)
-                        || elknode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                        || LayeredOptions.ALGORITHM_ID.endsWith(elknode.getProperty(CoreOptions.ALGORITHM));
 
                 LGraph nestedGraph = null;
                 if (usesElkLayered && hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
@@ -447,8 +447,9 @@ class ElkGraphImporter {
                     == HierarchyHandling.INCLUDE_CHILDREN;
             if (hasHierarchyHandlingEnabled) {
                 for (ElkNode elkChildGraphNode : elkGraphNode.getChildren()) {
-                    boolean usesElkLayered = !elkChildGraphNode.hasProperty(CoreOptions.ALGORITHM)
-                            || elkChildGraphNode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                    boolean usesElkLayered =
+                            !elkChildGraphNode.hasProperty(CoreOptions.ALGORITHM) || LayeredOptions.ALGORITHM_ID
+                                    .endsWith(elkChildGraphNode.getProperty(CoreOptions.ALGORITHM));
                     boolean partOfSameLayoutRun = elkChildGraphNode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
                             == HierarchyHandling.INCLUDE_CHILDREN;
                     
