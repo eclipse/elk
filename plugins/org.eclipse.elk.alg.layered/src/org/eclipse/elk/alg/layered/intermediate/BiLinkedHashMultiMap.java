@@ -97,7 +97,7 @@ public class BiLinkedHashMultiMap<K extends Comparable<K>, V> {
     
     public boolean isMaximalKey(K key) {
         for (K otherKey : multiMapKeyToValues.keySet()) {
-            if (key.compareTo(otherKey) <= 0) {
+            if (key.compareTo(otherKey) < 0) {
                 return false;
             }
         }
@@ -106,7 +106,7 @@ public class BiLinkedHashMultiMap<K extends Comparable<K>, V> {
     
     public boolean isMinimalKey(K key) {
         for (K otherKey : multiMapKeyToValues.keySet()) {
-            if (key.compareTo(otherKey) >= 0) {
+            if (key.compareTo(otherKey) > 0) {
                 return false;
             }
         }

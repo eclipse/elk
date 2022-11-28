@@ -379,8 +379,10 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
     private void modelOrderNodePromotion(final boolean leftToRight) {
         boolean somethingChanged = false;
         do {
-            somethingChanged = false;
-            for (int currentLayerId = biLayerMap.keySet().size() - 2; currentLayerId >= 0; currentLayerId--) {
+            somethingChanged = false;            
+            for (int currentLayerId = leftToRight ? biLayerMap.keySet().size() - 2 : 1;
+                    leftToRight ? currentLayerId >= 0 : currentLayerId < biLayerMap.keySet().size();
+                    currentLayerId += leftToRight ? -1 : 1) {
                 LinkedList<LNode> currentLayer = biLayerMap.getValues(currentLayerId);
                 for (int nodeIndex = 0; nodeIndex < currentLayer.size(); nodeIndex++) {
                     LNode node = currentLayer.get(nodeIndex);
@@ -391,16 +393,15 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                     // The last/first node shall not be promoted if no other node is there to compare it to.
                     if (biLayerMap.isMaximalKey(currentLayerId)
                             && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
-                        || biLayerMap.isMinimalKey(currentLayerId) // TODO maybe the currentLayerId can be smaller than 0 in RIGHT_TO_LEFT
+                        || biLayerMap.isMinimalKey(currentLayerId)
                             && this.promotionStrategy == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT) {
                         continue;
                     }
                     // Check whether this layer has a model order that prevents node promotion.
                     boolean shallBePromoted = true;
                     // Reset iterator.
-                    Iterator<LNode> interLayerIterator = currentLayer.iterator();
                     for (int otherNodeIndex = 0; otherNodeIndex < currentLayer.size(); otherNodeIndex++) {
-                        LNode otherNode = interLayerIterator.next();
+                        LNode otherNode = currentLayer.get(otherNodeIndex);
                         if (otherNode.hasProperty(InternalProperties.MODEL_ORDER)) {
                             if (leftToRight && node.getProperty(InternalProperties.MODEL_ORDER)
                                     < otherNode.getProperty(InternalProperties.MODEL_ORDER)
