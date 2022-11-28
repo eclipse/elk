@@ -184,15 +184,17 @@ public abstract class AbstractForceModel {
             if (u instanceof FBendpoint && v instanceof FBendpoint && !triedForBendPoints) {
                 // Wiggle orthogonal to edge direction
                 FEdge uE = ((FBendpoint) u).getEdge();
-                KVector uV = new KVector(uE.getTargetPoint()).sub(uE.getSourcePoint());
+                KVector uVector = new KVector(uE.getTargetPoint()).sub(uE.getSourcePoint());
                 double length = 2;
-                KVector orthogonaluV = new KVector(uV.x / uV.length() * length, -uV.y / uV.length() * length);
+                KVector orthogonaluV = new KVector(uVector.x / uVector.length() * length,
+                        -uVector.y / uVector.length() * length);
                 pu.add(orthogonaluV);
 
                 FEdge vE = ((FBendpoint) v).getEdge();
-                KVector vV = new KVector(vE.getTargetPoint()).sub(vE.getSourcePoint());
-                length = uV == vV ? -2 : 2;
-                KVector orthogonalvV = new KVector(vV.x / vV.length() * length, -vV.y / vV.length() * length);
+                KVector vVector = new KVector(vE.getTargetPoint()).sub(vE.getSourcePoint());
+                length = uVector == vVector ? -2 : 2;
+                KVector orthogonalvV = new KVector((vVector.x / vVector.length()) * length,
+                        -(vVector.y / vVector.length()) * length);
                 pu.add(orthogonalvV);
                 triedForBendPoints = true;
                 
