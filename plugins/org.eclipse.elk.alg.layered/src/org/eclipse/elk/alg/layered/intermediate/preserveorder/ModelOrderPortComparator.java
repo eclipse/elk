@@ -131,8 +131,14 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         // Sort outgoing ports before incoming ports.
         if (!p1.getIncomingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
             return 1;
-        } else {
+        } else if (!p1.getOutgoingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
             return -1;
+        } else {
+            // The ports have no edges.
+            // Use the port model order to compare them.
+            // FIXME Can this cause problems if the port order and the other ordering criteria used are conflicing?
+            return Integer.compare(p1.getProperty(InternalProperties.MODEL_ORDER),
+                    p2.getProperty(InternalProperties.MODEL_ORDER));
         }
     }
 }
