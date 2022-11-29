@@ -217,6 +217,13 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
                 mirrorX(node.getProperty(LayeredOptions.POSITION), offset - node.getSize().x);
             }
             
+            // mirror ORIGINAL BENDPOINTS
+            if (node.hasProperty(InternalProperties.ORIGINAL_BENDPOINTS)) {
+                for (KVector bendpoint : node.getProperty(InternalProperties.ORIGINAL_BENDPOINTS)) {
+                    mirrorX(bendpoint, offset - node.getSize().x);
+                }
+            }
+            
             // mirror the alignment
             switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
             case LEFT:
@@ -414,6 +421,13 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
             // mirror position
             if (node.getAllProperties().containsKey(LayeredOptions.POSITION)) {
                 mirrorY(node.getProperty(LayeredOptions.POSITION), offset - node.getSize().y);
+            }
+            
+            // mirror ORIGINAL BENDPOINTS
+            if (node.hasProperty(InternalProperties.ORIGINAL_BENDPOINTS)) {
+                for (KVector bendpoint : node.getProperty(InternalProperties.ORIGINAL_BENDPOINTS)) {
+                    mirrorY(bendpoint, offset - node.getSize().y);
+                }
             }
             
             // mirror the alignment
@@ -844,6 +858,13 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
             double tmp = pos.x;
             pos.x = pos.y;
             pos.y = tmp;
+        }
+        
+        // ORIGINAL BENDPOINTS
+        if (node.hasProperty(InternalProperties.ORIGINAL_BENDPOINTS)) {
+            for (KVector bendpoint : node.getProperty(InternalProperties.ORIGINAL_BENDPOINTS)) {
+                transpose(bendpoint);
+            }
         }
     }
     
