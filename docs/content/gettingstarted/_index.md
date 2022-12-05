@@ -6,11 +6,11 @@ menu:
     weight: 20
 ---
 
-Automatic layout can be a complex thing, but starting to use the _Eclipse Layout Kernel_ can be as easy.
+Automatic layout can be a complex thing, but starting to use the _Eclipse Layout Kernel_ can be easy.
 
 First of all, there are two versions of ELK. The [Java Version](https://github.com/eclipse/elk) and the Javascript Version, which is transpiled from the Java source using [GWT](https://www.gwtproject.org/).
 
-Examples of ELK graphs can be found [here](https://rtsys.informatik.uni-kiel.de/elklive/examples.html) in the [elklive](https://rtsys.informatik.uni-kiel.de/elklive/index.html) tool, which supports writing ELK graphs in the [ELKT](https://rtsys.informatik.uni-kiel.de/elklive/elkgraph.html) and [JSON](https://rtsys.informatik.uni-kiel.de/elklive/json.html) format, can convert between different formats, and allows to browse additional models.
+Examples of ELK graphs can be found [here](https://rtsys.informatik.uni-kiel.de/elklive/examples.html) in the [elklive](https://rtsys.informatik.uni-kiel.de/elklive/index.html) tool, which supports writing ELK graphs in the [ELKT](https://rtsys.informatik.uni-kiel.de/elklive/elkgraph.html) and [JSON](https://rtsys.informatik.uni-kiel.de/elklive/json.html) format, can convert between different formats, and allows browsing additional models.
 
 All layout algorithms and their options are documented [here](https://www.eclipse.org/elk/reference.html) and further elaborated in a series of [blog-posts](https://www.eclipse.org/elk/blog.html).
 
