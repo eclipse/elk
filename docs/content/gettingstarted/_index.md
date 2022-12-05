@@ -16,7 +16,7 @@ All layout algorithms and their options are documented [here](https://www.eclips
 
 ## Issues and Questions
 
-Both ELK and elkjs allow to report bugs and to ask questions in form of GitHub issues.
+Both [ELK](https://github.com/eclipse/elk/issues/new) and [elkjs](https://github.com/kieler/elkjs/issues/new?assignees=&labels=bug&template=bug_report.md&title=) allow to report bugs and to ask questions in form of GitHub issues.
 
 Additionally, the [ELK gitter](https://gitter.im/eclipse/elk) can be used to ask questions.
 
