@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.layered.p2layers.CoffmanGrahamLayerer;
 import org.eclipse.elk.alg.layered.p2layers.InteractiveLayerer;
 import org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer;
 import org.eclipse.elk.alg.layered.p2layers.MinWidthLayerer;
+import org.eclipse.elk.alg.layered.p2layers.LongestPathSourceLayerer;
 import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
 import org.eclipse.elk.alg.layered.p2layers.StretchWidthLayerer;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -35,6 +36,10 @@ public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGrap
      * All nodes will be layered according to the longest path to any sink.
      */
     LONGEST_PATH,
+    /**
+     * All nodes will be layered according to the longest path to any source.
+     */
+    LONGEST_PATH_SOURCE,
     /** 
      * Allows to restrict the number of original nodes in any layer. Essentially 
      * solves a precedence-constrained scheduling problem. 
@@ -82,6 +87,9 @@ public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGrap
           
         case MIN_WIDTH:
             return new MinWidthLayerer();
+            
+        case LONGEST_PATH_SOURCE:
+            return new LongestPathSourceLayerer();
 
         default:
             throw new IllegalArgumentException(
