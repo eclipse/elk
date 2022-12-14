@@ -40,7 +40,7 @@ All of this is pure Java code, and the only library dependencies here are the _E
 * People who want to use automatic layout in a Java application that is not built on Eclipse.
 {{% /note %}}
 
-The plan Java layer mostly adds functionality to execute layout algorithms more easily:
+The plain Java layer mostly adds functionality to execute layout algorithms more easily:
 
 1. The layout meta data service. This is where all available layout algorithms and layout properties are registered, to be queried later. The registration is either done manually (pure Java applications) or automatically (through Eclipse extension points).
 

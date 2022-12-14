@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.force.options.InternalProperties;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkEdge;
@@ -203,10 +204,12 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             klabel.setLocation(labelPos.x, labelPos.y);
         }
         
-        // set up the parent node
-        double width = (maxXPos - minXPos) + padding.getHorizontal();
-        double height = (maxYPos - minYPos) + padding.getVertical();
-        ElkUtil.resizeNode(kgraph, width, height, false, true);
+        if (!kgraph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
+            // set up the parent node
+            double width = (maxXPos - minXPos) + padding.getHorizontal();
+            double height = (maxYPos - minYPos) + padding.getVertical();
+            ElkUtil.resizeNode(kgraph, width, height, false, true);
+        }
     }
     
 }

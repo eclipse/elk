@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.rectpacking;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
+import org.eclipse.elk.alg.rectpacking.p1widthapproximation.WidthApproximationStrategy;
 import org.eclipse.elk.alg.test.PlainJavaInitialization;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -52,7 +53,8 @@ public class CompactionTest {
         ElkNode n6 = ElkGraphUtil.createNode(parent);
         ElkNode n7 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -109,7 +111,8 @@ public class CompactionTest {
         ElkNode n6 = ElkGraphUtil.createNode(parent);
         ElkNode n7 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -169,7 +172,8 @@ public class CompactionTest {
         ElkNode n6 = ElkGraphUtil.createNode(parent);
         ElkNode n7 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -237,7 +241,8 @@ public class CompactionTest {
         ElkNode n18 = ElkGraphUtil.createNode(parent);
         ElkNode n19 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 330.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 330.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 1.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(178, 162);
@@ -277,7 +282,8 @@ public class CompactionTest {
         ElkNode n4 = ElkGraphUtil.createNode(parent);
         ElkNode n5 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 190.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 190.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -325,7 +331,8 @@ public class CompactionTest {
         ElkNode n6 = ElkGraphUtil.createNode(parent);
         ElkNode n7 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -383,7 +390,8 @@ public class CompactionTest {
         ElkNode n3 = ElkGraphUtil.createNode(parent);
         ElkNode n4 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 110.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -426,7 +434,8 @@ public class CompactionTest {
         ElkNode n3 = ElkGraphUtil.createNode(parent);
         ElkNode n4 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 150.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 150.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -469,7 +478,8 @@ public class CompactionTest {
         ElkNode n3 = ElkGraphUtil.createNode(parent);
         ElkNode n4 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 150.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 150.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 70);
@@ -513,7 +523,8 @@ public class CompactionTest {
         ElkNode n5 = ElkGraphUtil.createNode(parent);
         ElkNode n6 = ElkGraphUtil.createNode(parent);
         parent.setProperty(CoreOptions.ALGORITHM, RectPackingOptions.ALGORITHM_ID);
-        parent.setProperty(RectPackingOptions.TARGET_WIDTH, 135.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_TARGET_WIDTH, 135.0);
+        parent.setProperty(RectPackingOptions.WIDTH_APPROXIMATION_STRATEGY, WidthApproximationStrategy.TARGET_WIDTH);
         parent.setProperty(CoreOptions.SPACING_NODE_NODE, 5.0);
         parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
         n1.setDimensions(30, 100);

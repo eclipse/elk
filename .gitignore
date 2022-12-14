@@ -2,6 +2,7 @@
 *.class
 bin/
 .checkstyle
+.hugo_build.lock
 .svn/
 target/
 build/mvnrepo/

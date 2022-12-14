@@ -29,6 +29,12 @@
    <feature url="features/org.eclipse.elk.algorithms.source_0.9.0.qualifier.jar" id="org.eclipse.elk.algorithms.feature.source" version="0.9.0.qualifier">
       <category name="elk"/>
    </feature>
+   <feature url="features/org.eclipse.elk.libavoid_0.9.0.qualifier.jar" id="org.eclipse.elk.libavoid.feature" version="0.9.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.libavoid.source_0.9.0.qualifier.jar" id="org.eclipse.elk.libavoid.feature.source" version="0.9.0.qualifier">
+      <category name="elk"/>
+   </feature>
    <feature url="features/org.eclipse.elk.gmf_0.9.0.qualifier.jar" id="org.eclipse.elk.gmf.feature" version="0.9.0.qualifier">
       <category name="elk"/>
    </feature>

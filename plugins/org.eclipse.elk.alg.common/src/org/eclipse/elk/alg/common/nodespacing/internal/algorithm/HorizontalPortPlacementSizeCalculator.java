@@ -263,10 +263,13 @@ public final class HorizontalPortPlacementSizeCalculator {
         
         boolean portLabelsOutside = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.OUTSIDE);
         boolean alwaysSameSide = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_SAME_SIDE);
+        boolean alwaysSameSideAbove =
+                nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_OTHER_SAME_SIDE);
         boolean spaceEfficient = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.SPACE_EFFICIENT);
         boolean uniformPortSpacing = nodeContext.sizeOptions.contains(SizeOptions.UNIFORM_PORT_SPACING);
         
-        boolean spaceEfficientPortLabels = !alwaysSameSide && (spaceEfficient || portContexts.size() == 2);
+        boolean spaceEfficientPortLabels = !alwaysSameSide && !alwaysSameSideAbove
+                && (spaceEfficient || portContexts.size() == 2);
 
         // Set the horizontal port margins of all ports according to how their labels will be placed. We'll be
         // modifying the margins soon enough.

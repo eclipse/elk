@@ -350,6 +350,8 @@ public final class PortLabelPlacementCalculator {
         boolean placeFirstPortDifferently = NodeLabelAndSizeUtilities.isFirstOutsidePortLabelPlacedDifferently(
                 nodeContext, portSide);
         
+        boolean alwaysAbove = nodeContext.portLabelsPlacement.contains(PortLabelPlacement.ALWAYS_OTHER_SAME_SIDE);
+        
         for (PortContext portContext : portContexts) {
             // If the port doesn't have labels, skip
             if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {
@@ -372,7 +374,7 @@ public final class PortLabelPlacementCalculator {
                 if (portContext.labelsNextToPort) {
                     portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
-                } else if (placeFirstPortDifferently) {
+                } else if (placeFirstPortDifferently || alwaysAbove) {
                     portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacingHorizontal;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 } else {
@@ -387,7 +389,7 @@ public final class PortLabelPlacementCalculator {
                 if (portContext.labelsNextToPort) {
                     portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
-                } else if (placeFirstPortDifferently) {
+                } else if (placeFirstPortDifferently || alwaysAbove) {
                     portLabelCellRect.x = -portLabelCellRect.width - nodeContext.portLabelSpacingHorizontal;
                     portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 } else {
@@ -405,7 +407,7 @@ public final class PortLabelPlacementCalculator {
                             : portLabelCell.getLabels().get(0).getSize().y;
                     portLabelCellRect.y = (portSize.y - labelHeight) / 2;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
-                } else if (placeFirstPortDifferently) {
+                } else if (placeFirstPortDifferently || alwaysAbove) {
                     portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacingVertical;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 } else {
@@ -423,7 +425,7 @@ public final class PortLabelPlacementCalculator {
                             : portLabelCell.getLabels().get(0).getSize().y;
                     portLabelCellRect.y = (portSize.y - labelHeight) / 2;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
-                } else if (placeFirstPortDifferently) {
+                } else if (placeFirstPortDifferently || alwaysAbove) {
                     portLabelCellRect.y = -portLabelCellRect.height - nodeContext.portLabelSpacingVertical;
                     portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
                 } else {

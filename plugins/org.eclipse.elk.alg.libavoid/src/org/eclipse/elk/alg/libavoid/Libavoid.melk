@@ -1,0 +1,223 @@
+/*******************************************************************************
+ * Copyright (c) 2016, 2022 Kiel University and others.
+ * 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+package org.eclipse.elk.alg.libavoid
+
+import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.elk.alg.libavoid.LibavoidLayoutProvider
+import org.eclipse.elk.core.options.PortConstraints
+
+bundle {
+    label "Libavoid Connector Routing"
+    metadataClass options.LibavoidMetaDataProvider
+}
+
+category edge {
+    label "Edge Routing"
+    description "Only route the edges without touching the node&apos;s positions."
+}
+
+algorithm libavoid(LibavoidLayoutProvider) {
+    label "Libavoid"
+    description
+        "libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal 
+        and polyline connector routing for use in interactive diagram editors."
+    metadataClass options.LibavoidOptions
+    category edge
+        
+       supports org.eclipse.elk.debugMode = false
+       supports org.eclipse.elk.port.side
+       supports org.eclipse.elk.direction
+       supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+       supports org.eclipse.elk.portConstraints = PortConstraints.FREE
+       
+       supports org.eclipse.elk.alg.libavoid.segmentPenalty
+       supports org.eclipse.elk.alg.libavoid.anglePenalty
+       supports org.eclipse.elk.alg.libavoid.crossingPenalty
+       supports org.eclipse.elk.alg.libavoid.clusterCrossingPenalty
+       supports org.eclipse.elk.alg.libavoid.fixedSharedPathPenalty
+       supports org.eclipse.elk.alg.libavoid.portDirectionPenalty
+       supports org.eclipse.elk.alg.libavoid.shapeBufferDistance
+       supports org.eclipse.elk.alg.libavoid.idealNudgingDistance
+       supports org.eclipse.elk.alg.libavoid.reverseDirectionPenalty
+       supports org.eclipse.elk.alg.libavoid.nudgeOrthogonalSegmentsConnectedToShapes
+       supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingJunctions
+       supports org.eclipse.elk.alg.libavoid.penaliseOrthogonalSharedPathsAtConnEnds
+       supports org.eclipse.elk.alg.libavoid.nudgeOrthogonalTouchingColinearSegments
+       supports org.eclipse.elk.alg.libavoid.performUnifyingNudgingPreprocessingStep
+       supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions
+       supports org.eclipse.elk.alg.libavoid.nudgeSharedPathsWithCommonEndPoint
+}      
+
+// --- Layout Options
+// NOTE: Do not group these layout options unless you change the libavoid server as well.
+
+option segmentPenalty: double {
+    label "Segment Penalty"
+    description 
+        "This penalty is applied for each segment in the connector path beyond the first. 
+        This should always normally be set when doing orthogonal routing to prevent 
+        step-like connector paths."
+    default = 10
+    targets parents
+}
+      
+option anglePenalty: double {
+    label "Angle Penalty"
+    description 
+        "This penalty is applied in its full amount to tight acute bends in the connector path. 
+        A smaller portion of the penalty is applied for slight bends, i.e., where the bend is close 
+        to 180 degrees. This is useful for polyline routing where there is some evidence that tighter 
+        corners are worse for readability, but that slight bends might not be so bad, 
+        especially when smoothed by curves."
+    default = 0
+    targets parents
+}
+
+advanced option crossingPenalty: double {
+    label "Crossing Penalty"
+    description 
+        "This penalty is applied whenever a connector path crosses another connector path. 
+        It takes shared paths into consideration and the penalty is only applied 
+        if there is an actual crossing."
+    default = 0
+    targets parents
+}
+
+advanced option clusterCrossingPenalty: double {
+    label "Cluster Crossing Penalty"
+    description "This penalty is applied whenever a connector path crosses a cluster boundary."
+    default = 0
+    targets parents
+}
+
+advanced option fixedSharedPathPenalty: double {
+    label "Fixed Shared Path Penalty"
+    description
+        "This penalty is applied whenever a connector path shares some segments with an immovable
+        portion of an existing connector route (such as the first or last segment of a connector)."
+    default = 0
+    targets parents
+}
+
+advanced option portDirectionPenalty: double {
+    label "Port Direction Penalty"
+    description
+        "This penalty is applied to port selection choice when the other end of the connector 
+        being routed does not appear in any of the 90 degree visibility cones centered on the 
+        visibility directions for the port."
+    default = 0
+    targets parents
+}
+
+option shapeBufferDistance: double {
+    label "Shape Buffer Distance"
+    description
+        "This parameter defines the spacing distance that will be added to the sides of each 
+        shape when determining obstacle sizes for routing. This controls how closely connectors 
+        pass shapes, and can be used to prevent connectors overlapping with shape boundaries."
+    default = 4
+    targets parents
+}
+
+option idealNudgingDistance: double {
+    label "Ideal Nudging Distance"
+    description
+        "This parameter defines the spacing distance that will be used for nudging apart 
+        overlapping corners and line segments of connectors."
+    default = 4
+    targets parents
+}
+
+option reverseDirectionPenalty: double {
+    label "Reverse Direction Penalty"
+    description
+        "This penalty is applied whenever a connector path travels in the direction opposite
+		of the destination from the source endpoint. By default this penalty is set to zero.
+		This shouldn't be needed in most cases but can be useful if you use penalties such as
+		crossingPenalty which cause connectors to loop around obstacles."
+    default = 0
+    targets parents
+}
+
+option nudgeOrthogonalSegmentsConnectedToShapes: boolean {
+    label "Nudge Orthogonal Segments"
+    description
+        "This option causes the final segments of connectors, which are attached to shapes, 
+        to be nudged apart. Usually these segments are fixed, since they are considered to be 
+        attached to ports."
+    default = false
+    targets parents
+}
+
+
+option improveHyperedgeRoutesMovingJunctions: boolean {
+    label "Improve Hyperedge Routes"
+    description
+        "This option causes hyperedge routes to be locally improved fixing obviously bad paths. 
+        As part of this process libavoid will effectively move junctions, setting new ideal positions 
+        for each junction."
+    default = true
+    targets parents
+}
+
+advanced option penaliseOrthogonalSharedPathsAtConnEnds: boolean {
+    label "Penalise Orthogonal Shared Paths"
+    description 
+        "This option penalises and attempts to reroute orthogonal shared connector paths terminating 
+        at a common junction or shape connection pin. When multiple connector paths enter or leave 
+        the same side of a junction (or shape pin), the router will attempt to reroute these to 
+        different sides of the junction or different shape pins. This option depends on the 
+        fixedSharedPathPenalty penalty having been set."
+    default = false
+    targets parents
+}
+
+option nudgeOrthogonalTouchingColinearSegments: boolean {
+    label "Nudge Orthogonal Touching Colinear Segments"
+    description
+        "This option can be used to control whether colinear line segments that touch just at 
+        their ends will be nudged apart. The overlap will usually be resolved in the other dimension, 
+        so this is not usually required."
+    default = false
+    targets parents
+}
+
+advanced option performUnifyingNudgingPreprocessingStep: boolean {
+    label "Perform Unifying Nudging Preprocessing"
+    description
+        "This option can be used to control whether the router performs a preprocessing step before 
+        orthogonal nudging where is tries to unify segments and centre them in free space. 
+        This generally results in better quality ordering and nudging."
+    default = true
+    targets parents
+}
+
+advanced option improveHyperedgeRoutesMovingAddingAndDeletingJunctions: boolean {
+    label "Improve Hyperedge Routes Add/Delete"
+    description 
+        "This option causes hyperedge routes to be locally improved fixing obviously bad paths.
+		It can cause junctions and connectors to be added or removed from hyperedges. As part of
+		this process libavoid will effectively move junctions by setting new ideal positions for
+		each remaining or added junction. If set, this option overrides the
+		improveHyperedgeRoutesMovingJunctions option."
+    default = false
+    targets parents
+}
+
+advanced option nudgeSharedPathsWithCommonEndPoint: boolean {
+    label "Nudge Shared Paths With Common Endpoint"
+    description 
+        "This option determines whether intermediate segments of connectors that are attached to
+		common endpoints will be nudged apart. Usually these segments get nudged apart, but you
+		may want to turn this off if you would prefer that entire shared paths terminating at a
+		common end point should overlap."
+    default = true
+    targets parents
+}

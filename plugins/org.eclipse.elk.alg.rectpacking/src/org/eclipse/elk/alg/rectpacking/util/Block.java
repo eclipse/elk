@@ -45,7 +45,7 @@ public class Block {
     /** Rectangles contained in this block. */
     private final List<ElkNode> children = new ArrayList<ElkNode>();
     /** The rectangles in children assigned to rows. */
-    private final List<BlockRow> rows = new ArrayList<BlockRow>();
+    private List<BlockRow> rows = new ArrayList<BlockRow>();
     /** X coordinate of this block. */
     private double x;
     /** Y coordinate of this block. */
@@ -578,5 +578,12 @@ public class Block {
      */
     public void setSmallestRectWidth(double smallestRectWidth) {
         this.smallestRectWidth = smallestRectWidth;
+    }
+
+    /**
+     * Recalculates the size of this block.
+     */
+    public void resetBlock() {
+        adjustSizeAfterRemove();
     }
 }
