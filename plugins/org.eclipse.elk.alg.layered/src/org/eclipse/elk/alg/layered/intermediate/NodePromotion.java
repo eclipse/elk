@@ -693,7 +693,6 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         // our layering. It is added to the layeredGraph with reversed IDs so they fit to the IDs
         // stored in the nodes but can also be properly assigned compliant with the layering used in
         // ELK Layered.
-        boolean leftToRight = promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT;
         List<Layer> layList = Lists.newArrayList();
         for (int i = 0; i <= maxHeight; i++) {
             Layer laLaLayer = new Layer(layeredGraph);
