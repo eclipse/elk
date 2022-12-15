@@ -716,16 +716,23 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         layeredGraph.getLayers().clear();
         layeredGraph.getLayers().addAll(layList);
     }
-    
+
+
+    /**
+     * Helper method for setting the layering after the model order promotion has finished.
+     * 
+     * @param layeredGraph The graph to which the calculated new layering is applied.
+     */
     private void setNewLayeringModelOrder(final LGraph layeredGraph) {
         List<Layer> layerList = Lists.newArrayList();
         layeredGraph.getLayers().clear();
+        // Get the layer indices.
         List<Integer> keySet = biLayerMap.keySet().stream().sorted().collect(Collectors.toList());
         for (Integer layerIndex : keySet) {
+            // Get node of layer.
             LinkedList<LNode> layerNodes = biLayerMap.getValues(layerIndex);
-            if (layerNodes.isEmpty()) {
-                
-            } else {
+            // Create new layer.
+            if (!layerNodes.isEmpty()) {
                 Layer newLayer = new Layer(layeredGraph);
                 layerList.add(newLayer);
                 newLayer.id = layerIndex;
@@ -734,6 +741,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                 }
             }
         }
+        // Apply new layering.
         layeredGraph.getLayers().addAll(layerList);
     }
 }
