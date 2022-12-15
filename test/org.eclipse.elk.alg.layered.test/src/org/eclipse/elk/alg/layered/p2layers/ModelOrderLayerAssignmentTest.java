@@ -221,8 +221,8 @@ public class ModelOrderLayerAssignmentTest {
         // Check whether n5 aligns with n4 and n3.
         assertEquals("n5 on wrong x coordinate", 120, n5.getX(), 0.1);
         assertEquals("n5 on wrong y coordinate", 40 + 30 + 10, n5.getY(), 0.1);
-        assertEquals("n6 on wrong x coordinate", 120 + 30 + 30, n6.getX(), 0.1);
-        assertEquals("n6 on wrong y coordinate", (80 + 30)/2, n6.getY(), 0.1);
+        assertEquals("n6 on wrong x coordinate", 170, n6.getX(), 0.1);
+        assertEquals("n6 on wrong y coordinate", 40, n6.getY(), 0.1);
     }
     
     @Test
