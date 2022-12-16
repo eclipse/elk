@@ -16,6 +16,7 @@ import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.HierarchyHandling
+import org.eclipse.elk.core.options.MergeRange
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
 
@@ -92,6 +93,7 @@ algorithm layered(LayeredLayoutProvider) {
     // flexible nodes during node placement
     supports nodePlacement.networkSimplex.nodeFlexibility
     supports nodePlacement.networkSimplex.nodeFlexibility.^default
+    supports nodePlacement.networkSimplex.nodeFlexibility.labelMerging
     
     // splines
     supports edgeRouting.splines.mode
@@ -530,6 +532,17 @@ group nodePlacement {
                 description
                     "Default value of the 'nodeFlexibility' option for the children of a hierarchical node."
                 default = NodeFlexibility.NONE
+                targets parents   
+                requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX
+            }
+            
+            advanced option labelMerging: MergeRange {
+                label "Merging of Node Labels"
+                description
+                    "Merges labels of nodes if the node width allows it. The values of the pair determine the labels 
+                     that should be tried to merge. E.g. for the Pair (2,4) the second, third, and fourth label are
+                     merged as far as possible."
+                default = new MergeRange(0,0)
                 targets parents   
                 requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX
             }

@@ -84,7 +84,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     SORT_BY_INPUT_ORDER_OF_MODEL,
     /** Inserts dummy nodes to take care of northern and southern ports. */
     NORTH_SOUTH_PORT_PREPROCESSOR,
-
+    
     // Before Phase 4
     
     /** Performs 'wrapping' of the graph, potentially executing improvement heuristics. */
@@ -123,7 +123,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
 
     // Before Phase 5
-
+    /** Adjust the node labels when network simplex with node flexibility is used. */
+    ADJUST_LABELS_TO_NODE_WIDTH,
     /** Calculate the size of layers and the graph's height and offset. */
     LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
     /** Fix coordinates of hierarchical port dummy nodes. */
@@ -282,6 +283,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case LAYER_CONSTRAINT_PREPROCESSOR:
             return new LayerConstraintPreprocessor();
+            
+        case ADJUST_LABELS_TO_NODE_WIDTH:
+            return new AdjustNodeLabels();
             
         case LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR:
             return new LayerSizeAndGraphHeightCalculator();

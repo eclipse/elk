@@ -24,6 +24,7 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.MergeRange;
 import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.util.ElkReflect;
@@ -128,6 +129,9 @@ public final class LayoutMetaDataService {
         ElkReflect.register(IndividualSpacings.class, 
                 () -> new IndividualSpacings(), 
                 (is) -> new IndividualSpacings((IndividualSpacings) is));
+        ElkReflect.register(MergeRange.class, 
+                () -> new MergeRange(),
+                (mr) -> new MergeRange((MergeRange) mr));
         
         // Commonly used classes for internal properties
         ElkReflect.register(ArrayList.class, 
