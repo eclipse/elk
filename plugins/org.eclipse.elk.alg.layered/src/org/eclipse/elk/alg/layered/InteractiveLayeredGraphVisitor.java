@@ -311,7 +311,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
      * @param layering
      *            List that contains the layers with their corresponding nodes.
      */
-    private void assignLayersToNodesWithProperty(final List<ElkNode> nodesWithLayerConstraint,
+    private int assignLayersToNodesWithProperty(final List<ElkNode> nodesWithLayerConstraint,
             final List<List<ElkNode>> layering) {
         // Sort nodes with constraint based on their layer.
         nodesWithLayerConstraint.sort((ElkNode a, ElkNode b) -> {
@@ -341,6 +341,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 layering.add(new ArrayList<>(Arrays.asList(node)));
             }
         }
+        return diff;
     }
 
     /**
