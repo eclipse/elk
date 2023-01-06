@@ -336,6 +336,7 @@ public class LayerSweepCrossingMinimizer
             for (LNode lNode : layer) {
                 Comparator<LPort> comp = new ModelOrderPortComparator(
                         previousLayer == -1 ? layers[0] : layers[previousLayer],
+                                lNode.getGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
                                 SortByInputModelProcessor.longEdgeTargetNodePreprocessing(lNode));
                 for (int i = 0; i < lNode.getPorts().size(); i++) {
                     for (int j = i + 1; j < lNode.getPorts().size(); j++) {
@@ -468,15 +469,17 @@ public class LayerSweepCrossingMinimizer
             final boolean onRightMostLayer) {
         int endIndex = endIndex(onRightMostLayer, nodeOrder.length);
         LNode[] lastLayer = nodeOrder[endIndex];
-        if (!isExternalPortDummy(lastLayer[0])) {
+        // Check whether the node to check is an external port dummy.
+        int j = firstIndex(onRightMostLayer, lastLayer.length);
+        if (!isExternalPortDummy(lastLayer[j])) {
             return;
         }
 
-        int j = firstIndex(onRightMostLayer, lastLayer.length);
         List<LPort> ports = parent.getPorts();
         for (int i = 0; i < ports.size(); i++) {
             LPort port = ports.get(i);
             if (isOnEndOfSweepSide(port, onRightMostLayer) && isHierarchical(port)) {
+                // Only on external port dummy node has a port as its origin.
                 ports.set(i, originPort(lastLayer[j]));
                 j += next(onRightMostLayer);
             }
