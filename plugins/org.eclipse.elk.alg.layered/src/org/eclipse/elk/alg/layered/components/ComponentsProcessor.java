@@ -142,7 +142,7 @@ public final class ComponentsProcessor {
                 // With external port connections, we want to use the more complex components
                 // placement algorithm
                 if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)
-                        == ComponentOrderingStrategy.FORCE_MODEL_ORDER) {
+                        == ComponentOrderingStrategy.GROUP_MODEL_ORDER) {
                     graphPlacer = componentGroupModelOrderGraphPlacer;
                 } else if (graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS)
                         == ComponentOrderingStrategy.MODEL_ORDER) {
