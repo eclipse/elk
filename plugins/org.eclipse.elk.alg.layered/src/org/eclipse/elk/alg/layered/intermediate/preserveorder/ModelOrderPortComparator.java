@@ -88,10 +88,10 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         if (!p1.getOutgoingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
             LNode p1TargetNode = p1.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
             LNode p2TargetNode = p2.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
-            
 
-            
-            if (this.strategy == OrderingStrategy.PREFER_NODES) {
+            if (this.strategy == OrderingStrategy.PREFER_NODES && p1TargetNode != null && p2TargetNode != null
+                    && p1TargetNode.hasProperty(InternalProperties.MODEL_ORDER)
+                    && p2TargetNode.hasProperty(InternalProperties.MODEL_ORDER)) {
                 return Integer.compare(p1TargetNode.getProperty(InternalProperties.MODEL_ORDER),
                         p2TargetNode.getProperty(InternalProperties.MODEL_ORDER));
             }
