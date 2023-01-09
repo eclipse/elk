@@ -1330,16 +1330,18 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
                             || edge.getSource().getNode().getLayer() != left) {
                         continue;
                     }
-                    ListIterator<LEdge> openEdgesIt = openEdges.listIterator(openEdges.size()); // start at the end
-                    LEdge last = openEdgesIt.previous();
-                    while (last != edge && openEdgesIt.hasPrevious()) {
-                        // mark both edges as being part of an edge crossing
-                        crossing[last.id] = true;
-                        crossing[edge.id] = true;
-                        last = openEdgesIt.previous();
-                    }
-                    if (openEdgesIt.hasPrevious()) {
-                        openEdgesIt.remove();
+                    if (!openEdges.isEmpty()) {
+                        ListIterator<LEdge> openEdgesIt = openEdges.listIterator(openEdges.size()); // start at the end
+                        LEdge last = openEdgesIt.previous();
+                        while (last != edge && openEdgesIt.hasPrevious()) {
+                            // mark both edges as being part of an edge crossing
+                            crossing[last.id] = true;
+                            crossing[edge.id] = true;
+                            last = openEdgesIt.previous();
+                        }
+                        if (openEdgesIt.hasPrevious()) {
+                            openEdgesIt.remove();
+                        }
                     }
                 }
             }

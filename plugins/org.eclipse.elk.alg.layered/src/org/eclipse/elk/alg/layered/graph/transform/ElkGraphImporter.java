@@ -32,6 +32,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.LayeredSpacings;
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
+import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.UnsupportedGraphException;
@@ -226,14 +227,7 @@ class ElkGraphImporter {
         int index = 0;
         for (ElkNode child : elkgraph.getChildren()) {
             if (!child.getProperty(LayeredOptions.NO_LAYOUT)) {
-                if ((elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
-                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                            == CycleBreakingStrategy.MODEL_ORDER
-                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                            == CycleBreakingStrategy.GREEDY_MODEL_ORDER
-                        || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                        || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE)
-                    && !child.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
+                if (needsModelOrder(child)) {
                     child.setProperty(InternalProperties.MODEL_ORDER, index);
                     index++;
                 }
@@ -245,13 +239,7 @@ class ElkGraphImporter {
         // (this is not part of the previous loop since all children must have already been transformed)
         index = 0;
         for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
-            if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
-                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                        == CycleBreakingStrategy.MODEL_ORDER
-                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                        == CycleBreakingStrategy.GREEDY_MODEL_ORDER
-                    || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                    || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
+            if (needsModelOrderBasedOnParent(elkgraph)) {
                 elkedge.setProperty(InternalProperties.MODEL_ORDER, index);
                 index++;
             }
@@ -312,14 +300,7 @@ class ElkGraphImporter {
         while (!elkGraphQueue.isEmpty()) {
             ElkNode elknode = elkGraphQueue.poll();
             
-            if ((elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
-                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                        == CycleBreakingStrategy.MODEL_ORDER
-                    || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                        == CycleBreakingStrategy.GREEDY_MODEL_ORDER
-                    || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                    || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE)
-                && !elknode.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER)) {
+            if (needsModelOrder(elknode)) {
                 // Assign a model order to the nodes as they are read
                 elknode.setProperty(InternalProperties.MODEL_ORDER, index++);
             }
@@ -334,7 +315,7 @@ class ElkGraphImporter {
                 boolean hasHierarchyHandlingEnabled = elknode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
                         == HierarchyHandling.INCLUDE_CHILDREN;
                 boolean usesElkLayered = !elknode.hasProperty(CoreOptions.ALGORITHM)
-                        || elknode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                        || LayeredOptions.ALGORITHM_ID.endsWith(elknode.getProperty(CoreOptions.ALGORITHM));
 
                 LGraph nestedGraph = null;
                 if (usesElkLayered && hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
@@ -386,13 +367,7 @@ class ElkGraphImporter {
                 // We don't support hyperedges
                 checkEdgeValidity(elkedge);
                 
-                if (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
-                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                            == CycleBreakingStrategy.MODEL_ORDER
-                        || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY)
-                            == CycleBreakingStrategy.GREEDY_MODEL_ORDER
-                        || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
-                        || elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE) {
+                if (needsModelOrderBasedOnParent(elkgraph)) {
                     // Assign a model order to the edges as they are read
                     elkedge.setProperty(InternalProperties.MODEL_ORDER, index++);
                 }
@@ -447,8 +422,9 @@ class ElkGraphImporter {
                     == HierarchyHandling.INCLUDE_CHILDREN;
             if (hasHierarchyHandlingEnabled) {
                 for (ElkNode elkChildGraphNode : elkGraphNode.getChildren()) {
-                    boolean usesElkLayered = !elkChildGraphNode.hasProperty(CoreOptions.ALGORITHM)
-                            || elkChildGraphNode.getProperty(CoreOptions.ALGORITHM).equals(LayeredOptions.ALGORITHM_ID);
+                    boolean usesElkLayered =
+                            !elkChildGraphNode.hasProperty(CoreOptions.ALGORITHM) || LayeredOptions.ALGORITHM_ID
+                                    .endsWith(elkChildGraphNode.getProperty(CoreOptions.ALGORITHM));
                     boolean partOfSameLayoutRun = elkChildGraphNode.getProperty(LayeredOptions.HIERARCHY_HANDLING)
                             == HierarchyHandling.INCLUDE_CHILDREN;
                     
@@ -458,6 +434,38 @@ class ElkGraphImporter {
                 }
             }
         }
+    }
+    
+    /**
+     * Calculates whether a node needs to have a model order set.
+     * 
+     * @param child The node.
+     * @return True, if model order should be set.
+     */
+    private boolean needsModelOrder(final ElkNode child) {
+        ElkNode elkgraph = child.getParent();
+        return needsModelOrderBasedOnParent(elkgraph)
+                && !child.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_NO_MODEL_ORDER);
+    }
+    
+    /**
+     * Calculates whether the parent graph of an element would need model order to be set.
+     * 
+     * @param elkgraph The graph.
+     * @return True, if model order should be set.
+     */
+    private boolean needsModelOrderBasedOnParent(final ElkNode elkgraph) {
+        return (elkgraph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY) != OrderingStrategy.NONE
+                || elkgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY) == CycleBreakingStrategy.MODEL_ORDER
+                || elkgraph
+                        .getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY) == CycleBreakingStrategy.GREEDY_MODEL_ORDER
+                || elkgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_FORCE_NODE_MODEL_ORDER)
+                || elkgraph
+                        .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) != ComponentOrderingStrategy.NONE)
+                || elkgraph.getProperty(
+                        LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
+                || elkgraph.getProperty(
+                        LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT;
     }
 
     /**

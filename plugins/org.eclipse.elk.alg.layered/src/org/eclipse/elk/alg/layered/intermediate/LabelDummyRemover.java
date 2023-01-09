@@ -86,7 +86,8 @@ public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
                     // Calculate the space available for the placement of labels
                     KVector labelSpace = new KVector(
                             node.getSize().x,
-                            node.getSize().y - thickness - edgeLabelSpacing);
+                            node.getSize().y
+                                + (node.isInlineEdgeLabel() ? 0 : -thickness - edgeLabelSpacing));
                     
                     // Place labels
                     List<LLabel> representedLabels = node.getProperty(InternalProperties.REPRESENTED_LABELS);

@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.math.KVector;
@@ -532,6 +533,17 @@ public final class LNode extends LShape {
             return id;
         }
         return Integer.toString(getIndex());
+    }
+
+    
+    /**
+     * Checks if the labels represented by the given this label dummy are to be placed inline.
+     * 
+     * @return True, if the node is a label and also an inline label.
+     */
+    public boolean isInlineEdgeLabel() {        
+        return this.getType() == NodeType.LABEL && this.getProperty(InternalProperties.REPRESENTED_LABELS).stream()
+                .allMatch(label -> label.getProperty(LayeredOptions.EDGE_LABELS_INLINE));
     }
 
     @Override
