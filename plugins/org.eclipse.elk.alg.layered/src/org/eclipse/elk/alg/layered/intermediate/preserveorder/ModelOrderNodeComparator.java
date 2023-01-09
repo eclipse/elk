@@ -19,7 +19,10 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Orders {@link LNode}s in the same layer by {@link InternalProperties#MODEL_ORDER}
@@ -36,6 +39,10 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
      * The ordering strategy.
      */
     private final OrderingStrategy orderingStrategy;
+    
+    private final Direction direction;
+    
+    private final boolean fixedSide;
     
     /**
      * Each node has an entry of nodes for which it is bigger.
@@ -59,8 +66,8 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
      * @param longEdgeOrderingStrategy The strategy to order dummy nodes and nodes with no connection the previous layer
      */
     public ModelOrderNodeComparator(final Layer thePreviousLayer, final OrderingStrategy orderingStrategy,
-            final LongEdgeOrderingStrategy longEdgeOrderingStrategy) {
-        this(orderingStrategy, longEdgeOrderingStrategy);
+            final LongEdgeOrderingStrategy longEdgeOrderingStrategy, final Direction d, final boolean fixedSide) {
+        this(orderingStrategy, longEdgeOrderingStrategy, d, fixedSide);
         this.previousLayer = new LNode[thePreviousLayer.getNodes().size()];
         thePreviousLayer.getNodes().toArray(this.previousLayer);
     }
@@ -73,15 +80,21 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
      * @param longEdgeOrderingStrategy The strategy to order dummy nodes and nodes with no connection the previous layer
      */
     public ModelOrderNodeComparator(final LNode[] previousLayer, final OrderingStrategy orderingStrategy,
-            final LongEdgeOrderingStrategy longEdgeOrderingStrategy) {
-        this(orderingStrategy, longEdgeOrderingStrategy);
+            final LongEdgeOrderingStrategy longEdgeOrderingStrategy, final Direction d, final boolean fixedSide) {
+        this(orderingStrategy, longEdgeOrderingStrategy, d, fixedSide);
         this.previousLayer = previousLayer;
     }
     
     private ModelOrderNodeComparator(final OrderingStrategy orderingStrategy,
-            final LongEdgeOrderingStrategy longEdgeOrderingStrategy) {
+            final LongEdgeOrderingStrategy longEdgeOrderingStrategy, final Direction d, final boolean fixedSide) {
         this.orderingStrategy = orderingStrategy;
         this.longEdgeNodeOrder = longEdgeOrderingStrategy;
+        if (d == null) {
+            this.direction = Direction.RIGHT;
+        } else {
+            this.direction = d;
+        }
+        this.fixedSide = fixedSide;
     }
 
     @Override
@@ -112,10 +125,35 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
         if (orderingStrategy == OrderingStrategy.PREFER_EDGES || !n1.hasProperty(InternalProperties.MODEL_ORDER)
                 || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // In this case the order of the connected nodes in the previous layer should be respected
-            LPort p1SourcePort = n1.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
-                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource()).orElse(null);
-            LPort p2SourcePort = n2.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
-                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource()).orElse(null);
+            LPort p1SourcePort = null;
+            for (LPort p : n1.getPorts()) {
+                if (!p.getIncomingEdges().isEmpty()) {
+                    if (fixedSide && p.hasProperty(LayeredOptions.PORT_SIDE)) {
+                        if (incomingBasedOnDirection(direction, p.getProperty(LayeredOptions.PORT_SIDE))) {
+                            p1SourcePort = p;
+                            break;
+                        }
+                    } else {
+                        p1SourcePort = p;
+                        break;
+                    }
+                }
+            }
+            
+            LPort p2SourcePort = null;
+            for (LPort p : n2.getPorts()) {
+                if (!p.getIncomingEdges().isEmpty()) {
+                    if (fixedSide && p.hasProperty(LayeredOptions.PORT_SIDE)) {
+                        if (incomingBasedOnDirection(direction, p.getProperty(LayeredOptions.PORT_SIDE))) {
+                            p2SourcePort = p;
+                            break;
+                        }
+                    } else {
+                        p2SourcePort = p;
+                        break;
+                    }
+                }
+            }
             
             // Case both nodes have connections to the previous layer.
             if (p1SourcePort != null && p2SourcePort != null) {
@@ -231,5 +269,12 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             biggerThan.get(veryBig).add(smaller);
             biggerThan.get(veryBig).addAll(smallerNodeBiggerThan);
         }
+    }
+    
+    private boolean incomingBasedOnDirection(Direction d, PortSide p) {
+        return d == Direction.RIGHT && p == PortSide.WEST
+                || d == Direction.LEFT && p == PortSide.EAST
+                || d == Direction.DOWN && p == PortSide.NORTH
+                || d == Direction.UP && p == PortSide.SOUTH;
     }
 }
