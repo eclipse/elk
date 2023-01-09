@@ -113,6 +113,9 @@ public class PortRestorer {
     // Self Loop Placement (One Side)
 
     private void processOneSideLoops(final SelfLoopOrderingStrategy ordering) {
+        if (ordering == SelfLoopOrderingStrategy.REVERSE_STACKED) {
+            Collections.reverse(slLoopsByType.get(SelfLoopType.ONE_SIDE));
+        }
         for (SelfHyperLoop slLoop : slLoopsByType.get(SelfLoopType.ONE_SIDE)) {
             // Obtain the port side
             PortSide side = slLoop.getSLPorts().get(0).getLPort().getSide();
@@ -127,7 +130,7 @@ public class PortRestorer {
                 // Simply add all ports according to our list
                 addToTargetArea(sortedPorts, side, PortSideArea.MIDDLE, AddMode.APPEND);
                 break;
-                
+            case REVERSE_STACKED:
             case STACKED:
                 // Compute which ports we want to have in the first group and which in the second group
                 int splitIndex = computePortListSplitIndex(sortedPorts);
@@ -136,17 +139,6 @@ public class PortRestorer {
                 addToTargetArea(sortedPorts.subList(0, splitIndex), side, PortSideArea.MIDDLE, AddMode.PREPEND);
                 addToTargetArea(
                         sortedPorts.subList(splitIndex, sortedPorts.size()), side, PortSideArea.MIDDLE, AddMode.APPEND);
-                break;
-                
-            case REVERSE_STACKED:
-//                Collections.reverse(sortedPorts);
-                // Compute which ports we want to have in the first group and which in the second group
-                splitIndex = computePortListSplitIndex(sortedPorts);
-                
-                // Prepend the first group to the middle list, and append the second group to that same list
-                addToTargetArea(sortedPorts.subList(0, splitIndex), side, PortSideArea.MIDDLE, AddMode.APPEND);
-                addToTargetArea(
-                        sortedPorts.subList(splitIndex, sortedPorts.size()), side, PortSideArea.MIDDLE, AddMode.PREPEND);
                 break;
                 
             default:
