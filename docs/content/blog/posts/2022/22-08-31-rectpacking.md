@@ -6,6 +6,7 @@ menu:
     parent: "2022"
     weight: 10
 ---
+_By Sören Domrös, August 31, 2022_
 
 The [`rectpacking`](https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-rectpacking.html) algorithm was introduced to solved common problems with the [`box`](https://www.eclipse.org/elk/reference/algorithms/org-eclipse-elk-box.html) algorithm, which cannot stack boxes in a row.
 The idea is to form stacks with subrows inside rows, while the size of a row is always dominated by a highest rectangle to provide a visual anchor point to "read" the rows from left to right.

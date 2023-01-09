@@ -72,6 +72,11 @@ public class BasicLayerAssignmentTest {
     }
     
     @ConfiguratorProvider
+    public LayoutConfigurator longestPathSourceConfigurator() {
+        return configuratorFor(LayeringStrategy.LONGEST_PATH_SOURCE);
+    }
+    
+    @ConfiguratorProvider
     public LayoutConfigurator minWidthConfigurator() {
         return configuratorFor(LayeringStrategy.MIN_WIDTH);
     }

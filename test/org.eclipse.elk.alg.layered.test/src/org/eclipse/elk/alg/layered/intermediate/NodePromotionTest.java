@@ -11,8 +11,11 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeringStrategy;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
+import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.p2layers.BasicLayerAssignmentTest;
 import org.eclipse.elk.alg.test.framework.LayoutTestRunner;
 import org.eclipse.elk.alg.test.framework.annotations.Algorithm;
@@ -74,6 +77,30 @@ public class NodePromotionTest {
     @ConfiguratorProvider
     public LayoutConfigurator NoBoundaryConfigurator() {
         return configuratorFor(NodePromotionStrategy.NO_BOUNDARY);
+    }
+    
+    @ConfiguratorProvider
+    public LayoutConfigurator modelOrderLeftToRight() {
+        LayoutConfigurator config = configuratorFor(NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY,
+                CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.LAYERING_STRATEGY,
+                LayeringStrategy.LONGEST_PATH_SOURCE);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_EDGES);
+        return config;
+    }
+    
+    @ConfiguratorProvider
+    public LayoutConfigurator modelOrderRightToLeft() {
+        LayoutConfigurator config = configuratorFor(NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY,
+                CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.LAYERING_STRATEGY,
+                LayeringStrategy.LONGEST_PATH);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_EDGES);
+        return config;
     }
     
     private LayoutConfigurator configuratorFor(final NodePromotionStrategy strategy) {

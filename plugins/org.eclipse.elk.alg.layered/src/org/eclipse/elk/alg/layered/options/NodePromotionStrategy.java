@@ -69,5 +69,24 @@ public enum NodePromotionStrategy {
      * The node promotion will run until there are no more promotions left to make. 
      */
     @AdvancedPropertyValue
-    NO_BOUNDARY;
+    NO_BOUNDARY,
+    /**
+     * Promotes such that they are in a layer that conforms to the model order (if it is applicable).
+     * 1 -> 2 -> 3 -> 5 is transformed to 1 -> 2 -> 3 -> 5
+     *   -> 4 ------>                       ------> 4 ->
+     * Since all nodes in layer 2 (node 2) are smaller and the next layer also has a smaller node,
+     * 4 can be moved more to the right.
+     * Model order does not care about maximum width but only about the model order.
+     * Should be used together with LONGEST_PATH_TO_SOURCE layering.
+     */
+    MODEL_ORDER_LEFT_TO_RIGHT,
+    /**
+     * Promotes such that they are in a layer that conforms to the model order (if it is applicable).
+     * 1 -> 3 -> 4 -> 5 is transformed to 1 -> 2 ------> 5
+     *   ------> 2 ->                       -> 3 -> 4 ->
+     * Since all nodes in layer 3 (node 3) are bigger and one in layer 2 is bigger, 2 can be moved more to the left.
+     * Model order does not care about maximum width but only about the model order.
+     * Should be used together with LONGEST_PATH layering.
+     */
+    MODEL_ORDER_RIGHT_TO_LEFT;
 }
