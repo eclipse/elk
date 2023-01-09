@@ -9,7 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -99,12 +98,6 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
     /** Holds all nodes of the graph that have incoming edges. */
     private List<LNode> nodesWithIncomingEdges;
 
-    /** Holds all nodes of the graph that have incoming edges. */
-    private List<LNode> realNodesWithIncomingEdges;
-
-    /** Holds all real nodes of the graph that have outgoing edges. */
-    private List<LNode> realNodesWithOutgoingEdges;
-
     /** Stores all nodes of the graph. */
     private List<LNode> nodes;
 
@@ -152,12 +145,6 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
 
     /** Is the current height of the graph. */
     private int maxHeight;
-    /** Height that is additionally added by model order.*/
-    private int additionalHeight;
-    
-    private int minimalLayer = 0;
-    
-    private int maximalLayer;
 
     /**
      * Approximated pixels that have to be added to the width (in pixels) for better estimation of
@@ -285,7 +272,6 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         dummySize = masterGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
 
         maxHeight = masterGraph.getLayers().size();
-        maximalLayer = maxHeight;
         int layerID = maxHeight - 1;
         int nodeID = 0;
         maxWidth = 0;
@@ -311,8 +297,6 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         degreeDiff = new int[nodeID][3]; // SUPPRESS CHECKSTYLE MagicNumber
         nodes = Lists.newArrayList();
         nodesWithIncomingEdges = Lists.newArrayList();
-        realNodesWithIncomingEdges = Lists.newArrayList();
-        realNodesWithOutgoingEdges = Lists.newArrayList();
         int dummyBaggage = 0; // Will contain number of dummy nodes between the layers.
         dummyNodeCount = 0;
 
@@ -338,12 +322,6 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
                 outcoming += outDegree; // and all outgoing edges
                 if (inDegree > 0) {
                     nodesWithIncomingEdges.add(node);
-                    if (node.getType() == NodeType.NORMAL) {
-                        realNodesWithIncomingEdges.add(node);
-                    }
-                }
-                if (outDegree > 0 && node.getType() == NodeType.NORMAL) {
-                    realNodesWithOutgoingEdges.add(node);
                 }
                 nodes.add(node);
             }
@@ -715,9 +693,8 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
         // our layering. It is added to the layeredGraph with reversed IDs so they fit to the IDs
         // stored in the nodes but can also be properly assigned compliant with the layering used in
         // ELK Layered.
-        boolean leftToRight = promotionStrategy == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT;
         List<Layer> layList = Lists.newArrayList();
-        for (int i = 0; i <= maxHeight + additionalHeight; i++) {
+        for (int i = 0; i <= maxHeight; i++) {
             Layer laLaLayer = new Layer(layeredGraph);
             laLaLayer.id = maxHeight - i;
             layList.add(laLaLayer);
@@ -725,7 +702,7 @@ public class NodePromotion implements ILayoutProcessor<LGraph> {
 
         // Assign all nodes to the beforehand created (laLa)layers.
         for (LNode node : nodes) {
-            node.setLayer(layList.get(maxHeight + (leftToRight ? 0 : additionalHeight) - layers[node.id]));
+            node.setLayer(layList.get(maxHeight - layers[node.id]));
         }
 
         // One Loop to exterminate all deceiving layers that don't contain any nodes!
