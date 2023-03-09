@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2020 Kiel University and others.
+ * Copyright (c) 2012, 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -51,7 +51,7 @@ public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {
         // We iterate over each node's label cells and offset and place them
         layeredGraph.getLayers().stream()
                 .flatMap(layer -> layer.getNodes().stream())
-                .filter(node -> node.getType() == NodeType.NORMAL && node.hasProperty(InternalProperties.END_LABELS))
+                .filter(node -> ((node.getType() == NodeType.NORMAL || node.getType() == NodeType.EXTERNAL_PORT) && node.hasProperty(InternalProperties.END_LABELS)))
                 .forEach(node -> processNode(node));
         
         monitor.done();
