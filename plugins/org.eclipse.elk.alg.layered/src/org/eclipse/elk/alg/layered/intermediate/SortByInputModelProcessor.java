@@ -69,7 +69,8 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer,
                                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
-                                    longEdgeTargetNodePreprocessing(node)));
+                                    longEdgeTargetNodePreprocessing(node),
+                                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER)));
                     progressMonitor.log("Node " + node + " ports: " + node.getPorts());
                 }
             }

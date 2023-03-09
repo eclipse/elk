@@ -337,7 +337,8 @@ public class LayerSweepCrossingMinimizer
                 Comparator<LPort> comp = new ModelOrderPortComparator(
                         previousLayer == -1 ? layers[0] : layers[previousLayer],
                                 lNode.getGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
-                                SortByInputModelProcessor.longEdgeTargetNodePreprocessing(lNode));
+                                SortByInputModelProcessor.longEdgeTargetNodePreprocessing(lNode),
+                                lNode.getGraph().getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER));
                 for (int i = 0; i < lNode.getPorts().size(); i++) {
                     for (int j = i + 1; j < lNode.getPorts().size(); j++) {
                         if (comp.compare(lNode.getPorts().get(i), lNode.getPorts().get(j)) > 0) {

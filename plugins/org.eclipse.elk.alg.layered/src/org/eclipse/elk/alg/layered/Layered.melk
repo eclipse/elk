@@ -192,6 +192,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.crossingCounterPortInfluence
     supports considerModelOrder.noModelOrder
     supports considerModelOrder.components
+    supports considerModelOrder.portModelOrder
     supports generatePositionAndLayerIds
 }
 
@@ -940,6 +941,14 @@ group considerModelOrder {
              crossings. Depending on the strategy this is not always possible since the node and edge order might be
              conflicting."
         default = OrderingStrategy.NONE
+        targets parents
+    }
+    option portModelOrder: boolean {
+        label "Consider Port Order"
+        description
+            "If disabled the port order of output ports is derived from the edge order and input ports are ordered by
+            their incoming connections. If enabled all ports are ordered by the port model order."
+        default = false
         targets parents
     }
     option noModelOrder: boolean {

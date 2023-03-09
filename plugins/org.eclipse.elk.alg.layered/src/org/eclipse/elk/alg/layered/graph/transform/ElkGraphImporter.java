@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.layered.graph.transform;
 
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -89,6 +90,7 @@ class ElkGraphImporter {
         // Create the layered graph
         final LGraph topLevelGraph = createLGraph(elkgraph);
         
+        List<ElkPort> ports = elkgraph.getPorts();
         // Assign defined port sides to all external ports 
         elkgraph.getPorts().stream().forEach(elkport -> ensureDefinedPortSide(topLevelGraph, elkport));
         
@@ -894,9 +896,11 @@ class ElkGraphImporter {
             graphProperties.add(GraphProperties.NON_FREE_PORTS);
         }
 
+        int portModelOrder = 0;
         // transform the ports
         Direction direction = lgraph.getProperty(LayeredOptions.DIRECTION);
         for (ElkPort elkport : elknode.getPorts()) {
+            elkport.setProperty(InternalProperties.MODEL_ORDER, portModelOrder++);
             if (!elkport.getProperty(LayeredOptions.NO_LAYOUT)) {
                 transformPort(elkport, lnode, graphProperties, direction, portConstraints);
             }
