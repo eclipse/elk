@@ -1,0 +1,90 @@
+<?xml version="1.0" standalone="no"?>
+
+<svg 
+     version="1.1"
+     baseProfile="full"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:ev="http://www.w3.org/2001/xml-events"
+     xmlns:klighd="http://de.cau.cs.kieler/klighd"
+     x="0px"
+     y="0px"
+     width="70px"
+     height="60px"
+     viewBox="0 0 70 60"
+     >
+<title></title>
+<desc>Creator: FreeHEP Graphics2D Driver Producer: de.cau.cs.kieler.klighd.piccolo.freehep.SemanticSVGGraphics2D Revision Source:  Date: Thursday, September 1, 2022 at 2:33:19 PM Central European Summer Time</desc>
+<g stroke-dashoffset="0" stroke-linejoin="miter" stroke-dasharray="none" stroke-width="1" stroke-linecap="butt" stroke-miterlimit="10">
+<g fill="#ffffff" fill-rule="nonzero" fill-opacity="1" stroke="none">
+  <path d="M 0 0 L 70 0 L 70 60 L 0 60 L 0 0 z"/>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 19.5 0.5 L 19.5 19.5 L 0.5 19.5 L 0.5 0.5 z"/>
+</g>
+<g transform="matrix(1, 0, 0, 1, 3, 3.5)">
+  <text x="0" y="10.0" font-weight="normal" font-size="10.666666984558105px" font-style="normal" fill="#000000" stroke="none" font-family="Helvetica" style="white-space: pre" fill-opacity="1" textLength="14.0px" lengthAdjust="spacingAndGlyphs">n1</text>
+</g>
+<g transform="matrix(1, 0, 0, 1, 50, 1.6666669845581055)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 19.5 0.5 L 19.5 19.5 L 0.5 19.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 53, 5.1666669845581055)">
+  <text x="0" y="10.0" font-weight="normal" font-size="10.666666984558105px" font-style="normal" fill="#000000" stroke="none" font-family="Helvetica" style="white-space: pre" fill-opacity="1" textLength="14.0px" lengthAdjust="spacingAndGlyphs">n2</text>
+</g>
+<g transform="matrix(1, 0, 0, 1, 0, 40)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 19.5 0.5 L 19.5 19.5 L 0.5 19.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 3, 43.5)">
+  <text x="0" y="10.0" font-weight="normal" font-size="10.666666984558105px" font-style="normal" fill="#000000" stroke="none" font-family="Helvetica" style="white-space: pre" fill-opacity="1" textLength="14.0px" lengthAdjust="spacingAndGlyphs">n3</text>
+</g>
+<g transform="matrix(1, 0, 0, 1, -12, -12)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 32 62 L 52 62 L 52 28.66666603088379 L 62 28.66666603088379"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 42, 13.666666030883789)">
+<g fill="#000000" fill-rule="nonzero" fill-opacity="1" stroke="none">
+  <path d="M 0 0 L 3.200000047683716 3 L 0 6 L 8 3 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 42, 13.666666030883789)">
+<g stroke-opacity="1" stroke-linejoin="round" fill="none" stroke="#000000">
+  <path d="M 0 0 L 3.200000047683716 3 L 0 6 L 8 3 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, -12, -12)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 62 23.66666603088379 L 42 23.66666603088379 L 42 25.33333396911621 L 32 25.33333396911621"/>
+</g>
+</g>
+<g transform="matrix(-0.9999999999999962, -0.00000008742278024865, 0.00000008742278024865, -0.9999999999999962, 27.999999737731635, 16.33333449365288)">
+<g fill="#000000" fill-rule="nonzero" fill-opacity="1" stroke="none">
+  <path d="M 0 0 L 3.200000047683716 3 L 0 6 L 8 3 z"/>
+</g>
+</g>
+<g transform="matrix(-0.9999999999999962, -0.00000008742278024865, 0.00000008742278024865, -0.9999999999999962, 27.999999737731635, 16.33333449365288)">
+<g stroke-opacity="1" stroke-linejoin="round" fill="none" stroke="#000000">
+  <path d="M 0 0 L 3.200000047683716 3 L 0 6 L 8 3 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, -12, -12)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 32 18.66666603088379 L 62 18.66666603088379"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 42, 3.666666030883789)">
+<g fill="#000000" fill-rule="nonzero" fill-opacity="1" stroke="none">
+  <path d="M 0 0 L 3.200000047683716 3 L 0 6 L 8 3 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 42, 3.666666030883789)">
+<g stroke-opacity="1" stroke-linejoin="round" fill="none" stroke="#000000">
+  <path d="M 0 0 L 3.200000047683716 3 L 0 6 L 8 3 z"/>
+</g>
+</g>
+</g>
+</svg>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -32,13 +32,16 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class ElkGraphImporter implements IGraphImporter<ElkNode> {
 
     // /////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> TGraph
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public TGraph importGraph(final ElkNode elkgraph) {
         TGraph tGraph = new TGraph();
 
@@ -140,11 +143,13 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
     // /////////////////////////////////////////////////////////////////////////////
     // Apply Layout Results
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void applyLayout(final TGraph tGraph) {
         // get the corresponding kGraph
         ElkNode elkgraph = (ElkNode) tGraph.getProperty(InternalProperties.ORIGIN);
-
+        
         // calculate the offset from border spacing and node distribution
         double minXPos = Integer.MAX_VALUE;
         double minYPos = Integer.MAX_VALUE;
@@ -158,39 +163,24 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
-        
-        ElkPadding padding = elkgraph.getProperty(MrTreeOptions.PADDING);
-        KVector offset = new KVector(padding.getLeft() - minXPos, padding.getTop() - minYPos);
 
-        // process the nodes
+        ElkPadding padding = elkgraph.getProperty(MrTreeOptions.PADDING);
+        
+        // apply tNode positions to elkNodes
         for (TNode tNode : tGraph.getNodes()) {
             Object object = tNode.getProperty(InternalProperties.ORIGIN);
             if (object instanceof ElkNode) {
-                // set the node position
                 ElkNode elknode = (ElkNode) object;
-                KVector nodePos = tNode.getPosition().add(offset);
-                elknode.setLocation(nodePos.x - elknode.getWidth() / 2, nodePos.y - elknode.getHeight() / 2);
+                elknode.setLocation(tNode.getPosition().x, tNode.getPosition().y);
+                elknode.copyProperties(tNode);
             }
         }
-
-        // process the edges
+        
+        // copy tEdge bendpoints to elkEdges
         for (TEdge tEdge : tGraph.getEdges()) {
             ElkEdge elkedge = (ElkEdge) tEdge.getProperty(InternalProperties.ORIGIN);
             if (elkedge != null) {
                 KVectorChain bendPoints = tEdge.getBendPoints();
-
-                // add the source port and target points to the vector chain
-                KVector sourcePoint = new KVector(tEdge.getSource().getPosition());
-                bendPoints.addFirst(sourcePoint);
-                KVector targetPoint = new KVector(tEdge.getTarget().getPosition());
-                bendPoints.addLast(targetPoint);
-                
-                // correct the source and target points
-                toNodeBorder(sourcePoint, bendPoints.get(1),
-                        tEdge.getSource().getSize());
-                toNodeBorder(targetPoint, bendPoints.get(bendPoints.size() - 2),
-                        tEdge.getTarget().getSize());
-
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(elkedge, true, true);
                 ElkUtil.applyVectorChain(bendPoints, edgeSection);
             }
@@ -203,8 +193,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             ElkUtil.resizeNode(elkgraph, width, height, false, false);
         }
     }
-    
-    
+
+
     /**
      * Modify the given center position to the border of the node.
      * 
@@ -226,5 +216,4 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         center.x += scale * (next.x - center.x);
         center.y += scale * (next.y - center.y);
     }
-
 }

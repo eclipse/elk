@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -14,12 +14,19 @@ package org.eclipse.elk.alg.mrtree.options;
  *
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public enum OrderWeighting {
     
+    /** Doesn't change node ordering. 
+     * When using this nodes will be in the order of the definition of their incoming edges */
+    MODEL_ORDER,
     /** Chooses the number of descendants for the weighting. */
     DESCENDANTS,
     /** Chooses maximal number of descendants at the same level. */
-    FAN;
+    FAN,
+    /** Chooses the nodes with the highest position constraint. 
+     * Without set constraints this will behave just like NONE */
+    CONSTRAINT;
     
 }
