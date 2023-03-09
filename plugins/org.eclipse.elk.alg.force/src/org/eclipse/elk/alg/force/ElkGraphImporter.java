@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.force;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.elk.alg.force.graph.FBendpoint;
 import org.eclipse.elk.alg.force.graph.FEdge;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
@@ -169,6 +170,14 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
+        for (FBendpoint bendpoint : fgraph.getBendpoints()) {
+            KVector pos = bendpoint.getPosition();
+            KVector size = bendpoint.getSize();
+            minXPos = Math.min(minXPos, pos.x - size.x / 2);
+            minYPos = Math.min(minYPos, pos.y - size.y / 2);
+            maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
+            maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
+        }
         
         ElkPadding padding = kgraph.getProperty(ForceOptions.PADDING);
         KVector offset = new KVector(padding.getLeft() - minXPos, padding.getTop() - minYPos);
@@ -180,7 +189,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             if (object instanceof ElkNode) {
                 // set the node position
                 ElkNode knode = (ElkNode) object;
-                KVector nodePos = fnode.getPosition().add(offset);
+                KVector nodePos = new KVector(fnode.getPosition()).add(offset);
                 knode.setLocation(nodePos.x - knode.getWidth() / 2, nodePos.y - knode.getHeight() / 2);
             }
         }
@@ -190,17 +199,26 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             ElkEdge kedge = (ElkEdge) fedge.getProperty(InternalProperties.ORIGIN);
             ElkEdgeSection kedgeSection = ElkGraphUtil.firstEdgeSection(kedge, true, true);
             
-            KVector startLocation = fedge.getSourcePoint();
+            // Add bendpoints
+            KVector startLocation = new KVector(fedge.getSourcePoint());
+            startLocation.add(offset);
             kedgeSection.setStartLocation(startLocation.x, startLocation.y);
+            fedge.getBendpoints().forEach(bp -> {
+                KVector position = new KVector(bp.getPosition());
+                position.add(offset);
+                ElkGraphUtil.createBendPoint(kedgeSection, position.x, position.y);
+            });
             
-            KVector endLocation = fedge.getTargetPoint();
+            KVector endLocation = new KVector(fedge.getTargetPoint());
+            endLocation.add(offset);
+            
             kedgeSection.setEndLocation(endLocation.x, endLocation.y);
         }
         
         // process the labels
         for (FLabel flabel : fgraph.getLabels()) {
             ElkLabel klabel = (ElkLabel) flabel.getProperty(InternalProperties.ORIGIN);
-            KVector labelPos = flabel.getPosition().add(offset);
+            KVector labelPos = new KVector(flabel.getPosition()).add(offset);
             klabel.setLocation(labelPos.x, labelPos.y);
         }
         

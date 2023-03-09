@@ -23,6 +23,9 @@ public abstract class FParticle extends MapPropertyHolder {
     /** the serial version UID. */
     private static final long serialVersionUID = -6264474302326798066L;
     
+    /** particle position displacement for each iteration. */
+    private KVector displacement = new KVector();
+
     /** Position of this particle. */
     private KVector position = new KVector();
     /** Width and height of graphical representation. */
@@ -53,6 +56,15 @@ public abstract class FParticle extends MapPropertyHolder {
      */
     public double getRadius() {
         return size.length() / 2;
+    }
+
+    /**
+     * Returns the displacement vector.
+     * 
+     * @return the displacement vector
+     */
+    public KVector getDisplacement() {
+        return displacement;
     }
 
 }
