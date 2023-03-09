@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -14,18 +14,18 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 
 /**
- * Definition of available intermediate layout processors for the tree layouter. This enumeration
- * also serves as a factory for intermediate layout processors.
+ * Definition of available intermediate layout processors for the tree layouter. This enumeration also serves as a
+ * factory for intermediate layout processors.
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<TGraph> {
 
     /**
-     * In this enumeration, intermediate layout processors are listed by the earliest slot in which
-     * they can sensibly be used. The order in which they are listed is determined by the
-     * dependencies on other processors.
+     * In this enumeration, intermediate layout processors are listed by the earliest slot in which they can sensibly be
+     * used. The order in which they are listed is determined by the dependencies on other processors.
      */
 
     // Before Phase 2
@@ -33,7 +33,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<TGr
     ROOT_PROC,
     /** Compute the fanout of each node in a given graph. */
     FAN_PROC,
-    
+    /** Compute the level of each node in a given graph. */
+    LEVEL_PROC,
+
     // Before Phase 2 and 3
     /** Determine the local neighbors of each node in a given graph. */
     NEIGHBORS_PROC,
@@ -43,9 +45,17 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<TGr
     LEVEL_HEIGHT,
 
     // Before Phase 4
+    /** Applies the layout direction. */
+    DIRECTION_PROC,
     /** Set the coordinates for each node in a given graph. */
     NODE_POSITION_PROC,
-    
+    /** Applies compaction post processing to the graph. */
+    COMPACTION_PROC,
+    /** Determine the height of each level in the given graph. */
+    LEVEL_COORDS,
+    /** Sets the graphs x/y max/min properties. */
+    GRAPH_BOUNDS_PROC,
+
     // After Phase 4
     /** Reinsert edges that were removed for treeifying. */
     DETREEIFYING_PROC;
@@ -65,15 +75,30 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<TGr
         case FAN_PROC:
             return new FanProcessor();
 
+        case LEVEL_PROC:
+            return new LevelProcessor();
+
         case NEIGHBORS_PROC:
             return new NeighborsProcessor();
 
         case LEVEL_HEIGHT:
             return new LevelHeightProcessor();
 
+        case LEVEL_COORDS:
+            return new LevelCoordinatesProcessor();
+
+        case DIRECTION_PROC:
+            return new DirectionProcessor();
+
         case NODE_POSITION_PROC:
             return new NodePositionProcessor();
             
+        case COMPACTION_PROC:
+            return new CompactionProcessor();
+
+        case GRAPH_BOUNDS_PROC:
+            return new GraphBoundsProcessor();
+
         case DETREEIFYING_PROC:
             return new Untreeifyer();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -21,19 +21,22 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import com.google.common.collect.Iterables;
 
 /**
- * A processor which determine the neighbors and siblings for all nodes in the graph. A neighbor is
+ * A processor which determines the neighbors and siblings for all nodes in the graph. A neighbor is
  * the current node's nearest node, at the same level. A siblings is a neighbor with the same
  * parent.
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class NeighborsProcessor implements ILayoutProcessor<TGraph> {
 
     /** the number of nodes in the given graph. */
     private int numberOfNodes;
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor set neighbors", 1f);
 
@@ -56,12 +59,11 @@ public class NeighborsProcessor implements ILayoutProcessor<TGraph> {
         }
 
         progressMonitor.done();
-
     }
 
     /**
      * Set the neighbors of each node in the current level and for their children. A neighbor is the
-     * current node's nearest node, at the same level. A siblings is a neighbor with the same
+     * current node's nearest node, at the same level. A sibling is a neighbor with the same
      * parent.
      * 
      * @param currentLevel

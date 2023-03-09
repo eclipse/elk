@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,10 +9,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.p3place;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.TreeUtil;
+import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
@@ -20,7 +23,10 @@ import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Iterables;
 
@@ -53,6 +59,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
 
@@ -63,25 +70,41 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
                     .before(TreeLayoutPhases.P3_NODE_PLACEMENT)
                         .add(IntermediateProcessorStrategy.LEVEL_HEIGHT)
                         .add(IntermediateProcessorStrategy.NEIGHBORS_PROC)
-                    .addBefore(TreeLayoutPhases.P4_EDGE_ROUTING, IntermediateProcessorStrategy.NODE_POSITION_PROC);
+                    .before(TreeLayoutPhases.P4_EDGE_ROUTING)
+                        .add(IntermediateProcessorStrategy.DIRECTION_PROC)
+                        .add(IntermediateProcessorStrategy.NODE_POSITION_PROC);
 
     private double spacing;
 
     /** Determine how to adjust all the nodes with respect to the location of the root. */
-    private double xTopAdjustment = 0d;
+    private double xTopAdjustment = 0d; 
     private double yTopAdjustment = 0d;
+    
+    private Direction direction;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor order nodes", 2);
 
-        /** set the spacing according to the user inputs */
+        /** set the settings according to the user inputs */
         spacing = tGraph.getProperty(MrTreeOptions.SPACING_NODE_NODE).doubleValue();
+        direction = tGraph.getProperty(MrTreeOptions.DIRECTION);
+        
+        // Set Direction to DOWN if its UNDEFINED
+        if (direction == Direction.UNDEFINED) {
+            direction = Direction.DOWN;
+            tGraph.setProperty(MrTreeOptions.DIRECTION, direction);
+        }
 
         /** find the root node of this component */
         LinkedList<TNode> roots = new LinkedList<TNode>();
@@ -262,10 +285,18 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
     private double meanNodeWidth(final TNode leftNode, final TNode rightNode) {
         double nodeWidth = 0d;
         if (leftNode != null) {
-            nodeWidth += leftNode.getSize().x / 2d;
+            if (direction.isVertical()) {
+                nodeWidth += leftNode.getSize().x / 2d;
+            } else {
+                nodeWidth += leftNode.getSize().y / 2d;
+            }
         }
         if (rightNode != null) {
-            nodeWidth += rightNode.getSize().x / 2d;
+            if (direction.isVertical()) {
+                nodeWidth += rightNode.getSize().x / 2d;
+            } else {
+                nodeWidth += rightNode.getSize().y / 2d;
+            }
         }
         return nodeWidth;
     }
@@ -313,5 +344,4 @@ public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
             }
         }
     }
-    
 }
