@@ -175,10 +175,10 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
         List<List<ElkNode>> layerNodes = initialLayers(nodesWithoutC);
 
         // Assign layers to nodes with constraints.
-        assignLayersToNodesWithProperty(nodesWithLayerConstraint, layerNodes);
+        int diff = assignLayersToNodesWithProperty(nodesWithLayerConstraint, layerNodes);
 
         // add nodes with rC to the correct layer
-        assignLayersToNodesWithRC(nodesWithRC, layerNodes, nodes);
+        assignLayersToNodesWithRC(nodesWithRC, layerNodes, nodes, diff);
 
         return layerNodes;
     }
@@ -244,7 +244,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
      *          All nodes of the graph.
      */
     private void assignLayersToNodesWithRC(final List<ElkNode> nodesWithRC, final List<List<ElkNode>> layering, 
-            final List<ElkNode> allNodes) {
+            final List<ElkNode> allNodes, final int diff) {
         for (int i = 0; i < nodesWithRC.size(); i++) {
             ElkNode node = nodesWithRC.get(i);
             ElkNode succNode = null;
@@ -295,10 +295,10 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 
                 // update layer id of the current node
                 int val = succVal > predVal ? succVal : predVal;
-                node.setProperty(LayeredOptions.LAYERING_LAYER_ID, val);
-                shiftOtherNodes(node, val, layering, true);
-                shiftOtherNodes(node, val, layering, false);
-                layering.get(val).add(node);
+                node.setProperty(LayeredOptions.LAYERING_LAYER_ID, val - diff);
+                shiftOtherNodes(node, val - diff, layering, true);
+                shiftOtherNodes(node, val - diff, layering, false);
+                layering.get(val - diff).add(node);
             }
         }
     }
@@ -311,7 +311,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
      * @param layering
      *            List that contains the layers with their corresponding nodes.
      */
-    private void assignLayersToNodesWithProperty(final List<ElkNode> nodesWithLayerConstraint,
+    private int assignLayersToNodesWithProperty(final List<ElkNode> nodesWithLayerConstraint,
             final List<List<ElkNode>> layering) {
         // Sort nodes with constraint based on their layer.
         nodesWithLayerConstraint.sort((ElkNode a, ElkNode b) -> {
@@ -341,6 +341,7 @@ public class InteractiveLayeredGraphVisitor implements IGraphElementVisitor {
                 layering.add(new ArrayList<>(Arrays.asList(node)));
             }
         }
+        return diff;
     }
 
     /**
