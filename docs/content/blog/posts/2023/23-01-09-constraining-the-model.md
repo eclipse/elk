@@ -27,7 +27,7 @@ separateConnectedComponents: false
 
 There are two different ways to get positions for your nodes.
 
-### Pseudo Positions
+#### Using Pseudo Positions
 
 Add pseudo positions to your nodes as seen [here](https://rtsys.informatik.uni-kiel.de/elklive/examples.html?e=user-hints%2Finteractive-constraints%2FinteractiveLayeredLayout_circle_pseudo_positions).
 
@@ -35,7 +35,7 @@ Add pseudo positions to your nodes as seen [here](https://rtsys.informatik.uni-k
 layout [position: 100, 0]
 ```
 
-### Constraints
+#### Using Constraints
 
 [KLighD](https://github.com/kieler/KLighD) configures a second layout run with the interactive strategies mentioned above if the `interactiveLayout` property is set on the root.
 For the second final run the `layerChoiceConstraint`s and `positionsChoiceConstraint`s are evaluated.
@@ -61,7 +61,7 @@ Also consider to have a look at the following example that showcase interactive 
 
 In the following we assume that all states and edges are ordered in their (textual) model as it is indicated by their labels.
 
-### Cycle Breaking
+#### Cycle Breaking
 
 ELK 0.8.1 introduced the `GREEDY_MODEL_ORDER` and the `MODEL_ORDER` [cycleBreaking.strategy](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-layered-cycleBreaking-strategy.html).
 The greedy model order cycle breaker optimizes for backward edges but refers to the textual ordering of the nodes if no unique alternative exists.
@@ -84,7 +84,7 @@ The model order cycle breaker only uses the model order and reverses all edges t
 
 Examples can be found [here](https://rtsys.informatik.uni-kiel.de/elklive/examples.html?e=user-hints%2Fmodel-order%2FmodelOrderCycleBreaking).
 
-### Layer Assignment (ELK 0.9.0)
+#### Layer Assignment (ELK 0.9.0)
 
 ELK 0.9.0 will introduce model order layer assignment by node promotion.
 Setting `nodePromotion` to `MODEL_ORDER_LEFT_TO_RIGHT` together with `LONGEST_PATH_SOURCE` (and model order cycle breaking) allows to specify the layer of each node by ordering all nodes in a breath-first order.
@@ -97,7 +97,7 @@ In the following `n4` is moved in the correct layer using node promotion by mode
 
 {{< image src="la-correct.svg" alt="Intial layer assignment." >}}
 
-### Crossing Minimization (partly ELK 0.9.0)
+#### Crossing Minimization (partly ELK 0.9.0)
 
 ELK 0.8.1 already introduced model order as a tie-breaker with the [`considerModelOrder.strategy`](https://www.eclipse.org/elk/reference/options/org-eclipse-elk-layered-considerModelOrder-strategy.html) property, which allows to sort the nodes and ports before crossing minimization by the edge order (`PREFER_EDGES`), the node and the edge order (`NODES_AND_EDGES`), and the nodes (will be added in 0.9.0, `PREFER_NODES`).
 
