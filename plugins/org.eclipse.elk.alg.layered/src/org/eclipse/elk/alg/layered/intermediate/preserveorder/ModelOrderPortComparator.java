@@ -160,11 +160,13 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             return 1;
         } else if (!p1.getOutgoingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
             return -1;
-        } else {
+        } else if (p1.hasProperty(InternalProperties.MODEL_ORDER) && p2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // The ports have no edges.
             // Use the port model order to compare them.
             return Integer.compare(p1.getProperty(InternalProperties.MODEL_ORDER),
                     p2.getProperty(InternalProperties.MODEL_ORDER));
+        } else {
+            return -1;
         }
     }
     
