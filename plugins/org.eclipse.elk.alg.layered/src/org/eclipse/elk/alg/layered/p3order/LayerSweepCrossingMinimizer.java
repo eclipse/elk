@@ -304,13 +304,12 @@ public class LayerSweepCrossingMinimizer
      * @param strategy the ordering strategy to compare the nodes
      * @return The number of model order conflicts
      */
-    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strategy, final Direction d, boolean fixedSide) {
+    private int countModelOrderNodeChanges(final LNode[][] layers, final OrderingStrategy strategy) {
         int previousLayer = -1;
         int wrongModelOrder = 0;
         for (LNode[] layer : layers) {
             ModelOrderNodeComparator comp = new ModelOrderNodeComparator(
-                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL,
-                            d, fixedSide);
+                    previousLayer == -1 ? layers[0] : layers[previousLayer], strategy, LongEdgeOrderingStrategy.EQUAL);
             for (int i = 0; i < layer.length; i++) {
                 for (int j = i + 1; j < layer.length; j++) {
                     if (layer[i].hasProperty(InternalProperties.MODEL_ORDER)
@@ -397,9 +396,7 @@ public class LayerSweepCrossingMinimizer
                     .getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE);
             if (modelOrderStrategy != OrderingStrategy.NONE) {
                 modelOrderInfluence += crossingCounterNodeInfluence
-                        * countModelOrderNodeChanges(gD.currentNodeOrder(), modelOrderStrategy,
-                                currentGraph.lGraph().getProperty(LayeredOptions.DIRECTION),
-                                currentGraph.lGraph().getProperty(LayeredOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_SIDE);
+                        * countModelOrderNodeChanges(gD.currentNodeOrder(), modelOrderStrategy);
                 modelOrderInfluence += crossingCounterPortInfluence
                         * countModelOrderPortChanges(gD.currentNodeOrder());
             }
