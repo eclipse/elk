@@ -59,7 +59,7 @@ public final class BreadthFirstModelOrderLayerer implements ILayoutPhase<Layered
     
     @Override
     public void process(final LGraph thelayeredGraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Longest path layering", 1);
+        monitor.begin("Breadth first model order layering", 1);
         
         layeredGraph = thelayeredGraph;
         // Add first layer.
@@ -123,6 +123,12 @@ public final class BreadthFirstModelOrderLayerer implements ILayoutPhase<Layered
             }
         }
         layeredGraph.getLayers().removeAll(toDelete);
+        // Adjust layer ids
+        int layerId = 0;
+        for (Layer layer : layeredGraph.getLayers()) {
+            layer.id = layerId;
+            layerId++;
+        }
         monitor.done();
     }
 
