@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.layered.options;
 
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.p2layers.BreadthFirstModelOrderLayerer;
 import org.eclipse.elk.alg.layered.p2layers.CoffmanGrahamLayerer;
 import org.eclipse.elk.alg.layered.p2layers.InteractiveLayerer;
 import org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer;
@@ -65,7 +66,13 @@ public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGrap
      * problem with consideration of dummy nodes.
      */
     @ExperimentalPropertyValue
-    MIN_WIDTH;
+    MIN_WIDTH,
+    /**
+     * Assumes an intended breadth first model order of nodes and creates layers accordingly.
+     * No node with a higher model order is in a layer before a node with a lower model order.
+     * Dummy labels are only placed in layers between real nodes.
+     */
+    BF_MODEL_ORDER;
     
     @Override
     public ILayoutPhase<LayeredPhases, LGraph> create() {
@@ -90,6 +97,9 @@ public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGrap
             
         case LONGEST_PATH_SOURCE:
             return new LongestPathSourceLayerer();
+            
+        case BF_MODEL_ORDER:
+            return new BreadthFirstModelOrderLayerer();
 
         default:
             throw new IllegalArgumentException(
