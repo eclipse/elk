@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 @RunWith(LayoutTestRunner.class)
 @Algorithm(LayeredOptions.ALGORITHM_ID)
 @DefaultConfiguration()
-public class BasicBFModelOrderTest {
+public class BasicModelOrderTest {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Sources
@@ -47,13 +47,23 @@ public class BasicBFModelOrderTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
 
+//    @ConfiguratorProvider
+//    public LayoutConfigurator bfConfiguration() {
+//        LayoutConfigurator config = new LayoutConfigurator();
+//        config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY,
+//                CycleBreakingStrategy.MODEL_ORDER);
+//        config.configure(ElkNode.class).setProperty(LayeredOptions.LAYERING_STRATEGY,
+//                LayeringStrategy.BF_MODEL_ORDER);
+//        return config;
+//    }
+
     @ConfiguratorProvider
-    public LayoutConfigurator nodesAndEdgesConfigurator() {
+    public LayoutConfigurator dfConfiguration() {
         LayoutConfigurator config = new LayoutConfigurator();
         config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY,
                 CycleBreakingStrategy.MODEL_ORDER);
         config.configure(ElkNode.class).setProperty(LayeredOptions.LAYERING_STRATEGY,
-                LayeringStrategy.BF_MODEL_ORDER);
+                LayeringStrategy.DF_MODEL_ORDER);
         return config;
     }
 

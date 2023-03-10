@@ -32,6 +32,7 @@ import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.LayeredSpacings;
+import org.eclipse.elk.alg.layered.options.LayeringStrategy;
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
@@ -467,7 +468,11 @@ class ElkGraphImporter {
                 || elkgraph.getProperty(
                         LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) == NodePromotionStrategy.MODEL_ORDER_LEFT_TO_RIGHT
                 || elkgraph.getProperty(
-                        LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT;
+                        LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) == NodePromotionStrategy.MODEL_ORDER_RIGHT_TO_LEFT
+                || elkgraph.getProperty(
+                        LayeredOptions.LAYERING_STRATEGY) == LayeringStrategy.BF_MODEL_ORDER
+                || elkgraph.getProperty(
+                        LayeredOptions.LAYERING_STRATEGY) == LayeringStrategy.DF_MODEL_ORDER;
     }
 
     /**

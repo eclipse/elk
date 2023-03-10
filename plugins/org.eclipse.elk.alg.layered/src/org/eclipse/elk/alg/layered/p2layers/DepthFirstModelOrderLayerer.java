@@ -123,9 +123,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                     if (!nodesToPlace.isEmpty()) {
                         if (layerDiff > 0) {
                             // Case some dependency to the existing graph was found add all nodes to their layers.
-                            for (LNode nodeToPlace : nodesToPlace) {
-                                nodeToPlace.setLayer(layeredGraph.getLayers().get(nodeToPlace.id + layerDiff));
-                            }
+                            placeNodesToPlace();
                             // Remove all nodes since they are now placed correctly.
                             nodesToPlace.clear();
                             addNodeToLayer(desiredLayer, node);
@@ -167,6 +165,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                     } else {
                         // Place previous strip since it had no dependencies.
                         placeNodesToPlace();
+                        nodesToPlace.clear();
                         // Find the last layer the node is connected to.
                         int maxLayer = 0;
                         maxLayer = getMaxConnectedLayer(maxLayer, node);
@@ -211,11 +210,19 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
             boolean connectedViaLabelDummy;
             if (nodesToPlace.isEmpty()) {
                 // Case the node to check already has a layer.
+                // TODO this may case an NPE if getLayer is null;
                 directlyConnected = edge.getSource().getNode().getType() == NodeType.NORMAL
+                        && edge.getSource().getNode().getLayer() != null
                         && edge.getSource().getNode().getLayer().id == currentLayerId;
-                connectedViaLabelDummy = edge.getSource().getNode().getType() == NodeType.LABEL
-                        && edge.getSource().getNode().getIncomingEdges().iterator().next()
-                        .getSource().getNode().getLayer().id == currentLayerId;
+                if (edge.getSource().getNode().getIncomingEdges().iterator().hasNext()) {
+                    Layer connectedLayerViaDummy = edge.getSource().getNode().getIncomingEdges().iterator().next()
+                            .getSource().getNode().getLayer();
+                    connectedViaLabelDummy = edge.getSource().getNode().getType() == NodeType.LABEL
+                            && connectedLayerViaDummy != null
+                            && connectedLayerViaDummy.id == currentLayerId;
+                } else {
+                    connectedViaLabelDummy = false;
+                }
             } else {
                 // Case the node to check might not be placed yet and the node id holds its desired layer.
                 directlyConnected = edge.getSource().getNode().getType() == NodeType.NORMAL
