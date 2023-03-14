@@ -293,8 +293,12 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
         for (LNode nodeToPlace : nodesToPlace) {
             if (nodeToPlace.id >= layeredGraph.getLayers().size()) {
                 // Add a normal and a dummy layer.
-                layeredGraph.getLayers().add(new Layer(layeredGraph));
-                layeredGraph.getLayers().add(new Layer(layeredGraph));
+                Layer dummyLayer = new Layer(layeredGraph);
+                dummyLayer.id = nodeToPlace.id - 1;
+                layeredGraph.getLayers().add(dummyLayer);
+                Layer newLayer = new Layer(layeredGraph);
+                newLayer.id = nodeToPlace.id;
+                layeredGraph.getLayers().add(newLayer);
             }
             nodeToPlace.setLayer(layeredGraph.getLayers().get(nodeToPlace.id));
         }
