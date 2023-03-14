@@ -47,15 +47,15 @@ public class BasicModelOrderTest {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
 
-//    @ConfiguratorProvider
-//    public LayoutConfigurator bfConfiguration() {
-//        LayoutConfigurator config = new LayoutConfigurator();
-//        config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY,
-//                CycleBreakingStrategy.MODEL_ORDER);
-//        config.configure(ElkNode.class).setProperty(LayeredOptions.LAYERING_STRATEGY,
-//                LayeringStrategy.BF_MODEL_ORDER);
-//        return config;
-//    }
+    @ConfiguratorProvider
+    public LayoutConfigurator bfConfiguration() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY,
+                CycleBreakingStrategy.MODEL_ORDER);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.LAYERING_STRATEGY,
+                LayeringStrategy.BF_MODEL_ORDER);
+        return config;
+    }
 
     @ConfiguratorProvider
     public LayoutConfigurator dfConfiguration() {

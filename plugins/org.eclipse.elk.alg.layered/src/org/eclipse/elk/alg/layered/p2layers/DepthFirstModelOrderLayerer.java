@@ -147,6 +147,8 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                     }
                 } else {
                     // Case a new strip has to begin.
+                    placeNodesToPlace();
+                    nodesToPlace.clear();
                     
                     // Find the layer for the first element of the strip.
                     // If it has no incoming connections it is placed in the first layer.
@@ -163,9 +165,6 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                         currentLayerId = 0;
                         
                     } else {
-                        // Place previous strip since it had no dependencies.
-                        placeNodesToPlace();
-                        nodesToPlace.clear();
                         // Find the last layer the node is connected to.
                         int maxLayer = 0;
                         maxLayer = getMaxConnectedLayer(maxLayer, node);
