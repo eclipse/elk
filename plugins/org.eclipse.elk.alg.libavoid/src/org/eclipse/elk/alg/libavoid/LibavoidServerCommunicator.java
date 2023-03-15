@@ -24,7 +24,6 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -88,9 +87,6 @@ public class LibavoidServerCommunicator {
 
     /** String builder holding the textual graph. */
     private StringBuilder sb = new StringBuilder();
-
-    /** The direction of the current drawing. */
-    private Direction currentDirection = Direction.UNDEFINED;
 
     /**
      * Resets the communicator, i.e., clearing the maps to remember current nodes and the textual
@@ -170,6 +166,8 @@ public class LibavoidServerCommunicator {
             final Map<String, KVectorChain> layoutInformation,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Apply layout", SUBTASK_WORK);
+        double maxX = 0;
+        double maxY = 0;
 
         // Libavoid only routes edges, hence we only have to apply the new edge information
         for (Entry<String, KVectorChain> entry : layoutInformation.entrySet()) {
@@ -192,6 +190,22 @@ public class LibavoidServerCommunicator {
             // clean bend points
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(e, true, true);
             ElkUtil.applyVectorChain(points, edgeSection);
+            for (KVector point : points) {
+            	maxX = Math.max(maxX, point.x);
+            	maxY = Math.max(maxY, point.y);
+            }
+        }
+        
+        // Determine graph size and apply it to the parent node
+        for (ElkNode node : parentNode.getChildren()) {
+        	maxX = Math.max(maxX, node.getX() + node.getWidth());
+        	maxY = Math.max(maxY, node.getY() + node.getHeight());
+        }
+        if (parentNode.getWidth() < maxX) {
+        	parentNode.setWidth(maxX + parentNode.getProperty(CoreOptions.PADDING).right);
+        }
+        if (parentNode.getHeight() < maxY) {
+        	parentNode.setHeight(maxY + parentNode.getProperty(CoreOptions.PADDING).bottom);
         }
 
         progressMonitor.done();
@@ -287,11 +301,14 @@ public class LibavoidServerCommunicator {
         // The information is required to initialize the libavoid router properly
         // before the router can be configured with additional options
         EdgeRouting edgeRouting = node.getProperty(LibavoidOptions.EDGE_ROUTING);
-        addOption(LibavoidOptions.EDGE_ROUTING, edgeRouting);
+        if (edgeRouting != EdgeRouting.UNDEFINED) {
+        	addOption(LibavoidOptions.EDGE_ROUTING, edgeRouting);
+        }
 
         Direction direction = node.getProperty(LibavoidOptions.DIRECTION);
-        currentDirection = direction;
-        addOption(LibavoidOptions.DIRECTION, direction);
+        if (direction != Direction.UNDEFINED) {
+        	addOption(LibavoidOptions.DIRECTION, direction);
+        }
 
         /*
          * Penalties
@@ -324,6 +341,10 @@ public class LibavoidServerCommunicator {
         double idealNudgingDistance =
                 node.getProperty(LibavoidOptions.IDEAL_NUDGING_DISTANCE);
         addPenalty(LibavoidOptions.IDEAL_NUDGING_DISTANCE, idealNudgingDistance);
+        
+        double reverseDirectionPenalty =
+        		node.getProperty(LibavoidOptions.REVERSE_DIRECTION_PENALTY);
+        addPenalty(LibavoidOptions.REVERSE_DIRECTION_PENALTY, reverseDirectionPenalty);
 
         /*
          * Routing options
@@ -359,27 +380,37 @@ public class LibavoidServerCommunicator {
                 LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS,
                 improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
 
+        boolean nudgeSharedPathsWithCommonEndPoint =
+        		node.getProperty(LibavoidOptions.NUDGE_SHARED_PATHS_WITH_COMMON_END_POINT);
+        addRoutingOption(LibavoidOptions.NUDGE_SHARED_PATHS_WITH_COMMON_END_POINT,
+        		nudgeSharedPathsWithCommonEndPoint);
     }
 
     private void addOption(final IProperty<?> key, final Object value) {
-        sb.append("OPTION " + getOptionId(key) + " " + value.toString());
+    	if (value != null) {
+	        sb.append("OPTION " + getOptionId(key) + " " + value.toString());
+	        sb.append("\n");
+    	}
+    }
+
+    private void addRoutingOption(final IProperty<?> key, final boolean value) {
+        sb.append("ROUTINGOPTION " + getOptionId(key) + " " + Boolean.toString(value));
         sb.append("\n");
     }
 
-    private void addRoutingOption(final IProperty<?> key, final Object value) {
-        sb.append("ROUTINGOPTION " + getOptionId(key) + " " + value.toString());
-        sb.append("\n");
-    }
-
-    private void addPenalty(final IProperty<?> key, final Object value) {
-        sb.append("PENALTY " + getOptionId(key) + " " + value.toString());
-        sb.append("\n");
+    private void addPenalty(final IProperty<?> key, final double value) {
+    	if (!Double.isNaN(value)) {
+	        sb.append("PENALTY " + getOptionId(key) + " " + Double.toString(value));
+	        sb.append("\n");
+    	}
     }
     
     private String getOptionId(final IProperty<?> key) {
     	String optionId = key.getId();
-    	if (optionId.startsWith("org.eclipse.elk.alg.libavoid")) {
-    		optionId = "de.cau.cs.kieler.kiml.libavoid" + optionId.substring("org.eclipse.elk.alg.libavoid".length());
+    	if (optionId.startsWith("org.eclipse.elk.alg.libavoid.")) {
+    		optionId = optionId.substring("org.eclipse.elk.alg.libavoid.".length());
+    	} else if (optionId.startsWith("org.eclipse.elk.")) {
+    		optionId = optionId.substring("org.eclipse.elk.".length());
     	}
     	return optionId;
     }
@@ -497,16 +528,16 @@ public class LibavoidServerCommunicator {
         portIdMap.put(portId, port);
 
         // gather information
-        PortSide side = ElkUtil.calcPortSide(port, currentDirection);
-
-        // get center point of port
-        double centerX = port.getX() + port.getWidth() / 2;
-        double centerY = port.getY() + port.getHeight() / 2;
+        PortSide side = port.getProperty(CoreOptions.PORT_SIDE);
         
         // for compound nodes we have to mirror the port sides
         if (compoundNode != null) {
             side = side.opposed();
         }
+
+        // get center point of port
+        double centerX = port.getX() + port.getWidth() / 2;
+        double centerY = port.getY() + port.getHeight() / 2;
 
         // format: portId nodeId portSide centerX centerYs
         sb.append("PORT " + portId + " " + nodeId + " " + side.toString() + " " + centerX + " "
@@ -524,11 +555,6 @@ public class LibavoidServerCommunicator {
         libavoidNode(node, nodeIdCounter, 
                 node.getX(), node.getY(), node.getWidth(), node.getHeight(), 
                 portLessIncomingEdges, portLessOutgoingEdges);
-
-        // transfer port constraints
-        PortConstraints pc = node.getProperty(LibavoidOptions.PORT_CONSTRAINTS);
-        sb.append("NODEOPTION " + nodeIdCounter + " " + pc);
-        sb.append("\n");
 
         // transfer all ports
         for (ElkPort port : node.getPorts()) {
@@ -602,7 +628,7 @@ public class LibavoidServerCommunicator {
     }
 
     private int determineHierarchicalNodeId(final ElkPort port) {
-        PortSide ps = ElkUtil.calcPortSide(port, currentDirection);
+        PortSide ps = port.getProperty(CoreOptions.PORT_SIDE);
         int nodeId = 0;
         switch (ps) {
         case NORTH:

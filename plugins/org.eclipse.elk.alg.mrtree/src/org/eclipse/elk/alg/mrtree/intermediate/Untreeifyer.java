@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -27,14 +27,19 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public class Untreeifyer implements ILayoutProcessor<TGraph> {
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
-        List<TEdge>  edges = tGraph.getProperty(InternalProperties.REMOVABLE_EDGES);
+        progressMonitor.begin("Untreeify", 1);
+        
+        List<TEdge> edges = tGraph.getProperty(InternalProperties.REMOVABLE_EDGES);
 
         for (TEdge tEdge : edges) {
             tEdge.getSource().getOutgoingEdges().add(tEdge);
             tEdge.getTarget().getIncomingEdges().add(tEdge);
         }
+        
+        progressMonitor.done();
     }
-    
 }

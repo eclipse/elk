@@ -401,7 +401,6 @@ public class LibavoidServer {
 
         if (error != null && error.length() > 0) {
             // an error output could be read from Libavoid, so display that to the user
-            error.insert(0, "Libavoid error: ");
             throw new LibavoidServerException("Libavoid error: " + error.toString());
         }
     }

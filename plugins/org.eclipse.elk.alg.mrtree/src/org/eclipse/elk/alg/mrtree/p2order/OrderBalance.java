@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -39,6 +39,7 @@ import org.eclipse.elk.graph.properties.IProperty;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class OrderBalance implements ILayoutPhase<TreeLayoutPhases, TGraph> {
 
@@ -55,17 +56,28 @@ public class OrderBalance implements ILayoutPhase<TreeLayoutPhases, TGraph> {
      */
     private IProperty<Integer> weighting;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Processor arrange node", 1);
 
+        // elkjs-exclude-start
+        if (tGraph.getProperty(MrTreeOptions.DEBUG_MODE)) {
+            progressMonitor.log("OrderBalance!");
+        }
+        // elkjs-exclude-end
+
         /** get the weighting from the userinterface */
-        if (tGraph.getProperty(MrTreeOptions.WEIGHTING).equals(OrderWeighting.DESCENDANTS)) {
+        if (!tGraph.getProperty(MrTreeOptions.WEIGHTING).equals(OrderWeighting.FAN)) {
             weighting = InternalProperties.DESCENDANTS;
         } else {
             weighting = InternalProperties.FAN;
@@ -195,13 +207,19 @@ public class OrderBalance implements ILayoutPhase<TreeLayoutPhases, TGraph> {
     /**
      * A comparator for edge targets that uses the given property.
      */
-    private static class SortTEdgeTargetProperty implements Comparator<TEdge> {
+    public static class SortTEdgeTargetProperty implements Comparator<TEdge> {
         private IProperty<Integer> property;
 
         SortTEdgeTargetProperty(final IProperty<Integer> property) {
             this.property = property;
         }
-
+        
+        /**
+         * The compare method.
+         * @param t1 The first edge
+         * @param t2 The second edge
+         * @return The difference for the property
+         */
         public int compare(final TEdge t1, final TEdge t2) {
             return t2.getTarget().getProperty(property) - t1.getTarget().getProperty(property);
         }

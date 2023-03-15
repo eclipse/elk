@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -15,7 +15,9 @@ import java.util.Iterator;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
+import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -27,15 +29,17 @@ import com.google.common.collect.Lists;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class LevelHeightProcessor implements ILayoutProcessor<TGraph> {
 
     /** number of nodes in the graph. */
     private int numberOfNodes;
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
-
         progressMonitor.begin("Processor determine the height for each level", 1f);
 
         /** save number of nodes for progress computation */
@@ -53,11 +57,10 @@ public class LevelHeightProcessor implements ILayoutProcessor<TGraph> {
 
         /** start with the root and level down by dsf */
         if (root != null) {
-            setNeighbors(Lists.newArrayList(root), progressMonitor);
+            setNeighbors(Lists.newArrayList(root), progressMonitor, tGraph.getProperty(MrTreeOptions.DIRECTION));
         }
 
         progressMonitor.done();
-
     }
 
     /**
@@ -70,8 +73,8 @@ public class LevelHeightProcessor implements ILayoutProcessor<TGraph> {
      * @param progressMonitor
      *            the current progress monitor
      */
-    private void setNeighbors(final Iterable<TNode> currentLevel,
-            final IElkProgressMonitor progressMonitor) {
+    private void setNeighbors(final Iterable<TNode> currentLevel, 
+            final IElkProgressMonitor progressMonitor, final Direction layoutDirection) {
         /** only do something in filled levels */
         if (!Iterables.isEmpty(currentLevel)) {
             /** create subtask for recursive descent */
@@ -88,14 +91,24 @@ public class LevelHeightProcessor implements ILayoutProcessor<TGraph> {
                 }
             };
 
-            double height = 0d;
-
-            for (TNode cN : currentLevel) {
-                /** append the children of the current node to the next level */
-                nextLevel = Iterables.concat(nextLevel, cN.getChildren());
-                /** check if the node is the tallest node so far */
-                if (height < cN.getSize().y) {
-                    height = cN.getSize().y;
+            double height = 0;
+            if (layoutDirection.isHorizontal()) {
+                for (TNode cN : currentLevel) {
+                    /** append the children of the current node to the next level */
+                    nextLevel = Iterables.concat(nextLevel, cN.getChildren());
+                    /** check if the node is the tallest node so far */
+                    if (height < cN.getSize().x) {
+                        height = cN.getSize().x;
+                    }
+                }
+            } else {
+                for (TNode cN : currentLevel) {
+                    /** append the children of the current node to the next level */
+                    nextLevel = Iterables.concat(nextLevel, cN.getChildren());
+                    /** check if the node is the tallest node so far */
+                    if (height < cN.getSize().y) {
+                        height = cN.getSize().y;
+                    }
                 }
             }
             for (TNode cN : currentLevel) {
@@ -107,7 +120,7 @@ public class LevelHeightProcessor implements ILayoutProcessor<TGraph> {
             sT.done();
 
             /** determine neighbors by bfs and for the whole graph */
-            setNeighbors(nextLevel, progressMonitor);
+            setNeighbors(nextLevel, progressMonitor, layoutDirection);
         }
 
     }

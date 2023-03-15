@@ -10,14 +10,18 @@
 package org.eclipse.elk.alg.libavoid;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
-import org.eclipse.elk.alg.libavoid.options.LibavoidOptions;
 import org.eclipse.elk.alg.libavoid.server.LibavoidServer;
 import org.eclipse.elk.alg.libavoid.server.LibavoidServerPool;
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
@@ -35,21 +39,10 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
 
-        // TODO
-        // at this point the 'DIRECTION' should be set to a reasonable value ... 
-        // parentNode.setProperty(LibavoidOptions.DIRECTION, Direction.DOWN);
-        
-        // TODO check if we should set this to 0 by default
-        parentNode.setProperty(LibavoidOptions.IDEAL_NUDGING_DISTANCE, 0d);
-        
-        // calculate node margins
+        // Prepare the graph
+    	prepareGraph(parentNode);
         ElkGraphAdapter adapter = ElkGraphAdapters.adapt(parentNode);
-
         NodeDimensionCalculation.sortPortLists(adapter);
-        
-        // TODO this behaves strangely (creates different node sizes for the layered alg)
-        // NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        
         NodeDimensionCalculation.calculateNodeMargins(adapter);
         
         // create an Libavoid server process instance or use an existing one
@@ -59,6 +52,22 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
         // if everything worked well, release the used process instance
         LibavoidServerPool.INSTANCE.release(lvServer);
 
+    }
+    
+    private void prepareGraph(final ElkNode parentNode) {
+    	Direction direction = parentNode.getProperty(CoreOptions.DIRECTION);
+    	for (ElkNode node : parentNode.getChildren()) {
+    		for (ElkPort port : node.getPorts()) {
+    			
+    			// Compute missing port sides
+    			PortSide side = port.getProperty(CoreOptions.PORT_SIDE);
+    			if (side == PortSide.UNDEFINED) {
+    	        	side = ElkUtil.calcPortSide(port, direction);
+    	        	port.setProperty(CoreOptions.PORT_SIDE, side);
+    	        }
+    			
+    		}
+    	}
     }
 
 }

@@ -99,6 +99,71 @@ public class BasicConsiderModelOrderTest {
         return config;
     }
 
+    @ConfiguratorProvider
+    public LayoutConfigurator preferNodesConfigurator() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
+                CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_NODES);
+        return config;
+    }
+
+    @ConfiguratorProvider
+    public LayoutConfigurator preferNodesWeightedConfigurator() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
+                CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_NODES);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_NODE_INFLUENCE,
+                0.001);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_CROSSING_COUNTER_PORT_INFLUENCE,
+                0.001);
+        return config;
+    }
+
+    @ConfiguratorProvider
+    public LayoutConfigurator portModelOrderPreferEdges() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
+                CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_EDGES);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER,
+                true);
+        return config;
+    }
+
+    @ConfiguratorProvider
+    public LayoutConfigurator portModelOrderNodesAndEdges() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
+                CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.NODES_AND_EDGES);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER,
+                true);
+        return config;
+    }
+
+    @ConfiguratorProvider
+    public LayoutConfigurator portModelOrderPreferNodes() {
+        LayoutConfigurator config = new LayoutConfigurator();
+        config.configure(ElkNode.class).setProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY,
+                CrossingMinimizationStrategy.LAYER_SWEEP);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY,
+                OrderingStrategy.PREFER_NODES);
+        config.configure(ElkNode.class).setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER,
+                true);
+        return config;
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Tests
     
