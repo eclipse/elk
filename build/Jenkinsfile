@@ -253,7 +253,7 @@ spec:
         container('jnlp') {
           // Deploy the website
           dir ('elk/build/releng') {
-            sshagent(['git.eclipse.org-bot-ssh']) {
+            sshagent(['github-bot-ssh']) {
               sh "bash publish-website.sh"
             }
           }
