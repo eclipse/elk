@@ -18,7 +18,7 @@ then
 fi
 
 # Produce a shallow clone of the repository
-git clone --depth 1 ssh://genie.elk@github.com:eclipse/elk-website.git website
+git clone --depth 1 git@github.com:eclipse/elk-website.git website
 
 # Synchronize the website over to the repository
 rsync -crv --delete --exclude=".*/" --exclude=".*" elk/docs/public/ website
