@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
@@ -38,6 +40,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public final class MrTree {
 
@@ -66,6 +69,13 @@ public final class MrTree {
     public TGraph doLayout(final TGraph tgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Tree layout", 1);
 
+        // elkjs-exclude-start
+        if (tgraph.getProperty(MrTreeOptions.DEBUG_MODE)) {
+            progressMonitor.log("MrTree! called at "
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        }
+        // elkjs-exclude-end
+        
         // set up the phases and processors depending on user options
         updateModules(tgraph);
 
@@ -162,17 +172,17 @@ public final class MrTree {
         }
         monitor.begin("Layout", algorithm.size());
 
+        // elkjs-exclude-start
         if (graph.getProperty(MrTreeOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
-
-            System.out.println("ELK MrTree uses the following " + algorithm.size() + " modules:");
+            themonitor.log("ELK MrTree uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
-                String slot = (i < 10 ? "0" : "") + (i++); // SUPPRESS CHECKSTYLE MagicNumber
-                System.out.println("   Slot " + slot + ": " + algorithm.get(i).getClass().getName());
+                themonitor.log("   Slot " + i + ": " + algorithm.get(i).getClass().getName());
             }
         }
+        // elkjs-exclude-end
         // invoke each layout processor
         for (ILayoutProcessor<TGraph> processor : algorithm) {
             if (monitor.isCanceled()) {

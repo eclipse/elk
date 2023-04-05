@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -23,13 +23,17 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * 
  * @author sor
  * @author sgu
+ * @author sdo
  */
 public class RootProcessor implements ILayoutProcessor<TGraph> {
 
     private ArrayList<TNode> roots = new ArrayList<TNode>();
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("Find roots", 1);
 
         /** clear list of roots if processor is reused */
         roots.clear();
@@ -70,5 +74,7 @@ public class RootProcessor implements ILayoutProcessor<TGraph> {
             tGraph.getNodes().add(superRoot);
             break;
         }
+        
+        progressMonitor.done();
     }
 }

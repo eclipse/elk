@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Kiel University and others.
+ * Copyright (c) 2020, 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -17,8 +17,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LongEdgeOrderingStrategy;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 
 /**
@@ -112,10 +112,25 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
         if (orderingStrategy == OrderingStrategy.PREFER_EDGES || !n1.hasProperty(InternalProperties.MODEL_ORDER)
                 || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // In this case the order of the connected nodes in the previous layer should be respected
-            LPort p1SourcePort = n1.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
-                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource()).orElse(null);
-            LPort p2SourcePort = n2.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty())
-                    .findFirst().map(p -> p.getIncomingEdges().get(0).getSource()).orElse(null);
+            LPort p1SourcePort = null;
+            for (LPort p : n1.getPorts()) {
+                // Get the first port that actually connects to a previous layer.
+                if (!p.getIncomingEdges().isEmpty()) {
+                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer() != n1.getLayer()) {
+                        p1SourcePort = p.getIncomingEdges().get(0).getSource();
+                    }
+                }
+            }
+            
+            LPort p2SourcePort = null;
+            for (LPort p : n2.getPorts()) {
+                // Get the first port that actually connects to a previous layer.
+                if (!p.getIncomingEdges().isEmpty()) {
+                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer() != n2.getLayer()) {
+                        p2SourcePort = p.getIncomingEdges().get(0).getSource();
+                    }
+                }
+            }
             
             // Case both nodes have connections to the previous layer.
             if (p1SourcePort != null && p2SourcePort != null) {

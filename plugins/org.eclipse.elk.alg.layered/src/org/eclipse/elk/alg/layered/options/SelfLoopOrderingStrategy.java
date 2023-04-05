@@ -16,6 +16,8 @@ public enum SelfLoopOrderingStrategy {
 
     /** Self loops will be stacked or nested high. */
     STACKED,
+    /** Self loops will be stacked or nested high with the first self loop on top. */
+    REVERSE_STACKED,
     /** Self loops will be placed next to each other. */
     SEQUENCED;
     

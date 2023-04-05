@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2020 Kiel University and others.
+ * Copyright (c) 2012, 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -33,7 +32,7 @@ import org.eclipse.elk.core.math.KVector;
  * @author msp
  * @author cds
  */
-final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
+class SimpleRowGraphPlacer extends AbstractGraphPlacer {
     
     @Override
     public void combine(final List<LGraph> components, final LGraph target) {
@@ -56,6 +55,52 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         }
         assert !components.contains(target);
         // Sort components
+        sortComponents(components, target);
+        
+        LGraph firstComponent = components.get(0);
+        target.getLayerlessNodes().clear();
+        target.copyProperties(firstComponent);
+        
+        // determine the maximal row width by the maximal box width and the total area
+        double maxRowWidth = 0.0f;
+        double totalArea = 0.0f;
+        for (LGraph graph : components) {
+            KVector size = graph.getSize();
+            maxRowWidth = Math.max(maxRowWidth, size.x);
+            totalArea += size.x * size.y;
+        }
+        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
+                * target.getProperty(LayeredOptions.ASPECT_RATIO));
+        double componentSpacing = target.getProperty(LayeredOptions.SPACING_COMPONENT_COMPONENT);
+
+        placeComponents(components, target, maxRowWidth, componentSpacing);
+        
+        // if compaction is desired, do so!
+        if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)) {
+            ComponentsCompactor compactor = new ComponentsCompactor();
+            compactor.compact(components, target.getSize(), componentSpacing);
+
+            // the compaction algorithm places components absolutely,
+            // therefore we have to use the final drawing's offset
+            for (LGraph h : components) {
+                h.getOffset().reset().add(compactor.getOffset());
+            }
+
+            // set the new graph size
+            target.getSize().reset().add(compactor.getGraphSize());
+        }
+
+        // finally move the components to the combined graph
+        moveGraphs(target, components, 0, 0);
+    }
+    
+    /**
+     * Sort components based on the summed up priority.
+     * 
+     * @param components All components
+     * @param target The target graph
+     */
+    public void sortComponents(final List<LGraph> components, final LGraph target) {
         if (target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_COMPONENTS) == ComponentOrderingStrategy.NONE) {
             // assign priorities
             for (LGraph graph : components) {
@@ -79,23 +124,18 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
                 }
             });
         }
-        
-        LGraph firstComponent = components.get(0);
-        target.getLayerlessNodes().clear();
-        target.copyProperties(firstComponent);
-        
-        // determine the maximal row width by the maximal box width and the total area
-        double maxRowWidth = 0.0f;
-        double totalArea = 0.0f;
-        for (LGraph graph : components) {
-            KVector size = graph.getSize();
-            maxRowWidth = Math.max(maxRowWidth, size.x);
-            totalArea += size.x * size.y;
-        }
-        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * target.getProperty(LayeredOptions.ASPECT_RATIO));
-        double componentSpacing = target.getProperty(LayeredOptions.SPACING_COMPONENT_COMPONENT);
-
+    }
+    
+    /**
+     * Places components in rows bounded by the approximated width.
+     * 
+     * @param components The components
+     * @param target The target graph
+     * @param maxRowWidth The maximum row width
+     * @param componentSpacing the component component spacing
+     */
+    public void placeComponents(final List<LGraph> components, final LGraph target, final double maxRowWidth, final
+            double componentSpacing) {
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = componentSpacing;
         for (LGraph graph : components) {
@@ -116,24 +156,6 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         
         target.getSize().x = broadestRow;
         target.getSize().y = ypos + highestBox;
-        
-        // if compaction is desired, do so!
-        if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)) {
-            ComponentsCompactor compactor = new ComponentsCompactor();
-            compactor.compact(components, target.getSize(), componentSpacing);
-
-            // the compaction algorithm places components absolutely,
-            // therefore we have to use the final drawing's offset
-            for (LGraph h : components) {
-                h.getOffset().reset().add(compactor.getOffset());
-            }
-
-            // set the new graph size
-            target.getSize().reset().add(compactor.getGraphSize());
-        }
-
-        // finally move the components to the combined graph
-        moveGraphs(target, components, 0, 0);
     }
 
 }

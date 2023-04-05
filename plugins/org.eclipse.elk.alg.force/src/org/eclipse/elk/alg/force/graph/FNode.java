@@ -29,9 +29,6 @@ public final class FNode extends FParticle {
     /** the identifier number. */
     public int id;
     // CHECKSTYLEON VisibilityModifier
-    
-    /** particle position displacement for each iteration. */
-    private KVector displacement = new KVector();
     /** the node label. */
     private String label;
     /** The parent node. */
@@ -72,15 +69,6 @@ public final class FNode extends FParticle {
         } else {
             return "n_" + label;
         }
-    }
-
-    /**
-     * Returns the displacement vector.
-     * 
-     * @return the displacement vector
-     */
-    public KVector getDisplacement() {
-        return displacement;
     }
 
     /**

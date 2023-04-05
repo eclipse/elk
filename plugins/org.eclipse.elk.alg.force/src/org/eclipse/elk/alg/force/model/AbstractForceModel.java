@@ -110,9 +110,10 @@ public abstract class AbstractForceModel {
         int iterations = 0;
         
         while (moreIterations(iterations) && !monitor.isCanceled()) {
-            
+
+            iterationDone();
             // calculate attractive and repulsive forces
-            for (FNode v : fgraph.getNodes()) {
+            for (FParticle v : fgraph.getParticles()) {
                 for (FParticle u : fgraph.getParticles()) {
                     if (u != v) {
                         KVector displacement = calcDisplacement(u, v);
@@ -124,14 +125,12 @@ public abstract class AbstractForceModel {
             }
             
             // apply calculated displacement
-            for (FNode v : fgraph.getNodes()) {
+            for (FParticle v : fgraph.getParticles()) {
                 KVector d = v.getDisplacement();
                 d.bound(-dispBound, -dispBound, dispBound, dispBound);
                 v.getPosition().add(d);
                 d.reset();
             }
-            
-            iterationDone();
             iterations++;
         }
         monitor.done();
@@ -181,8 +180,28 @@ public abstract class AbstractForceModel {
         KVector pu = u.getPosition();
         KVector pv = v.getPosition();
         while (pu.x - pv.x == 0 && pu.y - pv.y == 0) {
-            pu.wiggle(random, 1);
-            pv.wiggle(random, 1);
+            boolean triedForBendPoints = false;
+            if (u instanceof FBendpoint && v instanceof FBendpoint && !triedForBendPoints) {
+                // Wiggle orthogonal to edge direction
+                FEdge uE = ((FBendpoint) u).getEdge();
+                KVector uVector = new KVector(uE.getTargetPoint()).sub(uE.getSourcePoint());
+                double length = 2;
+                KVector orthogonaluV = new KVector(uVector.x / uVector.length() * length,
+                        -uVector.y / uVector.length() * length);
+                pu.add(orthogonaluV);
+
+                FEdge vE = ((FBendpoint) v).getEdge();
+                KVector vVector = new KVector(vE.getTargetPoint()).sub(vE.getSourcePoint());
+                length = uVector == vVector ? -2 : 2;
+                KVector orthogonalvV = new KVector((vVector.x / vVector.length()) * length,
+                        -(vVector.y / vVector.length()) * length);
+                pu.add(orthogonalvV);
+                triedForBendPoints = true;
+                
+            } else {
+                pu.wiggle(random, 1);
+                pv.wiggle(random, 1);
+            }
         }
     }
 

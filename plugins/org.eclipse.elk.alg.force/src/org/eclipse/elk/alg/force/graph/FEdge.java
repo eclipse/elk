@@ -149,8 +149,8 @@ public final class FEdge extends MapPropertyHolder {
             KVector incr = targetPos.clone().sub(sourcePos).scale(1 / (double) (count + 1));
             KVector pos = sourcePos.clone();
             for (FBendpoint bendPoint : bendpoints) {
-                bendPoint.getPosition().x = pos.x;
-                bendPoint.getPosition().y = pos.y;
+                bendPoint.getPosition().x = pos.x + incr.x;
+                bendPoint.getPosition().y = pos.y + incr.y;
                 pos.add(incr);
             }
         }

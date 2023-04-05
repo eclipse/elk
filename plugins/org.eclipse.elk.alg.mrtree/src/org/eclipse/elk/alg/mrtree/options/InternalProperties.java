@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 Kiel University and others.
+ * Copyright (c) 2013 - 2022 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.options;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +25,8 @@ import org.eclipse.elk.graph.properties.Property;
  * 
  * @author sor
  * @author sgu
+ * @author jnc
+ * @author sdo
  */
 public final class InternalProperties {
 
@@ -75,6 +78,32 @@ public final class InternalProperties {
 
     /** The y height of the nodes level. */
     public static final IProperty<Double> LEVELHEIGHT = new Property<Double>("LEVELHEIGHT", 0d);
+    
+    /** The min position of the nodes level in the current layout direction. */
+    public static final IProperty<Double> LEVELMIN = new Property<Double>("LEVELMIN", 0d);
+    
+    /** The max position of the nodes level in the current layout direction. */
+    public static final IProperty<Double> LEVELMAX = new Property<Double>("LEVELMAX", 0d);
+    
+    /** The min x position of the nodes within this graph. */
+    public static final IProperty<Double> GRAPH_XMIN = new Property<Double>("GRAPH_XMIN", 0d);
+    
+    /** The min y position of the nodes within this graph. */
+    public static final IProperty<Double> GRAPH_YMIN = new Property<Double>("GRAPH_YMIN", 0d);
+    
+    /** The maximum x coordinate any nodes reaches with its position and size within this graph. */
+    public static final IProperty<Double> GRAPH_XMAX = new Property<Double>("GRAPH_XMAX", 0d);
+    
+    /** The maximum y coordinate any nodes reaches with its position and size within this graph. */
+    public static final IProperty<Double> GRAPH_YMAX = new Property<Double>("GRAPH_YMAX", 0d);
+    
+    /** Is set to true by the compaction processor if the nodes level changed. */
+    public static final IProperty<Boolean> COMPACT_LEVEL_ASCENSION = 
+            new Property<Boolean>("COMPACT_LEVEL_ASCENSION", false);
+    
+    /** Is set to the lowest dependent node if there is one. */
+    public static final IProperty<List<TNode>> COMPACT_CONSTRAINTS = 
+            new Property<List<TNode>>("COMPACT_CONSTRAINTS", new ArrayList<TNode>());
 
     /**
      * Id of of a real node. This Indicates the block by the most significant letters and level of

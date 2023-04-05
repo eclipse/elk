@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   width="100"
+   height="60"
+   viewBox="0 0 100 60"
+   id="svg94"
+   sodipodi:docname="cb-greedy.svg"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)">
+  <metadata
+     id="metadata100">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs98" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2488"
+     inkscape:window-height="1403"
+     id="namedview96"
+     showgrid="false"
+     inkscape:zoom="3.47"
+     inkscape:cx="50"
+     inkscape:cy="10"
+     inkscape:window-x="72"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg94" />
+  <desc
+     id="desc4">Creator: FreeHEP Graphics2D Driver Producer: de.cau.cs.kieler.klighd.piccolo.freehep.SemanticSVGGraphics2D Revision Source:  Date: Thursday, September 1, 2022 at 2:33:00 PM Central European Summer Time</desc>
+  <g
+     stroke-miterlimit="10"
+     id="g92"
+     style="stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0"
+     transform="translate(0,20)">
+    <g
+       id="g8"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none">
+      <path
+         d="M 0,0 H 100 V 20 H 0 Z"
+         id="path6"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(80)"
+       id="g14">
+      <g
+         id="g12"
+         style="fill:none;stroke:#000000;stroke-opacity:1">
+        <path
+           d="m 0.5,0.5 h 19 v 19 h -19 z"
+           id="path10"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(83,3.5)"
+       id="g18">
+      <text
+         x="0"
+         y="10"
+         font-weight="normal"
+         font-size="10.666666984558105px"
+         font-style="normal"
+         style="font-style:normal;font-weight:normal;font-size:10.66666698px;font-family:Helvetica;white-space:pre;fill:#000000;fill-opacity:1;stroke:none"
+         textLength="14"
+         lengthAdjust="spacingAndGlyphs"
+         id="text16">n1</text>
+    </g>
+    <g
+       transform="translate(40)"
+       id="g24">
+      <g
+         id="g22"
+         style="fill:none;stroke:#000000;stroke-opacity:1">
+        <path
+           d="m 0.5,0.5 h 19 v 19 h -19 z"
+           id="path20"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(43,3.5)"
+       id="g28">
+      <text
+         x="0"
+         y="10"
+         font-weight="normal"
+         font-size="10.666666984558105px"
+         font-style="normal"
+         style="font-style:normal;font-weight:normal;font-size:10.66666698px;font-family:Helvetica;white-space:pre;fill:#000000;fill-opacity:1;stroke:none"
+         textLength="14"
+         lengthAdjust="spacingAndGlyphs"
+         id="text26">n2</text>
+    </g>
+    <g
+       id="g32"
+       style="fill:none;stroke:#000000;stroke-opacity:1">
+      <path
+         d="m 0.5,0.5 h 19 v 19 h -19 z"
+         id="path30"
+         inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="translate(3,3.5)"
+       id="g36">
+      <text
+         x="0"
+         y="10"
+         font-weight="normal"
+         font-size="10.666666984558105px"
+         font-style="normal"
+         style="font-style:normal;font-weight:normal;font-size:10.66666698px;font-family:Helvetica;white-space:pre;fill:#000000;fill-opacity:1;stroke:none"
+         textLength="14"
+         lengthAdjust="spacingAndGlyphs"
+         id="text34">n3</text>
+    </g>
+    <g
+       transform="translate(-12,-12)"
+       id="g42">
+      <g
+         id="g40"
+         style="fill:none;stroke:#000000;stroke-opacity:1">
+        <path
+           d="M 32,22 H 52"
+           id="path38"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(32,7)"
+       id="g48">
+      <g
+         id="g46"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none">
+        <path
+           d="M 0,0 3.2,3 0,6 8,3 Z"
+           id="path44"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(32,7)"
+       id="g54">
+      <g
+         id="g52"
+         style="fill:none;stroke:#000000;stroke-linejoin:round;stroke-opacity:1">
+        <path
+           d="M 0,0 3.2,3 0,6 8,3 Z"
+           id="path50"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(-12,-12)"
+       id="g60">
+      <g
+         id="g58"
+         style="fill:none;stroke:#000000;stroke-opacity:1">
+        <path
+           d="M 72,18.666666 H 92"
+           id="path56"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(72,3.666666)"
+       id="g66">
+      <g
+         id="g64"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none">
+        <path
+           d="M 0,0 3.2,3 0,6 8,3 Z"
+           id="path62"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(72,3.666666)"
+       id="g72">
+      <g
+         id="g70"
+         style="fill:none;stroke:#000000;stroke-linejoin:round;stroke-opacity:1">
+        <path
+           d="M 0,0 3.2,3 0,6 8,3 Z"
+           id="path68"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="translate(-12,-12)"
+       id="g78">
+      <g
+         id="g76"
+         style="fill:none;stroke:#000000;stroke-opacity:1">
+        <path
+           d="M 92,25.333334 H 72"
+           id="path74"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="rotate(-179.99999,34,8.1666658)"
+       id="g84">
+      <g
+         id="g82"
+         style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none">
+        <path
+           d="M 0,0 3.2,3 0,6 8,3 Z"
+           id="path80"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       transform="rotate(-179.99999,34,8.1666658)"
+       id="g90">
+      <g
+         id="g88"
+         style="fill:none;stroke:#000000;stroke-linejoin:round;stroke-opacity:1">
+        <path
+           d="M 0,0 3.2,3 0,6 8,3 Z"
+           id="path86"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+  </g>
+</svg>
