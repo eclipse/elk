@@ -222,12 +222,14 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             klabel.setLocation(labelPos.x, labelPos.y);
         }
         
+        // set up the parent node
+        double width = (maxXPos - minXPos) + padding.getHorizontal();
+        double height = (maxYPos - minYPos) + padding.getVertical();
         if (!kgraph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
-            // set up the parent node
-            double width = (maxXPos - minXPos) + padding.getHorizontal();
-            double height = (maxYPos - minYPos) + padding.getVertical();
             ElkUtil.resizeNode(kgraph, width, height, false, true);
         }
+        kgraph.setProperty(CoreOptions.CHILD_AREA_WIDTH, width);
+        kgraph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, height);
     }
     
 }

@@ -833,6 +833,112 @@ programmatic option scaleFactor: double {
 // requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
+programmatic option childAreaWidth: double {
+    label "Child Area Width"
+    description
+        "The width of the area occupied by the laid out children of a node."
+    targets parents
+}
+
+programmatic option childAreaHeight: double {
+    label "Child Area Height"
+    description
+        "The height of the area occupied by the laid out children of a node."
+    targets parents
+}
+
+advanced option topdownLayout: boolean {
+    label "Topdown Layout"
+    description
+        "Turns topdown layout on and off. If this option is enabled, hierarchical layout will be computed first for
+         the root node and then for its children recursively. Layouts are then scaled down to fit the area provided by
+         their parents. Graphs must follow a certain structure for topdown layout to work properly. 
+         {@link TopdownNodeTypes.PARALLEL_NODE} nodes must have children of type 
+         {@link TopdownNodeTypes.HIERARCHICAL_NODE} and must define {@link topdown.hierarchicalNodeWidth} and 
+         {@link topdown.hierarchicalNodeAspectRatio} for their children. Furthermore they need to be laid out using an 
+         algorithm  that is a {@link TopdownLayoutProvider}. Hierarchical nodes can also be parents of other hierarchical
+         nodes and can optionally use a {@link TopdownSizeApproximator} to dynamically set sizes during topdown layout.
+         In this case {@link topdown.hierarchicalNodeWidth} and {@link topdown.hierarchicalNodeAspectRatio} should be set
+         on the node itself rather than the parent. The values are then used by the size approximator as base values.
+         Hierarchical nodes require the layout option {@link nodeSize.fixedGraphSize} to be true to prevent the algorithm 
+         used there from resizing the hierarchical node. This option is not supported if 'Hierarchy Handling' is set to 
+         'INCLUDE_CHILDREN'"
+    documentation "@topdownlayout.md"
+    default = false
+    targets parents
+    requires topdown.nodeType
+}
+
+group topdown {
+    programmatic option scaleFactor: double {
+        label "Topdown Scale Factor"
+        description
+            "The scaling factor to be applied to the nodes laid out within the node in recursive topdown
+             layout. The difference to 'Scale Factor' is that the node itself is not scaled. This value has to be set on 
+             hierarchical nodes."
+        lowerBound = ExclusiveBounds.greaterThan(0)
+        default = 1
+        targets parents
+        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
+    
+    advanced option sizeApproximator: TopdownSizeApproximator {
+        label "Topdown Size Approximator"
+        description
+            "The size approximator to be used to set sizes of hierarchical nodes during topdown layout. The default
+             value is null, which results in nodes keeping whatever size is defined for them e.g. through parent 
+             parallel node or by manually setting the size."
+             default = null
+             targets nodes
+             requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
+    
+    advanced option hierarchicalNodeWidth: double {
+        label "Topdown Hierarchical Node Width"
+        description
+            "The fixed size of a hierarchical node when using topdown layout. If this value is set on a parallel 
+             node it applies to its children, when set on a hierarchical node it applies to the node itself."
+        default = 150
+        targets parents, nodes
+        requires nodeType
+    }
+    
+    advanced option hierarchicalNodeAspectRatio: double {
+        label "Topdown Hierarchical Node Aspect Ratio"
+        description
+            "The fixed aspect ratio of a hierarchical node when using topdown layout. Default is 1/sqrt(2). If this 
+             value is set on a parallel node it applies to its children, when set on a hierarchical node it applies to 
+             the node itself."
+        default = 1.414
+        targets parents, nodes
+        requires nodeType
+    }
+    
+    advanced option nodeType: TopdownNodeTypes{
+        label "Topdown Node Type"
+        description
+            "The different node types used for topdown layout. If the node type is set 
+             to {@link TopdownNodeTypes.PARALLEL_NODE} the algorithm must be set to a {@link TopdownLayoutProvider} such
+             as {@link TopdownPacking}. The {@link nodeSize.fixedGraphSize} option is technically only required for 
+             hierarchical nodes." 
+        default = null
+        targets nodes
+        requires nodeSize.fixedGraphSize
+    }
+    
+    advanced option scaleCap: double {
+        label "Topdown Scale Cap"
+        description
+            "Determines the upper limit for the topdown scale factor. The default value is 1.0 which ensures
+             that nested children never end up appearing larger than their parents in terms of unit sizes such 
+             as the font size. If the limit is larger, nodes will fully utilize the available space, but it is 
+             counteriniuitive for inner nodes to have a larger scale than outer nodes."
+        targets parents
+        default = 1
+        requires nodeType == TopdownNodeTypes.HIERARCHICAL_NODE
+    }
+}
+
 // --- INSIDE SELF LOOPS
 group insideSelfLoops {
 

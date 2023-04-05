@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -395,6 +397,75 @@ public final class ElkUtil {
                 anchor.y *= scalingFactor;
             }
         }
+    }
+    
+    /**
+     * Computes the area occupied by this node's layout and stores the values in {@link CoreOptions#CHILD_AREA_WIDTH} 
+     * and {@link CoreOptions#CHILD_AREA_HEIGHT}.
+     * @param node the node whose child area should be computed
+     */
+    public static void computeChildAreaDimensions(final ElkNode node) {
+
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double maxX = 0.0;
+        double maxY = 0.0;
+        
+        // iterate over all nodes and labels and get their coordinate bounds
+        Iterable<ElkLabel> edgeLabels = new ArrayList<>();
+        for (ElkEdge edge : node.getContainedEdges()) {
+            edgeLabels = Iterables.concat(edgeLabels, edge.getLabels());
+        }
+        for (ElkShape shape : Iterables.concat(node.getLabels(), node.getChildren(), edgeLabels)) {
+
+            ElkMargin margins = shape.getProperty(CoreOptions.MARGINS);
+            if (minX > shape.getX() - margins.left) {
+                minX = shape.getX() - margins.left;
+            }
+            if (minY > shape.getY() - margins.top) {
+                minY = shape.getY() - margins.top;
+            }
+            if (maxX < shape.getX() + shape.getWidth() + margins.right) {
+                maxX = shape.getX() + shape.getWidth() + margins.right; 
+            }
+            if (maxY < shape.getY() + shape.getHeight() + margins.bottom) {
+                maxY = shape.getY() + shape.getHeight() + margins.bottom; 
+            }
+        }
+        
+        // iterate over all contained edges and check their bounds
+        for (ElkEdge edge : node.getContainedEdges()) {
+            for (ElkEdgeSection section : edge.getSections()) {
+                double sX = section.getStartX();
+                double eX = section.getEndX();
+                double sY = section.getStartY();
+                double eY = section.getEndY();
+
+                minX = Math.min(minX, sX);
+                minX = Math.min(minX, eX);
+
+                maxX = Math.max(maxX, sX);
+                maxX = Math.max(maxX, eX);
+
+                minY = Math.min(minY, sY);
+                minY = Math.min(minY, eY);
+
+                maxY = Math.max(maxY, sY);
+                maxY = Math.max(maxY, eY);
+                
+                for (ElkBendPoint bendpoint : section.getBendPoints()) {
+
+                    minX = Math.min(minX, bendpoint.getX());
+                    maxX = Math.max(maxX, bendpoint.getX());
+                    minY = Math.min(minY, bendpoint.getY());
+                    maxY = Math.max(maxY, bendpoint.getY());
+                    
+                }
+            }
+        }
+        // max and min value represent outermost bounds of the layout
+        node.setProperty(CoreOptions.CHILD_AREA_WIDTH, maxX - minX);
+        node.setProperty(CoreOptions.CHILD_AREA_HEIGHT, maxY - minY);
     }
 
     /**

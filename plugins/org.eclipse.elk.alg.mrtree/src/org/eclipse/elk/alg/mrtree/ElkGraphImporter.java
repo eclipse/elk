@@ -186,12 +186,15 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             }
         }
 
+        // set up the graph
+        double width = maxXPos - minXPos + padding.getHorizontal();
+        double height = maxYPos - minYPos + padding.getVertical();
         if (!elkgraph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
-            // set up the graph
-            double width = maxXPos - minXPos + padding.getHorizontal();
-            double height = maxYPos - minYPos + padding.getVertical();
             ElkUtil.resizeNode(elkgraph, width, height, false, false);
         }
+        elkgraph.setProperty(CoreOptions.CHILD_AREA_WIDTH, width);
+        elkgraph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, height);
+        
     }
 
 

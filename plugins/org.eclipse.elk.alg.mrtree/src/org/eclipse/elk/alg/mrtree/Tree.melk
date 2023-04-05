@@ -13,6 +13,7 @@ import org.eclipse.elk.alg.mrtree.TreeLayoutProvider
 import org.eclipse.elk.alg.mrtree.options.OrderWeighting
 import org.eclipse.elk.alg.mrtree.options.TreeifyingOrder
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.TopdownNodeTypes
 import org.eclipse.elk.core.options.Direction
 
 /**
@@ -57,6 +58,12 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.portLabels.placement
     supports weighting
     supports searchOrder
+    // topdown layout
+    supports org.eclipse.elk.topdownLayout
+    supports org.eclipse.elk.topdown.scaleFactor
+    supports org.eclipse.elk.topdown.hierarchicalNodeWidth
+    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio
+    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.HIERARCHICAL_NODE
     supports positionConstraint
     supports edgeRoutingMode
     supports treeLevel

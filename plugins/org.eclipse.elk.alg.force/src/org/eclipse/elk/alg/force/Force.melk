@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.force
 import org.eclipse.elk.alg.force.ForceLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.options.TopdownNodeTypes
 
 /**
  * Declarations for the ELK Force layout algorithm.
@@ -59,6 +60,13 @@ algorithm force(ForceLayoutProvider) {
     supports iterations
     supports repulsion
     supports repulsivePower
+    
+    // topdown layout
+    supports org.eclipse.elk.topdownLayout
+    supports org.eclipse.elk.topdown.scaleFactor
+    supports org.eclipse.elk.topdown.hierarchicalNodeWidth
+    supports org.eclipse.elk.topdown.hierarchicalNodeAspectRatio
+    supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.HIERARCHICAL_NODE
 }
 
 option model: ForceModelStrategy {
