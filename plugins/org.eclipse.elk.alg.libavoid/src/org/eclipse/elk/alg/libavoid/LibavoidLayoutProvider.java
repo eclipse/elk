@@ -9,7 +9,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.libavoid;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.alg.libavoid.options.LibavoidOptions;
 import org.eclipse.elk.alg.libavoid.server.LibavoidServer;
 import org.eclipse.elk.alg.libavoid.server.LibavoidServerPool;
 import org.eclipse.elk.core.AbstractLayoutProvider;
@@ -39,6 +41,11 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
 
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!parentNode.getProperty(LibavoidOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(parentNode)
+                           .execute();
+        }
         // Prepare the graph
     	prepareGraph(parentNode);
         ElkGraphAdapter adapter = ElkGraphAdapters.adapt(parentNode);
