@@ -75,6 +75,7 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
         switch (graph.getProperty(LayeredOptions.WRAPPING_CUTTING_STRATEGY)) {
             case MANUAL:
                 icic = new ICutIndexCalculator.ManualCutIndexCalculator();
+                break;
             case ARD:
                 icic = new ARDCutIndexHeuristic();
                 break;
@@ -197,11 +198,15 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
                     LEdge nodeStartEdge = new LEdge();
                     nodeStartEdge.setSource(originalEdge.getSource());
                     nodeStartEdge.setTarget(inPortBp1);
+                    nodeStartEdge.setProperty(InternalProperties.MODEL_ORDER,
+                            originalEdge.getProperty(InternalProperties.MODEL_ORDER));
                     
                     // second dummy edge
                     LEdge startEndEdge = new LEdge();
                     startEndEdge.setSource(outPortBp1);
                     startEndEdge.setTarget(inPortBp2);
+                    startEndEdge.setProperty(InternalProperties.MODEL_ORDER,
+                            originalEdge.getProperty(InternalProperties.MODEL_ORDER));
                     
                     // reroute the original edge
                     originalEdge.setSource(outPortBp2);
