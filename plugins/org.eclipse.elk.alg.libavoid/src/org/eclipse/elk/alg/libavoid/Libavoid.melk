@@ -53,6 +53,8 @@ algorithm libavoid(LibavoidLayoutProvider) {
        supports org.eclipse.elk.alg.libavoid.performUnifyingNudgingPreprocessingStep
        supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions
        supports org.eclipse.elk.alg.libavoid.nudgeSharedPathsWithCommonEndPoint
+       supports org.eclipse.elk.alg.libavoid.enableHyperedgesFromCommonSource
+       supports org.eclipse.elk.alg.libavoid.isCluster
 }      
 
 // --- Layout Options
@@ -220,4 +222,28 @@ advanced option nudgeSharedPathsWithCommonEndPoint: boolean {
 		common end point should overlap."
     default = true
     targets parents
+}
+
+advanced option enableHyperedgesFromCommonSource: boolean {
+    label "Enable Hyperedges From Common Source"
+    description
+    	"This option enables a post-processing step that creates hyperedges for all edges with the same source.
+    	Be aware that this step will significantly decrease performance."
+    default = false
+    targets parents
+}
+
+advanced option isCluster: boolean {
+    label "Marks a node as a cluster"
+    description
+    	"This option marks a node as a cluster, resulting in its children being handled as 
+    	relative to the graph itself while the marked node is only added as a cluster.
+    	Note that clusters are experimental and can therefore have a negative impact on performance.
+    	The cluster node cannot have:
+    	- clusters as children
+    	- outgoing or incoming connections (directly to the node)
+    	- ports
+    	Edges into or out of the cluster must be added across the cluster's borders, without the use of hierarchical ports."
+    default = false
+    targets nodes
 }
