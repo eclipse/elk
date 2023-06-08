@@ -19,6 +19,7 @@ import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.ContentAlignment;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
@@ -373,6 +374,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             for (ElkLabel label : edge.getLabels()) {
                                 label.setLocation(label.getX() + xShift, label.getY() + yShift);
                             }
+                            // shift junction points
+                            KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                            for (KVector junctionPoint : junctionPoints) {
+                                junctionPoint.x += xShift;
+                                junctionPoint.y += yShift;
+                            }
+                            edge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
                         }
                     }
                     topdownLayoutMonitor.done();
