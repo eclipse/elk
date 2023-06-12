@@ -420,8 +420,8 @@
   <!-- The license ELK is available as. -->
   <licenses>
     <license>
-      <name>Eclipse Public License - v 1.0</name>
-      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+      <name>Eclipse Public License - v 2.0</name>
+      <url>http://www.eclipse.org/legal/epl-v20.html</url>
     </license>
   </licenses>
 
@@ -429,14 +429,22 @@
   <!-- Our developers. -->
   <developers>
     <developer>
-      <id>christoph.schulze</id>
-      <name>Christoph Daniel Schulze</name>
-      <email>cds@informatik.uni-kiel.de</email>
+      <id>soeren.domroes</id>
+      <name>Sören Domrös</name>
+      <email>sdo@informatik.uni-kiel.de</email>
       <organization>Kiel University</organization>
       <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
       <roles>
         <role>project lead</role>
       </roles>
+    </developer>
+
+    <developer>
+      <id>christoph.schulze</id>
+      <name>Christoph Daniel Schulze</name>
+      <email>cds@informatik.uni-kiel.de</email>
+      <organization>Kiel University</organization>
+      <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
     </developer>
 
     <developer>
