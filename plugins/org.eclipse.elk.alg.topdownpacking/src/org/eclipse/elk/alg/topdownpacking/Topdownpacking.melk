@@ -20,7 +20,7 @@ bundle {
 }
 
 algorithm topdownpacking(TopdownpackingLayoutProvider) {
-    label "Topdownpacking"
+    label "ELK Top-down Packing"
     description "An algorithm for placing boxes of fixed sizes. Expands boxes horizontally to fill empty 
                  whitespace. This algorithm can be used standalone or specifically for 
                  {@link CoreOptions.TOPDOWN_LAYOUT}. In this use case it should be set for nodes whose
