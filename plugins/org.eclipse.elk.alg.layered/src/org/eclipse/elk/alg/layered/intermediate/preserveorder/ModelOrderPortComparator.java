@@ -86,6 +86,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
 
     @Override
     public int compare(final LPort p1, final LPort p2) {
+        // TODO handle different port sides separately
         if (!biggerThan.containsKey(p1)) {
             biggerThan.put(p1, new HashSet<>());
         } else if (biggerThan.get(p1).contains(p2)) {
@@ -232,13 +233,15 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         } else if (p1.hasProperty(InternalProperties.MODEL_ORDER) && p2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // The ports have no edges.
             // Use the port model order to compare them.
-            if (p1.getProperty(InternalProperties.MODEL_ORDER) > p2.getProperty(InternalProperties.MODEL_ORDER)) {
-                updateBiggerAndSmallerAssociations(p1, p2);
-            } else {
+            int p1MO = p1.getProperty(InternalProperties.MODEL_ORDER);
+            int p2MO = p2.getProperty(InternalProperties.MODEL_ORDER);
+            if (p1MO > p2MO) {
                 updateBiggerAndSmallerAssociations(p2, p1);
+            } else {
+                updateBiggerAndSmallerAssociations(p1, p2);
             }
-            return Integer.compare(p1.getProperty(InternalProperties.MODEL_ORDER),
-                    p2.getProperty(InternalProperties.MODEL_ORDER));
+            return Integer.compare(p2MO,
+                    p1MO);
         } else {
             updateBiggerAndSmallerAssociations(p2, p1);
             return -1;
@@ -255,7 +258,8 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
      *         second.
      */
     public int checkPortModelOrder(final LPort p1, final LPort p2) {
-        if (p1.hasProperty(InternalProperties.MODEL_ORDER) && p2.hasProperty(InternalProperties.MODEL_ORDER)) {
+        if (p1.hasProperty(InternalProperties.MODEL_ORDER)
+                && p2.hasProperty(InternalProperties.MODEL_ORDER)) {
             return Integer.compare(p1.getProperty(InternalProperties.MODEL_ORDER),
                     p2.getProperty(InternalProperties.MODEL_ORDER));
         }
