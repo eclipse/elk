@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
+import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Orders {@link LPort}s in the same layer by their edges {@link InternalProperties#MODEL_ORDER}
@@ -85,8 +86,20 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
     }
 
     @Override
-    public int compare(final LPort p1, final LPort p2) {
-        // TODO handle different port sides separately
+    public int compare(final LPort originalP1, final LPort originalP2) {
+        LPort p1 = originalP1;
+        LPort p2 = originalP2;
+
+        if (p1.getSide() == PortSide.WEST && p2.getSide() == PortSide.WEST) {
+            // Both nodes have the same port side.
+            // Hence I need to determine their ordering based on the side.
+            // WEST sort descending
+            // EAST, NORTH, SOUTH sort ascending
+            // Hence I exchange p1 and p2 in the WEST case.
+            LPort temp = p1;
+            p1 = p2;
+            p2 = temp;
+        }
         if (!biggerThan.containsKey(p1)) {
             biggerThan.put(p1, new HashSet<>());
         } else if (biggerThan.get(p1).contains(p2)) {
@@ -107,12 +120,24 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         } else if (biggerThan.get(p2).contains(p1)) {
             return 1;
         }
+        // Sort nodes by their ports sides NORTH < EAST < SOUTH < WEST.
+        if (p1.getSide() != p2.getSide()) {
+            int result =  new PortSideComparator().compare(p1.getSide(), p2.getSide());
+
+            if (result == -1) {
+                updateBiggerAndSmallerAssociations(p2, p1);
+            } else {
+                updateBiggerAndSmallerAssociations(p1, p2);
+            }
+            return result;
+        }
+        
         // Sort incoming edges by sorting their ports by the order of the nodes they connect to.
         if (!p1.getIncomingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
             // If port order is used instead of edge order, consult it to make decisions.
             // If not both ports have a model order fall back to the edge order.
             if (portModelOrder) {
-                int result =  checkPortModelOrder(p2, p1);
+                int result =  checkPortModelOrder(p1, p2);
                 if (result != 0) {
                     if (result == -1) {
                         updateBiggerAndSmallerAssociations(p2, p1);
@@ -236,12 +261,12 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             int p1MO = p1.getProperty(InternalProperties.MODEL_ORDER);
             int p2MO = p2.getProperty(InternalProperties.MODEL_ORDER);
             if (p1MO > p2MO) {
-                updateBiggerAndSmallerAssociations(p2, p1);
-            } else {
                 updateBiggerAndSmallerAssociations(p1, p2);
+            } else {
+                updateBiggerAndSmallerAssociations(p2, p1);
             }
-            return Integer.compare(p2MO,
-                    p1MO);
+            return Integer.compare(p1MO,
+                    p2MO);
         } else {
             updateBiggerAndSmallerAssociations(p2, p1);
             return -1;
@@ -285,5 +310,17 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             biggerThan.get(veryBig).add(smaller);
             biggerThan.get(veryBig).addAll(smallerNodeBiggerThan);
         }
+    }
+    
+    private class PortSideComparator implements Comparator<PortSide> {
+
+        /* (non-Javadoc)
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public int compare(final PortSide ps1, final PortSide ps2) {
+            return Integer.compare(ps1.ordinal(), ps2.ordinal());
+        }
+        
     }
 }
