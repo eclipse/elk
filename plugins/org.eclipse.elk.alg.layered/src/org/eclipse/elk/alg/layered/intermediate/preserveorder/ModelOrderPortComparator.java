@@ -90,7 +90,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         LPort p1 = originalP1;
         LPort p2 = originalP2;
 
-        if (p1.getSide() == PortSide.WEST && p2.getSide() == PortSide.WEST) {
+        if (portModelOrder && p1.getSide() == PortSide.WEST && p2.getSide() == PortSide.WEST) {
             // Both nodes have the same port side.
             // Hence I need to determine their ordering based on the side.
             // WEST sort descending
