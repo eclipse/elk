@@ -1,6 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Kiel University and others.
- *               2023 Primetals Technologies Austria GmbH
+ * Copyright (c) 2013, 2023 Kiel University, Primetals Technologies Austria GmbH and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -472,7 +471,7 @@ public class LibavoidServerCommunicator {
         sb.append("GRAPHEND");
         sb.append("\n");
     }
-	
+
     /**
      * Checks if either the source or target of an edge are inside a cluster.
      */
@@ -583,6 +582,15 @@ public class LibavoidServerCommunicator {
         }
     }
     
+    /**
+     * Checks if a node is a cluster. In addition to the IS_CLUSTER property,
+     * a node must meet certain restrictions to be processed as a cluster:
+     * <ul>
+     * 		<li>not the layout graph</li>
+     * 		<li>no ports</li>
+     * 		<li>no directly connected edges</li>
+     * <ul>
+     */
     private boolean isCluster(final ElkNode node) {
     	return node.getProperty(LibavoidOptions.IS_CLUSTER)
     			&& node.getParent() != null // cannot be the outermost graph
@@ -610,6 +618,11 @@ public class LibavoidServerCommunicator {
 		}
 	}
     
+	/**
+     * A cluster node is transformed into a node that overlays its children.
+     * For this purpose, the children of the cluster are translated to the cluster's coordinates 
+     * before transformation, thereby placing them at the same hierarchy level as the cluster node itself.
+     */
     private void transformCluster(final ElkNode node) {
     	libavoidCluster(node, nodeIdCounter, 
                 node.getX(), node.getY(), node.getWidth(), node.getHeight());
