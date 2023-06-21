@@ -427,6 +427,18 @@ public final class KVector implements IDataObject, Cloneable {
     public static double crossProduct(final KVector v, final KVector w) {
         return v.x * w.y - v.y * w.x;
     }
+    
+    /**
+     * Rotates the given vector v by the angle provided in radians. Rotation is anti-clockwise.
+     * @param v
+     * @param angle
+     * @return the rotated vector
+     */
+    public KVector rotate(final double angle) {
+        this.x = this.x * Math.cos(angle) - this.y * Math.sin(angle);
+        this.y = this.y * Math.sin(angle) + this.y * Math.cos(angle);
+        return this;
+    }
 
     /**
      * Apply the given bounds to this vector.

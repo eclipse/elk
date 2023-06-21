@@ -31,28 +31,29 @@ algorithm libavoid(LibavoidLayoutProvider) {
     metadataClass options.LibavoidOptions
     category edge
         
-       supports org.eclipse.elk.debugMode = false
-       supports org.eclipse.elk.port.side
-       supports org.eclipse.elk.direction
-       supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
-       supports org.eclipse.elk.portConstraints = PortConstraints.FREE
+    supports org.eclipse.elk.debugMode = false
+    supports org.eclipse.elk.port.side
+    supports org.eclipse.elk.direction
+    supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+    supports org.eclipse.elk.portConstraints = PortConstraints.FREE
+    supports org.eclipse.elk.omitNodeMicroLayout
        
-       supports org.eclipse.elk.alg.libavoid.segmentPenalty
-       supports org.eclipse.elk.alg.libavoid.anglePenalty
-       supports org.eclipse.elk.alg.libavoid.crossingPenalty
-       supports org.eclipse.elk.alg.libavoid.clusterCrossingPenalty
-       supports org.eclipse.elk.alg.libavoid.fixedSharedPathPenalty
-       supports org.eclipse.elk.alg.libavoid.portDirectionPenalty
-       supports org.eclipse.elk.alg.libavoid.shapeBufferDistance
-       supports org.eclipse.elk.alg.libavoid.idealNudgingDistance
-       supports org.eclipse.elk.alg.libavoid.reverseDirectionPenalty
-       supports org.eclipse.elk.alg.libavoid.nudgeOrthogonalSegmentsConnectedToShapes
-       supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingJunctions
-       supports org.eclipse.elk.alg.libavoid.penaliseOrthogonalSharedPathsAtConnEnds
-       supports org.eclipse.elk.alg.libavoid.nudgeOrthogonalTouchingColinearSegments
-       supports org.eclipse.elk.alg.libavoid.performUnifyingNudgingPreprocessingStep
-       supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions
-       supports org.eclipse.elk.alg.libavoid.nudgeSharedPathsWithCommonEndPoint
+    supports org.eclipse.elk.alg.libavoid.segmentPenalty
+    supports org.eclipse.elk.alg.libavoid.anglePenalty
+    supports org.eclipse.elk.alg.libavoid.crossingPenalty
+    supports org.eclipse.elk.alg.libavoid.clusterCrossingPenalty
+    supports org.eclipse.elk.alg.libavoid.fixedSharedPathPenalty
+    supports org.eclipse.elk.alg.libavoid.portDirectionPenalty
+    supports org.eclipse.elk.alg.libavoid.shapeBufferDistance
+    supports org.eclipse.elk.alg.libavoid.idealNudgingDistance
+    supports org.eclipse.elk.alg.libavoid.reverseDirectionPenalty
+    supports org.eclipse.elk.alg.libavoid.nudgeOrthogonalSegmentsConnectedToShapes
+    supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingJunctions
+    supports org.eclipse.elk.alg.libavoid.penaliseOrthogonalSharedPathsAtConnEnds
+    supports org.eclipse.elk.alg.libavoid.nudgeOrthogonalTouchingColinearSegments
+    supports org.eclipse.elk.alg.libavoid.performUnifyingNudgingPreprocessingStep
+    supports org.eclipse.elk.alg.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions
+    supports org.eclipse.elk.alg.libavoid.nudgeSharedPathsWithCommonEndPoint
 }      
 
 // --- Layout Options
