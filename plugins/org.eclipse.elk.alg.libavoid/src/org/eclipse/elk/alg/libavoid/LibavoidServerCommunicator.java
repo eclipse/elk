@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2022 Kiel University and others.
+ * Copyright (c) 2013, 2023 Kiel University, Primetals Technologies Austria GmbH and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -384,6 +384,11 @@ public class LibavoidServerCommunicator {
         		node.getProperty(LibavoidOptions.NUDGE_SHARED_PATHS_WITH_COMMON_END_POINT);
         addRoutingOption(LibavoidOptions.NUDGE_SHARED_PATHS_WITH_COMMON_END_POINT,
         		nudgeSharedPathsWithCommonEndPoint);
+        
+        boolean enableHyperedgesFromCommonSource =
+        		node.getProperty(LibavoidOptions.ENABLE_HYPEREDGES_FROM_COMMON_SOURCE);
+        addRoutingOption(LibavoidOptions.ENABLE_HYPEREDGES_FROM_COMMON_SOURCE,
+        		enableHyperedgesFromCommonSource);
     }
 
     private void addOption(final IProperty<?> key, final Object value) {
@@ -444,7 +449,7 @@ public class LibavoidServerCommunicator {
         for (ElkNode node : root.getChildren()) {
             // all edges between nodes within the root node
             for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
-                if (!edge.isHierarchical()) {
+                if (!edge.isHierarchical() || isClusterEdge(edge)) {
                     transformEdge(edge);
                 }
             }
@@ -452,6 +457,7 @@ public class LibavoidServerCommunicator {
         
         // AND, in case of an compound node,
         // all edges between hierarchical ports and nodes within the root node
+        // cluster edges (even from hierarchical ports) are already handled by the normal edge handling
         for (ElkPort p : root.getPorts()) {
             for (ElkEdge e : ElkGraphUtil.allIncidentEdges(p)) {
                 ElkNode src = ElkGraphUtil.connectableShapeToNode(e.getSources().get(0));
@@ -467,6 +473,18 @@ public class LibavoidServerCommunicator {
     }
 
     /**
+     * Checks if either the source or target of an edge are inside a cluster.
+     */
+	private boolean isClusterEdge(ElkEdge edge) {
+		final ElkNode srcNode = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+        final ElkNode tgtNode = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+        final ElkNode srcParent = srcNode.getParent();
+        final ElkNode tgtParent = tgtNode.getParent();
+        return (srcParent != null && srcParent.hasProperty(LibavoidOptions.IS_CLUSTER))
+        		|| (tgtParent != null && tgtParent.hasProperty(LibavoidOptions.IS_CLUSTER));
+	}
+
+	/**
      * Create 4 nodes that "surround", hence restrict, the child area. This way it is guaranteed
      * that no edge is routed outsite its compound node.
      */
@@ -520,6 +538,16 @@ public class LibavoidServerCommunicator {
                 + (yPos + height) + " " + portLessIncomingEdges + " " + portLessOutgoingEdges);
         sb.append("\n");
     }
+    
+    private void libavoidCluster(final ElkNode node, final int id, 
+            final double xPos, final double yPos,
+            final double width, final double height) {
+        // format:
+        // id topleft bottomright
+        sb.append("CLUSTER " + id + " " + xPos + " " + yPos + " " + (xPos + width) 
+        		+ " " + (yPos + height));
+        sb.append("\n");
+    }
 
     private void libavoidPort(final ElkPort port, final int portId, final int nodeId,
             final ElkNode compoundNode) {
@@ -547,22 +575,64 @@ public class LibavoidServerCommunicator {
     }
 
     private void transformNode(final ElkNode node) {
+        if (isCluster(node)) {
+        	transformCluster(node);
+        } else {        	
+        	transformNode(node, node.getX(), node.getY());
+        }
+    }
+    
+    /**
+     * Checks if a node is a cluster. In addition to the IS_CLUSTER property,
+     * a node must meet certain restrictions to be processed as a cluster:
+     * <ul>
+     * 		<li>not the layout graph</li>
+     * 		<li>no ports</li>
+     * 		<li>no directly connected edges</li>
+     * <ul>
+     */
+    private boolean isCluster(final ElkNode node) {
+    	return node.getProperty(LibavoidOptions.IS_CLUSTER)
+    			&& node.getParent() != null // cannot be the outermost graph
+    			&& !node.getParent().getProperty(LibavoidOptions.IS_CLUSTER) // no nested clusters allowed
+    			&& node.getOutgoingEdges().isEmpty()
+    			&& node.getIncomingEdges().isEmpty()
+    			&& node.getPorts().isEmpty();
+    }
+
+	private void transformNode(final ElkNode node, final double x, final double y) {
         // get information about port-less incoming and outgoing edges
         int portLessIncomingEdges = node.getIncomingEdges().size();
         int portLessOutgoingEdges = node.getOutgoingEdges().size();
-
-        // convert the bounds
-        libavoidNode(node, nodeIdCounter, 
-                node.getX(), node.getY(), node.getWidth(), node.getHeight(), 
-                portLessIncomingEdges, portLessOutgoingEdges);
-
-        // transfer all ports
-        for (ElkPort port : node.getPorts()) {
-            libavoidPort(port, portIdCounter, nodeIdCounter, null);
-            portIdCounter++;
-        }
-
-        nodeIdCounter++;
+        
+		// convert the bounds
+		libavoidNode(node, nodeIdCounter, 
+				x, y, node.getWidth(), node.getHeight(), 
+				portLessIncomingEdges, portLessOutgoingEdges);
+		nodeIdCounter++;
+		
+		// transfer all ports
+		for (ElkPort port : node.getPorts()) {
+			libavoidPort(port, portIdCounter, nodeIdCounter, null);
+			portIdCounter++;
+		}
+	}
+    
+	/**
+     * A cluster node is transformed into a node that overlays its children.
+     * For this purpose, the children of the cluster are translated to the cluster's coordinates 
+     * before transformation, thereby placing them at the same hierarchy level as the cluster node itself.
+     */
+    private void transformCluster(final ElkNode node) {
+    	libavoidCluster(node, nodeIdCounter, 
+                node.getX(), node.getY(), node.getWidth(), node.getHeight());
+    	nodeIdCounter++;
+    	
+    	final double x = node.getX();
+    	final double y = node.getY();
+    	for (ElkNode child : node.getChildren()) {
+    		transformNode(child, child.getX() + x, child.getX() + y);
+    	}
     }
 
     private void transformEdge(final ElkEdge edge) {
