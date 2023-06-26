@@ -63,8 +63,8 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
             graph.setWidth(width);
             graph.setHeight(height);
         }
-        graph.setProperty(CoreOptions.CHILD_AREA_WIDTH, width);
-        graph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, height);
+        graph.setProperty(CoreOptions.CHILD_AREA_WIDTH, width - padding.getHorizontal());
+        graph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, height - padding.getVertical());
         progressMonitor.logGraph(graph, "After");
     }
 }
