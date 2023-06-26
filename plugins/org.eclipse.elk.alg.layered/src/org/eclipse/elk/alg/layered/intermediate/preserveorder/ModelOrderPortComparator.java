@@ -48,11 +48,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
     private OrderingStrategy strategy;
     
     /**
-     * Each node has an entry of nodes for which it is bigger.
+     * Each port has an entry of ports for which it is bigger.
      */
     private HashMap<LPort, HashSet<LPort>> biggerThan = new HashMap<>();
     /**
-     * Each node has an entry of nodes for which it is smaller.
+     * Each port has an entry of ports for which it is smaller.
      */
     private HashMap<LPort, HashSet<LPort>> smallerThan = new HashMap<>();
 
@@ -292,23 +292,23 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
     }
     
     private void updateBiggerAndSmallerAssociations(final LPort bigger, final LPort smaller) {
-        HashSet<LPort> biggerNodeBiggerThan = biggerThan.get(bigger);
-        HashSet<LPort> smallerNodeBiggerThan = biggerThan.get(smaller);
-        HashSet<LPort> biggerNodeSmallerThan = smallerThan.get(bigger);
-        HashSet<LPort> smallerNodeSmallerThan = smallerThan.get(smaller);
-        biggerNodeBiggerThan.add(smaller);
-        smallerNodeSmallerThan.add(bigger);
-        for (LPort verySmall : smallerNodeBiggerThan) {
-            biggerNodeBiggerThan.add(verySmall);
+        HashSet<LPort> biggerPortBiggerThan = biggerThan.get(bigger);
+        HashSet<LPort> smallerPortBiggerThan = biggerThan.get(smaller);
+        HashSet<LPort> biggerPortSmallerThan = smallerThan.get(bigger);
+        HashSet<LPort> smallerPortSmallerThan = smallerThan.get(smaller);
+        biggerPortBiggerThan.add(smaller);
+        smallerPortSmallerThan.add(bigger);
+        for (LPort verySmall : smallerPortBiggerThan) {
+            biggerPortBiggerThan.add(verySmall);
             smallerThan.get(verySmall).add(bigger);
-            smallerThan.get(verySmall).addAll(biggerNodeSmallerThan);
+            smallerThan.get(verySmall).addAll(biggerPortSmallerThan);
         }
         
 
-        for (LPort veryBig : biggerNodeSmallerThan) {
-            smallerNodeSmallerThan.add(veryBig);
+        for (LPort veryBig : biggerPortSmallerThan) {
+            smallerPortSmallerThan.add(veryBig);
             biggerThan.get(veryBig).add(smaller);
-            biggerThan.get(veryBig).addAll(smallerNodeBiggerThan);
+            biggerThan.get(veryBig).addAll(smallerPortBiggerThan);
         }
     }
     
