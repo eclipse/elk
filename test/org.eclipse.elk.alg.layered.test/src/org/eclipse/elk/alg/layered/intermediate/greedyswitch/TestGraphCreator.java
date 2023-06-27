@@ -721,7 +721,7 @@ public class TestGraphCreator {
         LNode[] leftNodes = addNodesToLayer(2, layers[0]);
         LNode[] rightNodes = addNodesToLayer(3, layers[1]);
 
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
 
         addNorthSouthEdge(PortSide.EAST, rightNodes[2], rightNodes[1], leftNodes[0], true);
 
