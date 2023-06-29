@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopEdge;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopHolder;
+import org.eclipse.elk.alg.layered.intermediate.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.ElkMargin;
@@ -504,6 +507,16 @@ public final class LGraphAdapters {
                        }
                     }
                 }
+                // Add the incoming edge from the self loop holder if asked for one.
+                if (element.getNode().hasProperty(InternalProperties.SELF_LOOP_HOLDER)) {
+                    SelfLoopHolder slh = element.getNode().getProperty(InternalProperties.SELF_LOOP_HOLDER);
+                    SelfLoopPort slp = slh.getSLPortMap().get(element);
+                    if (slp != null) {
+                        for (SelfLoopEdge sle : slp.getIncomingSLEdges()) {
+                            incomingEdgeAdapters.add(new LEdgeAdapter(sle.getLEdge()));
+                        }                        
+                    }
+                }
             }
             return incomingEdgeAdapters;
         }
@@ -523,6 +536,16 @@ public final class LGraphAdapters {
                         for (LEdge e : portDummy.getOutgoingEdges()) {
                             outgoingEdgeAdapters.add(new LEdgeAdapter(e));
                         }
+                    }
+                }
+                // Add the incoming edge from the self loop holder if asked for one.
+                if (element.getNode().hasProperty(InternalProperties.SELF_LOOP_HOLDER)) {
+                    SelfLoopHolder slh = element.getNode().getProperty(InternalProperties.SELF_LOOP_HOLDER);
+                    SelfLoopPort slp = slh.getSLPortMap().get(element);
+                    if (slp != null) {
+                        for (SelfLoopEdge sle : slp.getOutgoingSLEdges()) {
+                            outgoingEdgeAdapters.add(new LEdgeAdapter(sle.getLEdge()));
+                        }                        
                     }
                 }
             }
