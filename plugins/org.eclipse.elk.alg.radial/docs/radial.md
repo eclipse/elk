@@ -12,27 +12,27 @@ In the following all these steps are explained in more detail.
 The essential phase of the layouter is the node placement, where the nodes are assigned a position.
 Currently only one node placement algorithm is implemented that is the one of Eades. 
 As mentioned before it would be possible to swap the node placement algorithm by another one.
-But it also possible to customize the given algorithm of Eades, but beforehand you should know how the algorithm of Eades work.
+But it also possible to customize the given algorithm of Eades, but beforehand you should know how the algorithm of Eades works.
 
 #### The Algorithm of Eades
 ![alt text](/docs/images/EadesTree.png)
 As mentioned Eades provides an algorithm for drawing radial layouts. It was published in "Drawing free trees.", (published by
 International Institute for Advanced Study of Social Information Science, Fujitsu Limited in 1991). 
 The algorithm he provided can layout trees with nodes of no size. The distance between the single radii is given as a constant input.
-But how does Eades algorithm work:
-The algorithms starts placing the root node and then continues with placing each node of each subtree.
-Each subtree of the is assigned to an annulus wedge, a part of the circle. Each node is then placed in the center of its wedge.  
-To estimate how big the wedge of each subtree will be, Eades counts the numbers of leafs. 
-The node which shall be placed gets space according to the number of leafs it has compared to the number of leaves all nodes of the same layer have.
+But how does Eades's algorithm work:
+The algorithm starts placing the root node and then continues with placing each node of each subtree.
+Each subtree is assigned to an annulus wedge, a part of the circle. Each node is then placed in the center of its wedge.  
+To estimate how big the wedge of each subtree will be, Eades counts the numbers of leaves. 
+The node which shall be placed gets space according to the number of leaves it has compared to the number of leaves all nodes of the same layer have.
 The first wedge starts at the right of the circle, because polar coordinates are used and there is degree zero.
 The following examples shall clarify this process:
 ![alt text](/docs/images/EadesWedgeExample.png)
 The right lower nodes receives one quarter of the space, because he has (and is) one leaf. 
-The right upper node has one leaf and receives one quarter and the left node has two leafs that why it receives two quarters.
+The right upper node has one leaf and receives one quarter and the left node has two leaves that is why it receives two quarters.
 
 #### Customizations
 As mentioned the algorithm of Eades do not consider node sizes, therefore we provided an annulus wedge criteria which does.
-Therefore the available space is not calculated by the number of leaves but by the maximum sum of the length of all diagonals of a radius or respectively wedge.
+Therefore the available space is not calculated by the number of leaves but by the maximum sum of the length of all node diagonals of a wedge.
 Another customization is that the first wedge does not start on the right of the circle but on a position which gives a better layout. 
 This means that each node is translated for some degree on the radius. This movement can be used to minimize the edge length or even more valuable, the number of edge crossings.
 
@@ -62,5 +62,5 @@ There are advanced options for the node placement optimization strategy as well 
 The options are marked as advanced because they require additional information to work properly.
 The current options require the position option(org.eclipse.elk.position) to be set. 
 The original use is given by assuming there exists a relation between nodes in the parent node and the children. 
-Therfore the position reflects the position of the nodes in the parent node.
-This options may be adapted to other purposes.
+Therefore, the position reflects the position of the nodes in the parent node.
+These options may be adapted to other purposes.
