@@ -905,7 +905,9 @@ class ElkGraphImporter {
         // transform the ports
         Direction direction = lgraph.getProperty(LayeredOptions.DIRECTION);
         for (ElkPort elkport : elknode.getPorts()) {
-            elkport.setProperty(InternalProperties.MODEL_ORDER, portModelOrder++);
+            if (needsModelOrder(elknode)) {                
+                elkport.setProperty(InternalProperties.MODEL_ORDER, portModelOrder++);
+            }
             if (!elkport.getProperty(LayeredOptions.NO_LAYOUT)) {
                 transformPort(elkport, lnode, graphProperties, direction, portConstraints);
             }
