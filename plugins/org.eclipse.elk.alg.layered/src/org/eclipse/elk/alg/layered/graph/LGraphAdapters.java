@@ -538,7 +538,7 @@ public final class LGraphAdapters {
                         }
                     }
                 }
-                // Add the incoming edge from the self loop holder if asked for one.
+                // Add the outgoing edge from the self loop holder if asked for one.
                 if (element.getNode().hasProperty(InternalProperties.SELF_LOOP_HOLDER)) {
                     SelfLoopHolder slh = element.getNode().getProperty(InternalProperties.SELF_LOOP_HOLDER);
                     SelfLoopPort slp = slh.getSLPortMap().get(element);
