@@ -80,9 +80,9 @@ public enum TopdownSizeApproximator {
                     ElkNode newTar = oldToNewNodeMap.get(edge.getTargets().get(0));
 //                    ElkEdge newEdge = ElkGraphUtil.createSimpleEdge(newSrc, newTar);
                     ElkEdge newEdge = ElkGraphFactory.eINSTANCE.createElkEdge();
-                    edge.getSources().add(newSrc);
-                    edge.getTargets().add(newTar);
-                    edge.setContainingNode(newSrc.getParent());
+                    newEdge.getSources().add(newSrc);
+                    newEdge.getTargets().add(newTar);
+                    newEdge.setContainingNode(newSrc.getParent());
                     newEdge.copyProperties(edge);
                 }
             }
