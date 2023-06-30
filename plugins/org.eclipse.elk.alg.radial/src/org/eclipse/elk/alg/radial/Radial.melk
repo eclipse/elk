@@ -43,9 +43,18 @@ algorithm radial(RadialLayoutProvider) {
     supports radius
     supports sorter
     supports wedgeCriteria
+    supports initialAngle
 }
 
 /////////////////////////////////Options///////////////////////////////
+option initialAngle: double {
+    label "Initial Angle"
+    description
+        "The initial angle to start the placement of the nodes of. Default is 0. Can be used to rotate the entire radial
+         layout. Must be set on the root node of a radial layout."
+    default = 0
+    targets parents
+}
 option orderId: int {
     label "Order ID "
     description

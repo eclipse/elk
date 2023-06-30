@@ -74,7 +74,8 @@ public class EadesRadial implements ILayoutPhase<RadialLayoutPhases, ElkNode> {
                 }
             }
         }
-        positionNodes(root, 0, 0, 2 * Math.PI, optimalOffset);
+        double rotOffset = graph.getProperty(RadialOptions.INITIAL_ANGLE);
+        positionNodes(root, 0, rotOffset, 2 * Math.PI + rotOffset, optimalOffset);
     }
 
     /**
