@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial.intermediate;
 
+import org.eclipse.elk.alg.radial.InternalProperties;
+import org.eclipse.elk.alg.radial.options.RadialOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
@@ -48,6 +50,43 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
 
         ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
         KVector offset = new KVector(minXPos - padding.getLeft(), minYPos - padding.getTop());
+        
+        
+        double width = maxXPos - minXPos + padding.getHorizontal();
+        double height = maxYPos - minYPos + padding.getVertical();
+        
+        if (graph.getProperty(RadialOptions.CENTER_ON_ROOT)) {
+            ElkNode root = graph.getProperty(InternalProperties.ROOT_NODE);
+            ElkMargin rootMargins = root.getProperty(CoreOptions.MARGINS);
+            double rootX = root.getX() + root.getWidth()/2 + (rootMargins.left + rootMargins.right)/2 - offset.x;
+            double rootY = root.getY() + root.getHeight()/2 + (rootMargins.top + rootMargins.bottom)/2 - offset.y;
+            
+            double dx = width - rootX;
+            double dy = height - rootY;
+            
+            if (dx < width / 2) {
+                //need to add additional space on the left
+                double additionalX = dx - rootX;
+                width += additionalX;
+                offset.x -= additionalX;
+            } else {
+                // add addtional space on the right
+                double additionalX = rootX - dx;
+                width += additionalX;
+            }
+            
+            if (dy < height / 2) {
+                //need to add additional space on the top
+                double additionalY = dy - rootY;
+                height += additionalY;
+                offset.y -= additionalY;
+            } else {
+                // add addtional space on the bottom
+                double additionalY = rootY - dy;
+                height += additionalY;
+            }
+            
+        }
 
         // process the nodes
         for (ElkNode node : graph.getChildren()) {
@@ -55,14 +94,14 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
             node.setX(node.getX() - offset.x);
             node.setY(node.getY() - offset.y);
         }
-
+        
         // set up the graph
-        double width = maxXPos - minXPos + padding.getHorizontal();
-        double height = maxYPos - minYPos + padding.getVertical();
         if (!graph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
             graph.setWidth(width);
             graph.setHeight(height);
         }
+
+        // store child area info
         graph.setProperty(CoreOptions.CHILD_AREA_WIDTH, width - padding.getHorizontal());
         graph.setProperty(CoreOptions.CHILD_AREA_HEIGHT, height - padding.getVertical());
         progressMonitor.logGraph(graph, "After");
