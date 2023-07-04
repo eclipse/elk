@@ -58,6 +58,8 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
         if (graph.getProperty(RadialOptions.CENTER_ON_ROOT)) {
             ElkNode root = graph.getProperty(InternalProperties.ROOT_NODE);
             ElkMargin rootMargins = root.getProperty(CoreOptions.MARGINS);
+            // calculate the current midpoint of the root, taking into account the defined margins and the already
+            // calculated offset necessary to shift the graph into the positive quadrant of the coordinate system
             double rootX = root.getX() + root.getWidth()/2 + (rootMargins.left + rootMargins.right)/2 - offset.x;
             double rootY = root.getY() + root.getHeight()/2 + (rootMargins.top + rootMargins.bottom)/2 - offset.y;
             
@@ -65,7 +67,7 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
             double dy = height - rootY;
             
             if (dx < width / 2) {
-                //need to add additional space on the left
+                // need to add additional space on the left
                 double additionalX = dx - rootX;
                 width += additionalX;
                 offset.x -= additionalX;
@@ -94,7 +96,7 @@ public class CalculateGraphSize implements ILayoutProcessor<ElkNode> {
             node.setX(node.getX() - offset.x);
             node.setY(node.getY() - offset.y);
         }
-        
+
         // set up the graph
         if (!graph.getProperty(CoreOptions.NODE_SIZE_FIXED_GRAPH_SIZE)) {
             graph.setWidth(width);
