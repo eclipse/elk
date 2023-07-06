@@ -43,9 +43,18 @@ algorithm radial(RadialLayoutProvider) {
     supports radius
     supports sorter
     supports wedgeCriteria
+    supports centerOnRoot
 }
 
 /////////////////////////////////Options///////////////////////////////
+option centerOnRoot: boolean {
+    label "Center On Root"
+    description 
+        "Centers the layout on the root of the tree i.e. so that the central node is also the center node of the
+         final layout. This introduces additional whitespace."
+    default = false
+    targets parents
+}
 option orderId: int {
     label "Order ID "
     description
