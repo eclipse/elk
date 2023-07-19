@@ -12,17 +12,15 @@ package org.eclipse.elk.alg.radial;
 import java.util.List;
 
 import org.eclipse.elk.alg.common.NodeMicroLayout;
-import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.radial.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.radial.options.CompactionStrategy;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
+import org.eclipse.elk.alg.radial.options.RotationStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
-import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -89,8 +87,17 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
         if (layoutGraph.getProperty(RadialOptions.COMPACTOR) != CompactionStrategy.NONE) {
             configuration.addBefore(RadialLayoutPhases.P2_EDGE_ROUTING, IntermediateProcessorStrategy.COMPACTION);
         }
+
+        if (layoutGraph.getProperty(RadialOptions.ROTATOR) != RotationStrategy.NONE) {
+            configuration.addBefore(RadialLayoutPhases.P2_EDGE_ROUTING, IntermediateProcessorStrategy.ROTATION);
+        }
+
         configuration.addBefore(RadialLayoutPhases.P2_EDGE_ROUTING,
                 IntermediateProcessorStrategy.GRAPH_SIZE_CALCULATION);
+        
+        if (layoutGraph.getProperty(RadialOptions.OUTGOING_EDGE_ANGLES)) {
+            configuration.addAfter(RadialLayoutPhases.P2_EDGE_ROUTING, IntermediateProcessorStrategy.OUTGOING_EDGE_ANGLES);
+        }
 
         algorithmAssembler.addProcessorConfiguration(configuration);
 
