@@ -258,6 +258,7 @@ public final class HyperEdgeSegmentSplitter {
                 if (isBetter(currArea, currRating, bestArea, bestRating)) {
                     bestArea = currArea;
                     bestRating = currRating;
+                    bestAreaIndex = i;
                 }
             }
         }
