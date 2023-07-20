@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2020 Kiel University and others.
+ * Copyright (c) 2017, 2020, 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -15,7 +15,6 @@ import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.radial.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.radial.options.CompactionStrategy;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
-import org.eclipse.elk.alg.radial.options.RotationStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -88,14 +87,14 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
             configuration.addBefore(RadialLayoutPhases.P2_EDGE_ROUTING, IntermediateProcessorStrategy.COMPACTION);
         }
 
-        if (layoutGraph.getProperty(RadialOptions.ROTATOR) != RotationStrategy.NONE) {
+        if (layoutGraph.getProperty(RadialOptions.ROTATE)) {
             configuration.addBefore(RadialLayoutPhases.P2_EDGE_ROUTING, IntermediateProcessorStrategy.ROTATION);
         }
 
         configuration.addBefore(RadialLayoutPhases.P2_EDGE_ROUTING,
                 IntermediateProcessorStrategy.GRAPH_SIZE_CALCULATION);
         
-        if (layoutGraph.getProperty(RadialOptions.OUTGOING_EDGE_ANGLES)) {
+        if (layoutGraph.getProperty(RadialOptions.ROTATION_OUTGOING_EDGE_ANGLES)) {
             configuration.addAfter(RadialLayoutPhases.P2_EDGE_ROUTING, IntermediateProcessorStrategy.OUTGOING_EDGE_ANGLES);
         }
 

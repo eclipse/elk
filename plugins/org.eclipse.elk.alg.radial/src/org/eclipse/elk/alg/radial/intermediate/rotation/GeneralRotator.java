@@ -9,13 +9,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial.intermediate.rotation;
 
-import org.eclipse.elk.alg.radial.options.RadialOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * The layout processor for rotation.
+ * The layout processor for rotation. Sets up logging and calls the angle rotation implementation.
  *
  */
 public class GeneralRotator implements ILayoutProcessor<ElkNode> {
@@ -23,10 +22,18 @@ public class GeneralRotator implements ILayoutProcessor<ElkNode> {
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("General 'Rotator", 1);
-        progressMonitor.logGraph(graph, "Before");
-        IRadialRotator rotator = graph.getProperty(RadialOptions.ROTATOR).create();
+        // elkjs-exclude-start
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(graph, "Before");
+        }
+        // elkjs-exclude-end
+        IRadialRotator rotator = new AngleRotation();
         rotator.rotate(graph);
-        progressMonitor.logGraph(graph, "After");
+        // elkjs-exclude-start
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(graph, "After");
+        }
+        // elkjs-exclude-end
     }
 
 }

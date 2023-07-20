@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -22,9 +22,17 @@ public class GeneralCompactor implements ILayoutProcessor<ElkNode> {
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("General Compactor", 1);
-        progressMonitor.logGraph(graph, "Before");
+        // elkjs-exclude-start
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(graph, "Before");
+        }
+        // elkjs-exclude-end
         IRadialCompactor compactor = graph.getProperty(RadialOptions.COMPACTOR).create();
         compactor.compact(graph);
-        progressMonitor.logGraph(graph, "After");
+        // elkjs-exclude-start
+        if (progressMonitor.isLoggingEnabled()) {
+            progressMonitor.logGraph(graph, "After");
+        }
+        // elkjs-exclude-end
     }
 }

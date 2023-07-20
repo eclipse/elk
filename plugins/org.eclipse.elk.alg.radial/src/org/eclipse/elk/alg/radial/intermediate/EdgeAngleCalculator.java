@@ -24,8 +24,11 @@ import org.eclipse.elk.graph.ElkNode;
  */
 public class EdgeAngleCalculator implements ILayoutProcessor<ElkNode> {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutProcessor#process(java.lang.Object, org.eclipse.elk.core.util.IElkProgressMonitor)
+    /**
+     * For each of edges connected to the root node we calculate its angle and store that information on the 
+     * connected target node. This node can then later use that information as basis to align its own layout
+     * to the incoming edge. Because this sets an option on child nodes, this is only useful when laying the
+     * graph out in a top-down manner (or possibly in multiple layout runs). 
      */
     @Override
     public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
@@ -36,10 +39,10 @@ public class EdgeAngleCalculator implements ILayoutProcessor<ElkNode> {
             KVector start = new KVector(edge.getSections().get(0).getStartX(), edge.getSections().get(0).getStartY());
             KVector end = new KVector(edge.getSections().get(0).getEndX(), edge.getSections().get(0).getEndY());
             
-            KVector edgeVector = end.add(start.scale(-1, -1));
+            KVector edgeVector = KVector.diff(end, start);
             double angle = Math.atan2(edgeVector.y, edgeVector.x);
             
-            edge.getTargets().get(0).setProperty(RadialOptions.TARGET_ANGLE, angle);
+            edge.getTargets().get(0).setProperty(RadialOptions.ROTATION_TARGET_ANGLE, angle);
         }
 
     }
