@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.radial.intermediate;
 
 import org.eclipse.elk.alg.radial.intermediate.compaction.GeneralCompactor;
 import org.eclipse.elk.alg.radial.intermediate.overlaps.RadiusExtensionOverlapRemoval;
+import org.eclipse.elk.alg.radial.intermediate.rotation.GeneralRotator;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 import org.eclipse.elk.graph.ElkNode;
@@ -27,8 +28,15 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
     COMPACTION,
 
     // Before phase 2
+    /** Rotate the final layout. */
+    ROTATION,
     /** Calculate the graph size to the new values. */
-    GRAPH_SIZE_CALCULATION;
+    GRAPH_SIZE_CALCULATION,
+    
+    // After phase 2
+    /** Store a target angle on child nodes to leave space for an edge coming from the root to the center of the child node. */
+    OUTGOING_EDGE_ANGLES;
+    
 
     @Override
     public ILayoutProcessor<ElkNode> create() {
@@ -37,8 +45,12 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
             return new RadiusExtensionOverlapRemoval();
         case COMPACTION:
             return new GeneralCompactor();
+        case ROTATION:
+            return new GeneralRotator();
         case GRAPH_SIZE_CALCULATION:
             return new CalculateGraphSize();
+        case OUTGOING_EDGE_ANGLES:
+            return new EdgeAngleCalculator();
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layout processor " + this.toString());

@@ -435,9 +435,19 @@ public final class KVector implements IDataObject, Cloneable {
      * @return the rotated vector
      */
     public KVector rotate(final double angle) {
-        this.x = this.x * Math.cos(angle) - this.y * Math.sin(angle);
-        this.y = this.y * Math.sin(angle) + this.y * Math.cos(angle);
+        double newX = this.x * Math.cos(angle) - this.y * Math.sin(angle);
+        this.y = this.x * Math.sin(angle) + this.y * Math.cos(angle);
+        this.x = newX;
         return this;
+    }
+    
+    /**
+     * Returns the angle between this vector and another given vector in radians.
+     * @param other
+     * @return angle between vectors
+     */
+    public double angle(KVector other) {
+        return Math.acos(this.dotProduct(other) / (this.length() * other.length()));
     }
 
     /**
