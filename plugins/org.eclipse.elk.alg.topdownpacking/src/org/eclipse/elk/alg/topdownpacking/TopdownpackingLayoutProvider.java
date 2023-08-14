@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Kiel University and others.
+ * Copyright (c) 2022 - 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -54,8 +54,8 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider impleme
     public List<ILayoutProcessor<GridElkNode>> assembleAlgorithm(GridElkNode graph) {
         algorithmAssembler.reset();
         
-        algorithmAssembler.setPhase(TopdownPackingPhases.P1_NODE_PLACEMENT, 
-                graph.getProperty(TopdownpackingOptions.NODE_PLACEMENT_STRATEGY));
+        algorithmAssembler.setPhase(TopdownPackingPhases.P1_NODE_ARRANGEMENT, 
+                graph.getProperty(TopdownpackingOptions.NODE_ARRANGEMENT_STRATEGY));
         algorithmAssembler.setPhase(TopdownPackingPhases.P2_WHITESPACE_ELIMINATION, 
                 graph.getProperty(TopdownpackingOptions.WHITESPACE_ELIMINATION_STRATEGY));
         
@@ -68,7 +68,7 @@ public class TopdownpackingLayoutProvider extends AbstractLayoutProvider impleme
     @Override
     public KVector getPredictedGraphSize(ElkNode graph) {
         // FIXME: enforce that all node placement strategies implement INodePlacer
-        INodePlacer nodePlacer = (INodePlacer) graph.getProperty(TopdownpackingOptions.NODE_PLACEMENT_STRATEGY).create();
+        INodeArranger nodePlacer = (INodeArranger) graph.getProperty(TopdownpackingOptions.NODE_ARRANGEMENT_STRATEGY).create();
         return nodePlacer.getPredictedSize(graph);
     }
 }
