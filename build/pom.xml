@@ -179,6 +179,17 @@
               <arch>x86_64</arch>
             </environment>
           </environments>
+          <dependency-resolution>
+            <extraRequirements>
+              <!-- to force the same version of jdt.compiler.apt
+                and jdt.core (for xtext-maven-plugin) -->
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jdt.compiler.apt</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+            </extraRequirements>
+          </dependency-resolution>
         </configuration>
       </plugin>
 
