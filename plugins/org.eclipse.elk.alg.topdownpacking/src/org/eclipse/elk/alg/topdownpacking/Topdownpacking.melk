@@ -9,10 +9,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.topdownpacking
 
+import org.eclipse.elk.alg.topdownpacking.NodeArrangementStrategy
 import org.eclipse.elk.alg.topdownpacking.TopdownpackingLayoutProvider
-import org.eclipse.elk.core.options.TopdownNodeTypes
-import org.eclipse.elk.alg.topdownpacking.NodePlacementStrategy
 import org.eclipse.elk.alg.topdownpacking.WhitespaceEliminationStrategy
+import org.eclipse.elk.core.options.TopdownNodeTypes
 
 bundle {
     metadataClass options.TopdownpackingMetaDataProvider
@@ -34,16 +34,16 @@ algorithm topdownpacking(TopdownpackingLayoutProvider) {
     supports org.eclipse.elk.topdownLayout
     supports org.eclipse.elk.topdown.nodeType = TopdownNodeTypes.PARALLEL_NODE
     
-    supports nodePlacement.strategy
+    supports nodeArrangement.strategy
     supports whitespaceElimination.strategy
 }
 
-group nodePlacement {
+group nodeArrangement {
     
-    option strategy: NodePlacementStrategy {
-        label "Node placement strategy"
-        description "Strategy for node placement. The strategy determines the size of the resulting graph."
-        default = NodePlacementStrategy.LEFT_RIGHT_TOP_DOWN_NODE_PLACER
+    option strategy: NodeArrangementStrategy {
+        label "Node arrangement strategy"
+        description "Strategy for node arrangement. The strategy determines the size of the resulting graph."
+        default = NodeArrangementStrategy.LEFT_RIGHT_TOP_DOWN_NODE_PLACER
         targets parents
     }
 }

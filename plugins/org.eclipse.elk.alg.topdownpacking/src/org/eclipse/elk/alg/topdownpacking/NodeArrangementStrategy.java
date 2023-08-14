@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Kiel University and others.
+ * Copyright (c) 2022 - 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -13,10 +13,10 @@ import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
- * Node placement strategy to use during topdown packing algorithm.
+ * Node arrangement strategy to use during topdown packing algorithm.
  *
  */
-public enum NodePlacementStrategy implements ILayoutPhaseFactory<TopdownPackingPhases, GridElkNode> {
+public enum NodeArrangementStrategy implements ILayoutPhaseFactory<TopdownPackingPhases, GridElkNode> {
     /**
      * Places nodes from left to right, top to bottom in a grid.
      */

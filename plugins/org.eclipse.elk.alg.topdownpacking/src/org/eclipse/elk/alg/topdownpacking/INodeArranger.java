@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Kiel University and others.
+ * Copyright (c) 2022 - 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -13,9 +13,9 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * A node placer has to provide a size prediction without computing a layout.
+ * A node arranger has to provide a size prediction without computing a layout.
  */
-public interface INodePlacer {
+public interface INodeArranger {
     
     /**
      * Computes the predicted required size of the graph and returns it without computing a full layout.

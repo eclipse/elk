@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Kiel University and others.
+ * Copyright (c) 2022 - 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -25,7 +25,7 @@ import org.eclipse.elk.graph.ElkNode;
  * Places nodes in a grid using the sizes provided by their parent node.
  *
  */
-public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode>, INodePlacer {
+public class LeftRightTopDownNodePlacer implements ILayoutPhase<TopdownPackingPhases, GridElkNode>, INodeArranger {
 
     /**
      * {@inheritDoc}
