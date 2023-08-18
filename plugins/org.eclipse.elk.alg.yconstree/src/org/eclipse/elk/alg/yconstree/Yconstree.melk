@@ -1,0 +1,65 @@
+/*******************************************************************************
+ * Copyright (c) 2015, 2020 Kiel University and others.
+ * 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
+package org.eclipse.elk.alg.yconstree
+
+import org.eclipse.elk.alg.yconstree.YconstreeLayoutProvider
+import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.options.TopdownNodeTypes
+
+/**
+ * Declarations for the ELK Force layout algorithm.
+ */
+bundle {
+    metadataClass options.YconstreeMetaDataProvider
+    idPrefix org.eclipse.elk.yconstree
+}
+
+algorithm yconstree(YconstreeLayoutProvider) {
+    label "ELK Yconstree"
+    description
+        "Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that
+        follow physical analogies by simulating forces that move the nodes into a balanced
+        distribution. Currently the original Eades model and the Fruchterman - Reingold model are
+        supported."
+    metadataClass options.YconstreeOptions
+    category org.eclipse.elk.tree
+    features multi_edges, edge_labels
+    preview images/force_layout.png
+    supports org.eclipse.elk.priority = 1
+    documentation "Priorities set on nodes determine the order in which connected components are placed:
+            components with a higher sum of node priorities will end up
+            before components with a lower sum.
+            Priorities set on edges usually directly influence the attractive force of a connection,
+            with higher priorities corresponding to greater attractive forces."
+    supports org.eclipse.elk.spacing.nodeNode = 80
+    supports org.eclipse.elk.spacing.edgeLabel = 5
+    supports org.eclipse.elk.aspectRatio = 1.6f
+    supports org.eclipse.elk.randomSeed = 1
+    supports org.eclipse.elk.separateConnectedComponents = true
+    supports org.eclipse.elk.padding = new ElkPadding(50)
+    supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.portConstraints
+    supports org.eclipse.elk.edgeLabels.inline = false
+    // Common node micro layout
+    supports org.eclipse.elk.omitNodeMicroLayout
+    supports org.eclipse.elk.nodeSize.fixedGraphSize
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.portLabels.placement
+    supports verticalConstraint
+}
+
+
+option verticalConstraint: double {
+    label "Fixed vertical position"
+    targets nodes
+}
