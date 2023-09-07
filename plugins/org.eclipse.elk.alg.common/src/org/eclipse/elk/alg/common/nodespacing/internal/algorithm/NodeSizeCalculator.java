@@ -46,8 +46,8 @@ public final class NodeSizeCalculator {
             // Simply use the node's current width
             width = nodeSize.x;
         } else {
-            // Ask the cell system how wide it would like to be
-            width = nodeContext.nodeContainer.getMinimumWidth();
+            // Ask the cell system how wide it would like to be or take the node's width if it has already been set
+            width = Math.max(nodeSize.x, nodeContext.nodeContainer.getMinimumWidth());
             
             // If we include node labels and outside node labels are not to overhang, we need to include those as well
             if (nodeContext.sizeConstraints.contains(SizeConstraint.NODE_LABELS)
@@ -95,8 +95,8 @@ public final class NodeSizeCalculator {
             // Simply use the node's current height
             height = nodeSize.y;
         } else {
-            // Ask the cell system how heigh it would like to be
-            height = nodeContext.nodeContainer.getMinimumHeight();
+            // Ask the cell system how heigh it would like to be or take the node's height if it has already been set
+            height = Math.max(nodeSize.y, nodeContext.nodeContainer.getMinimumHeight());
             
             // If we include node labels and outside node labels are not to overhang, we need to include those as well
             if (nodeContext.sizeConstraints.contains(SizeConstraint.NODE_LABELS)
