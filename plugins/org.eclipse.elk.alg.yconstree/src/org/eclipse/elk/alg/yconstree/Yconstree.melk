@@ -56,6 +56,7 @@ algorithm yconstree(YconstreeLayoutProvider) {
     supports org.eclipse.elk.nodeLabels.placement
     supports org.eclipse.elk.portLabels.placement
     supports verticalConstraint
+    supports org.eclipse.elk.margins
 }
 
 

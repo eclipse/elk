@@ -16,27 +16,27 @@ package org.eclipse.elk.alg.yconstree.p3relative;
 public class OutlineNode {
     
     private double relativeX;
-    private double relativeY;
+    private double absoluteY;
     private OutlineNode next;
     
-    OutlineNode(double relativeX, double relativeY, OutlineNode next){
+    OutlineNode(double relativeX, double absoluteY, OutlineNode next){
         this.setRelativeX(relativeX);
-        this.setRelativeY(relativeY);
+        this.setAbsoluteY(absoluteY);
         this.setNext(next);
     }
 
     /**
-     * @return the relativeY
+     * @return the absoluteY
      */
-    public double getRelativeY() {
-        return relativeY;
+    public double getAbsoluteY() {
+        return absoluteY;
     }
 
     /**
-     * @param relativeY the relativeY to set
+     * @param absoluteY the absoluteY to set
      */
-    public void setRelativeY(double relativeY) {
-        this.relativeY = relativeY;
+    public void setAbsoluteY(double absoluteY) {
+        this.absoluteY = absoluteY;
     }
 
     /**
@@ -71,7 +71,7 @@ public class OutlineNode {
      * @return a string representation of this objects relative coordinates
      */
     public String toString() {
-        return "X:" + relativeX + ",  Y:" + relativeY;
+        return "X:" + relativeX + ",  Y:" + absoluteY;
     }
     
     /**

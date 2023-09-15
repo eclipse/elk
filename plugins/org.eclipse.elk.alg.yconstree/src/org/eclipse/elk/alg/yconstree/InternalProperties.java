@@ -31,8 +31,21 @@ public class InternalProperties {
     public static final IProperty<OutlineNode> RIGHT_OUTLINE = new Property<OutlineNode>("RIGHT_OUTLINE");
     
     /**
-     * Defines the maximum depth (as a coordinate) 
+     * Defines the maximum depth (as a coordinate)  outdated
      */
     public static final IProperty<Double> MAX_DEPTH = new Property<Double>("MAX_DEPTH");
+    
+    /**
+     * Defines the maximum depth of outlines  
+     */
+    public static final IProperty<Double> OUTLINE_MAX_DEPTH = new Property<Double>("OUTLINE_MAX_DEPTH");
+    
+    /**
+     * Defines the canvas of the tree 
+     */
+    public static final IProperty<Double> MIN_X = new Property<Double>("MIN_X");
+    public static final IProperty<Double> MAX_X = new Property<Double>("MAX_X");
+    public static final IProperty<Double> MIN_Y = new Property<Double>("MIN_Y");
+    public static final IProperty<Double> MAX_Y = new Property<Double>("MAX_Y");
 
 }

@@ -17,9 +17,11 @@ public enum YconstreeLayoutPhases {
     //P1_TREECHECKING,
     /** Phase 2. */
     P2_NODE_Y_PLACEMENT,
-    /** Phase 2. */
+    /** Phase 3. */
     P3_NODE_RELATIV_PLACEMENT,
-    /** Phase 2. */
-    P4_NODE_ABSOLUTE_PLACEMENT;
+    /** Phase 4. */
+    P4_NODE_ABSOLUTE_PLACEMENT,
+    /** Phase 4. */
+    P5_EDGE_ROUTING;
     
 }

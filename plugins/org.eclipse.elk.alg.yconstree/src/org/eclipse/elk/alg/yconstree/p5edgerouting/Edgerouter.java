@@ -7,19 +7,23 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.yconstree.p4absolute;
+package org.eclipse.elk.alg.yconstree.p5edgerouting;
 
+import org.eclipse.elk.alg.yconstree.InternalProperties;
 import org.eclipse.elk.alg.yconstree.YconstreeLayoutPhases;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * @author claas
  *
  */
-public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
+public class Edgerouter implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
     
     private IElkProgressMonitor pm;
     
@@ -30,18 +34,14 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
     public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
         // TODO Auto-generated method stub
         pm = progressMonitor;
-        pm.begin("AbsolutPlacer", 1);
+        pm.begin("EdgeRouter", 1);
         
         try {
             if (!graph.getChildren().isEmpty()){
                 ElkNode parent = graph.getChildren().get(0);
                 
-                // first, move the root
-                parent.setX(parent.getX() - findMinimalX(parent));
-                // a little offset
-                parent.setX(parent.getX() + 10.0);
-                // now we update the whole tree to absolute X 
-                absoluteTreeCoords(parent);
+                routeEdges(parent);
+                setCanvas(graph);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -49,40 +49,8 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         }
         
         pm.done();
-        
     }
-    
-    
-    private double findMinimalX(ElkNode t) {
-        int numOfChildren = t.getOutgoingEdges().size();
-        if (numOfChildren == 0) {
-            return t.getX();
-        } else {
-            double minSubtreeX = 0.0;
-            double testX = 0.0;
-            for (int i = 0; i < numOfChildren; i++) {
-                testX = findMinimalX((ElkNode) t.getOutgoingEdges().get(i).getTargets().get(0));
-                minSubtreeX = (testX < minSubtreeX) ? testX : minSubtreeX;
-            }
-            return minSubtreeX + t.getX();
-        }
-    }
-    
-    private void absoluteTreeCoords(ElkNode t) {
-        int numOfChildren = t.getOutgoingEdges().size();
-        // a little offset
-        t.setY(t.getY() + 10.0);
-        if (numOfChildren > 0) {
-            ElkNode child;
-            for (int i = 0; i < numOfChildren; i++) {
-                child = (ElkNode) t.getOutgoingEdges().get(i).getTargets().get(0);
-                child.setX(child.getX() + t.getX());
-                absoluteTreeCoords(child);
-            }
-        }
-    }
-    
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
      */
@@ -90,6 +58,31 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
     public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> getLayoutProcessorConfiguration(ElkNode graph) {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    
+    
+    private void routeEdges(ElkNode node) {
+        for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+            ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+            ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
+            
+            
+            double startX = node.getX() + node.getWidth() / 2;
+            double startY = node.getY() + node.getHeight();
+            double endX = target.getX() + target.getWidth() / 2;
+            double endY = target.getY();
+            
+            section.setStartLocation(startX, startY);
+            section.setEndLocation(endX, endY);
+            routeEdges(target);
+        }
+    }
+    
+    private void setCanvas(ElkNode graph) {
+        ElkNode parent = graph.getChildren().get(0);
+        graph.setHeight(parent.getProperty(InternalProperties.MAX_Y) - parent.getProperty(InternalProperties.MIN_Y) + 20.0);
+        graph.setWidth(parent.getProperty(InternalProperties.MAX_X) - parent.getProperty(InternalProperties.MIN_X) + 20.0);
     }
 
 }

@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.yconstree.p1treechecking.TreeCheckerStrategy;
 import org.eclipse.elk.alg.yconstree.p2yplacement.NodeYPlacerStrategy;
 import org.eclipse.elk.alg.yconstree.p3relative.RelativeXPlacerStrategy;
 import org.eclipse.elk.alg.yconstree.p4absolute.AbsoluteXPlacerStrategy;
+import org.eclipse.elk.alg.yconstree.p5edgerouting.EdgerouterStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -54,6 +55,8 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
                 RelativeXPlacerStrategy.SIMPLE_XPLACING);
         algorithmAssembler.setPhase(YconstreeLayoutPhases.P4_NODE_ABSOLUTE_PLACEMENT,
                 AbsoluteXPlacerStrategy.ABSOLUTE_XPLACING);
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P5_EDGE_ROUTING,
+                EdgerouterStrategy.DIRECT_ROUTING);
 
         // Assemble the algorithm
         return algorithmAssembler.build(graph);
