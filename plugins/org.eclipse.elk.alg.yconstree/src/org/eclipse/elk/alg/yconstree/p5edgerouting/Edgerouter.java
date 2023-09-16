@@ -38,7 +38,7 @@ public class Edgerouter implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> 
         
         try {
             if (!graph.getChildren().isEmpty()){
-                ElkNode parent = graph.getChildren().get(0);
+                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
                 
                 routeEdges(parent);
                 setCanvas(graph);

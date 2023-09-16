@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.yconstree.p4absolute;
 
+import org.eclipse.elk.alg.yconstree.InternalProperties;
 import org.eclipse.elk.alg.yconstree.YconstreeLayoutPhases;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
@@ -34,7 +35,7 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         
         try {
             if (!graph.getChildren().isEmpty()){
-                ElkNode parent = graph.getChildren().get(0);
+                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
                 
                 // first, move the root
                 parent.setX(parent.getX() - findMinimalX(parent));

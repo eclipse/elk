@@ -49,7 +49,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         
         try {
             if (!graph.getChildren().isEmpty()){
-                ElkNode parent = graph.getChildren().get(0);
+                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
                 
                 yConsTreeStep(parent);
                 // for debugging: print outlines

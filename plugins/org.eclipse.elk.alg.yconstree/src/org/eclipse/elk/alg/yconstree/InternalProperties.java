@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.yconstree;
 import org.eclipse.elk.alg.yconstree.p3relative.OutlineNode;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -19,7 +20,7 @@ import org.eclipse.elk.graph.properties.Property;
  * @author claas
  *
  */
-public class InternalProperties {
+public final class InternalProperties {
     /**
      * Defines the left outline of this subtree.
      */
@@ -31,21 +32,25 @@ public class InternalProperties {
     public static final IProperty<OutlineNode> RIGHT_OUTLINE = new Property<OutlineNode>("RIGHT_OUTLINE");
     
     /**
-     * Defines the maximum depth (as a coordinate)  outdated
+     * Defines the maximum depth (as a coordinate)  outdated.
      */
     public static final IProperty<Double> MAX_DEPTH = new Property<Double>("MAX_DEPTH");
     
     /**
-     * Defines the maximum depth of outlines  
+     * Defines the maximum depth of outlines.  
      */
     public static final IProperty<Double> OUTLINE_MAX_DEPTH = new Property<Double>("OUTLINE_MAX_DEPTH");
     
-    /**
-     * Defines the canvas of the tree 
-     */
+    /** Defines the canvas of the tree. */
     public static final IProperty<Double> MIN_X = new Property<Double>("MIN_X");
+    /** Defines the canvas of the tree. */
     public static final IProperty<Double> MAX_X = new Property<Double>("MAX_X");
+    /** Defines the canvas of the tree. */
     public static final IProperty<Double> MIN_Y = new Property<Double>("MIN_Y");
+    /** Defines the canvas of the tree. */
     public static final IProperty<Double> MAX_Y = new Property<Double>("MAX_Y");
+    
+    /** The root node of the graph. */
+    public static final IProperty<ElkNode> ROOT_NODE = new Property<ElkNode>("root");
 
 }

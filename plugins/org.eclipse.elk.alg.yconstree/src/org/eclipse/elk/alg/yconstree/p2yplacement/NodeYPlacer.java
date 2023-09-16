@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.yconstree.p2yplacement;
 
+import org.eclipse.elk.alg.yconstree.InternalProperties;
 import org.eclipse.elk.alg.yconstree.YconstreeLayoutPhases;
 import org.eclipse.elk.alg.yconstree.options.YconstreeOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -36,7 +37,7 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
         
         try {
             if (!graph.getChildren().isEmpty()){
-                ElkNode parent = graph.getChildren().get(0);
+                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
                 setYLevels(parent,0.0);
             }
         } catch (Exception e) {

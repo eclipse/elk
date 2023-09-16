@@ -19,7 +19,6 @@ import org.eclipse.elk.alg.yconstree.p5edgerouting.EdgerouterStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -37,6 +36,21 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
         List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(graph);
 
         progressMonitor.begin("Tree layout", algorithm.size());
+        
+        // pre calculate the root node and save it
+        ElkNode root = YconstreeUtil.findRoot(graph);
+        graph.setProperty(InternalProperties.ROOT_NODE, root);
+        if (root == null) {
+            throw new IllegalArgumentException("The given graph is not a tree!");
+        }
+        
+        for (ElkNode child : graph.getChildren()) {
+            int numberOfParents;
+            numberOfParents = child.getIncomingEdges().size();
+            if (numberOfParents > 1) {
+                throw new IllegalArgumentException("The given graph is not an acyclic tree!");
+            }
+        }
 
         for (ILayoutProcessor<ElkNode> processor : algorithm) {
             processor.process(graph, progressMonitor.subTask(1));
@@ -49,6 +63,8 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
         algorithmAssembler.reset();
 
         // Configure phases
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P1_TREECHECKING,
+                TreeCheckerStrategy.SIMPLE_TREECHECKING);
         algorithmAssembler.setPhase(YconstreeLayoutPhases.P2_NODE_Y_PLACEMENT,
                 NodeYPlacerStrategy.SIMPLE_YPLACING);
         algorithmAssembler.setPhase(YconstreeLayoutPhases.P3_NODE_RELATIV_PLACEMENT,
