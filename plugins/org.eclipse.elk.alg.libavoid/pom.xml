@@ -62,7 +62,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://github.com/TypeFox/libavoid-server/releases/download/v0.3.0/libavoid-server-linux</url>
+              <url>https://github.com/TypeFox/libavoid-server/releases/download/v0.3.1/libavoid-server-linux</url>
               <outputDirectory>${project.basedir}/libavoid-server</outputDirectory>
             </configuration>
           </execution>
@@ -73,7 +73,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://github.com/TypeFox/libavoid-server/releases/download/v0.3.0/libavoid-server-macos</url>
+              <url>https://github.com/TypeFox/libavoid-server/releases/download/v0.3.1/libavoid-server-macos</url>
               <outputDirectory>${project.basedir}/libavoid-server</outputDirectory>
             </configuration>
           </execution>
@@ -84,7 +84,7 @@
               <goal>wget</goal>
             </goals>
             <configuration>
-              <url>https://github.com/TypeFox/libavoid-server/releases/download/v0.3.0/libavoid-server-win.exe</url>
+              <url>https://github.com/TypeFox/libavoid-server/releases/download/v0.3.1/libavoid-server-win.exe</url>
               <outputDirectory>${project.basedir}/libavoid-server</outputDirectory>
             </configuration>
           </execution>
