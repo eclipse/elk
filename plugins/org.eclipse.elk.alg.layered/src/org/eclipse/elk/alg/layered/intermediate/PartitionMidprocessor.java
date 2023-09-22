@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
@@ -100,6 +101,19 @@ public class PartitionMidprocessor implements ILayoutProcessor<LGraph> {
             sourcePort.setProperty(InternalProperties.PARTITION_DUMMY, true);
             
             for (LNode otherNode : secondPartition) {
+
+                // Dummy node to compensate for potential edge label and its influence on the layering.
+                LNode dummyNode = new LNode(node.getGraph());
+                node.getGraph().getLayerlessNodes().add(dummyNode);
+                dummyNode.setType(NodeType.LONG_EDGE);
+                dummyNode.setProperty(InternalProperties.PARTITION_DUMMY, true);
+                LPort dummyIn = new LPort();
+                dummyIn.setNode(dummyNode);
+                dummyIn.setSide(PortSide.WEST);
+                LPort dummyOut = new LPort();
+                dummyOut.setNode(dummyNode);
+                dummyOut.setSide(PortSide.EAST);
+                
                 LPort targetPort = new LPort();
                 targetPort.setNode(otherNode);
                 targetPort.setSide(PortSide.WEST);
@@ -108,7 +122,12 @@ public class PartitionMidprocessor implements ILayoutProcessor<LGraph> {
                 LEdge edge = new LEdge();
                 edge.setProperty(InternalProperties.PARTITION_DUMMY, true);
                 edge.setSource(sourcePort);
-                edge.setTarget(targetPort);
+                edge.setTarget(dummyIn);
+                
+                LEdge edge2 = new LEdge();
+                edge2.setProperty(InternalProperties.PARTITION_DUMMY, true);
+                edge2.setSource(dummyOut);
+                edge2.setTarget(targetPort);
             }
         }
     }
