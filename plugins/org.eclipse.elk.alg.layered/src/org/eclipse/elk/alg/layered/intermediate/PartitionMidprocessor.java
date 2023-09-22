@@ -99,21 +99,15 @@ public class PartitionMidprocessor implements ILayoutProcessor<LGraph> {
             sourcePort.setNode(node);
             sourcePort.setSide(PortSide.EAST);
             sourcePort.setProperty(InternalProperties.PARTITION_DUMMY, true);
+            boolean labelConnected = false;
+            
+            for (LEdge edge : node.getOutgoingEdges()) {
+                if (edge.getTarget().getNode().getType() == NodeType.LABEL) {
+                    labelConnected = true;
+                }
+            }
             
             for (LNode otherNode : secondPartition) {
-
-                // Dummy node to compensate for potential edge label and its influence on the layering.
-                LNode dummyNode = new LNode(node.getGraph());
-                node.getGraph().getLayerlessNodes().add(dummyNode);
-                dummyNode.setType(NodeType.LONG_EDGE);
-                dummyNode.setProperty(InternalProperties.PARTITION_DUMMY, true);
-                LPort dummyIn = new LPort();
-                dummyIn.setNode(dummyNode);
-                dummyIn.setSide(PortSide.WEST);
-                LPort dummyOut = new LPort();
-                dummyOut.setNode(dummyNode);
-                dummyOut.setSide(PortSide.EAST);
-                
                 LPort targetPort = new LPort();
                 targetPort.setNode(otherNode);
                 targetPort.setSide(PortSide.WEST);
@@ -122,12 +116,28 @@ public class PartitionMidprocessor implements ILayoutProcessor<LGraph> {
                 LEdge edge = new LEdge();
                 edge.setProperty(InternalProperties.PARTITION_DUMMY, true);
                 edge.setSource(sourcePort);
-                edge.setTarget(dummyIn);
+                edge.setTarget(targetPort);
                 
-                LEdge edge2 = new LEdge();
-                edge2.setProperty(InternalProperties.PARTITION_DUMMY, true);
-                edge2.setSource(dummyOut);
-                edge2.setTarget(targetPort);
+                if (labelConnected) {
+                    // Dummy node to compensate for potential edge label and its influence on the layering.
+                    LNode dummyNode = new LNode(node.getGraph());
+                    node.getGraph().getLayerlessNodes().add(dummyNode);
+                    dummyNode.setType(NodeType.LONG_EDGE);
+                    dummyNode.setProperty(InternalProperties.PARTITION_DUMMY, true);
+                    LPort dummyIn = new LPort();
+                    dummyIn.setNode(dummyNode);
+                    dummyIn.setSide(PortSide.WEST);
+                    LPort dummyOut = new LPort();
+                    dummyOut.setNode(dummyNode);
+                    dummyOut.setSide(PortSide.EAST);
+                    
+                    edge.setTarget(dummyIn);
+                    
+                    LEdge edge2 = new LEdge();
+                    edge2.setProperty(InternalProperties.PARTITION_DUMMY, true);
+                    edge2.setSource(dummyOut);
+                    edge2.setTarget(targetPort);
+                }
             }
         }
     }
