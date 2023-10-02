@@ -19,7 +19,7 @@ public class OutlineNode {
     private double absoluteY;
     private OutlineNode next;
     
-    OutlineNode(double relativeX, double absoluteY, OutlineNode next){
+    OutlineNode(final double relativeX, final double absoluteY, final OutlineNode next){
         this.setRelativeX(relativeX);
         this.setAbsoluteY(absoluteY);
         this.setNext(next);
@@ -35,7 +35,7 @@ public class OutlineNode {
     /**
      * @param absoluteY the absoluteY to set
      */
-    public void setAbsoluteY(double absoluteY) {
+    public void setAbsoluteY(final double absoluteY) {
         this.absoluteY = absoluteY;
     }
 
@@ -49,7 +49,7 @@ public class OutlineNode {
     /**
      * @param relativeX the relativeX to set
      */
-    public void setRelativeX(double relativeX) {
+    public void setRelativeX(final double relativeX) {
         this.relativeX = relativeX;
     }
 
@@ -63,7 +63,7 @@ public class OutlineNode {
     /**
      * @param next the next to set
      */
-    public void setNext(OutlineNode next) {
+    public void setNext(final OutlineNode next) {
         this.next = next;
     }
     
@@ -82,9 +82,12 @@ public class OutlineNode {
         return next == null;
     }
     
+    /**
+     * Print a full outline
+     */
     public void printFullOutline() {
         System.out.println(this.toString());
-        if(!this.isLast()) {
+        if (!this.isLast()) {
             this.getNext().printFullOutline();
         }
     }

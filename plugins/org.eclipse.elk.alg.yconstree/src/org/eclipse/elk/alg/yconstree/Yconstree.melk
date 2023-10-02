@@ -56,6 +56,7 @@ algorithm yconstree(YconstreeLayoutProvider) {
     supports org.eclipse.elk.nodeLabels.placement
     supports org.eclipse.elk.portLabels.placement
     supports verticalConstraint
+    supports layoutStrategy
     supports org.eclipse.elk.margins
 }
 
@@ -64,3 +65,10 @@ option verticalConstraint: double {
     label "Fixed vertical position"
     targets nodes
 }
+
+
+option layoutStrategy: String {
+    label "Strategy for the layout of it's children. 'straight' for straight line drawings, 'bend' for a possible bend"
+    targets nodes
+}
+

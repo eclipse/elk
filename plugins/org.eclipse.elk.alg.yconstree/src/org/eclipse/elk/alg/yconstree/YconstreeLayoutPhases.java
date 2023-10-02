@@ -14,14 +14,12 @@ package org.eclipse.elk.alg.yconstree;
 public enum YconstreeLayoutPhases {
     
     /** Phase 1. */
-    P1_TREECHECKING,
+    P1_NODE_Y_PLACEMENT,
     /** Phase 2. */
-    P2_NODE_Y_PLACEMENT,
+    P2_NODE_RELATIV_PLACEMENT,
     /** Phase 3. */
-    P3_NODE_RELATIV_PLACEMENT,
+    P3_NODE_ABSOLUTE_PLACEMENT,
     /** Phase 4. */
-    P4_NODE_ABSOLUTE_PLACEMENT,
-    /** Phase 4. */
-    P5_EDGE_ROUTING;
+    P4_EDGE_ROUTING;
     
 }

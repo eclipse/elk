@@ -52,5 +52,10 @@ public final class InternalProperties {
     
     /** The root node of the graph. */
     public static final IProperty<ElkNode> ROOT_NODE = new Property<ElkNode>("root");
-
+    
+    /**
+     * Defines the bendpoint of an edge.  
+     */
+    public static final IProperty<Double> EDGE_BEND_HEIGHT = new Property<Double>("EDGE_BEND_HEIGHT");
+    
 }

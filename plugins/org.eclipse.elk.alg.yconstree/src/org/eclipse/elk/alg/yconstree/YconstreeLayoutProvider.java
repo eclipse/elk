@@ -11,7 +11,6 @@ package org.eclipse.elk.alg.yconstree;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.yconstree.p1treechecking.TreeCheckerStrategy;
 import org.eclipse.elk.alg.yconstree.p2yplacement.NodeYPlacerStrategy;
 import org.eclipse.elk.alg.yconstree.p3relative.RelativeXPlacerStrategy;
 import org.eclipse.elk.alg.yconstree.p4absolute.AbsoluteXPlacerStrategy;
@@ -63,15 +62,13 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
         algorithmAssembler.reset();
 
         // Configure phases
-        algorithmAssembler.setPhase(YconstreeLayoutPhases.P1_TREECHECKING,
-                TreeCheckerStrategy.SIMPLE_TREECHECKING);
-        algorithmAssembler.setPhase(YconstreeLayoutPhases.P2_NODE_Y_PLACEMENT,
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P1_NODE_Y_PLACEMENT,
                 NodeYPlacerStrategy.SIMPLE_YPLACING);
-        algorithmAssembler.setPhase(YconstreeLayoutPhases.P3_NODE_RELATIV_PLACEMENT,
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P2_NODE_RELATIV_PLACEMENT,
                 RelativeXPlacerStrategy.SIMPLE_XPLACING);
-        algorithmAssembler.setPhase(YconstreeLayoutPhases.P4_NODE_ABSOLUTE_PLACEMENT,
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P3_NODE_ABSOLUTE_PLACEMENT,
                 AbsoluteXPlacerStrategy.ABSOLUTE_XPLACING);
-        algorithmAssembler.setPhase(YconstreeLayoutPhases.P5_EDGE_ROUTING,
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P4_EDGE_ROUTING,
                 EdgerouterStrategy.DIRECT_ROUTING);
 
         // Assemble the algorithm

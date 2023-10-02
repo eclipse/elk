@@ -28,13 +28,13 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      * @see org.eclipse.elk.core.alg.ILayoutProcessor#process(java.lang.Object, org.eclipse.elk.core.util.IElkProgressMonitor)
      */
     @Override
-    public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
+    public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         // TODO Auto-generated method stub
         pm = progressMonitor;
         pm.begin("AbsolutPlacer", 1);
         
         try {
-            if (!graph.getChildren().isEmpty()){
+            if (!graph.getChildren().isEmpty()) {
                 ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
                 
                 // first, move the root

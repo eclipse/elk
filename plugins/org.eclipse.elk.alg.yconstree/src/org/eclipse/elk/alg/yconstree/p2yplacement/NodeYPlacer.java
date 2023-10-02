@@ -25,20 +25,18 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
     
     private final double STANDARD_DISTANCE = 50.0;
     private IElkProgressMonitor pm;
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutProcessor#process(java.lang.Object, org.eclipse.elk.core.util.IElkProgressMonitor)
-     */
+    
     @Override
-    public void process(final ElkNode graph, IElkProgressMonitor progressMonitor) {
+    public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         // TODO Auto-generated method stub
         //elkGraph.setX(0.0);
         pm = progressMonitor;
         pm.begin("YPlacer", 1);
         
         try {
-            if (!graph.getChildren().isEmpty()){
+            if (!graph.getChildren().isEmpty()) {
                 ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
-                setYLevels(parent,0.0);
+                setYLevels(parent, 0.0);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -54,7 +52,7 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
      * @param node and it's children are getting updated Y-coords.
      * @param minHeight: Node gets minimum this height.
      */
-    private void setYLevels(ElkNode node, double minHeight) {
+    private void setYLevels(final ElkNode node, double minHeight) {
         // TODO: Y-Level_Constraints, remove different heightlevels.
         if (node.hasProperty(YconstreeOptions.VERTICAL_CONSTRAINT)) {
             pm.log("hier hab ich einen Constraint");
@@ -73,7 +71,8 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
      * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
      */
     @Override
-    public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> getLayoutProcessorConfiguration(ElkNode graph) {
+    public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> 
+                getLayoutProcessorConfiguration(final ElkNode graph) {
         // TODO Auto-generated method stub
         return null;
     }

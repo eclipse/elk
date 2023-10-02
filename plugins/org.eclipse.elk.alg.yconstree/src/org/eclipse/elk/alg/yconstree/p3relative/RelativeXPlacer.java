@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.yconstree.InternalProperties;
 import org.eclipse.elk.alg.yconstree.YconstreeLayoutPhases;
+import org.eclipse.elk.alg.yconstree.options.YconstreeOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkMargin;
@@ -40,7 +41,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      * @see org.eclipse.elk.core.alg.ILayoutProcessor#process(java.lang.Object, org.eclipse.elk.core.util.IElkProgressMonitor)
      */
     @Override
-    public void process(ElkNode graph, IElkProgressMonitor progressMonitor) {
+    public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         // TODO Auto-generated method stub
         pm = progressMonitor;
         pm.begin("XPlacer", 1);
@@ -51,9 +52,13 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             if (!graph.getChildren().isEmpty()){
                 ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
                 
-                yConsTreeStep(parent);
-                // for debugging: print outlines
-                //parent.getProperty(InternalProperties.RIGHT_OUTLINE).printFullOutline();
+                String strategy = graph.getProperty(YconstreeOptions.LAYOUT_STRATEGY);
+                if (strategy == null || strategy.equals("straight")) {
+                    yConsTreeStep(parent);
+                } else {
+                    alternativeYConsTreeStep(parent);
+                }
+                
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -64,7 +69,8 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
     }
     
     private void testfunction() {
-        OutlineNode outline1 = new OutlineNode(20.0, 0.0, new OutlineNode(0.0, 30.0, new OutlineNode(30.0, 30.0, new OutlineNode(0.0, 40.0, new OutlineNode(-20.0, 0.0, new OutlineNode(0.0, 20.0, null))))));
+        OutlineNode outline1 = new OutlineNode(20.0, 0.0, new OutlineNode(0.0, 30.0, new OutlineNode(30.0, 30.0, 
+                new OutlineNode(0.0, 40.0, new OutlineNode(-20.0, 0.0, new OutlineNode(0.0, 20.0, null))))));
         OutlineNode outline3 = new OutlineNode(0.0, 0.0, new OutlineNode(0.0, 40.0, null));
 
         //System.out.println("Hello There");
@@ -72,13 +78,15 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         //System.out.println(dist);
     }
     
-    private double outlineDistance(OutlineNode outline1, OutlineNode outline2) {
+    private double outlineDistance(final OutlineNode outline1, final OutlineNode outline2) {
         
-        OutlineNode changed_outline1 = new OutlineNode(outline1.getRelativeX(), minimalY, outline1.getNext());
-        OutlineNode changed_outline2 = new OutlineNode(outline2.getRelativeX(), minimalY, outline2.getNext());
+        OutlineNode changedOutline1 = new OutlineNode(outline1.getRelativeX(), minimalY, 
+                new OutlineNode(0.0, outline1.getAbsoluteY(), outline1.getNext()));
+        OutlineNode changedOutline2 = new OutlineNode(outline2.getRelativeX(), minimalY, 
+                new OutlineNode(0.0, outline2.getAbsoluteY(), outline2.getNext()));
         
         // the return value
-        double dist = changed_outline1.getRelativeX() - changed_outline2.getRelativeX();
+        double dist = changedOutline1.getRelativeX() - changedOutline2.getRelativeX();
         
         OutlineNode o1;
         OutlineNode o2;
@@ -89,8 +97,8 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         
         
         // fist run (compare points of o1  with o2)
-        o1 = changed_outline1;
-        o2 = changed_outline2;
+        o1 = changedOutline1;
+        o2 = changedOutline2;
         x1 = o1.getRelativeX();
         x2 = o2.getRelativeX();
         while (o1 != null && !o2.isLast()) {
@@ -114,8 +122,8 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         }
         
         // second run (compare points of o2  with o1)
-        o1 = changed_outline1;
-        o2 = changed_outline2;
+        o1 = changedOutline1;
+        o2 = changedOutline2;
         x1 = o1.getRelativeX();
         x2 = o2.getRelativeX();
         while (o2 != null && !o1.isLast()) {
@@ -144,12 +152,12 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
     
 
     /**
-     * Just a rudimentary function to 
+     * Just a rudimentary function to find the minimum.
      * @param d
      * @param e
      * @return
      */
-    private double min(double d, double e) {
+    private double min(final double d, final double e) {
         // TODO Auto-generated method stub
         return d < e ? d : e;
     }
@@ -159,7 +167,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      * @param e
      * @return
      */
-    private double max(double d, double e) {
+    private double max(final double d, final double e) {
         // TODO Auto-generated method stub
         return d > e ? d : e;
     }
@@ -168,7 +176,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      * This is the recursive function that calculates the layout for one node and it's children.
      * @param graph 
      */
-    private void yConsTreeStep(ElkNode graph) {
+    private void yConsTreeStep(final ElkNode graph) {
         
         ElkMargin margins = graph.getProperty(CoreOptions.MARGINS);
         
@@ -188,7 +196,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             
             // now the children get stuffed together, using the outlines.
             for (int i = 0; i < children.size() - 1; i++) {
-                putThemTogether(children.get(0), children.get(i), children.get(i + 1));
+                bundleChildren(children.get(0), children.get(i), children.get(i + 1));
             }
             
             // now we need to move the root to the middle of the nodes.
@@ -206,30 +214,33 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             }
             double moveRoot = 0.0;
             if (pos > 0) {
-                moveRoot = (children.get(maxDepthStartPos).getX() + children.get(pos-1).getX() + children.get(pos-1).getWidth()) / 2.0 - graph.getX();
+                moveRoot = (children.get(maxDepthStartPos).getX() + children.get(pos - 1).getX() 
+                        + children.get(pos - 1).getWidth()) / 2.0 - graph.getX();
             }
             
-            double betterMoveRoot = (children.get(0).getX() + children.get(children.size()-1).getX() + children.get(children.size()-1).getWidth() - graph.getWidth()) / 2.0 - graph.getX();
+            double betterMoveRoot = (children.get(0).getX() + children.get(children.size() - 1).getX() 
+                    + children.get(children.size() - 1).getWidth() - graph.getWidth()) / 2.0 - graph.getX();
             double newMoveRoot;
             
             //if better moveRoote is left of moveRoot
             if (betterMoveRoot < moveRoot) {
-                OutlineNode Rol;
-                double RolX, posX;
-                for (int i=0; i < maxDepthStartPos; i++) {
-                    for (int j = i+1; j < maxDepthStartPos + 1; j++) {
-                        Rol = children.get(i).getProperty(InternalProperties.RIGHT_OUTLINE);
-                        RolX = children.get(i).getX() + Rol.getRelativeX();
+                OutlineNode rol;
+                double rolX, posX;
+                for (int i = 0; i < maxDepthStartPos; i++) {
+                    for (int j = i + 1; j < maxDepthStartPos + 1; j++) {
+                        rol = children.get(i).getProperty(InternalProperties.RIGHT_OUTLINE);
+                        rolX = children.get(i).getX() + rol.getRelativeX();
                         posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
-                        while (Rol != null && Rol.getAbsoluteY() < maxDepth) {
+                        while (rol != null && rol.getAbsoluteY() < maxDepth) {
                             // new moveRoot
-                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - RolX) * ((graph.getX() + graph.getHeight()) - maxDepth) / (maxDepth - Rol.getAbsoluteY());
+                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - rolX) * ((graph.getY() 
+                                    + graph.getHeight()) - maxDepth) / (maxDepth - rol.getAbsoluteY());
                             betterMoveRoot = max(betterMoveRoot, newMoveRoot);
                             
                             // update Rol and RolX
-                            Rol = Rol.getNext();
-                            if (Rol != null) {
-                                RolX += Rol.getRelativeX();
+                            rol = rol.getNext();
+                            if (rol != null) {
+                                rolX += rol.getRelativeX();
                             }
                         }
                     }
@@ -239,22 +250,23 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             
             //if better moveRoote is right of moveRoot
             if (betterMoveRoot > moveRoot) {
-                OutlineNode Lol;
-                double LolX, posX;
-                for (int i=pos; i < children.size(); i++) {
-                    for (int j = pos-1; j < i; j++) {
-                        Lol = children.get(i).getProperty(InternalProperties.LEFT_OUTLINE);
-                        LolX = children.get(i).getX() + Lol.getRelativeX();
+                OutlineNode lol;
+                double lolX, posX;
+                for (int i = pos; i < children.size(); i++) {
+                    for (int j = pos - 1; j < i; j++) {
+                        lol = children.get(i).getProperty(InternalProperties.LEFT_OUTLINE);
+                        lolX = children.get(i).getX() + lol.getRelativeX();
                         posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
-                        while (Lol != null && Lol.getAbsoluteY() < maxDepth) {
+                        while (lol != null && lol.getAbsoluteY() < maxDepth) {
                             // new moveRoot
-                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - LolX) * ((graph.getX() + graph.getHeight()) - maxDepth) / (maxDepth - Lol.getAbsoluteY());
+                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - lolX) * ((graph.getY() 
+                                    + graph.getHeight()) - maxDepth) / (maxDepth - lol.getAbsoluteY());
                             betterMoveRoot = min(betterMoveRoot, newMoveRoot);
 
                             // update Rol and RolX
-                            Lol = Lol.getNext();
-                            if (Lol != null) {
-                                LolX += Lol.getRelativeX();
+                            lol = lol.getNext();
+                            if (lol != null) {
+                                lolX += lol.getRelativeX();
                             }
                         }
                     }
@@ -262,64 +274,151 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
                 moveRoot = betterMoveRoot;
             }
             
-            for(ElkNode child: children) {
+            for (ElkNode child: children) {
                 child.setX(child.getX() - moveRoot);
             }
             
-            /**
-            //-------------------------------------------------------------------------
-         // now we need to move the root to the middle of the nodes.
-            // we calculate the point of the child with the lowest y-position to avoid overlapping.
-            // if there is more than one lowest child, the root will be positioned in the middle of them.
-            int lowestChildPos = 0;
-            double lowestChildY = 0.0;
-            double lowestChildStart = 0.0; 
-            //**
-            while (lowestChildPos < children.size() && children.get(lowestChildPos).getY() >= lowestChildY) {
-                if (children.get(lowestChildPos).getY() > lowestChildY) {
-                    lowestChildStart = children.get(lowestChildPos).getX();
-                    lowestChildY = children.get(lowestChildPos).getY();
-                }
-                lowestChildPos++;
-            }
-            
-            double moveRoot = 0.0;
-            if (lowestChildPos > 0) {
-                moveRoot = (children.get(lowestChildPos - 1).getX() + children.get(lowestChildPos - 1).getWidth() + lowestChildStart - graph.getWidth()) / 2 - graph.getX();
-            }
-            
-            // move children
-            for(ElkNode child: children) {
-                child.setX(child.getX() - moveRoot);
-            }
-            //----------------------------------------------------------------------------
-            **/
             
             double newX;
             // lol update
-            newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
-            graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().setNext(new OutlineNode(newX, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getAbsoluteY(), children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getNext()));
+            newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() 
+                    - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
+            graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().getNext().getNext().setNext(
+                    new OutlineNode(newX, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getAbsoluteY(), 
+                            children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getNext()));
             // rol update
-            newX = children.get(children.size()-1).getX() + children.get(children.size()-1).getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX() - graph.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX();
-            graph.getProperty(InternalProperties.RIGHT_OUTLINE).getNext().setNext(new OutlineNode(newX, children.get(children.size()-1).getProperty(InternalProperties.RIGHT_OUTLINE).getAbsoluteY(), children.get(children.size()-1).getProperty(InternalProperties.RIGHT_OUTLINE).getNext()));
+            newX = children.get(children.size() - 1).getX() 
+                    + children.get(children.size() - 1).getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX() 
+                    - graph.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX();
+            graph.getProperty(InternalProperties.RIGHT_OUTLINE).getNext().getNext().getNext().setNext(
+                    new OutlineNode(newX, children.get(children.size() - 1).getProperty(
+                            InternalProperties.RIGHT_OUTLINE).getAbsoluteY(), children.get(children.size() - 1).
+                            getProperty(InternalProperties.RIGHT_OUTLINE).getNext()));
             
             // update outlineMaxY
             // update min und max for x and y
             for (ElkNode child: children) {
-                graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, max(graph.getProperty(InternalProperties.OUTLINE_MAX_DEPTH), child.getProperty(InternalProperties.OUTLINE_MAX_DEPTH)));
-                graph.setProperty(InternalProperties.MIN_X, min(graph.getProperty(InternalProperties.MIN_X), child.getX() + child.getProperty(InternalProperties.MIN_X)));
-                graph.setProperty(InternalProperties.MAX_X, max(graph.getProperty(InternalProperties.MAX_X), child.getX() + child.getProperty(InternalProperties.MAX_X)));
+                graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, max(graph.getProperty(InternalProperties.
+                        OUTLINE_MAX_DEPTH), child.getProperty(InternalProperties.OUTLINE_MAX_DEPTH)));
+                graph.setProperty(InternalProperties.MIN_X, min(graph.getProperty(InternalProperties.MIN_X), 
+                        child.getX() + child.getProperty(InternalProperties.MIN_X)));
+                graph.setProperty(InternalProperties.MAX_X, max(graph.getProperty(InternalProperties.MAX_X), 
+                        child.getX() + child.getProperty(InternalProperties.MAX_X)));
             }
             graph.setProperty(InternalProperties.MAX_Y, graph.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
             
         }
     }
     
+    
+    
+    private void alternativeYConsTreeStep(final ElkNode graph) {
+        ElkMargin margins = graph.getProperty(CoreOptions.MARGINS);
+        
+        makeSimpelOutlines(graph);
+        
+        if (!graph.getOutgoingEdges().isEmpty()) {
+            
+            // get all children
+            List<ElkNode> children = new ArrayList<>();
+            for (int i = 0; i < graph.getOutgoingEdges().size(); i++) {
+                ElkNode child = (ElkNode) graph.getOutgoingEdges().get(i).getTargets().get(0);
+                alternativeYConsTreeStep(child);
+                children.add(child);
+            }
+            
+            int cs = children.size();
+            
+            
+            // now the children get stuffed together, using the outlines.
+            for (int i = 0; i < children.size() - 1; i++) {
+                bundleChildren(children.get(0), children.get(i), children.get(i + 1));
+            }
+            
+            double moveRoot = (children.get(0).getX() + children.get(0).getWidth() / 2.0 
+                    + children.get(children.size() - 1).getX() + children.get(children.size() - 1).getWidth() / 2.0 
+                    - graph.getWidth()) / 2.0 - graph.getX();
+            
+            for (ElkNode child: children) {
+                child.setX(child.getX() - moveRoot);
+                child.setProperty(InternalProperties.EDGE_BEND_HEIGHT, 
+                        child.getProperty(InternalProperties.LEFT_OUTLINE).getAbsoluteY());
+            }
+            
+            // set bendHeights for children right of the parent
+            int i = 0;
+            while (i < cs - 1 && children.get(i).getX() + children.get(i).getWidth() 
+                    + children.get(i).getProperty(CoreOptions.MARGINS).right - graph.getWidth() / 2.0 <= 0.0) {
+                i++;
+            }
+            
+            double globalBendHeight = children.get(i).getProperty(InternalProperties.EDGE_BEND_HEIGHT);
+            for (int a = 0; a < cs; a++) {
+                if (globalBendHeight < children.get(a).getProperty(InternalProperties.EDGE_BEND_HEIGHT)) {
+                    children.get(a).setProperty(InternalProperties.EDGE_BEND_HEIGHT, globalBendHeight);
+                } else {
+                    globalBendHeight = children.get(a).getProperty(InternalProperties.EDGE_BEND_HEIGHT);
+                }
+            }
+            
+            // set bendHeights for children left of the parent
+            i = cs - 1;
+            while (i > 0 && children.get(i).getX() - children.get(i).getProperty(CoreOptions.MARGINS).left 
+                    - graph.getWidth() / 2.0 >= 0.0) {
+                i--;
+            }
+            
+            if (i < cs) {
+                for (int a = i; a >= 0; a--) {
+                    
+                    if (globalBendHeight < children.get(a).getProperty(InternalProperties.EDGE_BEND_HEIGHT)) {
+                        children.get(a).setProperty(InternalProperties.EDGE_BEND_HEIGHT, globalBendHeight);
+                    } else {
+                        globalBendHeight = children.get(a).getProperty(InternalProperties.EDGE_BEND_HEIGHT);
+                    }
+                }
+            }
+            
+            double newX;
+            OutlineNode newOutlinepart;
+            // lol update
+            newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() 
+                    - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
+            newOutlinepart = new OutlineNode(0.0, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE)
+                    .getAbsoluteY(), children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getNext());
+            graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().getNext().getNext()
+                    .setNext(new OutlineNode(newX, children.get(0).getProperty(InternalProperties.EDGE_BEND_HEIGHT), 
+                            newOutlinepart));
+            
+            newX = children.get(cs - 1).getX() + children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE)
+                    .getRelativeX() - graph.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX();
+            newOutlinepart = new OutlineNode(0.0, children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE)
+                    .getAbsoluteY(), children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
+            graph.getProperty(InternalProperties.RIGHT_OUTLINE).getNext().getNext().getNext()
+                    .setNext(new OutlineNode(newX, children.get(cs - 1).getProperty(InternalProperties
+                            .EDGE_BEND_HEIGHT), newOutlinepart));
+            
+            // update outlineMaxY
+            // update min und max for x and y
+            for (ElkNode child: children) {
+                graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, max(graph.getProperty(InternalProperties
+                        .OUTLINE_MAX_DEPTH), child.getProperty(InternalProperties.OUTLINE_MAX_DEPTH)));
+                graph.setProperty(InternalProperties.MIN_X, min(graph.getProperty(InternalProperties.MIN_X), 
+                        child.getX() + child.getProperty(InternalProperties.MIN_X)));
+                graph.setProperty(InternalProperties.MAX_X, max(graph.getProperty(InternalProperties.MAX_X), 
+                        child.getX() + child.getProperty(InternalProperties.MAX_X)));
+            }
+            graph.setProperty(InternalProperties.MAX_Y, graph.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
+            
+        }
+        
+    }
+    
     /**
      * sorts the subTrees in a half circle, uses mergesort.
      * @param graph
      */
-    private void sortSubTrees(List<ElkNode> children) {
+    private void sortSubTrees(final List<ElkNode> children) {
         
         // fist, we sort the SubTrees by the Y-coordinate of their root.
         Collections.sort(children, new NodeComparator());
@@ -348,47 +447,60 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
     }
     
     
-    private void makeSimpelOutlines(ElkNode graph) {
+    private void makeSimpelOutlines(final ElkNode graph) {
         ElkMargin margins = graph.getProperty(CoreOptions.MARGINS);
         
         // set the properties for left and right outlines
-        graph.setProperty(InternalProperties.LEFT_OUTLINE, new OutlineNode((-margins.left), graph.getY() - margins.top, new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom, null)));
-        graph.setProperty(InternalProperties.RIGHT_OUTLINE, new OutlineNode(graph.getWidth() + margins.right, graph.getY() - margins.top, new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom, null)));
+        OutlineNode endpart;
+        endpart = new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom, 
+                new OutlineNode(graph.getWidth() / 2.0, graph.getY() + graph.getHeight() + margins.bottom, null));
+        graph.setProperty(InternalProperties.LEFT_OUTLINE, new OutlineNode((-margins.left) 
+                + graph.getWidth() / 2.0, graph.getY() - margins.top, new OutlineNode(-graph.getWidth() / 2.0, 
+                        graph.getY() - margins.top, endpart)));
+        endpart = new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom, new OutlineNode( 
+                -graph.getWidth() / 2.0, graph.getY() + graph.getHeight() + margins.bottom, null));
+        graph.setProperty(InternalProperties.RIGHT_OUTLINE, new OutlineNode(graph.getWidth() / 2.0 
+                + margins.right, graph.getY() - margins.top, new OutlineNode(graph.getWidth() / 2.0, graph.getY() 
+                        - margins.top, endpart)));
         
         // set min and max values
         graph.setProperty(InternalProperties.MIN_X, graph.getX() - margins.left);
         graph.setProperty(InternalProperties.MAX_X, graph.getX() + margins.right + graph.getWidth());
         graph.setProperty(InternalProperties.MIN_Y, graph.getY() - margins.top);
         graph.setProperty(InternalProperties.MAX_Y, graph.getY() + margins.bottom + graph.getHeight());
-        graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().getAbsoluteY());
+        graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, graph.getProperty(InternalProperties.LEFT_OUTLINE)
+                .getNext().getNext().getAbsoluteY());
         
     }
     
     
-    private void putThemTogether(ElkNode leftSubtree, ElkNode a, ElkNode b) {
+    private void bundleChildren(final ElkNode leftSubtree, final ElkNode a, final ElkNode b) {
         
         double deltaX, deltaY, change;
         
         // calculate distance between the two parts
-        double dist = outlineDistance(a.getProperty(InternalProperties.RIGHT_OUTLINE), b.getProperty(InternalProperties.LEFT_OUTLINE));
+        double dist = outlineDistance(a.getProperty(InternalProperties.RIGHT_OUTLINE), 
+                b.getProperty(InternalProperties.LEFT_OUTLINE));
         b.setX(a.getX() + dist);
         
         // enhance the left outline
-        if (leftSubtree.getProperty(InternalProperties.OUTLINE_MAX_DEPTH) < b.getProperty(InternalProperties.OUTLINE_MAX_DEPTH)) {
+        if (leftSubtree.getProperty(InternalProperties.OUTLINE_MAX_DEPTH) 
+                < b.getProperty(InternalProperties.OUTLINE_MAX_DEPTH)) {
             OutlineNode lastL = leftSubtree.getProperty(InternalProperties.LEFT_OUTLINE);
-            double LabsX = lastL.getRelativeX() + leftSubtree.getX();
+            double lAbsX = lastL.getRelativeX() + leftSubtree.getX();
             
             // move to the end of leftSubtree
             while (!lastL.isLast()) {
                 lastL = lastL.getNext();
-                LabsX += lastL.getRelativeX();
+                lAbsX += lastL.getRelativeX();
             }
             // find fiting position in the lol of b
-            OutlineNode bItterator = new OutlineNode(b.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX(), minimalY, b.getProperty(InternalProperties.LEFT_OUTLINE).getNext());
-            double BabsX = bItterator.getRelativeX() + b.getX();
+            OutlineNode bItterator = new OutlineNode(b.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX(),
+                    minimalY, b.getProperty(InternalProperties.LEFT_OUTLINE).getNext());
+            double rAbsX = bItterator.getRelativeX() + b.getX();
             while (bItterator.getNext().getAbsoluteY() <= lastL.getAbsoluteY()) {
                 bItterator = bItterator.getNext();
-                BabsX += bItterator.getRelativeX();
+                rAbsX += bItterator.getRelativeX();
             }
             // now we calculate the change
             deltaX = bItterator.getNext().getRelativeX();
@@ -396,29 +508,32 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             change = ((lastL.getAbsoluteY() - bItterator.getAbsoluteY()) * deltaX) / deltaY;
             
             // now we calculate the new points
-            double newX = -LabsX + BabsX + change;
-            OutlineNode newNext = new OutlineNode(bItterator.getNext().getRelativeX() - change, bItterator.getNext().getAbsoluteY(), bItterator.getNext().getNext());
+            double newX = -lAbsX + rAbsX + change;
+            OutlineNode newNext = new OutlineNode(bItterator.getNext().getRelativeX() - change, bItterator.getNext()
+                    .getAbsoluteY(), bItterator.getNext().getNext());
             lastL.setNext(new OutlineNode(newX, lastL.getAbsoluteY(), newNext));
             // now update outline_max_depth
-            leftSubtree.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, b.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
+            leftSubtree.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, 
+                    b.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
         }
         
         // enhance the right outline
         if (b.getProperty(InternalProperties.OUTLINE_MAX_DEPTH) < a.getProperty(InternalProperties.OUTLINE_MAX_DEPTH)) {
             OutlineNode lastB = b.getProperty(InternalProperties.RIGHT_OUTLINE);
-            double BabsX = lastB.getRelativeX() + b.getX();
+            double rAbsX = lastB.getRelativeX() + b.getX();
             
             // move to the end of b
             while (!lastB.isLast()) {
                 lastB = lastB.getNext();
-                BabsX += lastB.getRelativeX();
+                rAbsX += lastB.getRelativeX();
             }
             // find fitting position in the rol of a
-            OutlineNode aItterator = new OutlineNode(a.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX(), minimalY, a.getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
-            double AabsX = aItterator.getRelativeX() + a.getX();
+            OutlineNode aItterator = new OutlineNode(a.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX(), 
+                    minimalY, a.getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
+            double aAbsX = aItterator.getRelativeX() + a.getX();
             while (aItterator.getNext().getAbsoluteY() <= lastB.getAbsoluteY()) {
                 aItterator = aItterator.getNext();
-                AabsX += aItterator.getRelativeX();
+                aAbsX += aItterator.getRelativeX();
             }
             // now we calculate the change
             deltaX = aItterator.getNext().getRelativeX();
@@ -426,8 +541,9 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             change = ((lastB.getAbsoluteY() - aItterator.getAbsoluteY()) * deltaX) / deltaY;
             
             // now we calculate the new points
-            double newX = AabsX - BabsX + change;
-            OutlineNode newNext = new OutlineNode(aItterator.getNext().getRelativeX() - change, aItterator.getNext().getAbsoluteY(), aItterator.getNext().getNext());
+            double newX = aAbsX - rAbsX + change;
+            OutlineNode newNext = new OutlineNode(aItterator.getNext().getRelativeX() - change, 
+                    aItterator.getNext().getAbsoluteY(), aItterator.getNext().getNext());
             lastB.setNext(new OutlineNode(newX, lastB.getAbsoluteY(), newNext));
             // now update outline_max_depth
             b.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, a.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
@@ -438,7 +554,8 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
      */
     @Override
-    public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> getLayoutProcessorConfiguration(ElkNode graph) {
+    public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> 
+    getLayoutProcessorConfiguration(ElkNode graph) {
         // TODO Auto-generated method stub
         return null;
     }
