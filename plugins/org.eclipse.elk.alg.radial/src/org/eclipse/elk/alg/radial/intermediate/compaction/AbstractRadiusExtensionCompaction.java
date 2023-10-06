@@ -130,10 +130,10 @@ public class AbstractRadiusExtensionCompaction {
         double y1 = node1.getY() - spacing / 2;
         double y2 = node2.getY() - spacing / 2;
 
-        double width1 = node1.getWidth() + spacing / 2;
-        double width2 = node2.getWidth() + spacing / 2;
-        double height1 = node1.getHeight() + spacing / 2;
-        double height2 = node2.getHeight() + spacing / 2;
+        double width1 = node1.getWidth() + spacing;
+        double width2 = node2.getWidth() + spacing;
+        double height1 = node1.getHeight() + spacing;
+        double height2 = node2.getHeight() + spacing;
 
         if ((x1 < x2 + width2 && x2 < x1) && (y1 < y2 + height2 && y2 < y1)) {
             // left upper and right lower corner overlap
