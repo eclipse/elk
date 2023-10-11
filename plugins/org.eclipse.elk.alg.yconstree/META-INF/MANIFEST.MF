@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Automatic-Module-Name: org.eclipse.elk.alg.force
+Automatic-Module-Name: org.eclipse.elk.alg.yconstree
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK Force Layout Algorithm
-Bundle-SymbolicName: org.eclipse.elk.alg.force;singleton:=true
+Bundle-Name: ELK Y Constraint Tree Layout Algorithm
+Bundle-SymbolicName: org.eclipse.elk.alg.yconstree;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
