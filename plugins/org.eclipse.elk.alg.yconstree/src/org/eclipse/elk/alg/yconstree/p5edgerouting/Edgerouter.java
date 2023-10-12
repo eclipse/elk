@@ -35,19 +35,13 @@ public class Edgerouter implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> 
         myProgressMonitor = progressMonitor;
         myProgressMonitor.begin("EdgeRouter", 1);
         
-        try {
-            if (!graph.getChildren().isEmpty()) {
-                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
-                
-                routeEdges(parent);
-                setCanvas(graph);
-            }
-        } catch (Exception e) {
-            // TODO properly handle exceptions
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (!graph.getChildren().isEmpty()) {
+            ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
+            
+            routeEdges(parent);
+            setCanvas(graph);
         }
-        
+
         myProgressMonitor.done();
     }
 

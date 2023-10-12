@@ -29,23 +29,17 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         myProgressMonitor = progressMonitor;
         myProgressMonitor.begin("AbsolutPlacer", 1);
         
-        try {
-            if (!graph.getChildren().isEmpty()) {
-                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
-                
-                // first, move the root
-                parent.setX(parent.getX() - findMinimalX(parent));
-                // a little offset
-                parent.setX(parent.getX() + 10.0); // TODO remove magic number
-                // now we update the whole tree to absolute X 
-                absoluteTreeCoords(parent);
-            }
-        } catch (Exception e) {
-            // TODO properly handle exception
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (!graph.getChildren().isEmpty()) {
+            ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
+            
+            // first, move the root
+            parent.setX(parent.getX() - findMinimalX(parent));
+            // a little offset
+            parent.setX(parent.getX() + 10.0); // TODO remove magic number
+            // now we update the whole tree to absolute X 
+            absoluteTreeCoords(parent);
         }
-        
+
         myProgressMonitor.done();
         
     }

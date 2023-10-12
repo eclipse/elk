@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.yconstree.p3relative.RelativeXPlacerStrategy;
 import org.eclipse.elk.alg.yconstree.p4absolute.AbsoluteXPlacerStrategy;
 import org.eclipse.elk.alg.yconstree.p5edgerouting.EdgerouterStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -40,14 +41,14 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
         ElkNode root = YconstreeUtil.findRoot(graph);
         graph.setProperty(InternalProperties.ROOT_NODE, root);
         if (root == null) {
-            throw new IllegalArgumentException("The given graph is not a tree!");
+            throw new UnsupportedConfigurationException("The given graph is not a tree!");
         }
         
         for (ElkNode child : graph.getChildren()) {
             int numberOfParents;
             numberOfParents = child.getIncomingEdges().size();
             if (numberOfParents > 1) {
-                throw new IllegalArgumentException("The given graph is not an acyclic tree!");
+                throw new UnsupportedConfigurationException("The given graph is not an acyclic tree!");
             }
         }
 

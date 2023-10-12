@@ -45,22 +45,16 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         
         spacingNodeNode = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
         
-        try {
-            if (!graph.getChildren().isEmpty()) {
-                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
-                
-                String strategy = graph.getProperty(YconstreeOptions.LAYOUT_STRATEGY);
-                if (strategy == null || strategy.equals("straight")) { //TODO use enum instead of string for strategy
-                    yConsTreeStep(parent);
-                } else {
-                    alternativeYConsTreeStep(parent);
-                }
-                
+        if (!graph.getChildren().isEmpty()) {
+            ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
+            
+            String strategy = graph.getProperty(YconstreeOptions.LAYOUT_STRATEGY);
+            if (strategy == null || strategy.equals("straight")) { //TODO use enum instead of string for strategy
+                yConsTreeStep(parent);
+            } else {
+                alternativeYConsTreeStep(parent);
             }
-        } catch (Exception e) {
-            // TODO properly handle exceptions
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
         }
         
         myProgressMonitor.done();
@@ -379,7 +373,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      */
     private void sortSubTrees(final List<ElkNode> children) {
         
-        // fist, we sort the SubTrees by the Y-coordinate of their root.
+        // first, we sort the SubTrees by the Y-coordinate of their root.
         Collections.sort(children, new NodeComparator());
         
         // now we need to put them in a V-shape 

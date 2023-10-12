@@ -30,19 +30,14 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        //elkGraph.setX(0.0);
+
         myProgressMonitor = progressMonitor;
         myProgressMonitor.begin("YPlacer", 1);
         
-        try {
-            if (!graph.getChildren().isEmpty()) {
-                ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
-                setYLevels(parent, 0.0);
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            //      Handle this exception properly
-            e.printStackTrace();
+
+        if (!graph.getChildren().isEmpty()) {
+            ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
+            setYLevels(parent, 0.0);
         }
         
         myProgressMonitor.done();
@@ -58,7 +53,6 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
         // TODO figure out what below todo means and whether it is still relevant
         // TODO: Y-Level_Constraints, remove different heightlevels.
         if (node.hasProperty(YconstreeOptions.VERTICAL_CONSTRAINT)) {
-            myProgressMonitor.log("hier hab ich einen Constraint");
             minHeight = node.getProperty(YconstreeOptions.VERTICAL_CONSTRAINT);
         }
         node.setY(minHeight);
