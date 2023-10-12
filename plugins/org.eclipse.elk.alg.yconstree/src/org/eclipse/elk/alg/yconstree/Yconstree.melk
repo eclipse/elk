@@ -9,6 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.yconstree
 
+import org.eclipse.elk.alg.yconstree.EdgeRoutingStrategy
 import org.eclipse.elk.alg.yconstree.YconstreeLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 
@@ -28,22 +29,13 @@ algorithm yconstree(YconstreeLayoutProvider) {
     metadataClass options.YconstreeOptions
     category org.eclipse.elk.tree
     features multi_edges, edge_labels
-    supports org.eclipse.elk.spacing.nodeNode = 80
-    supports org.eclipse.elk.spacing.edgeLabel = 5
-    supports org.eclipse.elk.aspectRatio = 1.6f
-    supports org.eclipse.elk.randomSeed = 1
-    supports org.eclipse.elk.separateConnectedComponents = true
-    supports org.eclipse.elk.padding = new ElkPadding(50)
+    supports org.eclipse.elk.spacing.nodeNode = 20
+    supports org.eclipse.elk.padding = new ElkPadding(5)
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.portConstraints
     supports org.eclipse.elk.edgeLabels.inline = false
     // Common node micro layout
     supports org.eclipse.elk.omitNodeMicroLayout
-    supports org.eclipse.elk.nodeSize.fixedGraphSize
-    supports org.eclipse.elk.nodeSize.options
-    supports org.eclipse.elk.nodeSize.constraints
-    supports org.eclipse.elk.nodeLabels.placement
-    supports org.eclipse.elk.portLabels.placement
     supports verticalConstraint
     supports layoutStrategy
     supports org.eclipse.elk.margins
@@ -56,7 +48,7 @@ option verticalConstraint: double {
 }
 
 
-option layoutStrategy: String {
+option layoutStrategy: EdgeRoutingStrategy {
     label "Strategy for the layout of it's children. 'straight' for straight line drawings, 'bend' for a possible bend"
     targets nodes
 }

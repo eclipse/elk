@@ -22,7 +22,6 @@ import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.properties.IProperty;
 
 /**
  * Node placer that positions nodes horizontally using coordinates that are relative to parent nodes.
@@ -33,10 +32,9 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
 
     private IElkProgressMonitor myProgressMonitor;
     private double spacingNodeNode;
-    
-    // TODO remove magic number, make const or property
+
     // a constant for moving every Outline to a minimal y-pos
-    private double minimalY = -100.0;
+    private final static double MINIMAL_Y = -100.0;
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
@@ -48,23 +46,26 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         if (!graph.getChildren().isEmpty()) {
             ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
             
-            String strategy = graph.getProperty(YconstreeOptions.LAYOUT_STRATEGY);
-            if (strategy == null || strategy.equals("straight")) { //TODO use enum instead of string for strategy
-                yConsTreeStep(parent);
-            } else {
-                alternativeYConsTreeStep(parent);
+            switch (graph.getProperty(YconstreeOptions.LAYOUT_STRATEGY)) {
+                case STRAIGHT:
+                    yConsTreeStep(parent);
+                    break;
+                case BEND:
+                    alternativeYConsTreeStep(parent);
+                    break;
+                default:
+                    break;   
             }
-
         }
-        
+
         myProgressMonitor.done();
     }
     
     private double outlineDistance(final OutlineNode outline1, final OutlineNode outline2) {
         
-        OutlineNode changedOutline1 = new OutlineNode(outline1.getRelativeX(), minimalY, 
+        OutlineNode changedOutline1 = new OutlineNode(outline1.getRelativeX(), MINIMAL_Y, 
                 new OutlineNode(0.0, outline1.getAbsoluteY(), outline1.getNext()));
-        OutlineNode changedOutline2 = new OutlineNode(outline2.getRelativeX(), minimalY, 
+        OutlineNode changedOutline2 = new OutlineNode(outline2.getRelativeX(), MINIMAL_Y, 
                 new OutlineNode(0.0, outline2.getAbsoluteY(), outline2.getNext()));
         
         // the return value
@@ -78,7 +79,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         double newdist;
         
         
-        // fist run (compare points of o1  with o2)
+        // first run (compare points of o1  with o2)
         o1 = changedOutline1;
         o2 = changedOutline2;
         x1 = o1.getRelativeX();
@@ -457,7 +458,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             }
             // find fiting position in the lol of b
             OutlineNode bItterator = new OutlineNode(b.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX(),
-                    minimalY, b.getProperty(InternalProperties.LEFT_OUTLINE).getNext());
+                    MINIMAL_Y, b.getProperty(InternalProperties.LEFT_OUTLINE).getNext());
             double rAbsX = bItterator.getRelativeX() + b.getX();
             while (bItterator.getNext().getAbsoluteY() <= lastL.getAbsoluteY()) {
                 bItterator = bItterator.getNext();
@@ -490,7 +491,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             }
             // find fitting position in the rol of a
             OutlineNode aItterator = new OutlineNode(a.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX(), 
-                    minimalY, a.getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
+                    MINIMAL_Y, a.getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
             double aAbsX = aItterator.getRelativeX() + a.getX();
             while (aItterator.getNext().getAbsoluteY() <= lastB.getAbsoluteY()) {
                 aItterator = aItterator.getNext();
