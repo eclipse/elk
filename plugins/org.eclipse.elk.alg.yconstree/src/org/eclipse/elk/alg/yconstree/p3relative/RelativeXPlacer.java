@@ -426,10 +426,10 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         // set min and max values
         graph.setProperty(InternalProperties.MIN_X, graph.getX() - margins.left);
         graph.setProperty(InternalProperties.MAX_X, 
-                graph.getX() + margins.right + spacingNodeNode / 2 + graph.getWidth());
+                graph.getX() + margins.right + graph.getWidth());
         graph.setProperty(InternalProperties.MIN_Y, graph.getY() - margins.top);
         graph.setProperty(InternalProperties.MAX_Y,
-                graph.getY() + margins.bottom + spacingNodeNode / 2 + graph.getHeight());
+                graph.getY() + margins.bottom + graph.getHeight());
         graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, graph.getProperty(InternalProperties.LEFT_OUTLINE)
                 .getNext().getNext().getAbsoluteY());
         

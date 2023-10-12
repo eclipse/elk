@@ -50,8 +50,6 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
      * @param minHeight: Node gets minimum this height.
      */
     private void setYLevels(final ElkNode node, double minHeight) {
-        // TODO figure out what below todo means and whether it is still relevant
-        // TODO: Y-Level_Constraints, remove different heightlevels.
         if (node.hasProperty(YconstreeOptions.VERTICAL_CONSTRAINT)) {
             minHeight = node.getProperty(YconstreeOptions.VERTICAL_CONSTRAINT);
         }
