@@ -31,9 +31,8 @@ import org.eclipse.elk.graph.properties.IProperty;
 public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
     
 
-    private IElkProgressMonitor pm;
-    //TODO remove unused or get value from property and actually use it
-    private double spacingNodeNode = 0.0;
+    private IElkProgressMonitor myProgressMonitor;
+    private double spacingNodeNode;
     
     // TODO remove magic number, make const or property
     // a constant for moving every Outline to a minimal y-pos
@@ -41,9 +40,8 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
-        pm = progressMonitor;
-        pm.begin("XPlacer", 1);
+        myProgressMonitor = progressMonitor;
+        myProgressMonitor.begin("XPlacer", 1);
         
         spacingNodeNode = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
         
@@ -65,7 +63,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             e.printStackTrace();
         }
         
-        pm.done();
+        myProgressMonitor.done();
     }
     
     private double outlineDistance(final OutlineNode outline1, final OutlineNode outline2) {
@@ -146,8 +144,6 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
      */
     private void yConsTreeStep(final ElkNode graph) {
         
-        ElkMargin margins = graph.getProperty(CoreOptions.MARGINS);
-        
         makeSimpleOutlines(graph);
         
         if (!graph.getOutgoingEdges().isEmpty()) {
@@ -189,8 +185,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             double betterMoveRoot = (children.get(0).getX() + children.get(children.size() - 1).getX() 
                     + children.get(children.size() - 1).getWidth() - graph.getWidth()) / 2.0 - graph.getX();
             double newMoveRoot;
-            
-            //if better moveRoote is left of moveRoot
+
             if (betterMoveRoot < moveRoot) {
                 OutlineNode rol;
                 double rolX, posX;
@@ -215,8 +210,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
                 }
                 moveRoot = betterMoveRoot;
             }
-            
-            //if better moveRoote is right of moveRoot
+
             if (betterMoveRoot > moveRoot) {
                 OutlineNode lol;
                 double lolX, posX;
@@ -277,9 +271,7 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             
         }
     }
-    
-    
-    
+
     private void alternativeYConsTreeStep(final ElkNode graph) {
         
         makeSimpleOutlines(graph);
@@ -419,22 +411,30 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
         
         // set the properties for left and right outlines
         OutlineNode endpart;
-        endpart = new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom, 
-                new OutlineNode(graph.getWidth() / 2.0, graph.getY() + graph.getHeight() + margins.bottom, null));
-        graph.setProperty(InternalProperties.LEFT_OUTLINE, new OutlineNode((-margins.left) 
-                + graph.getWidth() / 2.0, graph.getY() - margins.top, new OutlineNode(-graph.getWidth() / 2.0, 
-                        graph.getY() - margins.top, endpart)));
-        endpart = new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom, new OutlineNode( 
-                -graph.getWidth() / 2.0, graph.getY() + graph.getHeight() + margins.bottom, null));
-        graph.setProperty(InternalProperties.RIGHT_OUTLINE, new OutlineNode(graph.getWidth() / 2.0 
-                + margins.right, graph.getY() - margins.top, new OutlineNode(graph.getWidth() / 2.0, graph.getY() 
-                        - margins.top, endpart)));
+        endpart = new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom + spacingNodeNode / 2, 
+                new OutlineNode(graph.getWidth() / 2.0, 
+                        graph.getY() + graph.getHeight() + margins.bottom + spacingNodeNode / 2, null));
         
+        graph.setProperty(InternalProperties.LEFT_OUTLINE, new OutlineNode((-margins.left - spacingNodeNode / 2) 
+                + graph.getWidth() / 2.0, graph.getY() - margins.top - spacingNodeNode / 2, 
+                new OutlineNode(-graph.getWidth() / 2.0, graph.getY() - margins.top, endpart)));
+        
+        endpart = new OutlineNode(0.0, graph.getY() + graph.getHeight() + margins.bottom,
+                new OutlineNode(-graph.getWidth() / 2.0, 
+                        graph.getY() + graph.getHeight() + margins.bottom + spacingNodeNode / 2, null));
+        
+        graph.setProperty(InternalProperties.RIGHT_OUTLINE, new OutlineNode(graph.getWidth() / 2.0 
+                + margins.right + spacingNodeNode / 2, graph.getY() - margins.top,
+                new OutlineNode(graph.getWidth() / 2.0, graph.getY() - margins.top - spacingNodeNode / 2, endpart)));
+        
+        // TODO double check whether this is the best way and place to calculate this
         // set min and max values
         graph.setProperty(InternalProperties.MIN_X, graph.getX() - margins.left);
-        graph.setProperty(InternalProperties.MAX_X, graph.getX() + margins.right + graph.getWidth());
+        graph.setProperty(InternalProperties.MAX_X, 
+                graph.getX() + margins.right + spacingNodeNode / 2 + graph.getWidth());
         graph.setProperty(InternalProperties.MIN_Y, graph.getY() - margins.top);
-        graph.setProperty(InternalProperties.MAX_Y, graph.getY() + margins.bottom + graph.getHeight());
+        graph.setProperty(InternalProperties.MAX_Y,
+                graph.getY() + margins.bottom + spacingNodeNode / 2 + graph.getHeight());
         graph.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, graph.getProperty(InternalProperties.LEFT_OUTLINE)
                 .getNext().getNext().getAbsoluteY());
         
@@ -516,14 +516,10 @@ public class RelativeXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
             b.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, a.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
         }
     }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
-     */
+
     @Override
     public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> 
-    getLayoutProcessorConfiguration(ElkNode graph) {
-        // TODO Auto-generated method stub
+    getLayoutProcessorConfiguration(final ElkNode graph) {
         return null;
     }
 
