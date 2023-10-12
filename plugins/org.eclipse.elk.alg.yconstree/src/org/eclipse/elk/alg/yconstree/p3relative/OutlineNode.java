@@ -10,7 +10,7 @@
 package org.eclipse.elk.alg.yconstree.p3relative;
 
 /**
- * @author claas
+ * An outline node is the basic building block of outline. It has a position and a reference to the next outline node.
  *
  */
 public class OutlineNode {
@@ -83,7 +83,7 @@ public class OutlineNode {
     }
     
     /**
-     * Print a full outline
+     * Print a full outline.
      */
     public void printFullOutline() {
         System.out.println(this.toString());

@@ -16,11 +16,14 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Strategies for absolute node placement.
  *
  */
 public enum AbsoluteXPlacerStrategy implements ILayoutPhaseFactory<YconstreeLayoutPhases, ElkNode> {
 
+    /**
+     * Compute absolute x-coordinates based on relative coordinates
+     */
     ABSOLUTE_XPLACING;
 
     @Override
@@ -31,7 +34,7 @@ public enum AbsoluteXPlacerStrategy implements ILayoutPhaseFactory<YconstreeLayo
 
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the node orderer " + this.toString());
+                    "No implementation is available for the node placer " + this.toString());
         }
     }
 

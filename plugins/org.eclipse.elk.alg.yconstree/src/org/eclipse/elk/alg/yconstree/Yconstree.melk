@@ -11,8 +11,6 @@ package org.eclipse.elk.alg.yconstree
 
 import org.eclipse.elk.alg.yconstree.YconstreeLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
-import org.eclipse.elk.core.util.ExclusiveBounds
-import org.eclipse.elk.core.options.TopdownNodeTypes
 
 /**
  * Declarations for the ELK Y Constraint Tree layout algorithm.

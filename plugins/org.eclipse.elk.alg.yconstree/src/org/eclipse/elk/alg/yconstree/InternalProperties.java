@@ -17,10 +17,17 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 /**
- * @author claas
+ * The internal properties of the tree layouter. Properties that are used internally
+ * but do not need to be public are stored here.
  *
  */
 public final class InternalProperties {
+    
+    /**
+     * Private constructor to prevent initialization.
+     */
+    private InternalProperties() { }
+
     /**
      * Defines the left outline of this subtree.
      */
@@ -32,7 +39,7 @@ public final class InternalProperties {
     public static final IProperty<OutlineNode> RIGHT_OUTLINE = new Property<OutlineNode>("RIGHT_OUTLINE");
     
     /**
-     * Defines the maximum depth (as a coordinate)  outdated.
+     * Defines the maximum depth (as a coordinate) outdated.
      */
     public static final IProperty<Double> MAX_DEPTH = new Property<Double>("MAX_DEPTH");
     
@@ -43,10 +50,13 @@ public final class InternalProperties {
     
     /** Defines the canvas of the tree. */
     public static final IProperty<Double> MIN_X = new Property<Double>("MIN_X");
+    
     /** Defines the canvas of the tree. */
     public static final IProperty<Double> MAX_X = new Property<Double>("MAX_X");
+    
     /** Defines the canvas of the tree. */
     public static final IProperty<Double> MIN_Y = new Property<Double>("MIN_Y");
+    
     /** Defines the canvas of the tree. */
     public static final IProperty<Double> MAX_Y = new Property<Double>("MAX_Y");
     

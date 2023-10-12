@@ -8,18 +8,22 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 package org.eclipse.elk.alg.yconstree;
+
 /**
- * This algorithm's layout phases. each phase has its own strategy factory.
+ * This algorithm's layout phases. Each phase has its own strategy factory.
  */
 public enum YconstreeLayoutPhases {
     
-    /** Phase 1. */
+    /** Phase 1. Vertical placement of nodes.*/
     P1_NODE_Y_PLACEMENT,
-    /** Phase 2. */
-    P2_NODE_RELATIV_PLACEMENT,
-    /** Phase 3. */
+    
+    /** Phase 2. Horizontal placement of nodes.*/
+    P2_NODE_RELATIVE_PLACEMENT,
+    
+    /** Phase 3. Computation of absolute coordinates.*/
     P3_NODE_ABSOLUTE_PLACEMENT,
-    /** Phase 4. */
+    
+    /** Phase 4. Edge routing.*/
     P4_EDGE_ROUTING;
     
 }

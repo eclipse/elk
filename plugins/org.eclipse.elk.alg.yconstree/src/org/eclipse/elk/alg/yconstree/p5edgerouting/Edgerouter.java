@@ -22,19 +22,18 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.EList;
 
 /**
- * @author claas
+ * An edge router that draws straight edges between nodes.
  *
  */
 public class Edgerouter implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
     
-    private IElkProgressMonitor pm;
+    private IElkProgressMonitor myProgressMonitor;
     
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
-        pm = progressMonitor;
-        pm.begin("EdgeRouter", 1);
+        myProgressMonitor = progressMonitor;
+        myProgressMonitor.begin("EdgeRouter", 1);
         
         try {
             if (!graph.getChildren().isEmpty()) {
@@ -44,20 +43,17 @@ public class Edgerouter implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> 
                 setCanvas(graph);
             }
         } catch (Exception e) {
+            // TODO properly handle exceptions
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
-        pm.done();
+        myProgressMonitor.done();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
-     */
     @Override
     public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> getLayoutProcessorConfiguration(
             final ElkNode graph) {
-        // TODO Auto-generated method stub
         return null;
     }
     
@@ -84,7 +80,7 @@ public class Edgerouter implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> 
     private void setCanvas(final ElkNode graph) {
         ElkNode parent = graph.getChildren().get(0);
         graph.setHeight(parent.getProperty(InternalProperties.MAX_Y) 
-                - parent.getProperty(InternalProperties.MIN_Y) + 20.0);
+                - parent.getProperty(InternalProperties.MIN_Y) + 20.0); //TODO remove magic numbers
         graph.setWidth(parent.getProperty(InternalProperties.MAX_X) 
                 - parent.getProperty(InternalProperties.MIN_X) + 20.0);
     }

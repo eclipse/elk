@@ -22,7 +22,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Layout provider for the force layout algorithms.
+ * Layout provider for the y constraint tree layout algorithms.
  */
 public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
     
@@ -31,7 +31,7 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
         AlgorithmAssembler.<YconstreeLayoutPhases, ElkNode>create(YconstreeLayoutPhases.class);
 
     @Override
-    public void layout(ElkNode graph, IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(graph);
 
         progressMonitor.begin("Tree layout", algorithm.size());
@@ -58,13 +58,19 @@ public final class YconstreeLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.done();
     }
     
-    public List<ILayoutProcessor<ElkNode>> assembleAlgorithm(ElkNode graph) {
+    /**
+     * Configure the layout provider by assembling different layout processors.
+     * 
+     * @param graph The graph which shall be layout.
+     * @return The list of assembled layout processors.
+     */
+    public List<ILayoutProcessor<ElkNode>> assembleAlgorithm(final ElkNode graph) {
         algorithmAssembler.reset();
 
         // Configure phases
         algorithmAssembler.setPhase(YconstreeLayoutPhases.P1_NODE_Y_PLACEMENT,
                 NodeYPlacerStrategy.SIMPLE_YPLACING);
-        algorithmAssembler.setPhase(YconstreeLayoutPhases.P2_NODE_RELATIV_PLACEMENT,
+        algorithmAssembler.setPhase(YconstreeLayoutPhases.P2_NODE_RELATIVE_PLACEMENT,
                 RelativeXPlacerStrategy.SIMPLE_XPLACING);
         algorithmAssembler.setPhase(YconstreeLayoutPhases.P3_NODE_ABSOLUTE_PLACEMENT,
                 AbsoluteXPlacerStrategy.ABSOLUTE_XPLACING);

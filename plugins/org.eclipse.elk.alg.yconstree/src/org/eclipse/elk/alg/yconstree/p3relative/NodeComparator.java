@@ -12,17 +12,13 @@ package org.eclipse.elk.alg.yconstree.p3relative;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Comparator for sorting ElkNodes according to their y positions.
  *
  */
 class NodeComparator implements java.util.Comparator<ElkNode> {
 
-    /* (non-Javadoc)
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     @Override
     public int compare(final ElkNode a, final ElkNode b) {
-        // TODO Auto-generated method stub
         return (int) (a.getY() - b.getY()); // might be problematic when very small numbers are compared 
     }
 }

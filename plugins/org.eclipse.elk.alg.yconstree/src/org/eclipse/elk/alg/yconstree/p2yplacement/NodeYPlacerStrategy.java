@@ -15,11 +15,15 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Vertical node placement strategies.
  *
  */
 public enum NodeYPlacerStrategy implements ILayoutPhaseFactory<YconstreeLayoutPhases, ElkNode> {
 
+    /**
+     * Simple strategy for setting y coordinates of nodes. Vertical constraints are considered and if none are defined
+     * the fallback is to compute a position based on the node's location in the tree.
+     */
     SIMPLE_YPLACING;
 
     @Override
@@ -30,7 +34,7 @@ public enum NodeYPlacerStrategy implements ILayoutPhaseFactory<YconstreeLayoutPh
 
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the node orderer " + this.toString());
+                    "No implementation is available for the node placer " + this.toString());
         }
     }
 

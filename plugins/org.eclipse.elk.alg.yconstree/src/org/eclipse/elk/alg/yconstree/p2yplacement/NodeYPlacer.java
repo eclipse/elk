@@ -18,20 +18,21 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Node placer to position nodes vertically. Nodes that have a vertical constraint are placed according to that 
+ * constraint and other nodes are positioned automatically according to their position in the tree.
  *
  */
 public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
     
+    // TODO change this to a property
     private final double STANDARD_DISTANCE = 50.0;
-    private IElkProgressMonitor pm;
+    private IElkProgressMonitor myProgressMonitor;
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
         //elkGraph.setX(0.0);
-        pm = progressMonitor;
-        pm.begin("YPlacer", 1);
+        myProgressMonitor = progressMonitor;
+        myProgressMonitor.begin("YPlacer", 1);
         
         try {
             if (!graph.getChildren().isEmpty()) {
@@ -40,10 +41,11 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
+            //      Handle this exception properly
             e.printStackTrace();
         }
         
-        pm.done();
+        myProgressMonitor.done();
     }
     
     /**
@@ -53,11 +55,11 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
      * @param minHeight: Node gets minimum this height.
      */
     private void setYLevels(final ElkNode node, double minHeight) {
+        // TODO figure out what below todo means and whether it is still relevant
         // TODO: Y-Level_Constraints, remove different heightlevels.
         if (node.hasProperty(YconstreeOptions.VERTICAL_CONSTRAINT)) {
-            pm.log("hier hab ich einen Constraint");
+            myProgressMonitor.log("hier hab ich einen Constraint");
             minHeight = node.getProperty(YconstreeOptions.VERTICAL_CONSTRAINT);
-            //System.out.println("Hab was");
         }
         node.setY(minHeight);
         double newMinHeight = minHeight + STANDARD_DISTANCE + node.getHeight();
@@ -67,13 +69,9 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
-     */
     @Override
     public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> 
                 getLayoutProcessorConfiguration(final ElkNode graph) {
-        // TODO Auto-generated method stub
         return null;
     }
     

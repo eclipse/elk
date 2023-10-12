@@ -16,11 +16,14 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Edge routing strategies.
  *
  */
 public enum EdgerouterStrategy implements ILayoutPhaseFactory<YconstreeLayoutPhases, ElkNode> {
 
+    /**
+     * Straight edge routing.
+     */
     DIRECT_ROUTING;
 
     @Override
@@ -31,7 +34,7 @@ public enum EdgerouterStrategy implements ILayoutPhaseFactory<YconstreeLayoutPha
 
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the node orderer " + this.toString());
+                    "No implementation is available for the edge router " + this.toString());
         }
     }
 

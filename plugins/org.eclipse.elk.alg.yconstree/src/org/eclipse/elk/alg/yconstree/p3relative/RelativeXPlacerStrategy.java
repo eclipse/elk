@@ -15,11 +15,15 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Horizontal node placement strategies.
  *
  */
 public enum RelativeXPlacerStrategy implements ILayoutPhaseFactory<YconstreeLayoutPhases, ElkNode> {
 
+    /**
+     * Simple strategy for setting the horizontal positions of nodes. These positions are relative to their parents
+     * and chosen such that overlaps are avoided.
+     */
     SIMPLE_XPLACING;
 
     @Override
@@ -30,7 +34,7 @@ public enum RelativeXPlacerStrategy implements ILayoutPhaseFactory<YconstreeLayo
 
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the node orderer " + this.toString());
+                    "No implementation is available for the node placer " + this.toString());
         }
     }
 

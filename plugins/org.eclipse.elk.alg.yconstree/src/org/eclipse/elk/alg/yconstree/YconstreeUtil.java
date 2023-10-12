@@ -17,6 +17,11 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 public final class YconstreeUtil {
     
     /**
+     * Private constructor to prevent initilization.
+     */
+    private YconstreeUtil() { }
+    
+    /**
     * Computes the root node of a graph.
     * @param graph
     * @return Root node of graph.

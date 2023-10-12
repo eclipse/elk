@@ -17,21 +17,17 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * @author claas
+ * Computes absolute x coordinates from the previously computed relative coordinates.
  *
  */
 public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
     
-    private IElkProgressMonitor pm;
+    private IElkProgressMonitor myProgressMonitor;
     
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutProcessor#process(java.lang.Object, org.eclipse.elk.core.util.IElkProgressMonitor)
-     */
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        // TODO Auto-generated method stub
-        pm = progressMonitor;
-        pm.begin("AbsolutPlacer", 1);
+        myProgressMonitor = progressMonitor;
+        myProgressMonitor.begin("AbsolutPlacer", 1);
         
         try {
             if (!graph.getChildren().isEmpty()) {
@@ -40,56 +36,54 @@ public class AbsoluteXPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkN
                 // first, move the root
                 parent.setX(parent.getX() - findMinimalX(parent));
                 // a little offset
-                parent.setX(parent.getX() + 10.0);
+                parent.setX(parent.getX() + 10.0); // TODO remove magic number
                 // now we update the whole tree to absolute X 
                 absoluteTreeCoords(parent);
             }
         } catch (Exception e) {
+            // TODO properly handle exception
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
-        pm.done();
+        myProgressMonitor.done();
         
     }
     
     
-    private double findMinimalX(ElkNode t) {
-        int numOfChildren = t.getOutgoingEdges().size();
+    private double findMinimalX(final ElkNode tree) {
+        int numOfChildren = tree.getOutgoingEdges().size();
         if (numOfChildren == 0) {
-            return t.getX();
+            return tree.getX();
         } else {
             double minSubtreeX = 0.0;
             double testX = 0.0;
             for (int i = 0; i < numOfChildren; i++) {
-                testX = findMinimalX((ElkNode) t.getOutgoingEdges().get(i).getTargets().get(0));
+                testX = findMinimalX((ElkNode) tree.getOutgoingEdges().get(i).getTargets().get(0));
                 minSubtreeX = (testX < minSubtreeX) ? testX : minSubtreeX;
             }
-            return minSubtreeX + t.getX();
+            return minSubtreeX + tree.getX();
         }
     }
     
-    private void absoluteTreeCoords(ElkNode t) {
-        int numOfChildren = t.getOutgoingEdges().size();
+    private void absoluteTreeCoords(final ElkNode tree) {
+        int numOfChildren = tree.getOutgoingEdges().size();
         // a little offset
-        t.setY(t.getY() + 10.0);
+        tree.setY(tree.getY() + 10.0); // TODO remove magic number
         if (numOfChildren > 0) {
             ElkNode child;
             for (int i = 0; i < numOfChildren; i++) {
-                child = (ElkNode) t.getOutgoingEdges().get(i).getTargets().get(0);
-                child.setX(child.getX() + t.getX());
+                child = (ElkNode) tree.getOutgoingEdges().get(i).getTargets().get(0);
+                child.setX(child.getX() + tree.getX());
                 absoluteTreeCoords(child);
             }
         }
     }
     
     
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.core.alg.ILayoutPhase#getLayoutProcessorConfiguration(java.lang.Object)
-     */
     @Override
-    public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> getLayoutProcessorConfiguration(ElkNode graph) {
-        // TODO Auto-generated method stub
+    public LayoutProcessorConfiguration<YconstreeLayoutPhases, ElkNode> getLayoutProcessorConfiguration(
+            final ElkNode graph) {
         return null;
     }
 
