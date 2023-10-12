@@ -36,20 +36,36 @@ algorithm yconstree(YconstreeLayoutProvider) {
     supports org.eclipse.elk.edgeLabels.inline = false
     // Common node micro layout
     supports org.eclipse.elk.omitNodeMicroLayout
+    supports org.eclipse.elk.margins
+    // Algorithm specific properties
     supports verticalConstraint
     supports layoutStrategy
-    supports org.eclipse.elk.margins
+    supports layerDistance
+    
 }
 
 
 option verticalConstraint: double {
     label "Fixed vertical position"
+    description
+        "The Y position that the node should be fixed at."
     targets nodes
 }
 
 
 option layoutStrategy: EdgeRoutingStrategy {
-    label "Strategy for the layout of it's children. 'straight' for straight line drawings, 'bend' for a possible bend"
+    label "Edge layout strategy"
+    description
+        "Strategy for the layout of the children. 'straight' for straight line drawings, 'bend' for a possible bend"
     targets nodes
+    default = EdgeRoutingStrategy.STRAIGHT
+}
+
+option layerDistance: double {
+    label "Layer distance"
+    description
+        "The distance to use between nodes of different layers if no vertical constraints are set."
+    targets parents
+    default = 50.0
 }
 

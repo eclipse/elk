@@ -23,9 +23,8 @@ import org.eclipse.elk.graph.ElkNode;
  *
  */
 public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode> {
-    
-    // TODO change this to a property
-    private final double STANDARD_DISTANCE = 50.0;
+
+    private double layerDistance;
     private IElkProgressMonitor myProgressMonitor;
     
     @Override
@@ -34,6 +33,7 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
         myProgressMonitor = progressMonitor;
         myProgressMonitor.begin("YPlacer", 1);
         
+        layerDistance = graph.getProperty(YconstreeOptions.LAYER_DISTANCE);
 
         if (!graph.getChildren().isEmpty()) {
             ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
@@ -56,7 +56,7 @@ public class NodeYPlacer implements ILayoutPhase<YconstreeLayoutPhases, ElkNode>
             minHeight = node.getProperty(YconstreeOptions.VERTICAL_CONSTRAINT);
         }
         node.setY(minHeight);
-        double newMinHeight = minHeight + STANDARD_DISTANCE + node.getHeight();
+        double newMinHeight = minHeight + layerDistance + node.getHeight();
         for (int i = 0; i < node.getOutgoingEdges().size(); i++) {
             ElkNode child = (ElkNode) node.getOutgoingEdges().get(i).getTargets().get(0);
             setYLevels(child, newMinHeight);
