@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.meta.ide;
 
+import com.google.inject.Binder;
+import com.google.inject.name.Names;
 import org.eclipse.elk.core.meta.ide.contentassist.antlr.MetaDataParser;
 import org.eclipse.elk.core.meta.ide.contentassist.antlr.internal.InternalMetaDataLexer;
 import org.eclipse.xtext.ide.LexerIdeBindings;
@@ -19,12 +21,9 @@ import org.eclipse.xtext.ide.editor.contentassist.antlr.AntlrProposalConflictHel
 import org.eclipse.xtext.ide.editor.contentassist.antlr.IContentAssistParser;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 import org.eclipse.xtext.ide.refactoring.IRenameStrategy2;
-import org.eclipse.xtext.ide.server.rename.IRenameService2;
-import org.eclipse.xtext.ide.server.rename.RenameService2;
+import org.eclipse.xtext.ide.server.rename.IRenameService;
+import org.eclipse.xtext.ide.server.rename.RenameService;
 import org.eclipse.xtext.xbase.ide.DefaultXbaseIdeModule;
-
-import com.google.inject.Binder;
-import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {@link MetaDataIdeModule}.
@@ -55,8 +54,8 @@ public abstract class AbstractMetaDataIdeModule extends DefaultXbaseIdeModule {
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
-	public Class<? extends IRenameService2> bindIRenameService() {
-		return RenameService2.class;
+	public Class<? extends IRenameService> bindIRenameService() {
+		return RenameService.class;
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.ui.refactoring.RefactorElementNameFragment2
