@@ -86,6 +86,8 @@ public final class NodeContext {
     public final double portLabelSpacingVertical;
     /** Margin to leave around the set of ports on each side. */
     public final ElkMargin surroundingPortMargins;
+    /** Whether node is being laid out in top-down layout mode. */
+    public final boolean topdownLayout;
 
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +132,9 @@ public final class NodeContext {
     public NodeContext(final GraphAdapter<?> parentGraph, final NodeAdapter<?> node) {
         this.node = node;
         this.nodeSize = new KVector(node.getSize());
+        
+        // Top-down layout
+        topdownLayout = node.getProperty(CoreOptions.TOPDOWN_LAYOUT);
         
         // Compound node
         treatAsCompoundNode = node.isCompoundNode() || node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);

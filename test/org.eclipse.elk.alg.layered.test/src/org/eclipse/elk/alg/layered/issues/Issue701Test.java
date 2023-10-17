@@ -415,8 +415,7 @@ public class Issue701Test {
             // org.eclipse.elk.alg.common.nodespacing.internal.algorithm.HorizontalPortPlacementSizeCalculator.calculateHorizontalNodeSizeRequiredByFreePorts(NodeContext,
             // PortSide)
             assertEquals("Wrong node width according to port(s) label width.",
-                    Math.max(spacingBetweenPort + Math.max(portLabelWidth, oppositePortLabelWidth) + spacingBetweenPort,
-                            node.getWidth()),
+                    spacingBetweenPort + Math.max(portLabelWidth, oppositePortLabelWidth) + spacingBetweenPort,
                     node.getWidth(), 0);
         } else {
             double spacingLabelPort = port.getProperty(CoreOptions.SPACING_LABEL_PORT_HORIZONTAL);
@@ -482,7 +481,7 @@ public class Issue701Test {
                                     + Math.max(spacingBetweenPort, nodePadding.getBottom()));
 
             assertEquals("Wrong node height according to port label height.",
-                    Math.max(portHeightPlusPadding, Math.max(spacingBetweenPort, node.getHeight())), node.getHeight(), 0);
+                    Math.max(portHeightPlusPadding, spacingBetweenPort), node.getHeight(), 0);
             assertEquals("Wrong node label location.", ElkUtil.absolutePosition(node).y + nodeLabelPadding.getTop(),
                     ElkUtil.absolutePosition(nodeLabel).y, 0);
         } else {
