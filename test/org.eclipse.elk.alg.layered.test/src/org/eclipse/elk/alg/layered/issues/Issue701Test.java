@@ -481,7 +481,7 @@ public class Issue701Test {
                                     + Math.max(spacingBetweenPort, nodePadding.getBottom()));
 
             assertEquals("Wrong node height according to port label height.",
-                    Math.max(portHeightPlusPadding, spacingBetweenPort), node.getHeight(), 0);
+                    Math.max(portHeightPlusPadding, oppositePortHeightPlusPadding), node.getHeight(), 0);
             assertEquals("Wrong node label location.", ElkUtil.absolutePosition(node).y + nodeLabelPadding.getTop(),
                     ElkUtil.absolutePosition(nodeLabel).y, 0);
         } else {
