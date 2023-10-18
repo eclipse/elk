@@ -123,6 +123,9 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                     if (!nodesToPlace.isEmpty()) {
                         if (layerDiff > 0) {
                             // Case some dependency to the existing graph was found add all nodes to their layers.
+                            for (LNode toPlace : nodesToPlace) {
+                                toPlace.id += maxLayer;
+                            }
                             placeNodesToPlace();
                             // Remove all nodes since they are now placed correctly.
                             nodesToPlace.clear();
@@ -209,7 +212,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
             boolean connectedViaLabelDummy;
             if (nodesToPlace.isEmpty()) {
                 // Case the node to check already has a layer.
-                // TODO this may case an NPE if getLayer is null;
+                // This may case an NPE if getLayer is null;
                 directlyConnected = edge.getSource().getNode().getType() == NodeType.NORMAL
                         && edge.getSource().getNode().getLayer() != null
                         && edge.getSource().getNode().getLayer().id == currentLayerId;
