@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.vertiflex;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.vertiflex.options.VertiFlexOptions;
 import org.eclipse.elk.alg.vertiflex.p2yplacement.NodeYPlacerStrategy;
 import org.eclipse.elk.alg.vertiflex.p3relative.RelativeXPlacerStrategy;
 import org.eclipse.elk.alg.vertiflex.p4absolute.AbsoluteXPlacerStrategy;
@@ -19,7 +20,9 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -51,6 +54,10 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
                 throw new UnsupportedConfigurationException("The given graph is not an acyclic tree!");
             }
         }
+        
+        // check that vertical constraints are ordered in valid manner i.e. children always have higher vertical 
+        // constraints than their parents
+        checkVerticalConstraintValidity(root);
 
         for (ILayoutProcessor<ElkNode> processor : algorithm) {
             processor.process(graph, progressMonitor.subTask(1));
@@ -80,6 +87,28 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
 
         // Assemble the algorithm
         return algorithmAssembler.build(graph);
+    }
+    
+    private void checkVerticalConstraintValidity(final ElkNode root) {
+        if (root.hasProperty(VertiFlexOptions.VERTICAL_CONSTRAINT)) {
+            double rootHeight = root.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT);
+            for (ElkEdge outgoingEdge : root.getOutgoingEdges()) {
+                ElkNode child = (ElkNode) outgoingEdge.getTargets().get(0);
+                if (child.hasProperty(VertiFlexOptions.VERTICAL_CONSTRAINT)) {
+                    if (rootHeight + root.getHeight() + root.getProperty(CoreOptions.MARGINS).bottom
+                            >= child.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT) 
+                                + child.getProperty(CoreOptions.MARGINS).top) {
+                        throw new UnsupportedConfigurationException("Invalid vertical constraints. Node " 
+                            + root.getIdentifier() + " must have a smaller vertical constraint than its child " 
+                                + child.getIdentifier() + ". This includes both node's margins.");
+                    }
+                }
+            }
+        }
+        for (ElkEdge outgoingEdge : root.getOutgoingEdges()) {
+            ElkNode child = (ElkNode) outgoingEdge.getTargets().get(0);
+            checkVerticalConstraintValidity(child);
+        }
     }
 
 }
