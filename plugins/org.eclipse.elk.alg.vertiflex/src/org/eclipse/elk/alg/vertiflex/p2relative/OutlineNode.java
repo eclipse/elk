@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.vertiflex.p3relative;
+package org.eclipse.elk.alg.vertiflex.p2relative;
 
 /**
  * An outline node is the basic building block of outline. It has a position and a reference to the next outline node.

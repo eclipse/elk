@@ -7,30 +7,30 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.vertiflex.p4absolute;
+package org.eclipse.elk.alg.vertiflex.p2relative;
 
 import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
-import org.eclipse.elk.alg.vertiflex.p3relative.RelativeXPlacer;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Strategies for absolute node placement.
+ * Horizontal node placement strategies.
  *
  */
-public enum AbsoluteXPlacerStrategy implements ILayoutPhaseFactory<VertiFlexLayoutPhases, ElkNode> {
+public enum RelativeXPlacerStrategy implements ILayoutPhaseFactory<VertiFlexLayoutPhases, ElkNode> {
 
     /**
-     * Compute absolute x-coordinates based on relative coordinates
+     * Simple strategy for setting the horizontal positions of nodes. These positions are relative to their parents
+     * and chosen such that overlaps are avoided.
      */
-    ABSOLUTE_XPLACING;
+    SIMPLE_XPLACING;
 
     @Override
     public ILayoutPhase<VertiFlexLayoutPhases, ElkNode> create() {
         switch (this) {
-        case ABSOLUTE_XPLACING:
-            return new AbsoluteXPlacer();
+        case SIMPLE_XPLACING:
+            return new RelativeXPlacer();
 
         default:
             throw new IllegalArgumentException(

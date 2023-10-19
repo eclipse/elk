@@ -12,10 +12,10 @@ package org.eclipse.elk.alg.vertiflex;
 import java.util.List;
 
 import org.eclipse.elk.alg.vertiflex.options.VertiFlexOptions;
-import org.eclipse.elk.alg.vertiflex.p2yplacement.NodeYPlacerStrategy;
-import org.eclipse.elk.alg.vertiflex.p3relative.RelativeXPlacerStrategy;
-import org.eclipse.elk.alg.vertiflex.p4absolute.AbsoluteXPlacerStrategy;
-import org.eclipse.elk.alg.vertiflex.p5edgerouting.EdgerouterStrategy;
+import org.eclipse.elk.alg.vertiflex.p1yplacement.NodeYPlacerStrategy;
+import org.eclipse.elk.alg.vertiflex.p2relative.RelativeXPlacerStrategy;
+import org.eclipse.elk.alg.vertiflex.p3absolute.AbsoluteXPlacerStrategy;
+import org.eclipse.elk.alg.vertiflex.p4edgerouting.EdgerouterStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;

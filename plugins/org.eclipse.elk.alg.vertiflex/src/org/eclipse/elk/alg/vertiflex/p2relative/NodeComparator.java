@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.vertiflex.p3relative;
+package org.eclipse.elk.alg.vertiflex.p2relative;
 
 import org.eclipse.elk.graph.ElkNode;
 

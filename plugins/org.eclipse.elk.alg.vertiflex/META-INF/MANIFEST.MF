@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Automatic-Module-Name: org.eclipse.elk.alg.yconstree
+Automatic-Module-Name: org.eclipse.elk.alg.vertiflex
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK Y Constraint Tree Layout Algorithm
+Bundle-Name: VertiFlex Tree Layout Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.vertiflex;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project

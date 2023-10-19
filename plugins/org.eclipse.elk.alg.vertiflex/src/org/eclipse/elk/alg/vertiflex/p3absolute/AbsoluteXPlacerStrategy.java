@@ -7,34 +7,34 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.vertiflex.p5edgerouting;
+package org.eclipse.elk.alg.vertiflex.p3absolute;
 
 import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
-import org.eclipse.elk.alg.vertiflex.p3relative.RelativeXPlacer;
+import org.eclipse.elk.alg.vertiflex.p2relative.RelativeXPlacer;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Edge routing strategies.
+ * Strategies for absolute node placement.
  *
  */
-public enum EdgerouterStrategy implements ILayoutPhaseFactory<VertiFlexLayoutPhases, ElkNode> {
+public enum AbsoluteXPlacerStrategy implements ILayoutPhaseFactory<VertiFlexLayoutPhases, ElkNode> {
 
     /**
-     * Straight edge routing.
+     * Compute absolute x-coordinates based on relative coordinates
      */
-    DIRECT_ROUTING;
+    ABSOLUTE_XPLACING;
 
     @Override
     public ILayoutPhase<VertiFlexLayoutPhases, ElkNode> create() {
         switch (this) {
-        case DIRECT_ROUTING:
-            return new Edgerouter();
+        case ABSOLUTE_XPLACING:
+            return new AbsoluteXPlacer();
 
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the edge router " + this.toString());
+                    "No implementation is available for the node placer " + this.toString());
         }
     }
 

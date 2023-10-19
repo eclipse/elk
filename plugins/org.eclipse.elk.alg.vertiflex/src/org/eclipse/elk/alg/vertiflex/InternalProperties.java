@@ -9,7 +9,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.vertiflex;
 
-import org.eclipse.elk.alg.vertiflex.p3relative.OutlineNode;
+import org.eclipse.elk.alg.vertiflex.p2relative.OutlineNode;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.graph.ElkNode;

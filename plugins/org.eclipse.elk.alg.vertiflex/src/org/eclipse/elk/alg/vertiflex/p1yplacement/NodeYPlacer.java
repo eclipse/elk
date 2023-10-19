@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0 
  *******************************************************************************/
-package org.eclipse.elk.alg.vertiflex.p2yplacement;
+package org.eclipse.elk.alg.vertiflex.p1yplacement;
 
 import org.eclipse.elk.alg.vertiflex.InternalProperties;
 import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
