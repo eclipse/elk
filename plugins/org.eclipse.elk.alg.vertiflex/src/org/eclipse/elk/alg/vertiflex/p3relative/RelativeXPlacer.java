@@ -422,7 +422,6 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                 + margins.right + spacingNodeNode / 2, graph.getY() - margins.top,
                 new OutlineNode(graph.getWidth() / 2.0, graph.getY() - margins.top - spacingNodeNode / 2, endpart)));
         
-        // TODO double check whether this is the best way and place to calculate this
         // set min and max values
         graph.setProperty(InternalProperties.MIN_X, graph.getX() - margins.left);
         graph.setProperty(InternalProperties.MAX_X, 

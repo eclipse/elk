@@ -13,6 +13,9 @@ import org.eclipse.elk.alg.vertiflex.InternalProperties;
 import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
@@ -72,11 +75,12 @@ public class Edgerouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> 
     
     
     private void setCanvas(final ElkNode graph) {
-        ElkNode parent = graph.getChildren().get(0);
-        graph.setHeight(parent.getProperty(InternalProperties.MAX_Y) 
-                - parent.getProperty(InternalProperties.MIN_Y) + 20.0); //TODO remove magic numbers
-        graph.setWidth(parent.getProperty(InternalProperties.MAX_X) 
-                - parent.getProperty(InternalProperties.MIN_X) + 20.0);
+        ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
+
+        ElkUtil.computeChildAreaDimensions(graph);
+
+        graph.setWidth(graph.getProperty(CoreOptions.CHILD_AREA_WIDTH) + padding.left + padding.right);
+        graph.setHeight(graph.getProperty(CoreOptions.CHILD_AREA_HEIGHT) + padding.top + padding.bottom);
     }
 
 }
