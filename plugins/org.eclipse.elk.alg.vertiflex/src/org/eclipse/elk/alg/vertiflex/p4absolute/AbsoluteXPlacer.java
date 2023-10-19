@@ -34,8 +34,6 @@ public class AbsoluteXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             // first, move the root
             parent.setX(parent.getX() - findMinimalX(parent));
-            // a little offset
-            parent.setX(parent.getX() + 10.0); // TODO remove magic number
             // now we update the whole tree to absolute X 
             absoluteTreeCoords(parent);
         }
@@ -62,8 +60,6 @@ public class AbsoluteXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     
     private void absoluteTreeCoords(final ElkNode tree) {
         int numOfChildren = tree.getOutgoingEdges().size();
-        // a little offset
-        tree.setY(tree.getY() + 10.0); // TODO remove magic number
         if (numOfChildren > 0) {
             ElkNode child;
             for (int i = 0; i < numOfChildren; i++) {
