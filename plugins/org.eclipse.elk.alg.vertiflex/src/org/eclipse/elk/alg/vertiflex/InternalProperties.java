@@ -37,11 +37,6 @@ public final class InternalProperties {
     public static final IProperty<OutlineNode> RIGHT_OUTLINE = new Property<OutlineNode>("RIGHT_OUTLINE");
     
     /**
-     * Defines the maximum depth (as a coordinate) outdated.
-     */
-    public static final IProperty<Double> MAX_DEPTH = new Property<Double>("MAX_DEPTH");
-    
-    /**
      * Defines the maximum depth of outlines.  
      */
     public static final IProperty<Double> OUTLINE_MAX_DEPTH = new Property<Double>("OUTLINE_MAX_DEPTH");

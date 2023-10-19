@@ -13,9 +13,6 @@ import org.eclipse.elk.alg.vertiflex.InternalProperties;
 import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
-import org.eclipse.elk.core.math.ElkMargin;
-import org.eclipse.elk.core.math.ElkPadding;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -26,7 +23,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  * An edge router that draws straight edges between nodes.
  *
  */
-public class Edgerouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> {
+public class StraightEdgeRouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> {
     
     private IElkProgressMonitor myProgressMonitor;
     
@@ -34,13 +31,12 @@ public class Edgerouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> 
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         myProgressMonitor = progressMonitor;
-        myProgressMonitor.begin("EdgeRouter", 1);
+        myProgressMonitor.begin("StraightEdgeRouter", 1);
         
         if (!graph.getChildren().isEmpty()) {
             ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
             
             routeEdges(parent);
-            setCanvas(graph);
         }
 
         myProgressMonitor.done();
@@ -70,26 +66,4 @@ public class Edgerouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> 
             routeEdges(target);
         }
     }
-    
-    
-    private void setCanvas(final ElkNode graph) {
-        ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
-
-        double maxX = 0.0;
-        double maxY = 0.0;
-        for (ElkNode node : graph.getChildren()) {
-            ElkMargin margin = node.getProperty(CoreOptions.MARGINS);
-
-            if (maxX < node.getX() + node.getWidth() + margin.right) {
-                maxX = node.getX() + node.getWidth() + margin.right;
-            }
-            if (maxY < node.getY() + node.getHeight() + margin.bottom) {
-                maxY = node.getY() + node.getHeight() + margin.bottom;
-            }
-        }
-
-        graph.setWidth(maxX + padding.right);
-        graph.setHeight(maxY + padding.bottom);
-    }
-
 }

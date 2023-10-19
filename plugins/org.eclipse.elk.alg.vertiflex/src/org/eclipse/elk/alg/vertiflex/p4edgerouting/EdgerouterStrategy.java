@@ -23,14 +23,19 @@ public enum EdgerouterStrategy implements ILayoutPhaseFactory<VertiFlexLayoutPha
     /**
      * Straight edge routing.
      */
-    DIRECT_ROUTING;
+    DIRECT_ROUTING,
+    /**
+     * Routing with bendpoints if nodes are in the way.
+     */
+    BEND_ROUTING;
 
     @Override
     public ILayoutPhase<VertiFlexLayoutPhases, ElkNode> create() {
         switch (this) {
         case DIRECT_ROUTING:
-            return new Edgerouter();
-
+            return new StraightEdgeRouter();
+        case BEND_ROUTING:
+            return new BendEdgeRouter();
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the edge router " + this.toString());

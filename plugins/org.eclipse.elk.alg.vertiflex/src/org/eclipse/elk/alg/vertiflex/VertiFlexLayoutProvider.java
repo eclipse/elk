@@ -20,6 +20,8 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
@@ -62,6 +64,8 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         for (ILayoutProcessor<ElkNode> processor : algorithm) {
             processor.process(graph, progressMonitor.subTask(1));
         }
+        
+        setGraphSize(graph);
 
         progressMonitor.done();
     }
@@ -82,8 +86,19 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
                 RelativeXPlacerStrategy.SIMPLE_XPLACING);
         algorithmAssembler.setPhase(VertiFlexLayoutPhases.P3_NODE_ABSOLUTE_PLACEMENT,
                 AbsoluteXPlacerStrategy.ABSOLUTE_XPLACING);
-        algorithmAssembler.setPhase(VertiFlexLayoutPhases.P4_EDGE_ROUTING,
-                EdgerouterStrategy.DIRECT_ROUTING);
+        
+        EdgerouterStrategy routerStrategy;
+        switch (graph.getProperty(VertiFlexOptions.LAYOUT_STRATEGY)) {
+            case BEND:
+                routerStrategy = EdgerouterStrategy.BEND_ROUTING;
+                break;
+            case STRAIGHT:
+            default:
+                routerStrategy = EdgerouterStrategy.DIRECT_ROUTING;
+                break;
+            
+        }
+        algorithmAssembler.setPhase(VertiFlexLayoutPhases.P4_EDGE_ROUTING, routerStrategy);
 
         // Assemble the algorithm
         return algorithmAssembler.build(graph);
@@ -109,6 +124,26 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
             ElkNode child = (ElkNode) outgoingEdge.getTargets().get(0);
             checkVerticalConstraintValidity(child);
         }
+    }
+    
+    private void setGraphSize(final ElkNode graph) {
+        ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
+
+        double maxX = 0.0;
+        double maxY = 0.0;
+        for (ElkNode node : graph.getChildren()) {
+            ElkMargin margin = node.getProperty(CoreOptions.MARGINS);
+
+            if (maxX < node.getX() + node.getWidth() + margin.right) {
+                maxX = node.getX() + node.getWidth() + margin.right;
+            }
+            if (maxY < node.getY() + node.getHeight() + margin.bottom) {
+                maxY = node.getY() + node.getHeight() + margin.bottom;
+            }
+        }
+
+        graph.setWidth(maxX + padding.right);
+        graph.setHeight(maxY + padding.bottom);
     }
 
 }
