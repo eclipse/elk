@@ -10,7 +10,6 @@
 package org.eclipse.elk.alg.vertiflex.p4edgerouting;
 
 import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
-import org.eclipse.elk.alg.vertiflex.p2relative.RelativeXPlacer;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;

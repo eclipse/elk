@@ -17,7 +17,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 public final class VertiFlexUtil {
     
     /**
-     * Private constructor to prevent initilization.
+     * Private constructor to prevent initialization.
      */
     private VertiFlexUtil() { }
     

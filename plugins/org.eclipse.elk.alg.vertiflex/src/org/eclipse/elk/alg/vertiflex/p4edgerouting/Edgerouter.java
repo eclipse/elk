@@ -16,14 +16,11 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
-import org.eclipse.emf.common.util.EList;
 
 /**
  * An edge router that draws straight edges between nodes.
