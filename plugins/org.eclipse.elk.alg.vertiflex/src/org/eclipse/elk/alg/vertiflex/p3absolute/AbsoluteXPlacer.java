@@ -42,7 +42,7 @@ public class AbsoluteXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         
     }
     
-    
+    /** Find leftmost subtree. */
     private double findMinimalX(final ElkNode tree) {
         int numOfChildren = tree.getOutgoingEdges().size();
         if (numOfChildren == 0) {

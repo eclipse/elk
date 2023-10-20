@@ -35,12 +35,18 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
     
     private final AlgorithmAssembler<VertiFlexLayoutPhases, ElkNode> algorithmAssembler =
         AlgorithmAssembler.<VertiFlexLayoutPhases, ElkNode>create(VertiFlexLayoutPhases.class);
+    
+    private double nodeNodeSpacing;
+    private double layerDistance;
 
     @Override
     public void layout(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(graph);
 
         progressMonitor.begin("Tree layout", algorithm.size());
+        
+        nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
+        layerDistance = graph.getProperty(VertiFlexOptions.LAYER_DISTANCE);
         
         // pre calculate the root node and save it
         ElkNode root = VertiFlexUtil.findRoot(graph);
@@ -59,7 +65,7 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         
         // check that vertical constraints are ordered in valid manner i.e. children always have higher vertical 
         // constraints than their parents
-        checkVerticalConstraintValidity(root);
+        checkVerticalConstraintValidity(root, 0);
 
         for (ILayoutProcessor<ElkNode> processor : algorithm) {
             processor.process(graph, progressMonitor.subTask(1));
@@ -73,7 +79,7 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
     /**
      * Configure the layout provider by assembling different layout processors.
      * 
-     * @param graph The graph which shall be layout.
+     * @param graph The graph which shall be laid out.
      * @return The list of assembled layout processors.
      */
     public List<ILayoutProcessor<ElkNode>> assembleAlgorithm(final ElkNode graph) {
@@ -81,9 +87,9 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
 
         // Configure phases
         algorithmAssembler.setPhase(VertiFlexLayoutPhases.P1_NODE_Y_PLACEMENT,
-                NodeYPlacerStrategy.SIMPLE_YPLACING);
+                NodeYPlacerStrategy.SIMPLE_Y_PLACING);
         algorithmAssembler.setPhase(VertiFlexLayoutPhases.P2_NODE_RELATIVE_PLACEMENT,
-                RelativeXPlacerStrategy.SIMPLE_XPLACING);
+                RelativeXPlacerStrategy.SIMPLE_X_PLACING);
         algorithmAssembler.setPhase(VertiFlexLayoutPhases.P3_NODE_ABSOLUTE_PLACEMENT,
                 AbsoluteXPlacerStrategy.ABSOLUTE_XPLACING);
         
@@ -104,28 +110,36 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         return algorithmAssembler.build(graph);
     }
     
-    private void checkVerticalConstraintValidity(final ElkNode root) {
+    /** Checks whether a vertical constraint is larger than the constraints set by any ancestor nodes.*/
+    private void checkVerticalConstraintValidity(final ElkNode root, final double currentMinConstraint) {
+
+        double rootHeight;
         if (root.hasProperty(VertiFlexOptions.VERTICAL_CONSTRAINT)) {
-            double rootHeight = root.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT);
-            for (ElkEdge outgoingEdge : root.getOutgoingEdges()) {
-                ElkNode child = (ElkNode) outgoingEdge.getTargets().get(0);
-                if (child.hasProperty(VertiFlexOptions.VERTICAL_CONSTRAINT)) {
-                    if (rootHeight + root.getHeight() + root.getProperty(CoreOptions.MARGINS).bottom
-                            >= child.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT) 
-                                + child.getProperty(CoreOptions.MARGINS).top) {
-                        throw new UnsupportedConfigurationException("Invalid vertical constraints. Node " 
-                            + root.getIdentifier() + " must have a smaller vertical constraint than its child " 
-                                + child.getIdentifier() + ". This includes both node's margins.");
-                    }
+            rootHeight = root.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT);
+        } else {
+            rootHeight = currentMinConstraint;
+        }
+        
+        double newMinConstraint = rootHeight + root.getHeight() 
+            + Math.max(root.getProperty(CoreOptions.MARGINS).bottom, nodeNodeSpacing);
+        
+        for (ElkEdge outgoingEdge : root.getOutgoingEdges()) {
+            ElkNode child = (ElkNode) outgoingEdge.getTargets().get(0);
+            if (child.hasProperty(VertiFlexOptions.VERTICAL_CONSTRAINT)) {
+                if (newMinConstraint > child.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT) 
+                            + child.getProperty(CoreOptions.MARGINS).top) {
+                    throw new UnsupportedConfigurationException("Invalid vertical constraints. Node "
+                            + child.getIdentifier() + " has a vertical constraint that is too low for its ancestors.");
                 }
             }
         }
         for (ElkEdge outgoingEdge : root.getOutgoingEdges()) {
             ElkNode child = (ElkNode) outgoingEdge.getTargets().get(0);
-            checkVerticalConstraintValidity(child);
+            checkVerticalConstraintValidity(child, newMinConstraint);
         }
     }
     
+    /** Computes the space occupied by the layout and sets the graph size accordingly. */
     private void setGraphSize(final ElkNode graph) {
         ElkPadding padding = graph.getProperty(CoreOptions.PADDING);
 

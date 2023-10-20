@@ -21,7 +21,7 @@ public enum EdgeRoutingStrategy {
     STRAIGHT,
     
     /**
-     * Allow one bend point in edges to enable more compact layouts.
+     * Allow one bend point in edges to enable more compact layouts while also maintaining the node model order.
      */
     BEND
 

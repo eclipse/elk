@@ -24,12 +24,12 @@ public enum NodeYPlacerStrategy implements ILayoutPhaseFactory<VertiFlexLayoutPh
      * Simple strategy for setting y coordinates of nodes. Vertical constraints are considered and if none are defined
      * the fallback is to compute a position based on the node's location in the tree.
      */
-    SIMPLE_YPLACING;
+    SIMPLE_Y_PLACING;
 
     @Override
     public ILayoutPhase<VertiFlexLayoutPhases, ElkNode> create() {
         switch (this) {
-        case SIMPLE_YPLACING:
+        case SIMPLE_Y_PLACING:
             return new NodeYPlacer();
 
         default:

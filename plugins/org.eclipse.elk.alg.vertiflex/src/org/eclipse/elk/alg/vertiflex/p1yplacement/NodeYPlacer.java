@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.vertiflex.VertiFlexLayoutPhases;
 import org.eclipse.elk.alg.vertiflex.options.VertiFlexOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -25,6 +26,7 @@ import org.eclipse.elk.graph.ElkNode;
 public class NodeYPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> {
 
     private double layerDistance;
+    private double nodeNodeSpacing;
     private IElkProgressMonitor myProgressMonitor;
     
     @Override
@@ -34,6 +36,7 @@ public class NodeYPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode>
         myProgressMonitor.begin("YPlacer", 1);
         
         layerDistance = graph.getProperty(VertiFlexOptions.LAYER_DISTANCE);
+        nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
 
         if (!graph.getChildren().isEmpty()) {
             ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
@@ -44,8 +47,8 @@ public class NodeYPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode>
     }
     
     /**
-     * A Method to set the absolute Y coordinates of the notes.
-     * Uses a default distance between the notes.
+     * A Method to set the absolute Y coordinates of the nodes.
+     * Uses a default distance between the nodes.
      * @param node and it's children are getting updated Y-coords.
      * @param minHeight: Node gets minimum this height.
      */
@@ -54,7 +57,8 @@ public class NodeYPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode>
             minHeight = node.getProperty(VertiFlexOptions.VERTICAL_CONSTRAINT);
         }
         node.setY(minHeight);
-        double newMinHeight = minHeight + layerDistance + node.getHeight();
+        double newMinHeight = minHeight + layerDistance + node.getHeight() 
+            + Math.max(node.getProperty(CoreOptions.MARGINS).bottom, nodeNodeSpacing);
         for (int i = 0; i < node.getOutgoingEdges().size(); i++) {
             ElkNode child = (ElkNode) node.getOutgoingEdges().get(i).getTargets().get(0);
             setYLevels(child, newMinHeight);

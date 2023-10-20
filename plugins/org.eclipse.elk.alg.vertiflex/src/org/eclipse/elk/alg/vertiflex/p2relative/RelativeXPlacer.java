@@ -61,6 +61,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         myProgressMonitor.done();
     }
     
+    /** Computes the distance between two outlines. */
     private double outlineDistance(final OutlineNode outline1, final OutlineNode outline2) {
         
         OutlineNode changedOutline1 = new OutlineNode(outline1.getRelativeX(), MINIMAL_Y, 
@@ -150,7 +151,8 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                 yConsTreeStep(child);
                 children.add(child);
             }
-            // now the children of this node get sorted to form a semi-circle.
+            // now the children of this node get sorted to form a semi-circle. This allows routing straight edges
+            // without overlaps while keeping the layout relatively compact.
             sortSubTrees(children);
             
             // now the children get stuffed together, using the outlines.
@@ -267,6 +269,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         }
     }
 
+    /** Place nodes while maintaining model order and computing bendpoints for the later edges. */
     private void alternativeYConsTreeStep(final ElkNode graph) {
         
         makeSimpleOutlines(graph);
@@ -400,7 +403,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         
     }
     
-    
+    /** Create the initial outlines around a node. */
     private void makeSimpleOutlines(final ElkNode graph) {
         ElkMargin margins = graph.getProperty(CoreOptions.MARGINS);
         
@@ -434,7 +437,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         
     }
     
-    
+    /** Combine outlines of multiple siblings. */
     private void bundleChildren(final ElkNode leftSubtree, final ElkNode a, final ElkNode b) {
         
         double deltaX, deltaY, change;

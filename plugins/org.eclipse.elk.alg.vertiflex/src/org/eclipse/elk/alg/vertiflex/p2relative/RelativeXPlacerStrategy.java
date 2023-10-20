@@ -24,12 +24,12 @@ public enum RelativeXPlacerStrategy implements ILayoutPhaseFactory<VertiFlexLayo
      * Simple strategy for setting the horizontal positions of nodes. These positions are relative to their parents
      * and chosen such that overlaps are avoided.
      */
-    SIMPLE_XPLACING;
+    SIMPLE_X_PLACING;
 
     @Override
     public ILayoutPhase<VertiFlexLayoutPhases, ElkNode> create() {
         switch (this) {
-        case SIMPLE_XPLACING:
+        case SIMPLE_X_PLACING:
             return new RelativeXPlacer();
 
         default:

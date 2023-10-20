@@ -47,6 +47,7 @@ public class BendEdgeRouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNo
         return null;
     }
     
+    /** Route the edges with bendpoints. */
     private void routeEdges(final ElkNode node) {
         for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
             ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
@@ -62,13 +63,12 @@ public class BendEdgeRouter implements ILayoutPhase<VertiFlexLayoutPhases, ElkNo
             section.setEndLocation(endX, endY);
             
             double bendheight = target.getProperty(InternalProperties.EDGE_BEND_HEIGHT);
-            System.out.println(bendheight + " " + endY);
             double epsilon = 0.0001;
+            // if the node is low place a bendpoint above it
             if (Math.abs(bendheight 
                     - (endY - target.getParent().getProperty(CoreOptions.SPACING_NODE_NODE) / 2)) > epsilon) {
                 ElkGraphUtil.createBendPoint(section, endX, bendheight);
             }
-            
             routeEdges(target);
         }
     }

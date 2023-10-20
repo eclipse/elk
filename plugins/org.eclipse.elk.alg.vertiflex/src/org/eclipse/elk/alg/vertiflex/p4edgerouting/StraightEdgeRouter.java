@@ -49,7 +49,7 @@ public class StraightEdgeRouter implements ILayoutPhase<VertiFlexLayoutPhases, E
     }
     
     
-    
+    /** Route the edges with with straight edges. */
     private void routeEdges(final ElkNode node) {
         for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
             ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
