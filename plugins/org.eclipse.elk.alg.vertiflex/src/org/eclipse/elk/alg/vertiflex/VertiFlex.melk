@@ -56,7 +56,10 @@ option verticalConstraint: double {
 option layoutStrategy: EdgeRoutingStrategy {
     label "Edge layout strategy"
     description
-        "Strategy for the layout of the children. 'straight' for straight line drawings, 'bend' for a possible bend"
+        "Strategy for the layout of the children. 'straight' for straight line drawings, 'bend' for a possible bend.
+         When straight edges are prioritized the nodes will be reordered in order to guarantee that straight edges are
+         possible. If bend points are enabled on the other hand, the given model order of the nodes is maintained and 
+         bend points are introduced to prevent edge node overlaps."
     targets nodes
     default = EdgeRoutingStrategy.STRAIGHT
 }
