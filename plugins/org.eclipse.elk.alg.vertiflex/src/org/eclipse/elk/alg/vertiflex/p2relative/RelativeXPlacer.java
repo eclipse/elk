@@ -184,23 +184,22 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             double newMoveRoot;
 
             if (betterMoveRoot < moveRoot) {
-                OutlineNode rol;
-                double rolX, posX;
+                OutlineNode rightOutline;
+                double rightOutlineX, posX;
                 for (int i = 0; i < maxDepthStartPos; i++) {
                     for (int j = i + 1; j < maxDepthStartPos + 1; j++) {
-                        rol = children.get(i).getProperty(InternalProperties.RIGHT_OUTLINE);
-                        rolX = children.get(i).getX() + rol.getRelativeX();
+                        rightOutline = children.get(i).getProperty(InternalProperties.RIGHT_OUTLINE);
+                        rightOutlineX = children.get(i).getX() + rightOutline.getRelativeX();
                         posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
-                        while (rol != null && rol.getAbsoluteY() < maxDepth) {
-                            // new moveRoot
-                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - rolX) * ((graph.getY() 
-                                    + graph.getHeight()) - maxDepth) / (maxDepth - rol.getAbsoluteY());
+                        while (rightOutline != null && rightOutline.getAbsoluteY() < maxDepth) {
+
+                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - rightOutlineX) * ((graph.getY() 
+                                    + graph.getHeight()) - maxDepth) / (maxDepth - rightOutline.getAbsoluteY());
                             betterMoveRoot = Math.max(betterMoveRoot, newMoveRoot);
-                            
-                            // update Rol and RolX
-                            rol = rol.getNext();
-                            if (rol != null) {
-                                rolX += rol.getRelativeX();
+
+                            rightOutline = rightOutline.getNext();
+                            if (rightOutline != null) {
+                                rightOutlineX += rightOutline.getRelativeX();
                             }
                         }
                     }
@@ -209,23 +208,22 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             }
 
             if (betterMoveRoot > moveRoot) {
-                OutlineNode lol;
-                double lolX, posX;
+                OutlineNode leftOutline;
+                double leftOutlineX, posX;
                 for (int i = pos; i < children.size(); i++) {
                     for (int j = pos - 1; j < i; j++) {
-                        lol = children.get(i).getProperty(InternalProperties.LEFT_OUTLINE);
-                        lolX = children.get(i).getX() + lol.getRelativeX();
+                        leftOutline = children.get(i).getProperty(InternalProperties.LEFT_OUTLINE);
+                        leftOutlineX = children.get(i).getX() + leftOutline.getRelativeX();
                         posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
-                        while (lol != null && lol.getAbsoluteY() < maxDepth) {
-                            // new moveRoot
-                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - lolX) * ((graph.getY() 
-                                    + graph.getHeight()) - maxDepth) / (maxDepth - lol.getAbsoluteY());
+                        while (leftOutline != null && leftOutline.getAbsoluteY() < maxDepth) {
+
+                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - leftOutlineX) * ((graph.getY() 
+                                    + graph.getHeight()) - maxDepth) / (maxDepth - leftOutline.getAbsoluteY());
                             betterMoveRoot = Math.min(betterMoveRoot, newMoveRoot);
 
-                            // update Rol and RolX
-                            lol = lol.getNext();
-                            if (lol != null) {
-                                lolX += lol.getRelativeX();
+                            leftOutline = leftOutline.getNext();
+                            if (leftOutline != null) {
+                                leftOutlineX += leftOutline.getRelativeX();
                             }
                         }
                     }
@@ -239,13 +237,13 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             
             double newX;
-            // lol update
+            // left outline update
             newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() 
                     - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
             graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().getNext().getNext().setNext(
                     new OutlineNode(newX, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getAbsoluteY(), 
                             children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getNext()));
-            // rol update
+            // right outline update
             newX = children.get(children.size() - 1).getX() 
                     + children.get(children.size() - 1).getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX() 
                     - graph.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX();
@@ -338,7 +336,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             double newX;
             OutlineNode newOutlinepart;
-            // lol update
+            // left outline update
             newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() 
                     - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
             newOutlinepart = new OutlineNode(0.0, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE)
@@ -458,7 +456,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                 lastL = lastL.getNext();
                 lAbsX += lastL.getRelativeX();
             }
-            // find fiting position in the lol of b
+            // find fiting position in the left outline of b
             OutlineNode bItterator = new OutlineNode(b.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX(),
                     MINIMAL_Y, b.getProperty(InternalProperties.LEFT_OUTLINE).getNext());
             double rAbsX = bItterator.getRelativeX() + b.getX();
@@ -491,7 +489,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                 lastB = lastB.getNext();
                 rAbsX += lastB.getRelativeX();
             }
-            // find fitting position in the rol of a
+            // find fitting position in the right outline of a
             OutlineNode aItterator = new OutlineNode(a.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX(), 
                     MINIMAL_Y, a.getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
             double aAbsX = aItterator.getRelativeX() + a.getX();
