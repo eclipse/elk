@@ -37,7 +37,7 @@ public final class InternalProperties {
     public static final IProperty<OutlineNode> RIGHT_OUTLINE = new Property<OutlineNode>("RIGHT_OUTLINE");
     
     /**
-     * Defines the maximum depth of outlines.  
+     * Defines the maximum depth of outlines. This is the lowest point of the outline in the tree layout.
      */
     public static final IProperty<Double> OUTLINE_MAX_DEPTH = new Property<Double>("OUTLINE_MAX_DEPTH");
     
