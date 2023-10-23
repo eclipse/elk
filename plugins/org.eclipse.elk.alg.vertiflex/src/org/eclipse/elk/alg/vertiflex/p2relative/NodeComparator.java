@@ -19,6 +19,8 @@ class NodeComparator implements java.util.Comparator<ElkNode> {
 
     @Override
     public int compare(final ElkNode a, final ElkNode b) {
-        return (int) (a.getY() - b.getY()); // might be problematic when very small numbers are compared 
+        // TODO: this should use the node model order as a secondary criterion and if a and b are fuzzily at the 
+        //       same y level, the model order should be used instead.
+        return (int) (a.getY() - b.getY());
     }
 }
