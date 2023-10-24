@@ -41,6 +41,7 @@ algorithm vertiflex(VertiFlexLayoutProvider) {
     supports verticalConstraint
     supports layoutStrategy
     supports layerDistance
+    supports considerNodeModelOrder
     
 }
 
@@ -70,5 +71,13 @@ option layerDistance: double {
         "The distance to use between nodes of different layers if no vertical constraints are set."
     targets parents
     default = 50.0
+}
+
+option considerNodeModelOrder: boolean {
+    label "Consider node model order"
+    description
+        "Consider node model as a secondary criterion when using straight line routing."
+    targets parents
+    default = true
 }
 

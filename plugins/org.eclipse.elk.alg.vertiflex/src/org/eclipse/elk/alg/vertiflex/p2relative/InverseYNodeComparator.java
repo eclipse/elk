@@ -13,15 +13,15 @@ import org.eclipse.elk.alg.vertiflex.InternalProperties;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Comparator for sorting ElkNodes according to their y positions and model order.
+ * Comparator for sorting ElkNodes according to their y positions in descending order and model order.
  *
  */
-class NodeComparator implements java.util.Comparator<ElkNode> {
+class InverseYNodeComparator implements java.util.Comparator<ElkNode> {
 
     @Override
     public int compare(final ElkNode a, final ElkNode b) {
 
-        int sortYresult =  Double.compare(a.getY(), b.getY());
+        int sortYresult =  Double.compare(b.getY(), a.getY());
         if (sortYresult == 0) {
             int intSortresult =  Integer.compare(a.getProperty(InternalProperties.NODE_MODEL_ORDER), 
                     b.getProperty(InternalProperties.NODE_MODEL_ORDER));

@@ -37,7 +37,6 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         AlgorithmAssembler.<VertiFlexLayoutPhases, ElkNode>create(VertiFlexLayoutPhases.class);
     
     private double nodeNodeSpacing;
-    private double layerDistance;
 
     @Override
     public void layout(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
@@ -46,7 +45,6 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Tree layout", algorithm.size());
         
         nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
-        layerDistance = graph.getProperty(VertiFlexOptions.LAYER_DISTANCE);
         
         // pre calculate the root node and save it
         ElkNode root = VertiFlexUtil.findRoot(graph);
@@ -66,6 +64,13 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         // check that vertical constraints are ordered in valid manner i.e. children always have higher vertical 
         // constraints than their parents
         checkVerticalConstraintValidity(root, 0);
+        
+        // store model order
+        int count = 0;
+        for (ElkNode node : graph.getChildren()) {
+            node.setProperty(InternalProperties.NODE_MODEL_ORDER, count);
+            count += 1;
+        }
 
         for (ILayoutProcessor<ElkNode> processor : algorithm) {
             processor.process(graph, progressMonitor.subTask(1));

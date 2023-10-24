@@ -61,4 +61,9 @@ public final class InternalProperties {
      */
     public static final IProperty<Double> EDGE_BEND_HEIGHT = new Property<Double>("EDGE_BEND_HEIGHT");
     
+    /**
+     * Stores the model order of nodes. Smaller values come before larger values.
+     */
+    public static final IProperty<Integer> NODE_MODEL_ORDER = new Property<Integer>("Node Model Order");
+    
 }

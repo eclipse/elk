@@ -21,6 +21,7 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -32,6 +33,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
 
     private IElkProgressMonitor myProgressMonitor;
     private double spacingNodeNode;
+    private boolean considerNodeModelOrder;
 
     // a constant for moving every Outline to a minimal y-pos
     private static final double MINIMAL_Y = -100.0;
@@ -42,6 +44,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         myProgressMonitor.begin("XPlacer", 1);
         
         spacingNodeNode = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
+        considerNodeModelOrder = graph.getProperty(VertiFlexOptions.CONSIDER_NODE_MODEL_ORDER);
         
         if (!graph.getChildren().isEmpty()) {
             ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
@@ -163,72 +166,74 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             // now we need to move the root to the middle of the nodes.
             // we calculate the point of the child with the lowest y-position to avoid overlapping.
             // if there is more than one lowest child, the root will be positioned in the middle of them.
-            int pos = 0;
-            double maxDepth = 0.0;
-            int maxDepthStartPos = 0;
-            while (pos < children.size() && children.get(pos).getY() >= maxDepth) {
-                if (children.get(pos).getY() > maxDepth) {
-                    maxDepthStartPos = pos;
-                    maxDepth = children.get(pos).getY();
+                int pos = 0;
+                double maxDepth = 0.0;
+                int maxDepthStartPos = 0;
+                while (pos < children.size() && children.get(pos).getY() >= maxDepth) {
+                    if (children.get(pos).getY() > maxDepth) {
+                        maxDepthStartPos = pos;
+                        maxDepth = children.get(pos).getY();
+                    }
+                    pos += 1;
                 }
-                pos += 1;
-            }
-            double moveRoot = 0.0;
-            if (pos > 0) {
-                moveRoot = (children.get(maxDepthStartPos).getX() + children.get(pos - 1).getX() 
-                        + children.get(pos - 1).getWidth()) / 2.0 - graph.getX();
-            }
+                double moveRoot = 0.0;
+                if (pos > 0) {
+                    moveRoot = (children.get(maxDepthStartPos).getX() + children.get(pos - 1).getX()) / 2.0 
+                            - graph.getX();
+                }
             
-            double betterMoveRoot = (children.get(0).getX() + children.get(children.size() - 1).getX() 
-                    + children.get(children.size() - 1).getWidth() - graph.getWidth()) / 2.0 - graph.getX();
-            double newMoveRoot;
-
-            if (betterMoveRoot < moveRoot) {
-                OutlineNode rightOutline;
-                double rightOutlineX, posX;
-                for (int i = 0; i < maxDepthStartPos; i++) {
-                    for (int j = i + 1; j < maxDepthStartPos + 1; j++) {
-                        rightOutline = children.get(i).getProperty(InternalProperties.RIGHT_OUTLINE);
-                        rightOutlineX = children.get(i).getX() + rightOutline.getRelativeX();
-                        posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
-                        while (rightOutline != null && rightOutline.getAbsoluteY() < maxDepth) {
-
-                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - rightOutlineX) * ((graph.getY() 
-                                    + graph.getHeight()) - maxDepth) / (maxDepth - rightOutline.getAbsoluteY());
-                            betterMoveRoot = Math.max(betterMoveRoot, newMoveRoot);
-
-                            rightOutline = rightOutline.getNext();
-                            if (rightOutline != null) {
-                                rightOutlineX += rightOutline.getRelativeX();
+            if (!graph.getProperty(VertiFlexOptions.CONSIDER_NODE_MODEL_ORDER)) {
+                double betterMoveRoot = (children.get(0).getX() + children.get(children.size() - 1).getX() 
+                        + children.get(children.size() - 1).getWidth() - graph.getWidth()) / 2.0 - graph.getX();
+                double newMoveRoot;
+    
+                if (betterMoveRoot < moveRoot) {
+                    OutlineNode rightOutline;
+                    double rightOutlineX, posX;
+                    for (int i = 0; i < maxDepthStartPos; i++) {
+                        for (int j = i + 1; j < maxDepthStartPos + 1; j++) {
+                            rightOutline = children.get(i).getProperty(InternalProperties.RIGHT_OUTLINE);
+                            rightOutlineX = children.get(i).getX() + rightOutline.getRelativeX();
+                            posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
+                            while (rightOutline != null && rightOutline.getAbsoluteY() < maxDepth) {
+    
+                                newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - rightOutlineX) * ((graph.getY() 
+                                        + graph.getHeight()) - maxDepth) / (maxDepth - rightOutline.getAbsoluteY());
+                                betterMoveRoot = Math.max(betterMoveRoot, newMoveRoot);
+    
+                                rightOutline = rightOutline.getNext();
+                                if (rightOutline != null) {
+                                    rightOutlineX += rightOutline.getRelativeX();
+                                }
                             }
                         }
                     }
+                    moveRoot = betterMoveRoot;
                 }
-                moveRoot = betterMoveRoot;
-            }
-
-            if (betterMoveRoot > moveRoot) {
-                OutlineNode leftOutline;
-                double leftOutlineX, posX;
-                for (int i = pos; i < children.size(); i++) {
-                    for (int j = pos - 1; j < i; j++) {
-                        leftOutline = children.get(i).getProperty(InternalProperties.LEFT_OUTLINE);
-                        leftOutlineX = children.get(i).getX() + leftOutline.getRelativeX();
-                        posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
-                        while (leftOutline != null && leftOutline.getAbsoluteY() < maxDepth) {
-
-                            newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - leftOutlineX) * ((graph.getY() 
-                                    + graph.getHeight()) - maxDepth) / (maxDepth - leftOutline.getAbsoluteY());
-                            betterMoveRoot = Math.min(betterMoveRoot, newMoveRoot);
-
-                            leftOutline = leftOutline.getNext();
-                            if (leftOutline != null) {
-                                leftOutlineX += leftOutline.getRelativeX();
+    
+                if (betterMoveRoot > moveRoot) {
+                    OutlineNode leftOutline;
+                    double leftOutlineX, posX;
+                    for (int i = pos; i < children.size(); i++) {
+                        for (int j = pos - 1; j < i; j++) {
+                            leftOutline = children.get(i).getProperty(InternalProperties.LEFT_OUTLINE);
+                            leftOutlineX = children.get(i).getX() + leftOutline.getRelativeX();
+                            posX = children.get(j).getX() + children.get(j).getWidth() / 2.0;
+                            while (leftOutline != null && leftOutline.getAbsoluteY() < maxDepth) {
+    
+                                newMoveRoot = posX - graph.getWidth() / 2.0 + (posX - leftOutlineX) * ((graph.getY() 
+                                        + graph.getHeight()) - maxDepth) / (maxDepth - leftOutline.getAbsoluteY());
+                                betterMoveRoot = Math.min(betterMoveRoot, newMoveRoot);
+    
+                                leftOutline = leftOutline.getNext();
+                                if (leftOutline != null) {
+                                    leftOutlineX += leftOutline.getRelativeX();
+                                }
                             }
                         }
                     }
+                    moveRoot = betterMoveRoot;
                 }
-                moveRoot = betterMoveRoot;
             }
             
             for (ElkNode child: children) {
@@ -374,31 +379,156 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
      * @param graph
      */
     private void sortSubTrees(final List<ElkNode> children) {
-        
+
         // first, we sort the SubTrees by the Y-coordinate of their root.
         Collections.sort(children, new NodeComparator());
         
-        // now we need to put them in a V-shape 
-        // the deepest element gets ignored in the calculation of the widths.
         List<ElkNode> a = new ArrayList<>();
-        a.add(children.get(children.size() - 1));
         List<ElkNode> b = new ArrayList<>();
-        double widthA = 0.0, widthB = 0.0;
-        for (int i = 1; i < children.size(); i++) {
-            if (widthA <= widthB) {
-                a.add(children.get(children.size() - 1 - i));
-                widthA += children.get(children.size() - 1 - i).getWidth();
-            } else {
-                b.add(children.get(children.size() - 1 - i));
-                widthB += children.get(children.size() - 1 - i).getWidth();
+        
+        
+        // new code
+        if (considerNodeModelOrder) {
+            splitNodesWithModelOrder(children, a, b);
+        } else {
+            // now we need to put them in a V-shape 
+            // the deepest element gets ignored in the calculation of the widths.
+            a.add(children.get(children.size() - 1));
+            double widthA = 0.0, widthB = 0.0;
+            for (int i = 1; i < children.size(); i++) {
+                if (widthA <= widthB) {
+                    a.add(children.get(children.size() - 1 - i));
+                    widthA += children.get(children.size() - 1 - i).getWidth();
+                } else {
+                    b.add(children.get(children.size() - 1 - i));
+                    widthB += children.get(children.size() - 1 - i).getWidth();
+                }
             }
+            
+            Collections.reverse(a);
         }
-        Collections.reverse(a);
+        
+        Collections.sort(b, new InverseYNodeComparator());
         a.addAll(b);
         for (int i = 0; i < children.size(); i++) {
             children.set(i, a.get(i));
         }
         
+    }
+    
+    /** Split nodes into two lists, while maintaining a sensible model order for nodes on the same height. */
+    private void splitNodesWithModelOrder(List<ElkNode> original, List<ElkNode> left, List<ElkNode> right) {
+        // identify next subgroup (all at same y)
+        //split group in it in the weighted middle (always add first half to left group, and second half to right group)
+        if (original.size() == 0) {
+            return;
+        }
+        if (original.size() == 1) {
+            left.add(original.get(0));
+        }
+        if (original.size() == 2) {
+            // use model order to decide which node to put into which list regardless what the height ordering says
+            ElkNode first = original.get(0);
+            ElkNode second = original.get(1);
+            
+            if (first.getProperty(InternalProperties.NODE_MODEL_ORDER) 
+                    > second.getProperty(InternalProperties.NODE_MODEL_ORDER)) {
+                left.add(second);
+                right.add(first);
+            } else {
+                left.add(first);
+                right.add(second);
+            }
+        }
+
+        List<ElkNode> currentGroup = new ArrayList<>();
+        Pair<Double, Double> widthLeftRight = new Pair<>();
+        widthLeftRight.setFirst(0.0);
+        widthLeftRight.setSecond(0.0);
+        ElkNode current = original.get(0);
+        currentGroup.add(current);
+        for (int i = 1; i < original.size(); i++) {
+            ElkNode next = original.get(i);
+            if (Double.compare(current.getY(), next.getY()) == 0) {
+                // add next node to group because it has the same height as the previous element
+                currentGroup.add(next);
+            } else {
+                // split and add entire group
+                int finalIndexOfLeft = splitGroup(currentGroup, widthLeftRight);
+                left.addAll(currentGroup.subList(0, finalIndexOfLeft + 1));
+                right.addAll(currentGroup.subList(finalIndexOfLeft + 1, currentGroup.size()));
+                
+                // reset group
+                currentGroup = new ArrayList<>();
+                currentGroup.add(next);
+            }
+            current = next;
+            
+            // if next element is last element split and add the current group now
+            if (i == original.size() - 1) {
+                int finalIndexOfLeft = splitGroup(currentGroup, widthLeftRight);
+                left.addAll(currentGroup.subList(0, finalIndexOfLeft + 1));
+                right.addAll(currentGroup.subList(finalIndexOfLeft + 1, currentGroup.size()));
+            }
+        }
+    }
+    
+    /** Find a sensible splitting point to divide elements into a left and right list according to a given width of both
+     * lists.
+     * @param group the group to be split
+     * @param widthLeftRight the current widths of the left and right lists
+     * @return the index position at which to split the group
+     */
+    private int splitGroup(List<ElkNode> group, Pair<Double, Double> widthLeftRight) {
+        if (group.size() == 1) {
+            return 0;
+        } else {
+            double widthLeft = widthLeftRight.getFirst();
+            double widthRight = widthLeftRight.getSecond();
+            
+            double totalNewWidth = 0;
+            for (ElkNode node : group) {
+                totalNewWidth += node.getWidth();
+            }
+            
+            // linear equations to find desired widths to fill both lists so that they reach equal length
+            //  I: a + x = b + y
+            // II: x + y = t
+            // where a and b are widthLeft and widthRight, x and y are the desired additions to left and right
+            // and t is the totalNewWidth
+            // solution: x = (t-a+b)/2, y = t - (t-a+b)/2
+            
+            double desiredLeft = (totalNewWidth - widthLeft + widthRight) / 2;
+//            double desiredRight = totalNewWidth - desiredLeft;
+            
+            // add nodes to left side until desiredLeft is exceeded
+            // remove last element and compare both solutions, take the one which is closer to the desired solution
+            int i = 0;
+            double newLeftWidth = 0;
+            while (desiredLeft < newLeftWidth && i < group.size()) {
+                newLeftWidth += group.get(i).getWidth();
+            }
+            
+            double exceed = newLeftWidth - desiredLeft;
+            double under = desiredLeft - (newLeftWidth - group.get(i).getWidth());
+            
+            int resultIndex;
+            if (exceed > under) {
+                resultIndex = i;
+            } else {
+                resultIndex = i - 1;
+            }
+            
+            // add new widths to accumulated widths
+            widthLeftRight.setFirst(widthLeft + exceed);
+            double newRightWidth = 0;
+            for (int j = resultIndex + 1; j < group.size(); j++) {
+                newRightWidth += group.get(j).getWidth();
+            }
+            widthLeftRight.setSecond(widthRight + newRightWidth);
+            
+            return resultIndex;
+        }
     }
     
     /** Create the initial outlines around a node. */
