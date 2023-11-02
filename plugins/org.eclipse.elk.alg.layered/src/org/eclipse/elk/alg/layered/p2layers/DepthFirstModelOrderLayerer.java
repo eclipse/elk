@@ -71,6 +71,12 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
      */
     private List<LNode> nodesToPlace;
     
+    /**
+     * Saves the maximum layer the nodes that still have to be assigned to a layer will be placed in.
+     * This is necessary to determine the actual offset of the nodes to place.
+     */
+    private int maxToPlace = 0;
+    
     @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return BASELINE_PROCESSING_CONFIGURATION;
@@ -123,6 +129,9 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                     if (!nodesToPlace.isEmpty()) {
                         if (layerDiff > 0) {
                             // Case some dependency to the existing graph was found add all nodes to their layers.
+                            for (LNode toPlace : nodesToPlace) {
+                                toPlace.id += maxLayer - maxToPlace;
+                            }
                             placeNodesToPlace();
                             // Remove all nodes since they are now placed correctly.
                             nodesToPlace.clear();
@@ -131,6 +140,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                             // Case nodes cannot be placed without the need to move them later.
                             nodesToPlace.add(node);
                             node.id = desiredLayer;
+                            maxToPlace = Math.max(maxToPlace, desiredLayer);
                             // Add dummy nodes and give them their desired layer id.
                             for (LEdge edge : node.getIncomingEdges()) {
                                 if (edge.getSource().getNode().getLayer() == null
@@ -161,6 +171,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
                         // Case no incoming connections, save the node to be placed.
                         nodesToPlace.add(node);
                         node.id = 0; // Save the layer the node will be placed in.
+                        maxToPlace = Math.max(maxToPlace, 0);
                         currentLayer = layeredGraph.getLayers().get(0);
                         currentLayerId = 0;
                         
@@ -209,7 +220,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
             boolean connectedViaLabelDummy;
             if (nodesToPlace.isEmpty()) {
                 // Case the node to check already has a layer.
-                // TODO this may case an NPE if getLayer is null;
+                // This may case an NPE if getLayer is null;
                 directlyConnected = edge.getSource().getNode().getType() == NodeType.NORMAL
                         && edge.getSource().getNode().getLayer() != null
                         && edge.getSource().getNode().getLayer().id == currentLayerId;
@@ -289,6 +300,7 @@ public final class DepthFirstModelOrderLayerer implements ILayoutPhase<LayeredPh
      * Places the nodes to place in their desired layer.
      */
     public void placeNodesToPlace() {
+        maxToPlace = 0;
         for (LNode nodeToPlace : nodesToPlace) {
             if (nodeToPlace.id >= layeredGraph.getLayers().size()) {
                 // Add a normal and a dummy layer.

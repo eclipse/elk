@@ -73,12 +73,14 @@ public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGrap
      * No node with a higher model order is in a layer before a node with a lower model order.
      * Dummy labels are only placed in layers between real nodes.
      */
+    @ExperimentalPropertyValue
     BF_MODEL_ORDER,
     /**
      * Assumes an intended depth first model order of nodes and creates layers accordingly.
      * Nodes are placed in the next layer until a node does not connect the previous layer.
      * Dummy labels are only placed in layers between real nodes.
      */
+    @ExperimentalPropertyValue
     DF_MODEL_ORDER;
     
     @Override
