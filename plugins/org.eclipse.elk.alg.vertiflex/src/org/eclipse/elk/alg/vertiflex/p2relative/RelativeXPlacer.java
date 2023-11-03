@@ -276,8 +276,10 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     /** Place nodes while maintaining model order and computing bendpoints for the later edges. */
     private void alternativeYConsTreeStep(final ElkNode graph) {
         
+        // set up initial outlines for all nodes
         makeSimpleOutlines(graph);
         
+        // termination condition for the recursion, while a node has children continue
         if (!graph.getOutgoingEdges().isEmpty()) {
             
             // get all children
@@ -288,7 +290,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                 children.add(child);
             }
             
-            int cs = children.size();
+            int childrenSize = children.size();
             
             
             // now the children get stuffed together, using the outlines.
@@ -308,13 +310,13 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             // set bendHeights for children right of the parent
             int i = 0;
-            while (i < cs - 1 && children.get(i).getX() + children.get(i).getWidth() 
+            while (i < childrenSize - 1 && children.get(i).getX() + children.get(i).getWidth() 
                     + children.get(i).getProperty(CoreOptions.MARGINS).right - graph.getWidth() / 2.0 <= 0.0) {
                 i++;
             }
             
             double globalBendHeight = children.get(i).getProperty(InternalProperties.EDGE_BEND_HEIGHT);
-            for (int a = 0; a < cs; a++) {
+            for (int a = 0; a < childrenSize; a++) {
                 if (globalBendHeight < children.get(a).getProperty(InternalProperties.EDGE_BEND_HEIGHT)) {
                     children.get(a).setProperty(InternalProperties.EDGE_BEND_HEIGHT, globalBendHeight);
                 } else {
@@ -323,13 +325,13 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             }
             
             // set bendHeights for children left of the parent
-            i = cs - 1;
+            i = childrenSize - 1;
             while (i > 0 && children.get(i).getX() - children.get(i).getProperty(CoreOptions.MARGINS).left 
                     - graph.getWidth() / 2.0 >= 0.0) {
                 i--;
             }
             
-            if (i < cs) {
+            if (i < childrenSize) {
                 for (int a = i; a >= 0; a--) {
                     
                     if (globalBendHeight < children.get(a).getProperty(InternalProperties.EDGE_BEND_HEIGHT)) {
@@ -356,13 +358,13 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             // right outline update
             OutlineNode graphRightOutline = graph.getProperty(InternalProperties.RIGHT_OUTLINE);
-            OutlineNode rightChildOutline = children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE);
+            OutlineNode rightChildOutline = children.get(childrenSize - 1).getProperty(InternalProperties.RIGHT_OUTLINE);
             
-            newX = children.get(cs - 1).getX() + rightChildOutline.getRelativeX() - graphRightOutline.getRelativeX();
+            newX = children.get(childrenSize - 1).getX() + rightChildOutline.getRelativeX() - graphRightOutline.getRelativeX();
             newOutlinepart = new OutlineNode(0.0, rightChildOutline.getAbsoluteY(), rightChildOutline.getNext());
             graphRightOutline.getNext().getNext().getNext().setNext(
                     new OutlineNode(
-                            newX, children.get(cs - 1).getProperty(InternalProperties.EDGE_BEND_HEIGHT), newOutlinepart
+                            newX, children.get(childrenSize - 1).getProperty(InternalProperties.EDGE_BEND_HEIGHT), newOutlinepart
                     ));
             
             // update outlineMaxY
@@ -381,9 +383,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         
     }
     
-    /**
-     * Sorts the subTrees in a semi-circle.
-     */
+    /** Sorts the subTrees in a semi-circle. */
     private void sortSubTrees(final List<ElkNode> children) {
 
         // first, we sort the SubTrees by the Y-coordinate of their root.
