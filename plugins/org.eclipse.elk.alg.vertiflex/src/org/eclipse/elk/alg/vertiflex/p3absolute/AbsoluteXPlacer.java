@@ -22,12 +22,9 @@ import org.eclipse.elk.graph.ElkNode;
  */
 public class AbsoluteXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> {
     
-    private IElkProgressMonitor myProgressMonitor;
-    
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        myProgressMonitor = progressMonitor;
-        myProgressMonitor.begin("AbsolutPlacer", 1);
+        progressMonitor.begin("AbsolutPlacer", 1);
         
         if (!graph.getChildren().isEmpty()) {
             ElkNode parent = graph.getProperty(InternalProperties.ROOT_NODE);
@@ -38,8 +35,7 @@ public class AbsoluteXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             absoluteTreeCoords(parent);
         }
 
-        myProgressMonitor.done();
-        
+        progressMonitor.done();
     }
     
     /** Find leftmost subtree. */
