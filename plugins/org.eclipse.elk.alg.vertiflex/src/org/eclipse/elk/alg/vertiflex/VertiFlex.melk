@@ -45,14 +45,12 @@ algorithm vertiflex(VertiFlexLayoutProvider) {
     
 }
 
-
 option verticalConstraint: double {
     label "Fixed vertical position"
     description
         "The Y position that the node should be fixed at."
     targets nodes
 }
-
 
 option layoutStrategy: EdgeRoutingStrategy {
     label "Edge layout strategy"
@@ -80,4 +78,3 @@ option considerNodeModelOrder: boolean {
     targets parents
     default = true
 }
-
