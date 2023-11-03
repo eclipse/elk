@@ -29,9 +29,7 @@ import org.eclipse.elk.graph.ElkNode;
  *
  */
 public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode> {
-    
 
-    private IElkProgressMonitor myProgressMonitor;
     private double spacingNodeNode;
     private boolean considerNodeModelOrder;
 
@@ -40,8 +38,8 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
-        myProgressMonitor = progressMonitor;
-        myProgressMonitor.begin("XPlacer", 1);
+
+        progressMonitor.begin("XPlacer", 1);
         
         spacingNodeNode = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
         considerNodeModelOrder = graph.getProperty(VertiFlexOptions.CONSIDER_NODE_MODEL_ORDER);
@@ -61,7 +59,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             }
         }
 
-        myProgressMonitor.done();
+        progressMonitor.done();
     }
     
     /** Computes the distance between two outlines. */
@@ -243,19 +241,22 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             double newX;
             // left outline update
-            newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() 
-                    - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
-            graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().getNext().getNext().setNext(
-                    new OutlineNode(newX, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getAbsoluteY(), 
-                            children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getNext()));
+            OutlineNode graphLeftOutline = graph.getProperty(InternalProperties.LEFT_OUTLINE);
+            OutlineNode leftChildOutline = children.get(0).getProperty(InternalProperties.LEFT_OUTLINE);
+            
+            newX = children.get(0).getX() + leftChildOutline.getRelativeX()  - graphLeftOutline.getRelativeX();
+            graphLeftOutline.getNext().getNext().getNext().setNext(
+                    new OutlineNode(newX, leftChildOutline.getAbsoluteY(), leftChildOutline.getNext()));
+            
             // right outline update
+            OutlineNode graphRightOutline = graph.getProperty(InternalProperties.RIGHT_OUTLINE);
+            OutlineNode rightChildOutline = children.get(children.size() - 1)
+                    .getProperty(InternalProperties.RIGHT_OUTLINE);
+            
             newX = children.get(children.size() - 1).getX() 
-                    + children.get(children.size() - 1).getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX() 
-                    - graph.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX();
-            graph.getProperty(InternalProperties.RIGHT_OUTLINE).getNext().getNext().getNext().setNext(
-                    new OutlineNode(newX, children.get(children.size() - 1).getProperty(
-                            InternalProperties.RIGHT_OUTLINE).getAbsoluteY(), children.get(children.size() - 1).
-                            getProperty(InternalProperties.RIGHT_OUTLINE).getNext()));
+                    + rightChildOutline.getRelativeX() - graphRightOutline.getRelativeX();
+            graphRightOutline.getNext().getNext().getNext().setNext(
+                    new OutlineNode(newX, rightChildOutline.getAbsoluteY(), rightChildOutline.getNext()));
             
             // update outlineMaxY
             // update min und max for x and y
@@ -342,21 +343,27 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             double newX;
             OutlineNode newOutlinepart;
             // left outline update
-            newX = children.get(0).getX() + children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX() 
-                    - graph.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX();
-            newOutlinepart = new OutlineNode(0.0, children.get(0).getProperty(InternalProperties.LEFT_OUTLINE)
-                    .getAbsoluteY(), children.get(0).getProperty(InternalProperties.LEFT_OUTLINE).getNext());
-            graph.getProperty(InternalProperties.LEFT_OUTLINE).getNext().getNext().getNext()
+            OutlineNode leftChildOutline = children.get(0).getProperty(InternalProperties.LEFT_OUTLINE);
+            OutlineNode graphLeftOutline = graph.getProperty(InternalProperties.LEFT_OUTLINE);
+            
+            newX = children.get(0).getX() + leftChildOutline.getRelativeX() 
+                    - graphLeftOutline.getRelativeX();
+            newOutlinepart = new OutlineNode(0.0, leftChildOutline
+                    .getAbsoluteY(), leftChildOutline.getNext());
+            graphLeftOutline.getNext().getNext().getNext()
                     .setNext(new OutlineNode(newX, children.get(0).getProperty(InternalProperties.EDGE_BEND_HEIGHT), 
                             newOutlinepart));
             
-            newX = children.get(cs - 1).getX() + children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE)
-                    .getRelativeX() - graph.getProperty(InternalProperties.RIGHT_OUTLINE).getRelativeX();
-            newOutlinepart = new OutlineNode(0.0, children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE)
-                    .getAbsoluteY(), children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE).getNext());
-            graph.getProperty(InternalProperties.RIGHT_OUTLINE).getNext().getNext().getNext()
-                    .setNext(new OutlineNode(newX, children.get(cs - 1).getProperty(InternalProperties
-                            .EDGE_BEND_HEIGHT), newOutlinepart));
+            // right outline update
+            OutlineNode graphRightOutline = graph.getProperty(InternalProperties.RIGHT_OUTLINE);
+            OutlineNode rightChildOutline = children.get(cs - 1).getProperty(InternalProperties.RIGHT_OUTLINE);
+            
+            newX = children.get(cs - 1).getX() + rightChildOutline.getRelativeX() - graphRightOutline.getRelativeX();
+            newOutlinepart = new OutlineNode(0.0, rightChildOutline.getAbsoluteY(), rightChildOutline.getNext());
+            graphRightOutline.getNext().getNext().getNext().setNext(
+                    new OutlineNode(
+                            newX, children.get(cs - 1).getProperty(InternalProperties.EDGE_BEND_HEIGHT), newOutlinepart
+                    ));
             
             // update outlineMaxY
             // update min und max for x and y

@@ -27,13 +27,11 @@ public class NodeYPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode>
 
     private double layerDistance;
     private double nodeNodeSpacing;
-    private IElkProgressMonitor myProgressMonitor;
     
     @Override
     public void process(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
 
-        myProgressMonitor = progressMonitor;
-        myProgressMonitor.begin("YPlacer", 1);
+        progressMonitor.begin("YPlacer", 1);
         
         layerDistance = graph.getProperty(VertiFlexOptions.LAYER_DISTANCE);
         nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
@@ -43,7 +41,7 @@ public class NodeYPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkNode>
             setYLevels(parent, 0.0);
         }
         
-        myProgressMonitor.done();
+        progressMonitor.done();
     }
     
     /**
