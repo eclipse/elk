@@ -382,19 +382,16 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     }
     
     /**
-     * sorts the subTrees in a half circle, uses mergesort.
-     * @param graph
+     * Sorts the subTrees in a semi-circle.
      */
     private void sortSubTrees(final List<ElkNode> children) {
 
         // first, we sort the SubTrees by the Y-coordinate of their root.
         Collections.sort(children, new NodeComparator());
-        
+
         List<ElkNode> a = new ArrayList<>();
         List<ElkNode> b = new ArrayList<>();
-        
-        
-        // new code
+
         if (considerNodeModelOrder) {
             splitNodesWithModelOrder(children, a, b);
         } else {
@@ -411,18 +408,17 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                     widthB += children.get(children.size() - 1 - i).getWidth();
                 }
             }
-            
             Collections.reverse(a);
         }
-        
+
         Collections.sort(b, new InverseYNodeComparator());
         a.addAll(b);
         for (int i = 0; i < children.size(); i++) {
             children.set(i, a.get(i));
         }
-        
+
     }
-    
+
     /** Split nodes into two lists, while maintaining a sensible model order for nodes on the same height. */
     private void splitNodesWithModelOrder(List<ElkNode> original, List<ElkNode> left, List<ElkNode> right) {
         // identify next subgroup (all at same y)
@@ -572,7 +568,9 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         
     }
     
-    /** Combine outlines of multiple siblings. */
+    /**
+     * Combines the individual outlines of several sibling nodes to form the outline of the tree that they belong to.
+     */
     private void bundleChildren(final ElkNode leftSubtree, final ElkNode a, final ElkNode b) {
         
         double deltaX, deltaY, change;
@@ -593,7 +591,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
                 lastL = lastL.getNext();
                 lAbsX += lastL.getRelativeX();
             }
-            // find fiting position in the left outline of b
+            // find fitting position in the left outline of b
             OutlineNode bItterator = new OutlineNode(b.getProperty(InternalProperties.LEFT_OUTLINE).getRelativeX(),
                     MINIMAL_Y, b.getProperty(InternalProperties.LEFT_OUTLINE).getNext());
             double rAbsX = bItterator.getRelativeX() + b.getX();
@@ -611,6 +609,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             OutlineNode newNext = new OutlineNode(bItterator.getNext().getRelativeX() - change, bItterator.getNext()
                     .getAbsoluteY(), bItterator.getNext().getNext());
             lastL.setNext(new OutlineNode(newX, lastL.getAbsoluteY(), newNext));
+            
             // now update outline_max_depth
             leftSubtree.setProperty(InternalProperties.OUTLINE_MAX_DEPTH, 
                     b.getProperty(InternalProperties.OUTLINE_MAX_DEPTH));
