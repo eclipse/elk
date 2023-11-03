@@ -387,7 +387,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     private void sortSubTrees(final List<ElkNode> children) {
 
         // first, we sort the SubTrees by the Y-coordinate of their root.
-        Collections.sort(children, new NodeComparator());
+        Collections.sort(children, new NodeComparator(false));
 
         List<ElkNode> a = new ArrayList<>();
         List<ElkNode> b = new ArrayList<>();
@@ -411,7 +411,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             Collections.reverse(a);
         }
 
-        Collections.sort(b, new InverseYNodeComparator());
+        Collections.sort(b, new NodeComparator(true));
         a.addAll(b);
         for (int i = 0; i < children.size(); i++) {
             children.set(i, a.get(i));

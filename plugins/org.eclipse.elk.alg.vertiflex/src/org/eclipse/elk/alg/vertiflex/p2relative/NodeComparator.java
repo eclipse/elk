@@ -18,10 +18,25 @@ import org.eclipse.elk.graph.ElkNode;
  */
 class NodeComparator implements java.util.Comparator<ElkNode> {
 
+    private boolean invert = false;
+
+    /** Default constructor */
+    public NodeComparator() {}
+    
+    /** Constructor for inverted comparator. */
+    public NodeComparator(boolean invert) {
+        this.invert = invert;
+    }
+    
     @Override
     public int compare(final ElkNode a, final ElkNode b) {
 
-        int sortYresult =  Double.compare(a.getY(), b.getY());
+        int sortYresult;
+        if (!invert) {
+            sortYresult =  Double.compare(a.getY(), b.getY());
+        } else {
+            sortYresult = Double.compare(b.getY(), a.getY());
+        }
         if (sortYresult == 0) {
             int intSortresult =  Integer.compare(a.getProperty(InternalProperties.NODE_MODEL_ORDER), 
                     b.getProperty(InternalProperties.NODE_MODEL_ORDER));
