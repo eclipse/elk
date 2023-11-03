@@ -10,16 +10,20 @@
 package org.eclipse.elk.alg.vertiflex.p2relative;
 
 /**
- * An outline node is the basic building block of outline. It has a position and a reference to the next outline node.
+ * An outline node is the basic building block of an outline. 
+ * Outline nodes define the points on which the outline lies.
+ * Each outline node has a position and a reference to the next outline node.
  *
  */
 public class OutlineNode {
     
+    /** X coordinates are maintained as relative coordinates with respect to their ancestors. */
     private double relativeX;
+    /** Y coordinates are maintained as absolute coordinates that stem from the given vertical constraints. */
     private double absoluteY;
     private OutlineNode next;
     
-    OutlineNode(final double relativeX, final double absoluteY, final OutlineNode next){
+    public OutlineNode(final double relativeX, final double absoluteY, final OutlineNode next){
         this.setRelativeX(relativeX);
         this.setAbsoluteY(absoluteY);
         this.setNext(next);
