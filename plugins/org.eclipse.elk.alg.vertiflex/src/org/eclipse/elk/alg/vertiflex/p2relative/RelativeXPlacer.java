@@ -49,10 +49,10 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             
             switch (graph.getProperty(VertiFlexOptions.LAYOUT_STRATEGY)) {
                 case STRAIGHT:
-                    yConsTreeStep(parent);
+                    recursiveStraightlinePlacement(parent);
                     break;
                 case BEND:
-                    alternativeYConsTreeStep(parent);
+                    recursiveBentlinePlacement(parent);
                     break;
                 default:
                     break;   
@@ -139,7 +139,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
      * This is the recursive function that calculates the layout for one node and it's children.
      * @param graph 
      */
-    private void yConsTreeStep(final ElkNode graph) {
+    private void recursiveStraightlinePlacement(final ElkNode graph) {
         
         makeSimpleOutlines(graph);
         
@@ -149,7 +149,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             List<ElkNode> children = new ArrayList<>();
             for (int i = 0; i < graph.getOutgoingEdges().size(); i++) {
                 ElkNode child = (ElkNode) graph.getOutgoingEdges().get(i).getTargets().get(0);
-                yConsTreeStep(child);
+                recursiveStraightlinePlacement(child);
                 children.add(child);
             }
             // now the children of this node get sorted to form a semi-circle. This allows routing straight edges
@@ -274,7 +274,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     }
 
     /** Place nodes while maintaining model order and computing bendpoints for the later edges. */
-    private void alternativeYConsTreeStep(final ElkNode graph) {
+    private void recursiveBentlinePlacement(final ElkNode graph) {
         
         // set up initial outlines for all nodes
         makeSimpleOutlines(graph);
@@ -286,7 +286,7 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
             List<ElkNode> children = new ArrayList<>();
             for (int i = 0; i < graph.getOutgoingEdges().size(); i++) {
                 ElkNode child = (ElkNode) graph.getOutgoingEdges().get(i).getTargets().get(0);
-                alternativeYConsTreeStep(child);
+                recursiveBentlinePlacement(child);
                 children.add(child);
             }
             
