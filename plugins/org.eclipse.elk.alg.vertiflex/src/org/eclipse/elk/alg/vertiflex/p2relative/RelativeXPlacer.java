@@ -137,7 +137,16 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
     
     /**
      * This is the recursive function that calculates the layout for one node and it's children.
-     * @param graph 
+     * Children are placed such that straight edges can later be drawn from their parent to each of them.
+     * 
+     * If ConsiderModelOrder is set to false, all children are arranged in a semi-circle with the parent
+     * initially positioned above the lowest child and then shifted toward the center of the children as 
+     * far as possible.
+     * 
+     * If ConsiderModelOrder is set to true, groups of children are arranged such that they maintain their
+     * inherent model order. Furthermore, the reading direction is oriented left to right and top to bottom 
+     * as far as possible without violating the vertical position constraints and the straight edge routing
+     * requirement.
      */
     private void recursiveStraightlinePlacement(final ElkNode graph) {
         
@@ -273,7 +282,11 @@ public class RelativeXPlacer implements ILayoutPhase<VertiFlexLayoutPhases, ElkN
         }
     }
 
-    /** Place nodes while maintaining model order and computing bendpoints for the later edges. */
+    /** 
+     * Place nodes while maintaining model order and computing bendpoints for the later edges. 
+     * The model order is fully kept intact and bendpoints for the edges are computed  so that 
+     * overlap free edge routing is still possible.
+     */
     private void recursiveBentlinePlacement(final ElkNode graph) {
         
         // set up initial outlines for all nodes
