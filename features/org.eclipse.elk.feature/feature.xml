@@ -39,7 +39,6 @@ SPDX-License-Identifier: EPL-2.0
 
    <requires>
       <import plugin="com.google.guava"/>
-      <import plugin="org.eclipse.emf.ecore"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.emf.edit" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>

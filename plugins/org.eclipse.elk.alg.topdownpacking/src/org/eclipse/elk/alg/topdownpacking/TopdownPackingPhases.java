@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Kiel University and others.
+ * Copyright (c) 2022 - 2023 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -16,9 +16,9 @@ package org.eclipse.elk.alg.topdownpacking;
 public enum TopdownPackingPhases {
 
     /**
-     * Place equally sized nodes where the size is defined by the parent.
+     * Arrange equally sized nodes where the size is defined by the parent.
      */
-    P1_NODE_PLACEMENT,
+    P1_NODE_ARRANGEMENT,
     
     /**
      * Eliminate white space by increasing the size of some nodes to fully fill the space provided by the parent. 

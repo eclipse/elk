@@ -226,6 +226,16 @@ public class LayerSweepCrossingMinimizer
 
     private int minimizeCrossingsWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
+
+        // If the first, initial ordering is already optimal, do not change anything.
+        // If the initial order should be tried, model order should be active.
+        // So if the initial ordering has no crossings, just do not change anything in the graph.
+        // Normally a first sweep should change the order of not connected ports, which is bad.
+        double initialCrossings = countCurrentNumberOfCrossings(gData);
+        if (initialCrossings == 0 && gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
+            // E.g. model order is already correct.
+            return 0;
+        }
         
         if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
                 && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))
@@ -262,6 +272,16 @@ public class LayerSweepCrossingMinimizer
     
     private double minimizeCrossingsNodePortOrderWithCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
+        
+        // If the first, initial ordering is already optimal, do not change anything.
+        // If the initial order should be tried, model order should be active.
+        // So if the initial ordering has no crossings, just do not change anything in the graph.
+        // Normally a first sweep should change the order of not connected ports, which is bad.
+        double initialCrossings = countCurrentNumberOfCrossingsNodePortOrder(gData);
+        if (initialCrossings == 0 && gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)) {
+            // E.g. model order is already correct.
+            return 0;
+        }
         
         if ((!gData.lGraph().getProperty(InternalProperties.FIRST_TRY_WITH_INITIAL_ORDER)
                 && !gData.lGraph().getProperty(InternalProperties.SECOND_TRY_WITH_INITIAL_ORDER))

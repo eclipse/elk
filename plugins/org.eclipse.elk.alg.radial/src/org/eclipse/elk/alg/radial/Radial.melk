@@ -38,14 +38,27 @@ algorithm radial(RadialLayoutProvider) {
     supports org.eclipse.elk.portLabels.placement
     supports compactionStepSize
     supports compactor
+    supports rotate
+    supports rotation.targetAngle
+    supports rotation.computeAdditionalWedgeSpace
+    supports rotation.outgoingEdgeAngles
     supports optimizationCriteria
     supports orderId
     supports radius
     supports sorter
     supports wedgeCriteria
+    supports centerOnRoot
 }
 
 /////////////////////////////////Options///////////////////////////////
+option centerOnRoot: boolean {
+    label "Center On Root"
+    description 
+        "Centers the layout on the root of the tree i.e. so that the central node is also the center node of the
+         final layout. This introduces additional whitespace."
+    default = false
+    targets parents
+}
 option orderId: int {
     label "Order ID "
     description
@@ -62,6 +75,47 @@ option radius: double {
     default = 0.0
     targets parents
 }
+
+// Rotation
+option rotate: boolean {
+    label "Rotate"
+    description
+        "The rotate option determines whether a rotation of the layout should be performed."
+    targets parents
+    default = false
+}
+
+group rotation {
+    option targetAngle: double {
+        label "Target Angle"
+        description
+            "The angle in radians that the layout should be rotated to after layout."
+        targets parents
+        default = 0
+        requires rotate
+    }
+    
+    advanced option computeAdditionalWedgeSpace: boolean {
+        label "Additional Wedge Space"
+        description
+            "If set to true, modifies the target angle by rotating further such that space is left
+             for an edge to pass in between the nodes. This option should only be used in conjunction
+             with top-down layout."
+        targets parents
+        default = false
+        requires rotate
+    }
+    
+    advanced option outgoingEdgeAngles: boolean {
+        label "Outgoing Edge Angles"
+        description 
+            "Calculate the required angle of connected nodes to leave space for an incoming edge. This
+             option should only be used in conjunction with top-down layout."
+        targets parents
+        default = false
+    }
+}
+
 
 //Compaction
 option compactor: CompactionStrategy {
