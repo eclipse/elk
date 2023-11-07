@@ -355,6 +355,8 @@
                     <versionRange>${tycho-version}</versionRange>
                     <goals>
                       <goal>compile</goal>
+                      <goal>testCompile</goal>
+                      <goal>validate-classpath</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
@@ -388,6 +390,19 @@
                   </pluginExecutionFilter>
                   <action>
                     <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>target-platform-configuration</artifactId>
+                    <versionRange>[2.7.3,)</versionRange>
+                    <goals>
+                      <goal>target-platform</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
