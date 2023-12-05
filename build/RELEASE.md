@@ -6,7 +6,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 
 1. Add a new release on ELK's [project page](https://projects.eclipse.org/projects/modeling.elk).
 1. For major releases:
-    1. Prepare an IP log and have it approved by Eclipse Legal.
+    1. Update NOTICE.md file with relevant information regarding used third-party content.
     1. Have [PMC](mailto:modeling-pmc@eclipse.org) approve the release documentation.
     1. Schedule a release review. Release reviews run for a minimum of one week and conclude on the first and third Wednesdays of each month.
 
