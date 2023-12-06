@@ -2,11 +2,11 @@
 
 ## Release Review
 
-The Eclipse release process is described in more detail in the [Eclipse Project Handbook](https://www.eclipse.org/projects/handbook/#release).
+The Eclipse release process is described in more detail in the [Eclipse Project Handbook](https://www.eclipse.org/projects/handbook/#release). The review process is tracked in an [issue such as this](https://gitlab.eclipse.org/eclipsefdn/emo-team/emo/-/issues/258).
 
 1. Add a new release on ELK's [project page](https://projects.eclipse.org/projects/modeling.elk).
 1. For major releases:
-    1. Prepare an IP log and have it approved by Eclipse Legal.
+    1. Update NOTICE.md file with relevant information regarding used third-party content.
     1. Have [PMC](mailto:modeling-pmc@eclipse.org) approve the release documentation.
     1. Schedule a release review. Release reviews run for a minimum of one week and conclude on the first and third Wednesdays of each month.
 
@@ -52,7 +52,7 @@ This is a summary of the information on [this page](https://central.sonatype.org
 
 ## Releasing to Update Site
 
-1. Run the _PromoteUpdateSite_ build with proper parameter values and run it.
+1. ~~Run the _PromoteUpdateSite_ build with proper parameter values and run it.~~
 1. While in Jenkins, disable the nightly release build.
 
 
