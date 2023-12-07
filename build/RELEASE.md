@@ -13,7 +13,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
 
 ## The Release Branch
 
-1. Ensure that all bundles to be built and released are in fact built and are part of the update site.
+1. Ensure that all bundles to be built and released are in fact built and are part of the [update site](https://download.eclipse.org/elk/updates/).
 1. Create a release branch `releases/VERSION`.
 1. Remove `-SNAPSHOT` and `.qualifier` from any version numbers. This is necessary for Maven to push the build to the proper Maven Central release staging area. Be careful not to change anything in source code; this should mainly affect `category.xml`, `pom.xml`s, `feature.xml`s and `MANIFEST.MF`s.
 1. Open `build/org.eclipse.elk.repository/category.xml` and update its description like this:
@@ -23,7 +23,8 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
       Update site for the Eclipse Layout Kernel, version VERSION_NUMBER.
     </description>
     ```
-1. Remove the `Website` stage's call to the `publish-website.sh` script from the release build's `Jenkinsfile` and update the build variables at the top of the `Jenkinsfile`:
+1. Remove the `Website` stage's call to the `publish-website.sh` script from the release build's `Jenkinsfile` and configure the build variables in the [Jenkins configuration](https://ci.eclipse.org/elk/job/IntegrationNightly/):
+
    
     Variable              | New value
     --------------------- | ---------------------------------------------------------------------
@@ -31,7 +32,7 @@ The Eclipse release process is described in more detail in the [Eclipse Project 
     `VERSION`             | Well... the version number...
     `ELK_TARGET_DIR`      | `/home/data/httpd/download.eclipse.org/elk/updates/releases/VERSION/`
     
-1. Update the _[ReleaseNightly](https://ci.eclipse.org/elk/job/ReleaseNightly/)_ build with the same default values for the build variables. Also remember to update the repository branch the build will check out. Run it.
+1. \[deprecated\] Update the _[ReleaseNightly](https://ci.eclipse.org/elk/job/ReleaseNightly/)_ build with the same default values for the build variables. Also remember to update the repository branch the build will check out. Run it.
 1. Update the version numbers on `master`. Tycho can help:
 
     ```
