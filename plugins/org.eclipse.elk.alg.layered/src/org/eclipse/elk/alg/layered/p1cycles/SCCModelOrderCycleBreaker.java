@@ -78,8 +78,8 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
         }
         
         while (true) {
-            resetTrajan(layeredGraph);
-            trajan(layeredGraph);
+            resetTARJAN(layeredGraph);
+            TARJAN(layeredGraph);
             // Filter strongly connected components of size <= 1
             stronglyConnectedComponents.removeIf(s -> s.size() <= 1);
             // If no Strongly connected components remain, the graph is acyclic.
@@ -185,11 +185,11 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
         return modelOrder;
     }
 
-    private void trajan(final LGraph graph) {
+    private void TARJAN(final LGraph graph) {
         index = 0;
         stack = new Stack<LNode>();
         for (LNode node : graph.getLayerlessNodes()) {
-            if (node.getProperty(InternalProperties.TRAJAN_ID) == -1) {
+            if (node.getProperty(InternalProperties.TARJAN_ID) == -1) {
                 stronglyConnected(node);
                 stack.clear();
             }
@@ -197,11 +197,11 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
     }
     
     private void stronglyConnected(final LNode v) {
-        v.setProperty(InternalProperties.TRAJAN_ID, index);
-        v.setProperty(InternalProperties.TRAJAN_LOWLINK, index);
+        v.setProperty(InternalProperties.TARJAN_ID, index);
+        v.setProperty(InternalProperties.TARJAN_LOWLINK, index);
         index++;
         stack.push(v);
-        v.setProperty(InternalProperties.TRAJAN_ON_STACK, true);
+        v.setProperty(InternalProperties.TARJAN_ON_STACK, true);
         for (LEdge edge : v.getConnectedEdges()) {
             if (edge.getSource().getNode() != v && !revEdges.contains(edge)) {
                 continue;
@@ -215,34 +215,34 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
             } else {
                 target = edge.getTarget().getNode();
             }
-            if (target.getProperty(InternalProperties.TRAJAN_ID) == -1) {
+            if (target.getProperty(InternalProperties.TARJAN_ID) == -1) {
                 stronglyConnected(target);
-                v.setProperty(InternalProperties.TRAJAN_LOWLINK, 
-                        Math.min(v.getProperty(InternalProperties.TRAJAN_LOWLINK),
-                        target.getProperty(InternalProperties.TRAJAN_LOWLINK)));
-            } else if (target.getProperty(InternalProperties.TRAJAN_ON_STACK)) {
-                v.setProperty(InternalProperties.TRAJAN_LOWLINK, 
-                        Math.min(v.getProperty(InternalProperties.TRAJAN_LOWLINK),
-                                target.getProperty(InternalProperties.TRAJAN_ID)));
+                v.setProperty(InternalProperties.TARJAN_LOWLINK, 
+                        Math.min(v.getProperty(InternalProperties.TARJAN_LOWLINK),
+                        target.getProperty(InternalProperties.TARJAN_LOWLINK)));
+            } else if (target.getProperty(InternalProperties.TARJAN_ON_STACK)) {
+                v.setProperty(InternalProperties.TARJAN_LOWLINK, 
+                        Math.min(v.getProperty(InternalProperties.TARJAN_LOWLINK),
+                                target.getProperty(InternalProperties.TARJAN_ID)));
             }
         }
-        if (v.getProperty(InternalProperties.TRAJAN_LOWLINK) == v.getProperty(InternalProperties.TRAJAN_ID)) {
+        if (v.getProperty(InternalProperties.TARJAN_LOWLINK) == v.getProperty(InternalProperties.TARJAN_ID)) {
             Set<LNode> sCC = new HashSet<LNode>();
             LNode n = null;
             do {
                 n = stack.pop();
-                n.setProperty(InternalProperties.TRAJAN_ON_STACK, false);
+                n.setProperty(InternalProperties.TARJAN_ON_STACK, false);
                 sCC.add(n);
             } while (v != n);
             stronglyConnectedComponents.add(sCC);
         }
     }
     
-    private void resetTrajan(final LGraph graph) {
+    private void resetTARJAN(final LGraph graph) {
         for (LNode n : graph.getLayerlessNodes()) {
-            n.setProperty(InternalProperties.TRAJAN_ON_STACK, false);
-            n.setProperty(InternalProperties.TRAJAN_LOWLINK, -1);
-            n.setProperty(InternalProperties.TRAJAN_ID, -1);
+            n.setProperty(InternalProperties.TARJAN_ON_STACK, false);
+            n.setProperty(InternalProperties.TARJAN_LOWLINK, -1);
+            n.setProperty(InternalProperties.TARJAN_ID, -1);
             stack.clear();
             for (LEdge e : n.getConnectedEdges()) {
                 e.setProperty(InternalProperties.IS_PART_OF_CYCLE, false);

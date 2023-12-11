@@ -83,7 +83,7 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
         }
         
         // create strongly connected components.
-        trajan(layeredGraph);
+        TARJAN(layeredGraph);
         
         
         //DEBUG OUTPUTS
@@ -93,8 +93,8 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
             }
             System.out.println("SCC " + i + ":");
             for (LNode n : stronglyConnectedComponents.get(i)) {
-                System.out.println(n.toString() + " node trajan id = " + n.getProperty(InternalProperties.TRAJAN_ID) +
-                        " node lowlink = " + n.getProperty(InternalProperties.TRAJAN_LOWLINK)+
+                System.out.println(n.toString() + " node TARJAN id = " + n.getProperty(InternalProperties.TARJAN_ID) +
+                        " node lowlink = " + n.getProperty(InternalProperties.TARJAN_LOWLINK)+
                         " model order = " + n.getProperty(InternalProperties.MODEL_ORDER));
             }
             System.out.println("SCC " + i + " END");
@@ -273,11 +273,11 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
         return modelOrder;
     }
 
-    private void trajan(final LGraph graph) {
+    private void TARJAN(final LGraph graph) {
         index = 0;
         stack = new Stack<LNode>();
         for (LNode node : graph.getLayerlessNodes()) {
-            if (node.getProperty(InternalProperties.TRAJAN_ID) == -1) {
+            if (node.getProperty(InternalProperties.TARJAN_ID) == -1) {
                 stronglyConnected(node);
                 stack.clear();
             }
@@ -285,30 +285,30 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
     }
     
     private void stronglyConnected(final LNode v) {
-        v.setProperty(InternalProperties.TRAJAN_ID, index);
-        v.setProperty(InternalProperties.TRAJAN_LOWLINK, index);
+        v.setProperty(InternalProperties.TARJAN_ID, index);
+        v.setProperty(InternalProperties.TARJAN_LOWLINK, index);
         index++;
         stack.push(v);
-        v.setProperty(InternalProperties.TRAJAN_ON_STACK, true);
+        v.setProperty(InternalProperties.TARJAN_ON_STACK, true);
         for (LEdge edge : v.getOutgoingEdges()) {
             LNode target = edge.getTarget().getNode();
-            if (target.getProperty(InternalProperties.TRAJAN_ID) == -1) {
+            if (target.getProperty(InternalProperties.TARJAN_ID) == -1) {
                 stronglyConnected(target);
-                v.setProperty(InternalProperties.TRAJAN_LOWLINK, 
-                        Math.min(v.getProperty(InternalProperties.TRAJAN_LOWLINK),
-                        target.getProperty(InternalProperties.TRAJAN_LOWLINK)));
-            } else if (target.getProperty(InternalProperties.TRAJAN_ON_STACK)) {
-                v.setProperty(InternalProperties.TRAJAN_LOWLINK, 
-                        Math.min(v.getProperty(InternalProperties.TRAJAN_LOWLINK),
-                                target.getProperty(InternalProperties.TRAJAN_ID)));
+                v.setProperty(InternalProperties.TARJAN_LOWLINK, 
+                        Math.min(v.getProperty(InternalProperties.TARJAN_LOWLINK),
+                        target.getProperty(InternalProperties.TARJAN_LOWLINK)));
+            } else if (target.getProperty(InternalProperties.TARJAN_ON_STACK)) {
+                v.setProperty(InternalProperties.TARJAN_LOWLINK, 
+                        Math.min(v.getProperty(InternalProperties.TARJAN_LOWLINK),
+                                target.getProperty(InternalProperties.TARJAN_ID)));
             }
         }
-        if (v.getProperty(InternalProperties.TRAJAN_LOWLINK) == v.getProperty(InternalProperties.TRAJAN_ID)) {
+        if (v.getProperty(InternalProperties.TARJAN_LOWLINK) == v.getProperty(InternalProperties.TARJAN_ID)) {
             Set<LNode> sCC = new HashSet<LNode>();
             LNode n = null;
             do {
                 n = stack.pop();
-                n.setProperty(InternalProperties.TRAJAN_ON_STACK, false);
+                n.setProperty(InternalProperties.TARJAN_ON_STACK, false);
                 sCC.add(n);
             } while (v != n);
             stronglyConnectedComponents.add(sCC);
