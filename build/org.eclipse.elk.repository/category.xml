@@ -64,6 +64,4 @@
          Eclipse Layout Kernel components for the automatic layout of diagrams.
       </description>
    </category-def>
-   <repository-reference location="http://download.eclipse.org/releases/mars" enabled="true" />
-   <repository-reference location="http://guava-osgi.googlecode.com/svn/trunk/repository/" enabled="true" />
 </site>
