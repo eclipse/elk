@@ -24,6 +24,7 @@ The project maintains the following source code repositories
 
 * https://github.com/eclipse/elk
 * https://github.com/eclipse/elk-models
+* https://github.com/eclipse/elk-website
 
 ## Eclipse Contributor Agreement
 
