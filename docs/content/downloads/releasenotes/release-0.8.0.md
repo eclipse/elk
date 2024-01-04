@@ -46,7 +46,7 @@ This is mainly a bugfix release. See GitHub for the full [list of resolved issue
 - [#651](https://github.com/eclipse/elk/issues/651), [#790](https://github.com/eclipse/elk/pull/790): Report invalid hierarchical crossing minimization instead of fixing it.
 - [#791](https://github.com/eclipse/elk/pull/791), [#714](https://github.com/eclipse/elk/issues/714): Hierarchical edge orientation now uses the same in/out degree mechanism as the non-hierarchical layered algorithm.
 - [#766](https://github.com/eclipse/elk/issues/766), [#801](https://github.com/eclipse/elk/pull/801), Hierarchical port dummies are considered to take no size, same as other port dummies.
-- [#788](https://github.com/eclipse/elk/pull/788): Individual spacings for vertical and horizontal label port spacing.
+- [#788](https://github.com/eclipse/elk/pull/788): Individual spacings for vertical and horizontal label port spacing. `spacing.portLabel` is split into `spacing.labelPortHorizontal` and `spacing.labelPortVertical`.
 - [#817](https://github.com/eclipse/elk/pull/817), [#818](https://github.com/eclipse/elk/pull/818): Separate connected components are no longer implicitly ordered my minimal model order of the component if a model order strategy is set but require a separate option.
 
 ### Removal
