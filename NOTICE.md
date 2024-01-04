@@ -63,7 +63,7 @@ Google Guice / Inject Core API (5.0.1)
 
 ICU4J (74.2)
 
-* ICU
+* License: ICU
 
 libavoid (0.3.1)
 
