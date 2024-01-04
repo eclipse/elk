@@ -21,7 +21,8 @@ fi
 git clone --depth 1 git@github.com:eclipse/elk-website.git website
 
 # Synchronize the website over to the repository
-rsync -crv --delete --exclude=".*/" --exclude=".*" elk/docs/public/ website
+rsync -crv --delete --exclude=".*/" --exclude=".*" --exclude="CODE_OF_CONDUCT.md" --exclude="CONTRIBUTING.md" --exclude="LICENSE.md" --exclude="NOTICE.md" --exclude="README.md" --exclude="SECURITY.md" elk/docs/public/ website
+
 
 # Change into the git repository folder
 cd website
