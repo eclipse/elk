@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2018, 2020 Kiel University and others.
- * 
+ *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
@@ -10,6 +10,7 @@
 package org.eclipse.elk.alg.rectpacking.p2packing;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.elk.alg.rectpacking.options.InternalProperties;
 import org.eclipse.elk.alg.rectpacking.options.RectPackingOptions;
@@ -25,6 +26,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.core.options.ContentAlignment;
 
 /**
  * Second iteration of the algorithm. Actual placement of the boxes inside the approximated bounding box. Rectangles are
@@ -61,7 +63,7 @@ public class RowFillingAndCompaction {
     // Constructors.
     /**
      * Creates an {@link RowFillingAndCompaction} object to execute the second iteration on.
-     * 
+     *
      * @param aspectRatio The desired aspect ratio.
      * @param nodeNodeSpacing The spacing between two nodes.
      */
@@ -89,7 +91,7 @@ public class RowFillingAndCompaction {
 
         // Initial placement for rectangles in blocks in each row.
         List<RectRow> rows = InitialPlacement.place(layoutGraph.getChildren(), targetWidth, nodeNodeSpacing);
-        
+
         // Compaction of blocks.
         for (int rowIdx = 0; rowIdx < rows.size(); rowIdx++) {
             RectRow currentRow = rows.get(rowIdx);
@@ -97,6 +99,7 @@ public class RowFillingAndCompaction {
                 RectRow previousRow = rows.get(rowIdx - 1);
                 currentRow.setY(previousRow.getY() + previousRow.getHeight() + nodeNodeSpacing);
             }
+
             Pair<Boolean, Boolean> result = Compaction.compact(rowIdx, rows, targetWidth, nodeNodeSpacing,
                     layoutGraph.getProperty(RectPackingOptions.PACKING_COMPACTION_ROW_HEIGHT_REEVALUATION));
             if (result.getSecond()) {
@@ -156,20 +159,51 @@ public class RowFillingAndCompaction {
                 // elkjs-exclude-end
             }
         }
-         
+
         KVector size = DrawingUtil.calculateDimensions(rows, nodeNodeSpacing);
-        
-        double totalWidth = Math.max(size.x, minWidth - padding.getHorizontal());
+
+        double drawingWidth = Math.max(size.x, minWidth - padding.getHorizontal());
         double height = Math.max(size.y, minHeight - padding.getVertical());
         double additionalHeight = height - size.y;
+        double drawingHeight = size.y + additionalHeight;
         layoutGraph.setProperty(InternalProperties.ADDITIONAL_HEIGHT, additionalHeight);
         layoutGraph.setProperty(InternalProperties.ROWS, rows);
 
-        return new DrawingData(this.aspectRatio, totalWidth, size.y + additionalHeight, DrawingDataDescriptor.WHOLE_DRAWING);
+        // Handle content alignment here
+        Set<ContentAlignment> contentAlignment = layoutGraph.getProperty(RectPackingOptions.CONTENT_ALIGNMENT);
+        for (RectRow row : rows) {
+            this.alignChildrenHorizontal(row, drawingWidth, contentAlignment);
+        }
+
+        return new DrawingData(this.aspectRatio, drawingWidth, drawingHeight, DrawingDataDescriptor.WHOLE_DRAWING);
     }
 
     //////////////////////////////////////////////////////////////////
     // Helper method.
+
+    private void alignChildrenHorizontal(RectRow row, double width, Set<ContentAlignment> contentAlignment) {
+        double areaLeft = width - row.getWidth();
+        double xDiff = 0;
+        if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
+            xDiff = areaLeft / 2.0;
+        } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
+            xDiff = areaLeft;
+        }
+        List<Block> blocks = row.getChildren();
+        for (int index = 0; index < blocks.size(); index++) {
+            Block currentBlock = blocks.get(index);
+            if (index == 0) {
+                currentBlock.setLocation(xDiff, currentBlock.getY());
+            } else {
+                Block previousBlock = blocks.get(index - 1);
+                currentBlock.setLocation(
+                    previousBlock.getX() + previousBlock.getWidth() + nodeNodeSpacing, previousBlock.getY()
+                );
+            }
+        }
+    }
+
+
 
     /**
      * Recalculates the width and height of the row.
