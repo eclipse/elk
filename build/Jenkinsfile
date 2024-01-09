@@ -241,40 +241,6 @@ spec:
         }
       }
     }
-
-    stage('Website') {
-      steps {
-        container('hugo') {
-          dir ('elk/docs') {
-            sh "hugo"
-          }
-        }
-      }
-    }
-
-    stage('Publish') {
-      steps {
-        // Zip the update site
-        dir ('elk/build/org.eclipse.elk.repository/target/repository') {
-          sh "zip -r elk-${params.VERSION}.zip *"
-        }
-        
-        // Zip the website, put the zip file into the update site directory as well
-        dir ('elk/docs/public') {
-          sh "zip -r ../../build/org.eclipse.elk.repository/target/repository/elk-${params.VERSION}-docs.zip *"
-        }
-        
-        // Deploy the previously built artifacts
-        container('jnlp') {
-          // Deploy update site folder
-          sshagent(['projects-storage.eclipse.org-bot-ssh']) {
-            sh "ssh genie.elk@projects-storage.eclipse.org rm -rfv ${params.ELK_TARGET_DIR}"
-            sh "ssh genie.elk@projects-storage.eclipse.org mkdir -pv ${params.ELK_TARGET_DIR}"
-            sh "scp -vr elk/build/org.eclipse.elk.repository/target/repository/* genie.elk@projects-storage.eclipse.org:${params.ELK_TARGET_DIR}"
-          }
-        }
-      }
-    }
   }
 
   post {
