@@ -58,6 +58,11 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
         boolean tryBox = layoutGraph.getProperty(RectPackingOptions.TRYBOX);
         List<ElkNode> rectangles = layoutGraph.getChildren();
         
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(layoutGraph).execute();
+        }
+        
         // Check whether regions are stackable and do box layout instead.
         boolean stackable = false;
         if (tryBox && rectangles.size() >= 3) {
@@ -129,7 +134,7 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
                     layoutGraph.getProperty(InternalProperties.DRAWING_HEIGHT) + padding.getVertical(), false, true);
         }
 
-        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        // Do micro layout again since the whitspace elimination and other things might have changed node sizes.
         if (!layoutGraph.getProperty(RectPackingOptions.OMIT_NODE_MICRO_LAYOUT)) {
             NodeMicroLayout.forGraph(layoutGraph).execute();
         }
