@@ -20,6 +20,7 @@ import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.BoxLayoutProvider;
@@ -124,6 +125,20 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
             progressMonitor.logGraph(layoutGraph, slotIndex + "-Finished");
         }
         // elkjs-exclude-end
+        
+        // Content alignment
+        double realWidth = 0;
+        double realHeight = 0;
+        for (ElkNode rect : rectangles) {
+            realWidth = Math.max(realWidth, rect.getX() + rect.getWidth());
+            realHeight = Math.max(realHeight, rect.getY() + rect.getHeight());
+        }
+
+        ElkUtil.translate(layoutGraph,
+                new KVector(
+                        layoutGraph.getProperty(InternalProperties.DRAWING_WIDTH),
+                        layoutGraph.getProperty(InternalProperties.DRAWING_HEIGHT)),
+                new KVector(realWidth, realHeight));
 
         // Final touch.
         applyPadding(rectangles, padding);
