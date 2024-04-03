@@ -33,7 +33,9 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import com.google.common.collect.Lists;
 
 /**
- * @author Sasuk
+ * Cycle Breaking Strategy that looks further down the graph for nodes of the same type to reverse edges.
+ * Only works with Group Model Order.
+ * @author Mwr
  *
  */
 public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph>{
@@ -74,6 +76,7 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
                 currentTopMO = Math.max(currentTopMO, node.getProperty(InternalProperties.MODEL_ORDER) + 1);
             }
         }
+        //add fake "Model Order" so nodes without one can be dealt with.
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             if (node.getProperty(InternalProperties.MODEL_ORDER) == null 
                     && !node.toString().contains("external_port")) {
@@ -84,21 +87,6 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
         
         // create strongly connected components.
         TARJAN(layeredGraph);
-        
-        
-        //DEBUG OUTPUTS
-        for (int i = 0; i < stronglyConnectedComponents.size(); i++) {
-            if (stronglyConnectedComponents.get(i).size() <= 1) {
-                continue;
-            }
-            System.out.println("SCC " + i + ":");
-            for (LNode n : stronglyConnectedComponents.get(i)) {
-                System.out.println(n.toString() + " node TARJAN id = " + n.getProperty(InternalProperties.TARJAN_ID) +
-                        " node lowlink = " + n.getProperty(InternalProperties.TARJAN_LOWLINK)+
-                        " model order = " + n.getProperty(InternalProperties.MODEL_ORDER));
-            }
-            System.out.println("SCC " + i + " END");
-        }
         
         // mark edges that are part of a cycle (within a SCC).
         for (int i = 0; i < stronglyConnectedComponents.size(); i++) {
@@ -124,7 +112,7 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
                 offset = Math.max(offset, node.getProperty(InternalProperties.MODEL_ORDER) + 1);
             }
         }
-        approach1(layeredGraph, offset);
+        lookAhead(layeredGraph, offset);
         
         
         
@@ -137,18 +125,20 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
         monitor.done();
     }
     
-    
-    private void approach1(final LGraph layeredGraph,final int offset) {
+    /**
+     * Looks Further down the graph and uses the skip sequential edges option with fallback edges.
+     * @param layeredGraph the graph
+     * @param offset the offset for working with Model Order
+     */
+    private void lookAhead(final LGraph layeredGraph,final int offset) {
         int modelOrderMask[] = {1,4};
         for (int i: modelOrderMask) {
             for (LNode source : layeredGraph.getLayerlessNodes()) {
                 int groupID = source.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
-                int modelOrderSource = computeConstraintModelOrder(source, offset);
                 if (groupID != i) {    
                     continue;
                 }
-                
-                System.out.println("Checking Node: " + source.toString() + "With Model Order: " + modelOrderSource);
+                int modelOrderSource = computeConstraintModelOrder(source, offset);
                 
                 
                 for (LPort port : source.getPorts(PortType.OUTPUT)) {
@@ -172,8 +162,6 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
                             
                         } else if (computeConstraintModelOrder(target, offset) <= modelOrderSource) {
                             revEdges.add(edge);
-                            System.out.println("Reversed Edge from: " 
-                            + source.toString() + " to: " + target.toString());
                         } else {
                             edge.setProperty(InternalProperties.IS_FIXED, true);
                         }
@@ -207,22 +195,13 @@ public class ModelOrderLookAHeadCycleBreaker implements ILayoutPhase<LayeredPhas
                 if (groupPriorityTarget == groupPriority) {
                     if (computeConstraintModelOrder(target, offset) <= modelOrderOriginalSource) {
                         if (edge.getProperty(InternalProperties.IS_FIXED)) {
-                            System.out.println("FALLBACK");
                             toRev.clear();
                             toRev.add(fallBackEdge);
                             return toRev;
                         }
-                        System.out.println("REVERSED FROM ORIG: " + originalSource.toString()
-                        + " -> " + currentSource.toString()
-                        + " -> " + target.toString() + " MO-ORIG: " + modelOrderOriginalSource 
-                        + " MO-FINAL: " + computeConstraintModelOrder(target, offset));
-                        //revEdges.add(edge);
                         toRev.add(edge);
                     } else {
                         edge.setProperty(InternalProperties.IS_FIXED, true);
-                        System.out.println("FIXED FROM ORIG: " + originalSource.toString()
-                        + " -> " + currentSource.toString()
-                        + " -> " + target.toString());
                     }
                 } else if (!checked.contains(target)) {
                     nextNodes.add(target);

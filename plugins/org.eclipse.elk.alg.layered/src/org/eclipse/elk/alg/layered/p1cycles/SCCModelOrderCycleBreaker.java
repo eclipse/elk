@@ -30,6 +30,8 @@ import com.google.common.collect.Lists;
 
 /**
  * This Cycle Breaking Strategy relies on Tarjan's algorithm to find strongly connected components.
+ * It than selects the node with the maximum model order in the strongly connected components and reverses its out-going
+ * edges to nodes in the strongly connected component.
  * @author mwr
  *
  */
@@ -80,8 +82,7 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
         while (true) {
             resetTARJAN(layeredGraph);
             TARJAN(layeredGraph);
-            // Filter strongly connected components of size <= 1
-            stronglyConnectedComponents.removeIf(s -> s.size() <= 1);
+            
             // If no Strongly connected components remain, the graph is acyclic.
             if (stronglyConnectedComponents.size() == 0) {
                 break;
@@ -90,11 +91,7 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
             // highest model order only incoming
             findNodes(offset);
             
-            if (revEdges.isEmpty()) {
-                break;
-            }
-            
-         // reverse the gathered edges
+            // reverse the gathered edges
             for (LEdge edge : revEdges) {
                 edge.reverse(layeredGraph, false);
                 edge.getSource().getNode().setProperty(LayeredOptions.LAYERING_LAYER_ID,
@@ -106,17 +103,12 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
             revEdges.clear();
         }
         
-        
-        
-        
         monitor.done();
+        monitor.log("Execution Time: " + monitor.getExecutionTime());
     }
     
     public void findNodes(int offset) {
         for (int i = 0; i < stronglyConnectedComponents.size(); i++) {
-            if (stronglyConnectedComponents.get(i).size() <= 1) {
-                continue;
-            }
             LNode max = null;
             int maxModelOrder = Integer.MIN_VALUE;
             for (LNode n : stronglyConnectedComponents.get(i)) {
@@ -141,7 +133,6 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
             for (LEdge edge : max.getOutgoingEdges()) {
                  if (stronglyConnectedComponents.get(i).contains(edge.getTarget().getNode())) {
                      revEdges.add(edge);
-                     System.out.println("Reversed: " + edge.toString());
                  }
             
             }
@@ -234,7 +225,9 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
                 n.setProperty(InternalProperties.TARJAN_ON_STACK, false);
                 sCC.add(n);
             } while (v != n);
-            stronglyConnectedComponents.add(sCC);
+            if (sCC.size() > 1) {
+                stronglyConnectedComponents.add(sCC);
+            }
         }
     }
     

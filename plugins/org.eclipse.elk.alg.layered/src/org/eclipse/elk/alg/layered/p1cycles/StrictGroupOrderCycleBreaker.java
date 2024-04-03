@@ -73,29 +73,29 @@ public class StrictGroupOrderCycleBreaker implements ILayoutPhase<LayeredPhases,
             }
         }
         
+        final int offset_final = offset;
+        
         for (LNode source : layeredGraph.getLayerlessNodes()) {
             int modelOrderSource = computeConstraintModelOrder(source, offset);
             int groupIDSource = source.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
             
-            for (LPort port : source.getPorts(PortType.OUTPUT)) {
-                for (LEdge edge : port.getOutgoingEdges()) {
-                    LNode target = edge.getTarget().getNode();
-                    int groupIDTarget = target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
-                    int modelOrderTarget = computeConstraintModelOrder(target, offset);
-                    // Nodes with -1 as GroupID are external ports, which are never part of a cycle.
-                    if (groupIDTarget == -1 || groupIDSource == -1) {
-                        continue;
-                    }
-                    // If groups do not match, use groupID to reverse
-                    if (groupIDTarget < groupIDSource) {
-                        revEdges.add(edge);
-                    } 
-                    // If the groups match use the Model Order
-                    else if (modelOrderTarget < modelOrderSource && groupIDTarget == groupIDSource) {
-                        revEdges.add(edge);
-                    }
+            source.getOutgoingEdges().forEach(edge -> {
+                LNode target = edge.getTarget().getNode();
+                int groupIDTarget = target.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
+                int modelOrderTarget = computeConstraintModelOrder(target, offset_final);
+                // Nodes with -1 as GroupID are external ports, which are never part of a cycle.
+                if (groupIDTarget == -1 || groupIDSource == -1) {
+                    return;
                 }
-            }
+                // If groups do not match, use groupID to reverse
+                if (groupIDTarget < groupIDSource) {
+                    revEdges.add(edge);
+                } 
+                // If the groups match use the Model Order
+                else if (modelOrderTarget < modelOrderSource && groupIDTarget == groupIDSource) {
+                    revEdges.add(edge);
+                }
+            });
         }
         
         // reverse the gathered edges
