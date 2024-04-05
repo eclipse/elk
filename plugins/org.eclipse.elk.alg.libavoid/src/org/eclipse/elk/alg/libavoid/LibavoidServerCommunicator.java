@@ -310,6 +310,11 @@ public class LibavoidServerCommunicator {
         	addOption(LibavoidOptions.DIRECTION, direction);
         }
 
+        boolean enableHyperedgesFromCommonSource =
+        		node.getProperty(LibavoidOptions.ENABLE_HYPEREDGES_FROM_COMMON_SOURCE);
+        addOption(LibavoidOptions.ENABLE_HYPEREDGES_FROM_COMMON_SOURCE,
+        		enableHyperedgesFromCommonSource);
+
         /*
          * Penalties
          */
@@ -384,11 +389,6 @@ public class LibavoidServerCommunicator {
         		node.getProperty(LibavoidOptions.NUDGE_SHARED_PATHS_WITH_COMMON_END_POINT);
         addRoutingOption(LibavoidOptions.NUDGE_SHARED_PATHS_WITH_COMMON_END_POINT,
         		nudgeSharedPathsWithCommonEndPoint);
-        
-        boolean enableHyperedgesFromCommonSource =
-        		node.getProperty(LibavoidOptions.ENABLE_HYPEREDGES_FROM_COMMON_SOURCE);
-        addRoutingOption(LibavoidOptions.ENABLE_HYPEREDGES_FROM_COMMON_SOURCE,
-        		enableHyperedgesFromCommonSource);
     }
 
     private void addOption(final IProperty<?> key, final Object value) {
@@ -609,13 +609,14 @@ public class LibavoidServerCommunicator {
 		libavoidNode(node, nodeIdCounter, 
 				x, y, node.getWidth(), node.getHeight(), 
 				portLessIncomingEdges, portLessOutgoingEdges);
-		nodeIdCounter++;
 		
 		// transfer all ports
 		for (ElkPort port : node.getPorts()) {
 			libavoidPort(port, portIdCounter, nodeIdCounter, null);
 			portIdCounter++;
 		}
+
+        nodeIdCounter++;
 	}
     
 	/**

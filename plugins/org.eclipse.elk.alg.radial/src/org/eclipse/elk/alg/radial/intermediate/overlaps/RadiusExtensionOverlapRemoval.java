@@ -74,19 +74,17 @@ public class RadiusExtensionOverlapRemoval extends AbstractRadiusExtensionCompac
             Set<ElkNode> nextLevelNodes = RadialUtil.getNextLevelNodeSet(nodes);
             // Calculate the moved distance which is the amount all children and grandchildren have to be moved.
             int index = 1;
-            while (!nextLevelNodes.isEmpty()) {
+            if (!nextLevelNodes.isEmpty()) {
                 for(ElkNode nextLevelNode : nextLevelNodes) {
                     moveNode(nextLevelNode, movedDistance);
                 }
                 progressMonitor.logGraph(graph, "Child movement " + index);
-                nextLevelNodes = RadialUtil.getNextLevelNodeSet(new ArrayList<>(nextLevelNodes));
                 index++;
             }            
             
             if (sorter != null) {
                 sorter.sort(new ArrayList<>(nextLevelNodes));
             }
-            progressMonitor.logGraph(graph, "After ancestor movement");
             extend(graph, new ArrayList<>(nextLevelNodes), progressMonitor);
         }
     }

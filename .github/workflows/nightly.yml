@@ -14,10 +14,9 @@ jobs:
     strategy:
       matrix:
         # We check LTS versions and the latest release
-        # 8  - LTS
         # 11 - LTS
-        # 14 - latest
-        java-version: [ 8, 11, 14 ]
+        # 17 - LTS
+        java-version: [ 11, 17 ]
 
     steps:
     # Checkout the reposity of both elk and elk-models (the latter is required for the tests)

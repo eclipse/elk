@@ -37,25 +37,37 @@ ANTLR Runtime only: (3.2)
 
 * License: New BSD license
 
-Apache Commons Logging Jar (1.1.1)
+Apache Commons Logging Jar (1.2.0)
 
 * License: Apache License, 2.0
 
-Apache Log4J (1.2.8)
+Apache Log4J (1.2.24)
 
 * License: Apache License, 2.0
 
-ASM (5.0.1)
+ASM (9.5.0)
 
 * License: New BSD license
 
-Google Guava (15.0.0)
+Google Guava (30.1.0)
 
 * License: Apache License 2.0
 
-Google Guice / Inject Core API (3.0.0)
+Google Guava (33.0.0)
+
+* License: Apache License 2.0
+
+Google Guice / Inject Core API (5.0.1)
 
 * License: Apache License, 2.0
+
+ICU4J (74.2)
+
+* License: ICU
+
+libavoid (0.3.1)
+
+* License:  GNU Lesser General Public License, 2.1
 
 Ptolemy demo models (n/a)
 
