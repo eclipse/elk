@@ -14,6 +14,16 @@ infrastructure to connect them to diagram editors.
 
 * https://www.eclipse.org/elk/
 
+## Creating issues
+
+Before creating a new issue with a question, bug report, feature request or similar, 
+please use the search to avoid creating duplicate issues. In most cases when you create 
+an issue it is helpful to create and link an example in [elklive](https://rtsys.informatik.uni-kiel.de/elklive/).
+There you can also select the version of ELK that should be used.
+For questions regarding layout options, the [reference](https://eclipse.dev/elk/reference.html)
+can help. In particular you can see what options are supported by which algorithms.
+If these resources are not sufficient to solve your problem, please create an issue using the appropriate template!
+
 ## Developer resources
 
 Information regarding source code management, builds, and more.
