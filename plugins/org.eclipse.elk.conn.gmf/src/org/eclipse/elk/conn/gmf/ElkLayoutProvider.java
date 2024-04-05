@@ -10,6 +10,7 @@
 package org.eclipse.elk.conn.gmf;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -145,7 +146,7 @@ public class ElkLayoutProvider extends AbstractProvider implements ILayoutNodePr
             if (notationNode.equals(editPart.getNotationView())) {
                 return editPart;
             }
-            editPartQueue.addAll(editPart.getChildren());
+            editPartQueue.addAll((Collection<? extends IGraphicalEditPart>) editPart.getChildren());
         } while (!editPartQueue.isEmpty());
         return null;
     }
