@@ -53,9 +53,17 @@ Google Guava (30.1.0)
 
 * License: Apache License 2.0
 
+Google Guava (33.0.0)
+
+* License: Apache License 2.0
+
 Google Guice / Inject Core API (5.0.1)
 
 * License: Apache License, 2.0
+
+ICU4J (74.2)
+
+* License: ICU
 
 libavoid (0.3.1)
 

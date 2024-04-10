@@ -17,7 +17,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Sorts all child nodes by their desired position.
+ * Sets the minimum width and height of the parent since this influences decisions based on the aspect ratio.
  * 
  * <dl>
  *   <dt>Precondition:</dt>

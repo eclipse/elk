@@ -58,7 +58,6 @@ This is mainly a bugfix release. See GitHub for the full [list of resolved issue
 ### Cleanup
 
 - [#924](https://github.com/eclipse/elk/pull/924): Corrected pom license for maven central.
-
-
+- [#865](https://github.com/eclipse/elk/pull/865), [#835](https://github.com/eclipse/elk/pull/835): Restructure and improve rectpacking. This includes a lot of renaming. `optimizationGoal` is renamed to `widthApproximation.optimizationGoal`, `lastPlaceShift` is renamed to `widthApproximation.lastPlaceShift`, `onlyFirstIteration` is deleted, `rowCompaction` is now the default `packing.strategy` `COMPACTION`, `packing.compaction.rowHeightReevaluation` and `packing.compaction.iterations` are added to further improve the packing compaction, `expandNodes` and `expandToAspectRatio` have been reworked into `whiteSpaceElimination.strategy`s `EQUAL_BETWEEN_STRUCTURES` and `TO_ASPECT_RATIO`, `targetWidth` is now set via `widthApproximation.targetWidth`and is enabled by setting the `widthApproximation.strategy`, the `inNewRow` option can constrain the packing, and the `tryBox` option may be set to try whether the rectangles are stackable and in the case they are not use the simpler `box` layout algorithm.
 
 
