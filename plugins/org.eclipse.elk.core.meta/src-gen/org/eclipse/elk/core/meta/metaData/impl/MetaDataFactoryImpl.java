@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -132,6 +130,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdModel createMdModel()
   {
     MdModelImpl mdModel = new MdModelImpl();
@@ -143,6 +142,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdBundle createMdBundle()
   {
     MdBundleImpl mdBundle = new MdBundleImpl();
@@ -154,6 +154,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdBundleMember createMdBundleMember()
   {
     MdBundleMemberImpl mdBundleMember = new MdBundleMemberImpl();
@@ -165,6 +166,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdGroupOrOption createMdGroupOrOption()
   {
     MdGroupOrOptionImpl mdGroupOrOption = new MdGroupOrOptionImpl();
@@ -176,6 +178,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdGroup createMdGroup()
   {
     MdGroupImpl mdGroup = new MdGroupImpl();
@@ -187,6 +190,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdOption createMdOption()
   {
     MdOptionImpl mdOption = new MdOptionImpl();
@@ -198,6 +202,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdOptionDependency createMdOptionDependency()
   {
     MdOptionDependencyImpl mdOptionDependency = new MdOptionDependencyImpl();
@@ -209,6 +214,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdAlgorithm createMdAlgorithm()
   {
     MdAlgorithmImpl mdAlgorithm = new MdAlgorithmImpl();
@@ -220,6 +226,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdCategory createMdCategory()
   {
     MdCategoryImpl mdCategory = new MdCategoryImpl();
@@ -231,6 +238,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdOptionSupport createMdOptionSupport()
   {
     MdOptionSupportImpl mdOptionSupport = new MdOptionSupportImpl();
@@ -286,6 +294,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MetaDataPackage getMetaDataPackage()
   {
     return (MetaDataPackage)getEPackage();

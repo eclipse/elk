@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -123,6 +121,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isDeprecated()
   {
     return deprecated;
@@ -133,6 +132,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDeprecated(boolean newDeprecated)
   {
     boolean oldDeprecated = deprecated;
@@ -146,6 +146,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getLabel()
   {
     return label;
@@ -156,6 +157,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLabel(String newLabel)
   {
     String oldLabel = label;
@@ -169,6 +171,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getDescription()
   {
     return description;
@@ -179,6 +182,7 @@ public class MdCategoryImpl extends MdBundleMemberImpl implements MdCategory
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDescription(String newDescription)
   {
     String oldDescription = description;

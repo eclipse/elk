@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -88,6 +86,7 @@ public class MdOptionDependencyImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdOption getTarget()
   {
     if (target != null && target.eIsProxy())
@@ -118,6 +117,7 @@ public class MdOptionDependencyImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setTarget(MdOption newTarget)
   {
     MdOption oldTarget = target;
@@ -131,6 +131,7 @@ public class MdOptionDependencyImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public XExpression getValue()
   {
     return value;
@@ -158,6 +159,7 @@ public class MdOptionDependencyImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setValue(XExpression newValue)
   {
     if (newValue != value)

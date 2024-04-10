@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData;
 
@@ -40,10 +38,6 @@ public interface MdBundle extends EObject
   /**
    * Returns the value of the '<em><b>Label</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Label</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Label</em>' attribute.
    * @see #setLabel(String)
@@ -66,10 +60,6 @@ public interface MdBundle extends EObject
   /**
    * Returns the value of the '<em><b>Target Class</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Target Class</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Target Class</em>' attribute.
    * @see #setTargetClass(String)
@@ -92,10 +82,6 @@ public interface MdBundle extends EObject
   /**
    * Returns the value of the '<em><b>Documentation Folder</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Documentation Folder</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Documentation Folder</em>' attribute.
    * @see #setDocumentationFolder(String)
@@ -118,10 +104,6 @@ public interface MdBundle extends EObject
   /**
    * Returns the value of the '<em><b>Id Prefix</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Id Prefix</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Id Prefix</em>' attribute.
    * @see #setIdPrefix(String)
@@ -145,10 +127,6 @@ public interface MdBundle extends EObject
    * Returns the value of the '<em><b>Members</b></em>' containment reference list.
    * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdBundleMember}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Members</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Members</em>' containment reference list.
    * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdBundle_Members()

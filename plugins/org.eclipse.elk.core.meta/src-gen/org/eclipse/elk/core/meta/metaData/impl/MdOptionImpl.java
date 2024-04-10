@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -300,6 +298,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isDeprecated()
   {
     return deprecated;
@@ -310,6 +309,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDeprecated(boolean newDeprecated)
   {
     boolean oldDeprecated = deprecated;
@@ -323,6 +323,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isAdvanced()
   {
     return advanced;
@@ -333,6 +334,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setAdvanced(boolean newAdvanced)
   {
     boolean oldAdvanced = advanced;
@@ -346,6 +348,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isProgrammatic()
   {
     return programmatic;
@@ -356,6 +359,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setProgrammatic(boolean newProgrammatic)
   {
     boolean oldProgrammatic = programmatic;
@@ -369,6 +373,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isOutput()
   {
     return output;
@@ -379,6 +384,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setOutput(boolean newOutput)
   {
     boolean oldOutput = output;
@@ -392,6 +398,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isGlobal()
   {
     return global;
@@ -402,6 +409,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setGlobal(boolean newGlobal)
   {
     boolean oldGlobal = global;
@@ -415,6 +423,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public JvmTypeReference getType()
   {
     return type;
@@ -442,6 +451,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setType(JvmTypeReference newType)
   {
     if (newType != type)
@@ -463,6 +473,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getLabel()
   {
     return label;
@@ -473,6 +484,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLabel(String newLabel)
   {
     String oldLabel = label;
@@ -486,6 +498,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getDescription()
   {
     return description;
@@ -496,6 +509,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDescription(String newDescription)
   {
     String oldDescription = description;
@@ -509,6 +523,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public XExpression getDefaultValue()
   {
     return defaultValue;
@@ -536,6 +551,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDefaultValue(XExpression newDefaultValue)
   {
     if (newDefaultValue != defaultValue)
@@ -557,6 +573,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public XExpression getLowerBound()
   {
     return lowerBound;
@@ -584,6 +601,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLowerBound(XExpression newLowerBound)
   {
     if (newLowerBound != lowerBound)
@@ -605,6 +623,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public XExpression getUpperBound()
   {
     return upperBound;
@@ -632,6 +651,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setUpperBound(XExpression newUpperBound)
   {
     if (newUpperBound != upperBound)
@@ -653,6 +673,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<MdOptionTargetType> getTargets()
   {
     if (targets == null)
@@ -667,6 +688,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<String> getLegacyIds()
   {
     if (legacyIds == null)
@@ -681,6 +703,7 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<MdOptionDependency> getDependencies()
   {
     if (dependencies == null)

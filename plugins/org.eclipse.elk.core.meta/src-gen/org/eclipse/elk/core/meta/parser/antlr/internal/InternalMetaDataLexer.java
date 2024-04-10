@@ -1,11 +1,3 @@
-/*******************************************************************************
- * Copyright (c) 2019 Kiel University and others.
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0.
- * 
- * SPDX-License-Identifier: EPL-2.0
- *******************************************************************************/
 package org.eclipse.elk.core.meta.parser.antlr.internal;
 
 // Hack: Use our own Lexer superclass by means of import. 
@@ -2490,10 +2482,10 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_HEX;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8309:10: ( ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )? )
-            // InternalMetaData.g:8309:12: ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
+            // InternalMetaData.g:8308:10: ( ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )? )
+            // InternalMetaData.g:8308:12: ( '0x' | '0X' ) ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+ ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
             {
-            // InternalMetaData.g:8309:12: ( '0x' | '0X' )
+            // InternalMetaData.g:8308:12: ( '0x' | '0X' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -2521,7 +2513,7 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // InternalMetaData.g:8309:13: '0x'
+                    // InternalMetaData.g:8308:13: '0x'
                     {
                     match("0x"); 
 
@@ -2529,7 +2521,7 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalMetaData.g:8309:18: '0X'
+                    // InternalMetaData.g:8308:18: '0X'
                     {
                     match("0X"); 
 
@@ -2539,7 +2531,7 @@ public class InternalMetaDataLexer extends Lexer {
 
             }
 
-            // InternalMetaData.g:8309:24: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+
+            // InternalMetaData.g:8308:24: ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' | '_' )+
             int cnt2=0;
             loop2:
             do {
@@ -2577,7 +2569,7 @@ public class InternalMetaDataLexer extends Lexer {
                 cnt2++;
             } while (true);
 
-            // InternalMetaData.g:8309:58: ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
+            // InternalMetaData.g:8308:58: ( '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) ) )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -2586,10 +2578,10 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // InternalMetaData.g:8309:59: '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
+                    // InternalMetaData.g:8308:59: '#' ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
                     {
                     match('#'); 
-                    // InternalMetaData.g:8309:63: ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
+                    // InternalMetaData.g:8308:63: ( ( 'b' | 'B' ) ( 'i' | 'I' ) | ( 'l' | 'L' ) )
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -2607,7 +2599,7 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     switch (alt3) {
                         case 1 :
-                            // InternalMetaData.g:8309:64: ( 'b' | 'B' ) ( 'i' | 'I' )
+                            // InternalMetaData.g:8308:64: ( 'b' | 'B' ) ( 'i' | 'I' )
                             {
                             if ( input.LA(1)=='B'||input.LA(1)=='b' ) {
                                 input.consume();
@@ -2631,7 +2623,7 @@ public class InternalMetaDataLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // InternalMetaData.g:8309:84: ( 'l' | 'L' )
+                            // InternalMetaData.g:8308:84: ( 'l' | 'L' )
                             {
                             if ( input.LA(1)=='L'||input.LA(1)=='l' ) {
                                 input.consume();
@@ -2670,11 +2662,11 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8311:10: ( '0' .. '9' ( '0' .. '9' | '_' )* )
-            // InternalMetaData.g:8311:12: '0' .. '9' ( '0' .. '9' | '_' )*
+            // InternalMetaData.g:8310:10: ( '0' .. '9' ( '0' .. '9' | '_' )* )
+            // InternalMetaData.g:8310:12: '0' .. '9' ( '0' .. '9' | '_' )*
             {
             matchRange('0','9'); 
-            // InternalMetaData.g:8311:21: ( '0' .. '9' | '_' )*
+            // InternalMetaData.g:8310:21: ( '0' .. '9' | '_' )*
             loop5:
             do {
                 int alt5=2;
@@ -2723,11 +2715,11 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_DECIMAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8313:14: ( RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )? )
-            // InternalMetaData.g:8313:16: RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
+            // InternalMetaData.g:8312:14: ( RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )? )
+            // InternalMetaData.g:8312:16: RULE_INT ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )? ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
             {
             mRULE_INT(); 
-            // InternalMetaData.g:8313:25: ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )?
+            // InternalMetaData.g:8312:25: ( ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )?
             int alt7=2;
             int LA7_0 = input.LA(1);
 
@@ -2736,7 +2728,7 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // InternalMetaData.g:8313:26: ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
+                    // InternalMetaData.g:8312:26: ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
                     {
                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                         input.consume();
@@ -2747,7 +2739,7 @@ public class InternalMetaDataLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // InternalMetaData.g:8313:36: ( '+' | '-' )?
+                    // InternalMetaData.g:8312:36: ( '+' | '-' )?
                     int alt6=2;
                     int LA6_0 = input.LA(1);
 
@@ -2780,7 +2772,7 @@ public class InternalMetaDataLexer extends Lexer {
 
             }
 
-            // InternalMetaData.g:8313:58: ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
+            // InternalMetaData.g:8312:58: ( ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' ) | ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' ) )?
             int alt8=3;
             int LA8_0 = input.LA(1);
 
@@ -2792,7 +2784,7 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // InternalMetaData.g:8313:59: ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' )
+                    // InternalMetaData.g:8312:59: ( 'b' | 'B' ) ( 'i' | 'I' | 'd' | 'D' )
                     {
                     if ( input.LA(1)=='B'||input.LA(1)=='b' ) {
                         input.consume();
@@ -2816,7 +2808,7 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalMetaData.g:8313:87: ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' )
+                    // InternalMetaData.g:8312:87: ( 'l' | 'L' | 'd' | 'D' | 'f' | 'F' )
                     {
                     if ( input.LA(1)=='D'||input.LA(1)=='F'||input.LA(1)=='L'||input.LA(1)=='d'||input.LA(1)=='f'||input.LA(1)=='l' ) {
                         input.consume();
@@ -2849,10 +2841,10 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8315:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )* )
-            // InternalMetaData.g:8315:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
+            // InternalMetaData.g:8314:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )* )
+            // InternalMetaData.g:8314:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
             {
-            // InternalMetaData.g:8315:11: ( '^' )?
+            // InternalMetaData.g:8314:11: ( '^' )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -2861,7 +2853,7 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt9) {
                 case 1 :
-                    // InternalMetaData.g:8315:11: '^'
+                    // InternalMetaData.g:8314:11: '^'
                     {
                     match('^'); 
 
@@ -2879,7 +2871,7 @@ public class InternalMetaDataLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalMetaData.g:8315:44: ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
+            // InternalMetaData.g:8314:44: ( 'a' .. 'z' | 'A' .. 'Z' | '$' | '_' | '0' .. '9' )*
             loop10:
             do {
                 int alt10=2;
@@ -2928,10 +2920,10 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8317:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? ) )
-            // InternalMetaData.g:8317:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
+            // InternalMetaData.g:8316:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? ) )
+            // InternalMetaData.g:8316:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
             {
-            // InternalMetaData.g:8317:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
+            // InternalMetaData.g:8316:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )? | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )? )
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -2949,10 +2941,10 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // InternalMetaData.g:8317:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )?
+                    // InternalMetaData.g:8316:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* ( '\"' )?
                     {
                     match('\"'); 
-                    // InternalMetaData.g:8317:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalMetaData.g:8316:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop11:
                     do {
                         int alt11=3;
@@ -2968,7 +2960,7 @@ public class InternalMetaDataLexer extends Lexer {
 
                         switch (alt11) {
                     	case 1 :
-                    	    // InternalMetaData.g:8317:21: '\\\\' .
+                    	    // InternalMetaData.g:8316:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -2976,7 +2968,7 @@ public class InternalMetaDataLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalMetaData.g:8317:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalMetaData.g:8316:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -2996,7 +2988,7 @@ public class InternalMetaDataLexer extends Lexer {
                         }
                     } while (true);
 
-                    // InternalMetaData.g:8317:44: ( '\"' )?
+                    // InternalMetaData.g:8316:44: ( '\"' )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -3005,7 +2997,7 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     switch (alt12) {
                         case 1 :
-                            // InternalMetaData.g:8317:44: '\"'
+                            // InternalMetaData.g:8316:44: '\"'
                             {
                             match('\"'); 
 
@@ -3018,10 +3010,10 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalMetaData.g:8317:49: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )?
+                    // InternalMetaData.g:8316:49: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* ( '\\'' )?
                     {
                     match('\''); 
-                    // InternalMetaData.g:8317:54: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalMetaData.g:8316:54: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop13:
                     do {
                         int alt13=3;
@@ -3037,7 +3029,7 @@ public class InternalMetaDataLexer extends Lexer {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // InternalMetaData.g:8317:55: '\\\\' .
+                    	    // InternalMetaData.g:8316:55: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -3045,7 +3037,7 @@ public class InternalMetaDataLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalMetaData.g:8317:62: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalMetaData.g:8316:62: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -3065,7 +3057,7 @@ public class InternalMetaDataLexer extends Lexer {
                         }
                     } while (true);
 
-                    // InternalMetaData.g:8317:79: ( '\\'' )?
+                    // InternalMetaData.g:8316:79: ( '\\'' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -3074,7 +3066,7 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // InternalMetaData.g:8317:79: '\\''
+                            // InternalMetaData.g:8316:79: '\\''
                             {
                             match('\''); 
 
@@ -3105,12 +3097,12 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8319:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalMetaData.g:8319:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalMetaData.g:8318:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalMetaData.g:8318:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalMetaData.g:8319:24: ( options {greedy=false; } : . )*
+            // InternalMetaData.g:8318:24: ( options {greedy=false; } : . )*
             loop16:
             do {
                 int alt16=2;
@@ -3135,7 +3127,7 @@ public class InternalMetaDataLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // InternalMetaData.g:8319:52: .
+            	    // InternalMetaData.g:8318:52: .
             	    {
             	    matchAny(); 
 
@@ -3165,12 +3157,12 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8321:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalMetaData.g:8321:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalMetaData.g:8320:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalMetaData.g:8320:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalMetaData.g:8321:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalMetaData.g:8320:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop17:
             do {
                 int alt17=2;
@@ -3183,7 +3175,7 @@ public class InternalMetaDataLexer extends Lexer {
 
                 switch (alt17) {
             	case 1 :
-            	    // InternalMetaData.g:8321:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalMetaData.g:8320:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -3203,7 +3195,7 @@ public class InternalMetaDataLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalMetaData.g:8321:40: ( ( '\\r' )? '\\n' )?
+            // InternalMetaData.g:8320:40: ( ( '\\r' )? '\\n' )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -3212,9 +3204,9 @@ public class InternalMetaDataLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // InternalMetaData.g:8321:41: ( '\\r' )? '\\n'
+                    // InternalMetaData.g:8320:41: ( '\\r' )? '\\n'
                     {
-                    // InternalMetaData.g:8321:41: ( '\\r' )?
+                    // InternalMetaData.g:8320:41: ( '\\r' )?
                     int alt18=2;
                     int LA18_0 = input.LA(1);
 
@@ -3223,7 +3215,7 @@ public class InternalMetaDataLexer extends Lexer {
                     }
                     switch (alt18) {
                         case 1 :
-                            // InternalMetaData.g:8321:41: '\\r'
+                            // InternalMetaData.g:8320:41: '\\r'
                             {
                             match('\r'); 
 
@@ -3255,10 +3247,10 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8323:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalMetaData.g:8323:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalMetaData.g:8322:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalMetaData.g:8322:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalMetaData.g:8323:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalMetaData.g:8322:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt20=0;
             loop20:
             do {
@@ -3312,8 +3304,8 @@ public class InternalMetaDataLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalMetaData.g:8325:16: ( . )
-            // InternalMetaData.g:8325:18: .
+            // InternalMetaData.g:8324:16: ( . )
+            // InternalMetaData.g:8324:18: .
             {
             matchAny(); 
 

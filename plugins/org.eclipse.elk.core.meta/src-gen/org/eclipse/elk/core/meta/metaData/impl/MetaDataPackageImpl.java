@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -151,7 +149,6 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
   {
     super(eNS_URI, MetaDataFactory.eINSTANCE);
   }
-
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -205,6 +202,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdModel()
   {
     return mdModelEClass;
@@ -215,6 +213,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdModel_Name()
   {
     return (EAttribute)mdModelEClass.getEStructuralFeatures().get(0);
@@ -225,6 +224,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdModel_ImportSection()
   {
     return (EReference)mdModelEClass.getEStructuralFeatures().get(1);
@@ -235,6 +235,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdModel_Bundle()
   {
     return (EReference)mdModelEClass.getEStructuralFeatures().get(2);
@@ -245,6 +246,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdBundle()
   {
     return mdBundleEClass;
@@ -255,6 +257,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdBundle_Label()
   {
     return (EAttribute)mdBundleEClass.getEStructuralFeatures().get(0);
@@ -265,6 +268,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdBundle_TargetClass()
   {
     return (EAttribute)mdBundleEClass.getEStructuralFeatures().get(1);
@@ -275,6 +279,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdBundle_DocumentationFolder()
   {
     return (EAttribute)mdBundleEClass.getEStructuralFeatures().get(2);
@@ -285,6 +290,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdBundle_IdPrefix()
   {
     return (EAttribute)mdBundleEClass.getEStructuralFeatures().get(3);
@@ -295,6 +301,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdBundle_Members()
   {
     return (EReference)mdBundleEClass.getEStructuralFeatures().get(4);
@@ -305,6 +312,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdBundleMember()
   {
     return mdBundleMemberEClass;
@@ -315,6 +323,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdBundleMember_Name()
   {
     return (EAttribute)mdBundleMemberEClass.getEStructuralFeatures().get(0);
@@ -325,6 +334,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdBundleMember_Documentation()
   {
     return (EAttribute)mdBundleMemberEClass.getEStructuralFeatures().get(1);
@@ -335,6 +345,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdGroupOrOption()
   {
     return mdGroupOrOptionEClass;
@@ -345,6 +356,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdGroup()
   {
     return mdGroupEClass;
@@ -355,6 +367,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdGroup_Children()
   {
     return (EReference)mdGroupEClass.getEStructuralFeatures().get(0);
@@ -365,6 +378,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdOption()
   {
     return mdOptionEClass;
@@ -375,6 +389,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Deprecated()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(0);
@@ -385,6 +400,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Advanced()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(1);
@@ -395,6 +411,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Programmatic()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(2);
@@ -405,6 +422,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Output()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(3);
@@ -415,6 +433,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Global()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(4);
@@ -425,6 +444,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOption_Type()
   {
     return (EReference)mdOptionEClass.getEStructuralFeatures().get(5);
@@ -435,6 +455,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Label()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(6);
@@ -445,6 +466,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Description()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(7);
@@ -455,6 +477,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOption_DefaultValue()
   {
     return (EReference)mdOptionEClass.getEStructuralFeatures().get(8);
@@ -465,6 +488,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOption_LowerBound()
   {
     return (EReference)mdOptionEClass.getEStructuralFeatures().get(9);
@@ -475,6 +499,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOption_UpperBound()
   {
     return (EReference)mdOptionEClass.getEStructuralFeatures().get(10);
@@ -485,6 +510,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_Targets()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(11);
@@ -495,6 +521,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOption_LegacyIds()
   {
     return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(12);
@@ -505,6 +532,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOption_Dependencies()
   {
     return (EReference)mdOptionEClass.getEStructuralFeatures().get(13);
@@ -515,6 +543,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdOptionDependency()
   {
     return mdOptionDependencyEClass;
@@ -525,6 +554,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOptionDependency_Target()
   {
     return (EReference)mdOptionDependencyEClass.getEStructuralFeatures().get(0);
@@ -535,6 +565,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOptionDependency_Value()
   {
     return (EReference)mdOptionDependencyEClass.getEStructuralFeatures().get(1);
@@ -545,6 +576,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdAlgorithm()
   {
     return mdAlgorithmEClass;
@@ -555,6 +587,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_Deprecated()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(0);
@@ -565,6 +598,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdAlgorithm_Provider()
   {
     return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(1);
@@ -575,6 +609,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_Parameter()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(2);
@@ -585,6 +620,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_Label()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(3);
@@ -595,6 +631,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_TargetClass()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(4);
@@ -605,6 +642,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_Description()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(5);
@@ -615,6 +653,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdAlgorithm_Category()
   {
     return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(6);
@@ -625,6 +664,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_PreviewImage()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(7);
@@ -635,6 +675,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdAlgorithm_SupportedFeatures()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(8);
@@ -645,6 +686,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdAlgorithm_Validator()
   {
     return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(9);
@@ -655,6 +697,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdAlgorithm_SupportedOptions()
   {
     return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(10);
@@ -665,6 +708,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdCategory()
   {
     return mdCategoryEClass;
@@ -675,6 +719,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdCategory_Deprecated()
   {
     return (EAttribute)mdCategoryEClass.getEStructuralFeatures().get(0);
@@ -685,6 +730,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdCategory_Label()
   {
     return (EAttribute)mdCategoryEClass.getEStructuralFeatures().get(1);
@@ -695,6 +741,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdCategory_Description()
   {
     return (EAttribute)mdCategoryEClass.getEStructuralFeatures().get(2);
@@ -705,6 +752,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EClass getMdOptionSupport()
   {
     return mdOptionSupportEClass;
@@ -715,6 +763,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOptionSupport_Option()
   {
     return (EReference)mdOptionSupportEClass.getEStructuralFeatures().get(0);
@@ -725,6 +774,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EReference getMdOptionSupport_Value()
   {
     return (EReference)mdOptionSupportEClass.getEStructuralFeatures().get(1);
@@ -735,6 +785,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EAttribute getMdOptionSupport_Documentation()
   {
     return (EAttribute)mdOptionSupportEClass.getEStructuralFeatures().get(2);
@@ -745,6 +796,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EEnum getMdOptionTargetType()
   {
     return mdOptionTargetTypeEEnum;
@@ -755,6 +807,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EEnum getMdGraphFeature()
   {
     return mdGraphFeatureEEnum;
@@ -765,6 +818,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MetaDataFactory getMetaDataFactory()
   {
     return (MetaDataFactory)getEFactoryInstance();

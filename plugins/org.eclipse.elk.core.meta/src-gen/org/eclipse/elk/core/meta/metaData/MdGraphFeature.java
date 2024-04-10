@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData;
 
@@ -111,10 +109,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Self loops</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Self loops</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #SELF_LOOPS
    * @model name="self_loops"
@@ -126,10 +120,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Inside self loops</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Inside self loops</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #INSIDE_SELF_LOOPS
    * @model name="inside_self_loops"
@@ -141,10 +131,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Multi edges</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Multi edges</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #MULTI_EDGES
    * @model name="multi_edges"
@@ -156,10 +142,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Edge labels</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Edge labels</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #EDGE_LABELS
    * @model name="edge_labels"
@@ -171,10 +153,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Ports</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Ports</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #PORTS
    * @model name="ports"
@@ -186,10 +164,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Compound</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Compound</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #COMPOUND
    * @model name="compound"
@@ -201,10 +175,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Clusters</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Clusters</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #CLUSTERS
    * @model name="clusters"
@@ -216,10 +186,6 @@ public enum MdGraphFeature implements Enumerator
   /**
    * The '<em><b>Disconnected</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Disconnected</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #DISCONNECTED
    * @model name="disconnected"
@@ -360,6 +326,7 @@ public enum MdGraphFeature implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public int getValue()
   {
     return value;
@@ -370,6 +337,7 @@ public enum MdGraphFeature implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getName()
   {
     return name;
@@ -380,6 +348,7 @@ public enum MdGraphFeature implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getLiteral()
   {
     return literal;

@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData;
 
@@ -51,10 +49,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Deprecated</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Deprecated</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Deprecated</em>' attribute.
    * @see #setDeprecated(boolean)
@@ -77,10 +71,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Advanced</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Advanced</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Advanced</em>' attribute.
    * @see #setAdvanced(boolean)
@@ -103,10 +93,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Programmatic</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Programmatic</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Programmatic</em>' attribute.
    * @see #setProgrammatic(boolean)
@@ -129,10 +115,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Output</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Output</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Output</em>' attribute.
    * @see #setOutput(boolean)
@@ -155,10 +137,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Global</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Global</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Global</em>' attribute.
    * @see #setGlobal(boolean)
@@ -181,10 +159,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Type</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Type</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Type</em>' containment reference.
    * @see #setType(JvmTypeReference)
@@ -207,10 +181,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Label</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Label</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Label</em>' attribute.
    * @see #setLabel(String)
@@ -233,10 +203,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Description</b></em>' attribute.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Description</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Description</em>' attribute.
    * @see #setDescription(String)
@@ -259,10 +225,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Default Value</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Default Value</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Default Value</em>' containment reference.
    * @see #setDefaultValue(XExpression)
@@ -285,10 +247,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Lower Bound</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Lower Bound</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Lower Bound</em>' containment reference.
    * @see #setLowerBound(XExpression)
@@ -311,10 +269,6 @@ public interface MdOption extends MdGroupOrOption
   /**
    * Returns the value of the '<em><b>Upper Bound</b></em>' containment reference.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Upper Bound</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Upper Bound</em>' containment reference.
    * @see #setUpperBound(XExpression)
@@ -339,10 +293,6 @@ public interface MdOption extends MdGroupOrOption
    * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdOptionTargetType}.
    * The literals are from the enumeration {@link org.eclipse.elk.core.meta.metaData.MdOptionTargetType}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Targets</em>' attribute list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Targets</em>' attribute list.
    * @see org.eclipse.elk.core.meta.metaData.MdOptionTargetType
@@ -356,10 +306,6 @@ public interface MdOption extends MdGroupOrOption
    * Returns the value of the '<em><b>Legacy Ids</b></em>' attribute list.
    * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Legacy Ids</em>' attribute list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Legacy Ids</em>' attribute list.
    * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_LegacyIds()
@@ -372,10 +318,6 @@ public interface MdOption extends MdGroupOrOption
    * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.
    * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdOptionDependency}.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Dependencies</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Dependencies</em>' containment reference list.
    * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Dependencies()

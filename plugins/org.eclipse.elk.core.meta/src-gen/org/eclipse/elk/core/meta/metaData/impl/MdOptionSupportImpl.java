@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -109,6 +107,7 @@ public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdOption getOption()
   {
     if (option != null && option.eIsProxy())
@@ -139,6 +138,7 @@ public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setOption(MdOption newOption)
   {
     MdOption oldOption = option;
@@ -152,6 +152,7 @@ public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public XExpression getValue()
   {
     return value;
@@ -179,6 +180,7 @@ public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setValue(XExpression newValue)
   {
     if (newValue != value)
@@ -200,6 +202,7 @@ public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getDocumentation()
   {
     return documentation;
@@ -210,6 +213,7 @@ public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDocumentation(String newDocumentation)
   {
     String oldDocumentation = documentation;

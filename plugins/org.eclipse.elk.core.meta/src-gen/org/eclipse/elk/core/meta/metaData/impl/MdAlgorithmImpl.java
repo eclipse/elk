@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -256,6 +254,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public boolean isDeprecated()
   {
     return deprecated;
@@ -266,6 +265,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDeprecated(boolean newDeprecated)
   {
     boolean oldDeprecated = deprecated;
@@ -279,6 +279,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public JvmTypeReference getProvider()
   {
     return provider;
@@ -306,6 +307,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setProvider(JvmTypeReference newProvider)
   {
     if (newProvider != provider)
@@ -327,6 +329,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getParameter()
   {
     return parameter;
@@ -337,6 +340,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setParameter(String newParameter)
   {
     String oldParameter = parameter;
@@ -350,6 +354,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getLabel()
   {
     return label;
@@ -360,6 +365,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLabel(String newLabel)
   {
     String oldLabel = label;
@@ -373,6 +379,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getTargetClass()
   {
     return targetClass;
@@ -383,6 +390,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setTargetClass(String newTargetClass)
   {
     String oldTargetClass = targetClass;
@@ -396,6 +404,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getDescription()
   {
     return description;
@@ -406,6 +415,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDescription(String newDescription)
   {
     String oldDescription = description;
@@ -419,6 +429,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public MdCategory getCategory()
   {
     if (category != null && category.eIsProxy())
@@ -449,6 +460,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setCategory(MdCategory newCategory)
   {
     MdCategory oldCategory = category;
@@ -462,6 +474,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getPreviewImage()
   {
     return previewImage;
@@ -472,6 +485,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setPreviewImage(String newPreviewImage)
   {
     String oldPreviewImage = previewImage;
@@ -485,6 +499,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<MdGraphFeature> getSupportedFeatures()
   {
     if (supportedFeatures == null)
@@ -499,6 +514,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public JvmTypeReference getValidator()
   {
     return validator;
@@ -526,6 +542,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setValidator(JvmTypeReference newValidator)
   {
     if (newValidator != validator)
@@ -547,6 +564,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<MdOptionSupport> getSupportedOptions()
   {
     if (supportedOptions == null)

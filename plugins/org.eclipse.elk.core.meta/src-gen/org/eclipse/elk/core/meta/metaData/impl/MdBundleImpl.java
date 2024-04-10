@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
@@ -166,6 +164,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getLabel()
   {
     return label;
@@ -176,6 +175,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setLabel(String newLabel)
   {
     String oldLabel = label;
@@ -189,6 +189,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getTargetClass()
   {
     return targetClass;
@@ -199,6 +200,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setTargetClass(String newTargetClass)
   {
     String oldTargetClass = targetClass;
@@ -212,6 +214,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getDocumentationFolder()
   {
     return documentationFolder;
@@ -222,6 +225,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setDocumentationFolder(String newDocumentationFolder)
   {
     String oldDocumentationFolder = documentationFolder;
@@ -235,6 +239,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getIdPrefix()
   {
     return idPrefix;
@@ -245,6 +250,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public void setIdPrefix(String newIdPrefix)
   {
     String oldIdPrefix = idPrefix;
@@ -258,6 +264,7 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public EList<MdBundleMember> getMembers()
   {
     if (members == null)

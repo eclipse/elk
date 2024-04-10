@@ -357,6 +357,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	}
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdBundleMember returns MdAlgorithm
 	 *     MdAlgorithm returns MdAlgorithm
@@ -381,6 +382,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         )+ 
 	 *         supportedOptions+=MdOptionSupport*
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_MdAlgorithm(ISerializationContext context, MdAlgorithm semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -388,11 +390,13 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdBundle returns MdBundle
 	 *
 	 * Constraint:
 	 *     ((label=STRING | targetClass=QualifiedName | documentationFolder=Path | idPrefix=QualifiedName)* members+=MdBundleMember*)
+	 * </pre>
 	 */
 	protected void sequence_MdBundle(ISerializationContext context, MdBundle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -400,12 +404,14 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdBundleMember returns MdCategory
 	 *     MdCategory returns MdCategory
 	 *
 	 * Constraint:
 	 *     (deprecated?='deprecated'? name=ID (label=STRING | description=STRING | documentation=STRING)*)
+	 * </pre>
 	 */
 	protected void sequence_MdCategory(ISerializationContext context, MdCategory semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -413,6 +419,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdBundleMember returns MdGroup
 	 *     MdGroupOrOption returns MdGroup
@@ -420,6 +427,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *
 	 * Constraint:
 	 *     (name=ID documentation=STRING? children+=MdGroupOrOption*)
+	 * </pre>
 	 */
 	protected void sequence_MdGroup(ISerializationContext context, MdGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -427,11 +435,13 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdModel returns MdModel
 	 *
 	 * Constraint:
 	 *     (name=QualifiedName importSection=XImportSection? bundle=MdBundle)
+	 * </pre>
 	 */
 	protected void sequence_MdModel(ISerializationContext context, MdModel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -439,11 +449,13 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdOptionDependency returns MdOptionDependency
 	 *
 	 * Constraint:
 	 *     (target=[MdOption|QualifiedName] value=XExpression?)
+	 * </pre>
 	 */
 	protected void sequence_MdOptionDependency(ISerializationContext context, MdOptionDependency semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -451,11 +463,13 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdOptionSupport returns MdOptionSupport
 	 *
 	 * Constraint:
 	 *     (option=[MdOption|QualifiedName] value=XExpression? documentation=STRING?)
+	 * </pre>
 	 */
 	protected void sequence_MdOptionSupport(ISerializationContext context, MdOptionSupport semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -463,6 +477,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	
 	/**
+	 * <pre>
 	 * Contexts:
 	 *     MdBundleMember returns MdOption
 	 *     MdGroupOrOption returns MdOption
@@ -483,11 +498,12 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *                 lowerBound=XExpression | 
 	 *                 upperBound=XExpression
 	 *             )? 
-	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)? 
-	 *             (targets+=MdOptionTargetType targets+=MdOptionTargetType*)?
+	 *             (targets+=MdOptionTargetType targets+=MdOptionTargetType*)? 
+	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
 	 *         )+ 
 	 *         dependencies+=MdOptionDependency*
 	 *     )
+	 * </pre>
 	 */
 	protected void sequence_MdOption(ISerializationContext context, MdOption semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -1,13 +1,11 @@
 /**
- * ******************************************************************************
  * Copyright (c) 2016 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- *
+ * 
  * SPDX-License-Identifier: EPL-2.0
- *  ******************************************************************************
  */
 package org.eclipse.elk.core.meta.metaData;
 
@@ -81,10 +79,6 @@ public enum MdOptionTargetType implements Enumerator
   /**
    * The '<em><b>Parents</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Parents</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #PARENTS
    * @model name="parents"
@@ -96,10 +90,6 @@ public enum MdOptionTargetType implements Enumerator
   /**
    * The '<em><b>Nodes</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Nodes</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #NODES
    * @model name="nodes"
@@ -111,10 +101,6 @@ public enum MdOptionTargetType implements Enumerator
   /**
    * The '<em><b>Edges</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Edges</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #EDGES
    * @model name="edges"
@@ -126,10 +112,6 @@ public enum MdOptionTargetType implements Enumerator
   /**
    * The '<em><b>Ports</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Ports</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #PORTS
    * @model name="ports"
@@ -141,10 +123,6 @@ public enum MdOptionTargetType implements Enumerator
   /**
    * The '<em><b>Labels</b></em>' literal value.
    * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Labels</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
    * <!-- end-user-doc -->
    * @see #LABELS
    * @model name="labels"
@@ -279,6 +257,7 @@ public enum MdOptionTargetType implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public int getValue()
   {
     return value;
@@ -289,6 +268,7 @@ public enum MdOptionTargetType implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getName()
   {
     return name;
@@ -299,6 +279,7 @@ public enum MdOptionTargetType implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
+  @Override
   public String getLiteral()
   {
     return literal;

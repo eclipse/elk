@@ -26,14 +26,13 @@ import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.TerminalRule;
 import org.eclipse.xtext.UnorderedGroup;
-import org.eclipse.xtext.service.AbstractElementFinder.AbstractEnumRuleElementFinder;
-import org.eclipse.xtext.service.AbstractElementFinder.AbstractGrammarElementFinder;
+import org.eclipse.xtext.service.AbstractElementFinder;
 import org.eclipse.xtext.service.GrammarProvider;
 import org.eclipse.xtext.xbase.services.XbaseGrammarAccess;
 import org.eclipse.xtext.xbase.services.XtypeGrammarAccess;
 
 @Singleton
-public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
+public class MetaDataGrammarAccess extends AbstractElementFinder.AbstractGrammarElementFinder {
 	
 	public class MdModelElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdModel");
@@ -47,12 +46,18 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cBundleMdBundleParserRuleCall_3_0 = (RuleCall)cBundleAssignment_3.eContents().get(0);
 		
 		//MdModel:
-		//	('package' name=QualifiedName
-		//	importSection=XImportSection?
-		//	bundle=MdBundle)?;
+		//    (
+		//        'package' name=QualifiedName
+		//        importSection=XImportSection?
+		//        bundle=MdBundle
+		//    )?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//('package' name=QualifiedName importSection=XImportSection? bundle=MdBundle)?
+		//(
+		//    'package' name=QualifiedName
+		//    importSection=XImportSection?
+		//    bundle=MdBundle
+		//)?
 		public Group getGroup() { return cGroup; }
 		
 		//'package'
@@ -105,24 +110,47 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMembersMdBundleMemberParserRuleCall_2_0 = (RuleCall)cMembersAssignment_2.eContents().get(0);
 		
 		//MdBundle:
-		//	{MdBundle} ('bundle' '{' (('label' label=STRING)?
-		//	& ('metadataClass' targetClass=QualifiedName)?
-		//	& ('documentationFolder' documentationFolder=Path)?
-		//	& ('idPrefix' idPrefix=QualifiedName)?)
-		//	'}')?
-		//	members+=MdBundleMember*;
+		//    {MdBundle}
+		//    (
+		//        'bundle' '{'
+		//            (
+		//                ('label' label=STRING)?
+		//                & ('metadataClass' targetClass=QualifiedName)?
+		//                & ('documentationFolder' documentationFolder=Path)?
+		//                & ('idPrefix' idPrefix=QualifiedName)?
+		//            )
+		//        '}'
+		//    )?
+		//    members+=MdBundleMember*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{MdBundle} ('bundle' '{' (('label' label=STRING)? & ('metadataClass' targetClass=QualifiedName)? &
-		//('documentationFolder' documentationFolder=Path)? & ('idPrefix' idPrefix=QualifiedName)?) '}')?
+		//{MdBundle}
+		//(
+		//    'bundle' '{'
+		//        (
+		//            ('label' label=STRING)?
+		//            & ('metadataClass' targetClass=QualifiedName)?
+		//            & ('documentationFolder' documentationFolder=Path)?
+		//            & ('idPrefix' idPrefix=QualifiedName)?
+		//        )
+		//    '}'
+		//)?
 		//members+=MdBundleMember*
 		public Group getGroup() { return cGroup; }
 		
 		//{MdBundle}
 		public Action getMdBundleAction_0() { return cMdBundleAction_0; }
 		
-		//('bundle' '{' (('label' label=STRING)? & ('metadataClass' targetClass=QualifiedName)? & ('documentationFolder'
-		//documentationFolder=Path)? & ('idPrefix' idPrefix=QualifiedName)?) '}')?
+		//(
+		//    'bundle' '{'
+		//        (
+		//            ('label' label=STRING)?
+		//            & ('metadataClass' targetClass=QualifiedName)?
+		//            & ('documentationFolder' documentationFolder=Path)?
+		//            & ('idPrefix' idPrefix=QualifiedName)?
+		//        )
+		//    '}'
+		//)?
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'bundle'
@@ -131,8 +159,12 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_1_1() { return cLeftCurlyBracketKeyword_1_1; }
 		
-		//('label' label=STRING)? & ('metadataClass' targetClass=QualifiedName)? & ('documentationFolder'
-		//documentationFolder=Path)? & ('idPrefix' idPrefix=QualifiedName)?
+		//(
+		//    ('label' label=STRING)?
+		//    & ('metadataClass' targetClass=QualifiedName)?
+		//    & ('documentationFolder' documentationFolder=Path)?
+		//    & ('idPrefix' idPrefix=QualifiedName)?
+		//)
 		public UnorderedGroup getUnorderedGroup_1_2() { return cUnorderedGroup_1_2; }
 		
 		//('label' label=STRING)?
@@ -200,7 +232,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMdCategoryParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//MdBundleMember:
-		//	MdGroupOrOption | MdAlgorithm | MdCategory;
+		//    MdGroupOrOption | MdAlgorithm | MdCategory;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//MdGroupOrOption | MdAlgorithm | MdCategory
@@ -222,7 +254,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMdOptionParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//MdGroupOrOption:
-		//	MdGroup | MdOption;
+		//    MdGroup | MdOption;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//MdGroup | MdOption
@@ -250,12 +282,16 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
 		//MdGroup:
-		//	'group' name=ID '{' ('documentation' documentation=STRING)?
-		//	children+=MdGroupOrOption*
-		//	'}';
+		//    'group' name=ID '{'
+		//        ('documentation' documentation=STRING)?
+		//        children+=MdGroupOrOption*
+		//    '}';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'group' name=ID '{' ('documentation' documentation=STRING)? children+=MdGroupOrOption* '}'
+		//'group' name=ID '{'
+		//    ('documentation' documentation=STRING)?
+		//    children+=MdGroupOrOption*
+		//'}'
 		public Group getGroup() { return cGroup; }
 		
 		//'group'
@@ -362,24 +398,38 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_8 = (Keyword)cGroup.eContents().get(8);
 		
 		//MdOption:
-		//	deprecated?='deprecated'? (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
-		//	'option' name=ID (':' type=JvmTypeReference)? '{' (('label' label=STRING)?
-		//	& ('description' description=STRING)?
-		//	& ('documentation' documentation=STRING)? // "@docu/priority.md"
-		//	& ('default' '=' defaultValue=XExpression)?
-		//	& ('lowerBound' '=' lowerBound=XExpression)?
-		//	& ('upperBound' '=' upperBound=XExpression)?
-		//	& ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
-		//	& ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?) dependencies+=MdOptionDependency*
-		//	'}';
+		//    deprecated?='deprecated'?
+		//    (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
+		//    'option' name=ID (':' type=JvmTypeReference)? '{'
+		//        (
+		//            ('label' label=STRING)?
+		//            & ('description' description=STRING)?
+		//            & ('documentation' documentation=STRING)?   // "@docu/priority.md"
+		//            & ('default' '=' defaultValue=XExpression)?
+		//            & ('lowerBound' '=' lowerBound=XExpression)?
+		//            & ('upperBound' '=' upperBound=XExpression)?
+		//            & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
+		//            & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+		//        )
+		//        (dependencies+=MdOptionDependency)*
+		//    '}';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//deprecated?='deprecated'? (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
-		//'option' name=ID (':' type=JvmTypeReference)? '{' (('label' label=STRING)? & ('description' description=STRING)? &
-		//('documentation' documentation=STRING)? // "@docu/priority.md"
-		//& ('default' '=' defaultValue=XExpression)? & ('lowerBound' '=' lowerBound=XExpression)? & ('upperBound' '='
-		//upperBound=XExpression)? & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)? & ('legacyIds'
-		//legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?) dependencies+=MdOptionDependency* '}'
+		//deprecated?='deprecated'?
+		//(advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
+		//'option' name=ID (':' type=JvmTypeReference)? '{'
+		//    (
+		//        ('label' label=STRING)?
+		//        & ('description' description=STRING)?
+		//        & ('documentation' documentation=STRING)?   // "@docu/priority.md"
+		//        & ('default' '=' defaultValue=XExpression)?
+		//        & ('lowerBound' '=' lowerBound=XExpression)?
+		//        & ('upperBound' '=' upperBound=XExpression)?
+		//        & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
+		//        & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+		//    )
+		//    (dependencies+=MdOptionDependency)*
+		//'}'
 		public Group getGroup() { return cGroup; }
 		
 		//deprecated?='deprecated'?
@@ -439,10 +489,16 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_5() { return cLeftCurlyBracketKeyword_5; }
 		
-		//('label' label=STRING)? & ('description' description=STRING)? & ('documentation' documentation=STRING)? // "@docu/priority.md"
-		//& ('default' '=' defaultValue=XExpression)? & ('lowerBound' '=' lowerBound=XExpression)? & ('upperBound' '='
-		//upperBound=XExpression)? & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)? & ('legacyIds'
-		//legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+		//(
+		//    ('label' label=STRING)?
+		//    & ('description' description=STRING)?
+		//    & ('documentation' documentation=STRING)?   // "@docu/priority.md"
+		//    & ('default' '=' defaultValue=XExpression)?
+		//    & ('lowerBound' '=' lowerBound=XExpression)?
+		//    & ('upperBound' '=' upperBound=XExpression)?
+		//    & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
+		//    & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+		//)
 		public UnorderedGroup getUnorderedGroup_6() { return cUnorderedGroup_6; }
 		
 		//('label' label=STRING)?
@@ -574,7 +630,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//QualifiedName
 		public RuleCall getLegacyIdsQualifiedNameParserRuleCall_6_7_2_1_0() { return cLegacyIdsQualifiedNameParserRuleCall_6_7_2_1_0; }
 		
-		//dependencies+=MdOptionDependency*
+		//(dependencies+=MdOptionDependency)*
 		public Assignment getDependenciesAssignment_7() { return cDependenciesAssignment_7; }
 		
 		//MdOptionDependency
@@ -596,7 +652,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueXExpressionParserRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
 		
 		//MdOptionDependency:
-		//	'requires' target=[MdOption|QualifiedName] ('==' value=XExpression)?;
+		//    'requires' target=[MdOption|QualifiedName] ('==' value=XExpression)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'requires' target=[MdOption|QualifiedName] ('==' value=XExpression)?
@@ -686,23 +742,36 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_10 = (Keyword)cGroup.eContents().get(10);
 		
 		//MdAlgorithm:
-		//	deprecated?='deprecated'?
-		//	'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{' (('label' label=STRING)?
-		//	& ('metadataClass' targetClass=QualifiedName)?
-		//	& ('description' description=STRING)?
-		//	& ('documentation' documentation=STRING)?
-		//	& ('category' category=[MdCategory|QualifiedName])?
-		//	& ('preview' previewImage=Path)?
-		//	& ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
-		//	& ('validator' validator=JvmTypeReference)?) supportedOptions+=MdOptionSupport*
-		//	'}';
+		//    deprecated?='deprecated'?
+		//    'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{'
+		//        (
+		//            ('label' label=STRING)?
+		//            & ('metadataClass' targetClass=QualifiedName)?
+		//            & ('description' description=STRING)?
+		//            & ('documentation' documentation=STRING)?
+		//            & ('category' category=[MdCategory|QualifiedName])?
+		//            & ('preview' previewImage=Path)?
+		//            & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+		//            & ('validator' validator=JvmTypeReference)?
+		//        )
+		//        (supportedOptions+=MdOptionSupport)*
+		//    '}';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//deprecated?='deprecated'? 'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{' (('label'
-		//label=STRING)? & ('metadataClass' targetClass=QualifiedName)? & ('description' description=STRING)? & ('documentation'
-		//documentation=STRING)? & ('category' category=[MdCategory|QualifiedName])? & ('preview' previewImage=Path)? &
-		//('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)? & ('validator'
-		//validator=JvmTypeReference)?) supportedOptions+=MdOptionSupport* '}'
+		//deprecated?='deprecated'?
+		//'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{'
+		//    (
+		//        ('label' label=STRING)?
+		//        & ('metadataClass' targetClass=QualifiedName)?
+		//        & ('description' description=STRING)?
+		//        & ('documentation' documentation=STRING)?
+		//        & ('category' category=[MdCategory|QualifiedName])?
+		//        & ('preview' previewImage=Path)?
+		//        & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+		//        & ('validator' validator=JvmTypeReference)?
+		//    )
+		//    (supportedOptions+=MdOptionSupport)*
+		//'}'
 		public Group getGroup() { return cGroup; }
 		
 		//deprecated?='deprecated'?
@@ -747,10 +816,16 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_7() { return cLeftCurlyBracketKeyword_7; }
 		
-		//('label' label=STRING)? & ('metadataClass' targetClass=QualifiedName)? & ('description' description=STRING)? &
-		//('documentation' documentation=STRING)? & ('category' category=[MdCategory|QualifiedName])? & ('preview'
-		//previewImage=Path)? & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)? &
-		//('validator' validator=JvmTypeReference)?
+		//(
+		//    ('label' label=STRING)?
+		//    & ('metadataClass' targetClass=QualifiedName)?
+		//    & ('description' description=STRING)?
+		//    & ('documentation' documentation=STRING)?
+		//    & ('category' category=[MdCategory|QualifiedName])?
+		//    & ('preview' previewImage=Path)?
+		//    & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+		//    & ('validator' validator=JvmTypeReference)?
+		//)
 		public UnorderedGroup getUnorderedGroup_8() { return cUnorderedGroup_8; }
 		
 		//('label' label=STRING)?
@@ -864,7 +939,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//JvmTypeReference
 		public RuleCall getValidatorJvmTypeReferenceParserRuleCall_8_7_1_0() { return cValidatorJvmTypeReferenceParserRuleCall_8_7_1_0; }
 		
-		//supportedOptions+=MdOptionSupport*
+		//(supportedOptions+=MdOptionSupport)*
 		public Assignment getSupportedOptionsAssignment_9() { return cSupportedOptionsAssignment_9; }
 		
 		//MdOptionSupport
@@ -898,15 +973,24 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
 		//MdCategory:
-		//	deprecated?='deprecated'?
-		//	'category' name=ID '{' (('label' label=STRING)?
-		//	& ('description' description=STRING)?
-		//	& ('documentation' documentation=STRING)?)
-		//	'}';
+		//    deprecated?='deprecated'?
+		//    'category' name=ID '{'
+		//        (
+		//            ('label' label=STRING)?
+		//            & ('description' description=STRING)?
+		//            & ('documentation' documentation=STRING)?
+		//        )
+		//    '}';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//deprecated?='deprecated'? 'category' name=ID '{' (('label' label=STRING)? & ('description' description=STRING)? &
-		//('documentation' documentation=STRING)?) '}'
+		//deprecated?='deprecated'?
+		//'category' name=ID '{'
+		//    (
+		//        ('label' label=STRING)?
+		//        & ('description' description=STRING)?
+		//        & ('documentation' documentation=STRING)?
+		//    )
+		//'}'
 		public Group getGroup() { return cGroup; }
 		
 		//deprecated?='deprecated'?
@@ -927,7 +1011,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_3() { return cLeftCurlyBracketKeyword_3; }
 		
-		//('label' label=STRING)? & ('description' description=STRING)? & ('documentation' documentation=STRING)?
+		//(
+		//    ('label' label=STRING)?
+		//    & ('description' description=STRING)?
+		//    & ('documentation' documentation=STRING)?
+		//)
 		public UnorderedGroup getUnorderedGroup_4() { return cUnorderedGroup_4; }
 		
 		//('label' label=STRING)?
@@ -986,10 +1074,13 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cDocumentationSTRINGTerminalRuleCall_3_1_0 = (RuleCall)cDocumentationAssignment_3_1.eContents().get(0);
 		
 		//MdOptionSupport:
-		//	'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)? ('documentation' documentation=STRING)?;
+		//    'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)?
+		//    ('documentation' documentation=STRING)?
+		//    ;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)? ('documentation' documentation=STRING)?
+		//'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)?
+		//('documentation' documentation=STRING)?
 		public Group getGroup() { return cGroup; }
 		
 		//'supports'
@@ -1039,7 +1130,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQualifiedNameParserRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
 		
 		//Path:
-		//	QualifiedName (('/' | '-') QualifiedName)*;
+		//    QualifiedName (('/' | '-') QualifiedName)*;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//QualifiedName (('/' | '-') QualifiedName)*
@@ -1051,7 +1142,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//(('/' | '-') QualifiedName)*
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//'/' | '-'
+		//('/' | '-')
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
 		//'/'
@@ -1064,7 +1155,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getQualifiedNameParserRuleCall_1_1() { return cQualifiedNameParserRuleCall_1_1; }
 	}
 	
-	public class MdOptionTargetTypeElements extends AbstractEnumRuleElementFinder {
+	public class MdOptionTargetTypeElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdOptionTargetType");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cParentsEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
@@ -1079,7 +1170,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cLabelsLabelsKeyword_4_0 = (Keyword)cLabelsEnumLiteralDeclaration_4.eContents().get(0);
 		
 		//enum MdOptionTargetType:
-		//	parents | nodes | edges | ports | labels;
+		//    parents | nodes | edges | ports | labels;
 		public EnumRule getRule() { return rule; }
 		
 		//parents | nodes | edges | ports | labels
@@ -1088,34 +1179,29 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//parents
 		public EnumLiteralDeclaration getParentsEnumLiteralDeclaration_0() { return cParentsEnumLiteralDeclaration_0; }
 		
-		//"parents"
 		public Keyword getParentsParentsKeyword_0_0() { return cParentsParentsKeyword_0_0; }
 		
 		//nodes
 		public EnumLiteralDeclaration getNodesEnumLiteralDeclaration_1() { return cNodesEnumLiteralDeclaration_1; }
 		
-		//"nodes"
 		public Keyword getNodesNodesKeyword_1_0() { return cNodesNodesKeyword_1_0; }
 		
 		//edges
 		public EnumLiteralDeclaration getEdgesEnumLiteralDeclaration_2() { return cEdgesEnumLiteralDeclaration_2; }
 		
-		//"edges"
 		public Keyword getEdgesEdgesKeyword_2_0() { return cEdgesEdgesKeyword_2_0; }
 		
 		//ports
 		public EnumLiteralDeclaration getPortsEnumLiteralDeclaration_3() { return cPortsEnumLiteralDeclaration_3; }
 		
-		//"ports"
 		public Keyword getPortsPortsKeyword_3_0() { return cPortsPortsKeyword_3_0; }
 		
 		//labels
 		public EnumLiteralDeclaration getLabelsEnumLiteralDeclaration_4() { return cLabelsEnumLiteralDeclaration_4; }
 		
-		//"labels"
 		public Keyword getLabelsLabelsKeyword_4_0() { return cLabelsLabelsKeyword_4_0; }
 	}
-	public class MdGraphFeatureElements extends AbstractEnumRuleElementFinder {
+	public class MdGraphFeatureElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdGraphFeature");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cSelf_loopsEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
@@ -1136,59 +1222,52 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cDisconnectedDisconnectedKeyword_7_0 = (Keyword)cDisconnectedEnumLiteralDeclaration_7.eContents().get(0);
 		
 		//enum MdGraphFeature:
-		//	self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound
-		//	| clusters | disconnected;
+		//    self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound
+		//    | clusters | disconnected;
 		public EnumRule getRule() { return rule; }
 		
-		//self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound | clusters | disconnected
+		//self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound
+		//| clusters | disconnected
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//self_loops
 		public EnumLiteralDeclaration getSelf_loopsEnumLiteralDeclaration_0() { return cSelf_loopsEnumLiteralDeclaration_0; }
 		
-		//"self_loops"
 		public Keyword getSelf_loopsSelf_loopsKeyword_0_0() { return cSelf_loopsSelf_loopsKeyword_0_0; }
 		
 		//inside_self_loops
 		public EnumLiteralDeclaration getInside_self_loopsEnumLiteralDeclaration_1() { return cInside_self_loopsEnumLiteralDeclaration_1; }
 		
-		//"inside_self_loops"
 		public Keyword getInside_self_loopsInside_self_loopsKeyword_1_0() { return cInside_self_loopsInside_self_loopsKeyword_1_0; }
 		
 		//multi_edges
 		public EnumLiteralDeclaration getMulti_edgesEnumLiteralDeclaration_2() { return cMulti_edgesEnumLiteralDeclaration_2; }
 		
-		//"multi_edges"
 		public Keyword getMulti_edgesMulti_edgesKeyword_2_0() { return cMulti_edgesMulti_edgesKeyword_2_0; }
 		
 		//edge_labels
 		public EnumLiteralDeclaration getEdge_labelsEnumLiteralDeclaration_3() { return cEdge_labelsEnumLiteralDeclaration_3; }
 		
-		//"edge_labels"
 		public Keyword getEdge_labelsEdge_labelsKeyword_3_0() { return cEdge_labelsEdge_labelsKeyword_3_0; }
 		
 		//ports
 		public EnumLiteralDeclaration getPortsEnumLiteralDeclaration_4() { return cPortsEnumLiteralDeclaration_4; }
 		
-		//"ports"
 		public Keyword getPortsPortsKeyword_4_0() { return cPortsPortsKeyword_4_0; }
 		
 		//compound
 		public EnumLiteralDeclaration getCompoundEnumLiteralDeclaration_5() { return cCompoundEnumLiteralDeclaration_5; }
 		
-		//"compound"
 		public Keyword getCompoundCompoundKeyword_5_0() { return cCompoundCompoundKeyword_5_0; }
 		
 		//clusters
 		public EnumLiteralDeclaration getClustersEnumLiteralDeclaration_6() { return cClustersEnumLiteralDeclaration_6; }
 		
-		//"clusters"
 		public Keyword getClustersClustersKeyword_6_0() { return cClustersClustersKeyword_6_0; }
 		
 		//disconnected
 		public EnumLiteralDeclaration getDisconnectedEnumLiteralDeclaration_7() { return cDisconnectedEnumLiteralDeclaration_7; }
 		
-		//"disconnected"
 		public Keyword getDisconnectedDisconnectedKeyword_7_0() { return cDisconnectedDisconnectedKeyword_7_0; }
 	}
 	
@@ -1266,9 +1345,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//MdModel:
-	//	('package' name=QualifiedName
-	//	importSection=XImportSection?
-	//	bundle=MdBundle)?;
+	//    (
+	//        'package' name=QualifiedName
+	//        importSection=XImportSection?
+	//        bundle=MdBundle
+	//    )?;
 	public MdModelElements getMdModelAccess() {
 		return pMdModel;
 	}
@@ -1278,12 +1359,18 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdBundle:
-	//	{MdBundle} ('bundle' '{' (('label' label=STRING)?
-	//	& ('metadataClass' targetClass=QualifiedName)?
-	//	& ('documentationFolder' documentationFolder=Path)?
-	//	& ('idPrefix' idPrefix=QualifiedName)?)
-	//	'}')?
-	//	members+=MdBundleMember*;
+	//    {MdBundle}
+	//    (
+	//        'bundle' '{'
+	//            (
+	//                ('label' label=STRING)?
+	//                & ('metadataClass' targetClass=QualifiedName)?
+	//                & ('documentationFolder' documentationFolder=Path)?
+	//                & ('idPrefix' idPrefix=QualifiedName)?
+	//            )
+	//        '}'
+	//    )?
+	//    members+=MdBundleMember*;
 	public MdBundleElements getMdBundleAccess() {
 		return pMdBundle;
 	}
@@ -1293,7 +1380,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdBundleMember:
-	//	MdGroupOrOption | MdAlgorithm | MdCategory;
+	//    MdGroupOrOption | MdAlgorithm | MdCategory;
 	public MdBundleMemberElements getMdBundleMemberAccess() {
 		return pMdBundleMember;
 	}
@@ -1303,7 +1390,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdGroupOrOption:
-	//	MdGroup | MdOption;
+	//    MdGroup | MdOption;
 	public MdGroupOrOptionElements getMdGroupOrOptionAccess() {
 		return pMdGroupOrOption;
 	}
@@ -1313,9 +1400,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdGroup:
-	//	'group' name=ID '{' ('documentation' documentation=STRING)?
-	//	children+=MdGroupOrOption*
-	//	'}';
+	//    'group' name=ID '{'
+	//        ('documentation' documentation=STRING)?
+	//        children+=MdGroupOrOption*
+	//    '}';
 	public MdGroupElements getMdGroupAccess() {
 		return pMdGroup;
 	}
@@ -1325,16 +1413,21 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdOption:
-	//	deprecated?='deprecated'? (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
-	//	'option' name=ID (':' type=JvmTypeReference)? '{' (('label' label=STRING)?
-	//	& ('description' description=STRING)?
-	//	& ('documentation' documentation=STRING)? // "@docu/priority.md"
-	//	& ('default' '=' defaultValue=XExpression)?
-	//	& ('lowerBound' '=' lowerBound=XExpression)?
-	//	& ('upperBound' '=' upperBound=XExpression)?
-	//	& ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
-	//	& ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?) dependencies+=MdOptionDependency*
-	//	'}';
+	//    deprecated?='deprecated'?
+	//    (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
+	//    'option' name=ID (':' type=JvmTypeReference)? '{'
+	//        (
+	//            ('label' label=STRING)?
+	//            & ('description' description=STRING)?
+	//            & ('documentation' documentation=STRING)?   // "@docu/priority.md"
+	//            & ('default' '=' defaultValue=XExpression)?
+	//            & ('lowerBound' '=' lowerBound=XExpression)?
+	//            & ('upperBound' '=' upperBound=XExpression)?
+	//            & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
+	//            & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+	//        )
+	//        (dependencies+=MdOptionDependency)*
+	//    '}';
 	public MdOptionElements getMdOptionAccess() {
 		return pMdOption;
 	}
@@ -1344,7 +1437,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdOptionDependency:
-	//	'requires' target=[MdOption|QualifiedName] ('==' value=XExpression)?;
+	//    'requires' target=[MdOption|QualifiedName] ('==' value=XExpression)?;
 	public MdOptionDependencyElements getMdOptionDependencyAccess() {
 		return pMdOptionDependency;
 	}
@@ -1354,16 +1447,20 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdAlgorithm:
-	//	deprecated?='deprecated'?
-	//	'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{' (('label' label=STRING)?
-	//	& ('metadataClass' targetClass=QualifiedName)?
-	//	& ('description' description=STRING)?
-	//	& ('documentation' documentation=STRING)?
-	//	& ('category' category=[MdCategory|QualifiedName])?
-	//	& ('preview' previewImage=Path)?
-	//	& ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
-	//	& ('validator' validator=JvmTypeReference)?) supportedOptions+=MdOptionSupport*
-	//	'}';
+	//    deprecated?='deprecated'?
+	//    'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{'
+	//        (
+	//            ('label' label=STRING)?
+	//            & ('metadataClass' targetClass=QualifiedName)?
+	//            & ('description' description=STRING)?
+	//            & ('documentation' documentation=STRING)?
+	//            & ('category' category=[MdCategory|QualifiedName])?
+	//            & ('preview' previewImage=Path)?
+	//            & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+	//            & ('validator' validator=JvmTypeReference)?
+	//        )
+	//        (supportedOptions+=MdOptionSupport)*
+	//    '}';
 	public MdAlgorithmElements getMdAlgorithmAccess() {
 		return pMdAlgorithm;
 	}
@@ -1373,11 +1470,14 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdCategory:
-	//	deprecated?='deprecated'?
-	//	'category' name=ID '{' (('label' label=STRING)?
-	//	& ('description' description=STRING)?
-	//	& ('documentation' documentation=STRING)?)
-	//	'}';
+	//    deprecated?='deprecated'?
+	//    'category' name=ID '{'
+	//        (
+	//            ('label' label=STRING)?
+	//            & ('description' description=STRING)?
+	//            & ('documentation' documentation=STRING)?
+	//        )
+	//    '}';
 	public MdCategoryElements getMdCategoryAccess() {
 		return pMdCategory;
 	}
@@ -1387,7 +1487,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdOptionSupport:
-	//	'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)? ('documentation' documentation=STRING)?;
+	//    'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)?
+	//    ('documentation' documentation=STRING)?
+	//    ;
 	public MdOptionSupportElements getMdOptionSupportAccess() {
 		return pMdOptionSupport;
 	}
@@ -1397,7 +1499,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Path:
-	//	QualifiedName (('/' | '-') QualifiedName)*;
+	//    QualifiedName (('/' | '-') QualifiedName)*;
 	public PathElements getPathAccess() {
 		return pPath;
 	}
@@ -1407,7 +1509,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//enum MdOptionTargetType:
-	//	parents | nodes | edges | ports | labels;
+	//    parents | nodes | edges | ports | labels;
 	public MdOptionTargetTypeElements getMdOptionTargetTypeAccess() {
 		return eMdOptionTargetType;
 	}
@@ -1417,8 +1519,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//enum MdGraphFeature:
-	//	self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound
-	//	| clusters | disconnected;
+	//    self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound
+	//    | clusters | disconnected;
 	public MdGraphFeatureElements getMdGraphFeatureAccess() {
 		return eMdGraphFeature;
 	}
@@ -1427,8 +1529,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getMdGraphFeatureAccess().getRule();
 	}
 	
-	//XExpression:
-	//	XAssignment;
+	//XExpression returns XExpression :
+	//    XAssignment;
 	public XbaseGrammarAccess.XExpressionElements getXExpressionAccess() {
 		return gaXbase.getXExpressionAccess();
 	}
@@ -1437,10 +1539,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXExpressionAccess().getRule();
 	}
 	
-	//XAssignment XExpression:
-	//	{XAssignment} feature=[types::JvmIdentifiableElement|FeatureCallID] OpSingleAssign value=XAssignment | XOrExpression
-	//	(=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpMultiAssign])
-	//	rightOperand=XAssignment)?;
+	//XAssignment returns XExpression :
+	//    {XAssignment} feature=[types::JvmIdentifiableElement|FeatureCallID] OpSingleAssign value=XAssignment |
+	//    XOrExpression (
+	//        =>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpMultiAssign]) rightOperand=XAssignment
+	//    )?;
 	public XbaseGrammarAccess.XAssignmentElements getXAssignmentAccess() {
 		return gaXbase.getXAssignmentAccess();
 	}
@@ -1450,7 +1553,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpSingleAssign:
-	//	'=';
+	//    '='
+	//;
 	public XbaseGrammarAccess.OpSingleAssignElements getOpSingleAssignAccess() {
 		return gaXbase.getOpSingleAssignAccess();
 	}
@@ -1460,9 +1564,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpMultiAssign:
-	//	'+=' | '-=' | '*=' | '/=' | '%=' |
-	//	'<' '<' '=' |
-	//	'>' '>'? '>=';
+	//    '+=' | '-=' | '*=' | '/=' | '%=' |
+	//    '<' '<' '=' |
+	//    '>' '>'? '>=';
 	public XbaseGrammarAccess.OpMultiAssignElements getOpMultiAssignAccess() {
 		return gaXbase.getOpMultiAssignAccess();
 	}
@@ -1471,9 +1575,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpMultiAssignAccess().getRule();
 	}
 	
-	//XOrExpression XExpression:
-	//	XAndExpression (=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpOr])
-	//	rightOperand=XAndExpression)*;
+	//XOrExpression returns XExpression:
+	//    XAndExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpOr]) rightOperand=XAndExpression)*;
 	public XbaseGrammarAccess.XOrExpressionElements getXOrExpressionAccess() {
 		return gaXbase.getXOrExpressionAccess();
 	}
@@ -1483,7 +1586,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpOr:
-	//	'||';
+	//    '||';
 	public XbaseGrammarAccess.OpOrElements getOpOrAccess() {
 		return gaXbase.getOpOrAccess();
 	}
@@ -1492,9 +1595,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpOrAccess().getRule();
 	}
 	
-	//XAndExpression XExpression:
-	//	XEqualityExpression (=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpAnd])
-	//	rightOperand=XEqualityExpression)*;
+	//XAndExpression returns XExpression:
+	//    XEqualityExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpAnd]) rightOperand=XEqualityExpression)*;
 	public XbaseGrammarAccess.XAndExpressionElements getXAndExpressionAccess() {
 		return gaXbase.getXAndExpressionAccess();
 	}
@@ -1504,7 +1606,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpAnd:
-	//	'&&';
+	//    '&&';
 	public XbaseGrammarAccess.OpAndElements getOpAndAccess() {
 		return gaXbase.getOpAndAccess();
 	}
@@ -1513,9 +1615,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpAndAccess().getRule();
 	}
 	
-	//XEqualityExpression XExpression:
-	//	XRelationalExpression (=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpEquality])
-	//	rightOperand=XRelationalExpression)*;
+	//XEqualityExpression returns XExpression:
+	//    XRelationalExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpEquality])
+	//    rightOperand=XRelationalExpression)*;
 	public XbaseGrammarAccess.XEqualityExpressionElements getXEqualityExpressionAccess() {
 		return gaXbase.getXEqualityExpressionAccess();
 	}
@@ -1525,7 +1627,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpEquality:
-	//	'==' | '!=' | '===' | '!==';
+	//    '==' | '!=' | '===' | '!==';
 	public XbaseGrammarAccess.OpEqualityElements getOpEqualityAccess() {
 		return gaXbase.getOpEqualityAccess();
 	}
@@ -1534,10 +1636,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpEqualityAccess().getRule();
 	}
 	
-	//XRelationalExpression XExpression:
-	//	XOtherOperatorExpression (=> ({XInstanceOfExpression.expression=current} 'instanceof') type=JvmTypeReference |
-	//	=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpCompare])
-	//	rightOperand=XOtherOperatorExpression)*;
+	//XRelationalExpression returns XExpression:
+	//    XOtherOperatorExpression
+	//    (=>({XInstanceOfExpression.expression=current} 'instanceof') type=JvmTypeReference |
+	//     =>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpCompare]) rightOperand=XOtherOperatorExpression)*;
 	public XbaseGrammarAccess.XRelationalExpressionElements getXRelationalExpressionAccess() {
 		return gaXbase.getXRelationalExpressionAccess();
 	}
@@ -1547,7 +1649,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpCompare:
-	//	'>=' | '<' '=' | '>' | '<';
+	//    '>=' | '<' '=' | '>' | '<' ;
 	public XbaseGrammarAccess.OpCompareElements getOpCompareAccess() {
 		return gaXbase.getOpCompareAccess();
 	}
@@ -1556,9 +1658,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpCompareAccess().getRule();
 	}
 	
-	//XOtherOperatorExpression XExpression:
-	//	XAdditiveExpression (=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpOther])
-	//	rightOperand=XAdditiveExpression)*;
+	//XOtherOperatorExpression returns XExpression:
+	//    XAdditiveExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpOther])
+	//    rightOperand=XAdditiveExpression)*;
 	public XbaseGrammarAccess.XOtherOperatorExpressionElements getXOtherOperatorExpressionAccess() {
 		return gaXbase.getXOtherOperatorExpressionAccess();
 	}
@@ -1568,13 +1670,15 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpOther:
-	//	'->'
-	//	| '..<'
-	//	| '>' '..'
-	//	| '..'
-	//	| '=>'
-	//	| '>' (=> ('>' '>') | '>') | '<' (=> ('<' '<') | '<' | '=>') | '<>'
-	//	| '?:';
+	//      '->'
+	//    | '..<'
+	//    | '>' '..'
+	//    | '..'
+	//    | '=>'
+	//    | '>' (=>('>' '>') | '>')
+	//    | '<' (=>('<' '<') | '<' | '=>')
+	//    | '<>'
+	//    | '?:';
 	public XbaseGrammarAccess.OpOtherElements getOpOtherAccess() {
 		return gaXbase.getOpOtherAccess();
 	}
@@ -1583,9 +1687,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpOtherAccess().getRule();
 	}
 	
-	//XAdditiveExpression XExpression:
-	//	XMultiplicativeExpression (=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpAdd])
-	//	rightOperand=XMultiplicativeExpression)*;
+	//XAdditiveExpression returns XExpression:
+	//    XMultiplicativeExpression (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpAdd])
+	//    rightOperand=XMultiplicativeExpression)*;
 	public XbaseGrammarAccess.XAdditiveExpressionElements getXAdditiveExpressionAccess() {
 		return gaXbase.getXAdditiveExpressionAccess();
 	}
@@ -1595,7 +1699,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpAdd:
-	//	'+' | '-';
+	//    '+' | '-';
 	public XbaseGrammarAccess.OpAddElements getOpAddAccess() {
 		return gaXbase.getOpAddAccess();
 	}
@@ -1604,9 +1708,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpAddAccess().getRule();
 	}
 	
-	//XMultiplicativeExpression XExpression:
-	//	XUnaryOperation (=> ({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpMulti])
-	//	rightOperand=XUnaryOperation)*;
+	//XMultiplicativeExpression returns XExpression:
+	//    XUnaryOperation (=>({XBinaryOperation.leftOperand=current} feature=[types::JvmIdentifiableElement|OpMulti]) rightOperand=XUnaryOperation)*;
 	public XbaseGrammarAccess.XMultiplicativeExpressionElements getXMultiplicativeExpressionAccess() {
 		return gaXbase.getXMultiplicativeExpressionAccess();
 	}
@@ -1616,7 +1719,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpMulti:
-	//	'*' | '**' | '/' | '%';
+	//    '*' | '**' | '/' | '%';
 	public XbaseGrammarAccess.OpMultiElements getOpMultiAccess() {
 		return gaXbase.getOpMultiAccess();
 	}
@@ -1625,9 +1728,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpMultiAccess().getRule();
 	}
 	
-	//XUnaryOperation XExpression:
-	//	{XUnaryOperation} feature=[types::JvmIdentifiableElement|OpUnary] operand=XUnaryOperation
-	//	| XCastedExpression;
+	//XUnaryOperation returns XExpression:
+	//    {XUnaryOperation} feature=[types::JvmIdentifiableElement|OpUnary] operand=XUnaryOperation
+	//    | XCastedExpression;
 	public XbaseGrammarAccess.XUnaryOperationElements getXUnaryOperationAccess() {
 		return gaXbase.getXUnaryOperationAccess();
 	}
@@ -1637,7 +1740,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpUnary:
-	//	"!" | "-" | "+";
+	//    "!" | "-" | "+";
 	public XbaseGrammarAccess.OpUnaryElements getOpUnaryAccess() {
 		return gaXbase.getOpUnaryAccess();
 	}
@@ -1646,8 +1749,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpUnaryAccess().getRule();
 	}
 	
-	//XCastedExpression XExpression:
-	//	XPostfixOperation (=> ({XCastedExpression.target=current} 'as') type=JvmTypeReference)*;
+	//XCastedExpression returns XExpression:
+	//    XPostfixOperation (=>({XCastedExpression.target=current} 'as') type=JvmTypeReference)*
+	//;
 	public XbaseGrammarAccess.XCastedExpressionElements getXCastedExpressionAccess() {
 		return gaXbase.getXCastedExpressionAccess();
 	}
@@ -1656,8 +1760,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXCastedExpressionAccess().getRule();
 	}
 	
-	//XPostfixOperation XExpression:
-	//	XMemberFeatureCall => ({XPostfixOperation.operand=current} feature=[types::JvmIdentifiableElement|OpPostfix])?;
+	//XPostfixOperation returns XExpression:
+	//    XMemberFeatureCall =>({XPostfixOperation.operand=current} feature=[types::JvmIdentifiableElement|OpPostfix])?
+	//;
 	public XbaseGrammarAccess.XPostfixOperationElements getXPostfixOperationAccess() {
 		return gaXbase.getXPostfixOperationAccess();
 	}
@@ -1667,7 +1772,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//OpPostfix:
-	//	"++" | "--";
+	//    "++" | "--"
+	//;
 	public XbaseGrammarAccess.OpPostfixElements getOpPostfixAccess() {
 		return gaXbase.getOpPostfixAccess();
 	}
@@ -1676,15 +1782,20 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getOpPostfixAccess().getRule();
 	}
 	
-	//XMemberFeatureCall XExpression:
-	//	XPrimaryExpression (=> ({XAssignment.assignable=current} ('.' | explicitStatic?="::")
-	//	feature=[types::JvmIdentifiableElement|FeatureCallID] OpSingleAssign) value=XAssignment
-	//	| => ({XMemberFeatureCall.memberCallTarget=current} ("." | nullSafe?="?." | explicitStatic?="::")) ('<'
-	//	typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?
-	//	feature=[types::JvmIdentifiableElement|IdOrSuper] (=> explicitOperationCall?='(' (memberCallArguments+=XShortClosure
-	//	| memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)*)?
-	//	')')?
-	//	memberCallArguments+=XClosure?)*;
+	//XMemberFeatureCall returns XExpression:
+	//    XPrimaryExpression
+	//    (=>({XAssignment.assignable=current} ('.'|explicitStatic?="::") feature=[types::JvmIdentifiableElement|FeatureCallID] OpSingleAssign) value=XAssignment
+	//    |=>({XMemberFeatureCall.memberCallTarget=current} ("."|nullSafe?="?."|explicitStatic?="::"))
+	//        ('<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?
+	//        feature=[types::JvmIdentifiableElement|IdOrSuper] (
+	//            =>explicitOperationCall?='('
+	//                (
+	//                    memberCallArguments+=XShortClosure
+	//                  | memberCallArguments+=XExpression (',' memberCallArguments+=XExpression)*
+	//                )?
+	//            ')')?
+	//            memberCallArguments+=XClosure?
+	//        )*;
 	public XbaseGrammarAccess.XMemberFeatureCallElements getXMemberFeatureCallAccess() {
 		return gaXbase.getXMemberFeatureCallAccess();
 	}
@@ -1693,10 +1804,22 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXMemberFeatureCallAccess().getRule();
 	}
 	
-	//XPrimaryExpression XExpression:
-	//	XConstructorCall | XBlockExpression | XSwitchExpression | XSynchronizedExpression | XFeatureCall | XLiteral |
-	//	XIfExpression | XForLoopExpression | XBasicForLoopExpression | XWhileExpression | XDoWhileExpression |
-	//	XThrowExpression | XReturnExpression | XTryCatchFinallyExpression | XParenthesizedExpression;
+	//XPrimaryExpression returns XExpression:
+	//    XConstructorCall |
+	//    XBlockExpression |
+	//    XSwitchExpression |
+	//    XSynchronizedExpression |
+	//    XFeatureCall |
+	//    XLiteral |
+	//    XIfExpression |
+	//    XForLoopExpression |
+	//    XBasicForLoopExpression |
+	//    XWhileExpression |
+	//    XDoWhileExpression |
+	//    XThrowExpression |
+	//    XReturnExpression |
+	//    XTryCatchFinallyExpression |
+	//    XParenthesizedExpression;
 	public XbaseGrammarAccess.XPrimaryExpressionElements getXPrimaryExpressionAccess() {
 		return gaXbase.getXPrimaryExpressionAccess();
 	}
@@ -1705,8 +1828,15 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXPrimaryExpressionAccess().getRule();
 	}
 	
-	//XLiteral XExpression:
-	//	XCollectionLiteral | XClosure | XBooleanLiteral | XNumberLiteral | XNullLiteral | XStringLiteral | XTypeLiteral;
+	//XLiteral returns XExpression:
+	//    XCollectionLiteral |
+	//    XClosure |
+	//    XBooleanLiteral |
+	//    XNumberLiteral |
+	//    XNullLiteral |
+	//    XStringLiteral |
+	//    XTypeLiteral
+	//;
 	public XbaseGrammarAccess.XLiteralElements getXLiteralAccess() {
 		return gaXbase.getXLiteralAccess();
 	}
@@ -1716,7 +1846,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XCollectionLiteral:
-	//	XSetLiteral | XListLiteral;
+	//    XSetLiteral | XListLiteral
+	//;
 	public XbaseGrammarAccess.XCollectionLiteralElements getXCollectionLiteralAccess() {
 		return gaXbase.getXCollectionLiteralAccess();
 	}
@@ -1726,7 +1857,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XSetLiteral:
-	//	{XSetLiteral} '#' '{' (elements+=XExpression (',' elements+=XExpression)*)? '}';
+	//    {XSetLiteral} '#' '{' (elements+=XExpression (',' elements+=XExpression )*)? '}'
+	//;
 	public XbaseGrammarAccess.XSetLiteralElements getXSetLiteralAccess() {
 		return gaXbase.getXSetLiteralAccess();
 	}
@@ -1736,7 +1868,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XListLiteral:
-	//	{XListLiteral} '#' '[' (elements+=XExpression (',' elements+=XExpression)*)? ']';
+	//    {XListLiteral} '#' '[' (elements+=XExpression (',' elements+=XExpression )*)? ']'
+	//;
 	public XbaseGrammarAccess.XListLiteralElements getXListLiteralAccess() {
 		return gaXbase.getXListLiteralAccess();
 	}
@@ -1745,13 +1878,12 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXListLiteralAccess().getRule();
 	}
 	
-	//XClosure XExpression:
-	//	=> ({XClosure}
-	//	'[')
-	//	=> ((declaredFormalParameters+=JvmFormalParameter (',' declaredFormalParameters+=JvmFormalParameter)*)?
-	//	explicitSyntax?='|')?
-	//	expression=XExpressionInClosure
-	//	']';
+	//XClosure returns XExpression:
+	//    =>({XClosure}
+	//    '[')
+	//        =>((declaredFormalParameters+=JvmFormalParameter (',' declaredFormalParameters+=JvmFormalParameter)*)? explicitSyntax?='|')?
+	//        expression=XExpressionInClosure
+	//    ']';
 	public XbaseGrammarAccess.XClosureElements getXClosureAccess() {
 		return gaXbase.getXClosureAccess();
 	}
@@ -1760,8 +1892,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXClosureAccess().getRule();
 	}
 	
-	//XExpressionInClosure XExpression:
-	//	{XBlockExpression} (expressions+=XExpressionOrVarDeclaration ';'?)*;
+	//XExpressionInClosure returns XExpression:
+	//    {XBlockExpression}
+	//    (expressions+=XExpressionOrVarDeclaration ';'?)*
+	//;
 	public XbaseGrammarAccess.XExpressionInClosureElements getXExpressionInClosureAccess() {
 		return gaXbase.getXExpressionInClosureAccess();
 	}
@@ -1770,9 +1904,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXExpressionInClosureAccess().getRule();
 	}
 	
-	//XShortClosure XExpression:
-	//	=> ({XClosure} (declaredFormalParameters+=JvmFormalParameter (',' declaredFormalParameters+=JvmFormalParameter)*)?
-	//	explicitSyntax?='|') expression=XExpression;
+	//XShortClosure returns XExpression:
+	//    =>({XClosure} (declaredFormalParameters+=JvmFormalParameter (',' declaredFormalParameters+=JvmFormalParameter)*)? explicitSyntax?='|') expression=XExpression;
 	public XbaseGrammarAccess.XShortClosureElements getXShortClosureAccess() {
 		return gaXbase.getXShortClosureAccess();
 	}
@@ -1781,8 +1914,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXShortClosureAccess().getRule();
 	}
 	
-	//XParenthesizedExpression XExpression:
-	//	'(' XExpression ')';
+	//XParenthesizedExpression returns XExpression:
+	//    '(' XExpression ')';
 	public XbaseGrammarAccess.XParenthesizedExpressionElements getXParenthesizedExpressionAccess() {
 		return gaXbase.getXParenthesizedExpressionAccess();
 	}
@@ -1791,10 +1924,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXParenthesizedExpressionAccess().getRule();
 	}
 	
-	//XIfExpression XExpression:
-	//	{XIfExpression}
-	//	'if' '(' if=XExpression ')'
-	//	then=XExpression (=> 'else' else=XExpression)?;
+	//XIfExpression returns XExpression:
+	//    {XIfExpression}
+	//    'if' '(' if=XExpression ')'
+	//    then=XExpression
+	//    (=>'else' else=XExpression)?;
 	public XbaseGrammarAccess.XIfExpressionElements getXIfExpressionAccess() {
 		return gaXbase.getXIfExpressionAccess();
 	}
@@ -1803,12 +1937,13 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXIfExpressionAccess().getRule();
 	}
 	
-	//XSwitchExpression XExpression:
-	//	{XSwitchExpression}
-	//	'switch' (=> ('(' declaredParam=JvmFormalParameter ':') switch=XExpression ')'
-	//	| => (declaredParam=JvmFormalParameter ':')? switch=XExpression) '{'
-	//	cases+=XCasePart* ('default' ':' default=XExpression)?
-	//	'}';
+	//XSwitchExpression returns XExpression:
+	//    {XSwitchExpression}
+	//    'switch' (=>('(' declaredParam=JvmFormalParameter ':') switch=XExpression ')'
+	//        | =>(declaredParam=JvmFormalParameter ':')? switch=XExpression) '{'
+	//    (cases+=XCasePart)*
+	//    ('default' ':' default=XExpression )?
+	//    '}';
 	public XbaseGrammarAccess.XSwitchExpressionElements getXSwitchExpressionAccess() {
 		return gaXbase.getXSwitchExpressionAccess();
 	}
@@ -1818,7 +1953,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XCasePart:
-	//	{XCasePart} typeGuard=JvmTypeReference? ('case' case=XExpression)? (':' then=XExpression | fallThrough?=',');
+	//    {XCasePart}
+	//    typeGuard=JvmTypeReference? ('case' case=XExpression)?
+	//        (':' then=XExpression | fallThrough?=',') ;
 	public XbaseGrammarAccess.XCasePartElements getXCasePartAccess() {
 		return gaXbase.getXCasePartAccess();
 	}
@@ -1827,10 +1964,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXCasePartAccess().getRule();
 	}
 	
-	//XForLoopExpression XExpression:
-	//	=> ({XForLoopExpression}
-	//	'for' '(' declaredParam=JvmFormalParameter ':') forExpression=XExpression ')'
-	//	eachExpression=XExpression;
+	//XForLoopExpression returns XExpression:
+	//    =>({XForLoopExpression}
+	//    'for' '(' declaredParam=JvmFormalParameter ':') forExpression=XExpression ')'
+	//        eachExpression=XExpression;
 	public XbaseGrammarAccess.XForLoopExpressionElements getXForLoopExpressionAccess() {
 		return gaXbase.getXForLoopExpressionAccess();
 	}
@@ -1839,11 +1976,12 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXForLoopExpressionAccess().getRule();
 	}
 	
-	//XBasicForLoopExpression XExpression:
-	//	{XBasicForLoopExpression}
-	//	'for' '(' (initExpressions+=XExpressionOrVarDeclaration (',' initExpressions+=XExpressionOrVarDeclaration)*)? ';'
-	//	expression=XExpression? ';' (updateExpressions+=XExpression (',' updateExpressions+=XExpression)*)? ')'
-	//	eachExpression=XExpression;
+	//XBasicForLoopExpression returns XExpression:
+	//    {XBasicForLoopExpression}
+	//    'for' '('(initExpressions+=XExpressionOrVarDeclaration (',' initExpressions+=XExpressionOrVarDeclaration)*)? ';'
+	//        expression=XExpression? ';'
+	//        (updateExpressions+=XExpression (',' updateExpressions+=XExpression)*)? ')'
+	//        eachExpression=XExpression;
 	public XbaseGrammarAccess.XBasicForLoopExpressionElements getXBasicForLoopExpressionAccess() {
 		return gaXbase.getXBasicForLoopExpressionAccess();
 	}
@@ -1852,10 +1990,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXBasicForLoopExpressionAccess().getRule();
 	}
 	
-	//XWhileExpression XExpression:
-	//	{XWhileExpression}
-	//	'while' '(' predicate=XExpression ')'
-	//	body=XExpression;
+	//XWhileExpression returns XExpression:
+	//    {XWhileExpression}
+	//    'while' '(' predicate=XExpression ')'
+	//        body=XExpression;
 	public XbaseGrammarAccess.XWhileExpressionElements getXWhileExpressionAccess() {
 		return gaXbase.getXWhileExpressionAccess();
 	}
@@ -1864,11 +2002,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXWhileExpressionAccess().getRule();
 	}
 	
-	//XDoWhileExpression XExpression:
-	//	{XDoWhileExpression}
-	//	'do'
-	//	body=XExpression
-	//	'while' '(' predicate=XExpression ')';
+	//XDoWhileExpression returns XExpression:
+	//    {XDoWhileExpression}
+	//    'do'
+	//        body=XExpression
+	//    'while' '(' predicate=XExpression ')';
 	public XbaseGrammarAccess.XDoWhileExpressionElements getXDoWhileExpressionAccess() {
 		return gaXbase.getXDoWhileExpressionAccess();
 	}
@@ -1877,10 +2015,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXDoWhileExpressionAccess().getRule();
 	}
 	
-	//XBlockExpression XExpression:
-	//	{XBlockExpression}
-	//	'{' (expressions+=XExpressionOrVarDeclaration ';'?)*
-	//	'}';
+	//XBlockExpression returns XExpression:
+	//    {XBlockExpression}
+	//    '{'
+	//        (expressions+=XExpressionOrVarDeclaration ';'?)*
+	//    '}';
 	public XbaseGrammarAccess.XBlockExpressionElements getXBlockExpressionAccess() {
 		return gaXbase.getXBlockExpressionAccess();
 	}
@@ -1889,8 +2028,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXBlockExpressionAccess().getRule();
 	}
 	
-	//XExpressionOrVarDeclaration XExpression:
-	//	XVariableDeclaration | XExpression;
+	//XExpressionOrVarDeclaration returns XExpression:
+	//    XVariableDeclaration | XExpression;
 	public XbaseGrammarAccess.XExpressionOrVarDeclarationElements getXExpressionOrVarDeclarationAccess() {
 		return gaXbase.getXExpressionOrVarDeclarationAccess();
 	}
@@ -1899,9 +2038,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXExpressionOrVarDeclarationAccess().getRule();
 	}
 	
-	//XVariableDeclaration XExpression:
-	//	{XVariableDeclaration} (writeable?='var' | 'val') (=> (type=JvmTypeReference name=ValidID) | name=ValidID) ('='
-	//	right=XExpression)?;
+	//XVariableDeclaration returns XExpression:
+	//    {XVariableDeclaration}
+	//    (writeable?='var'|'val') (=>(type=JvmTypeReference name=ValidID) | name=ValidID) ('=' right=XExpression)?;
 	public XbaseGrammarAccess.XVariableDeclarationElements getXVariableDeclarationAccess() {
 		return gaXbase.getXVariableDeclarationAccess();
 	}
@@ -1910,8 +2049,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXVariableDeclarationAccess().getRule();
 	}
 	
-	//JvmFormalParameter types::JvmFormalParameter:
-	//	parameterType=JvmTypeReference? name=ValidID;
+	//JvmFormalParameter returns types::JvmFormalParameter:
+	//    (parameterType=JvmTypeReference)? name=ValidID;
 	public XbaseGrammarAccess.JvmFormalParameterElements getJvmFormalParameterAccess() {
 		return gaXbase.getJvmFormalParameterAccess();
 	}
@@ -1920,8 +2059,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmFormalParameterAccess().getRule();
 	}
 	
-	//FullJvmFormalParameter types::JvmFormalParameter:
-	//	parameterType=JvmTypeReference name=ValidID;
+	//FullJvmFormalParameter returns types::JvmFormalParameter:
+	//    parameterType=JvmTypeReference name=ValidID;
 	public XbaseGrammarAccess.FullJvmFormalParameterElements getFullJvmFormalParameterAccess() {
 		return gaXbase.getFullJvmFormalParameterAccess();
 	}
@@ -1930,12 +2069,17 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getFullJvmFormalParameterAccess().getRule();
 	}
 	
-	//XFeatureCall XExpression:
-	//	{XFeatureCall} ('<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?
-	//	feature=[types::JvmIdentifiableElement|IdOrSuper] (=> explicitOperationCall?='(' (featureCallArguments+=XShortClosure
-	//	| featureCallArguments+=XExpression (',' featureCallArguments+=XExpression)*)?
-	//	')')?
-	//	featureCallArguments+=XClosure?;
+	//XFeatureCall returns XExpression:
+	//    {XFeatureCall}
+	//    ('<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?
+	//    feature=[types::JvmIdentifiableElement|IdOrSuper]
+	//    (=>explicitOperationCall?='('
+	//        (
+	//            featureCallArguments+=XShortClosure
+	//          | featureCallArguments+=XExpression (',' featureCallArguments+=XExpression)*
+	//        )?
+	//    ')')?
+	//    featureCallArguments+=XClosure?;
 	public XbaseGrammarAccess.XFeatureCallElements getXFeatureCallAccess() {
 		return gaXbase.getXFeatureCallAccess();
 	}
@@ -1945,7 +2089,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//FeatureCallID:
-	//	ValidID | 'extends' | 'static' | 'import' | 'extension';
+	//    ValidID | 'extends' | 'static' | 'import' | 'extension'
+	//;
 	public XbaseGrammarAccess.FeatureCallIDElements getFeatureCallIDAccess() {
 		return gaXbase.getFeatureCallIDAccess();
 	}
@@ -1954,8 +2099,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getFeatureCallIDAccess().getRule();
 	}
 	
-	//IdOrSuper:
-	//	FeatureCallID | 'super';
+	//IdOrSuper :
+	//    FeatureCallID | 'super'
+	//;
 	public XbaseGrammarAccess.IdOrSuperElements getIdOrSuperAccess() {
 		return gaXbase.getIdOrSuperAccess();
 	}
@@ -1964,13 +2110,17 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getIdOrSuperAccess().getRule();
 	}
 	
-	//XConstructorCall XExpression:
-	//	{XConstructorCall}
-	//	'new' constructor=[types::JvmConstructor|QualifiedName] (=> '<' typeArguments+=JvmArgumentTypeReference (','
-	//	typeArguments+=JvmArgumentTypeReference)* '>')? (=> explicitConstructorCall?='(' (arguments+=XShortClosure
-	//	| arguments+=XExpression (',' arguments+=XExpression)*)?
-	//	')')?
-	//	arguments+=XClosure?;
+	//XConstructorCall returns XExpression:
+	//    {XConstructorCall}
+	//    'new' constructor=[types::JvmConstructor|QualifiedName]
+	//    (=>'<' typeArguments+=JvmArgumentTypeReference (',' typeArguments+=JvmArgumentTypeReference)* '>')?
+	//    (=>explicitConstructorCall?='('
+	//        (
+	//            arguments+=XShortClosure
+	//          | arguments+=XExpression (',' arguments+=XExpression)*
+	//        )?
+	//    ')')?
+	//    arguments+=XClosure?;
 	public XbaseGrammarAccess.XConstructorCallElements getXConstructorCallAccess() {
 		return gaXbase.getXConstructorCallAccess();
 	}
@@ -1979,8 +2129,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXConstructorCallAccess().getRule();
 	}
 	
-	//XBooleanLiteral XExpression:
-	//	{XBooleanLiteral} ('false' | isTrue?='true');
+	//XBooleanLiteral returns XExpression :
+	//    {XBooleanLiteral} ('false' | isTrue?='true');
 	public XbaseGrammarAccess.XBooleanLiteralElements getXBooleanLiteralAccess() {
 		return gaXbase.getXBooleanLiteralAccess();
 	}
@@ -1989,8 +2139,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXBooleanLiteralAccess().getRule();
 	}
 	
-	//XNullLiteral XExpression:
-	//	{XNullLiteral} 'null';
+	//XNullLiteral returns XExpression :
+	//    {XNullLiteral} 'null';
 	public XbaseGrammarAccess.XNullLiteralElements getXNullLiteralAccess() {
 		return gaXbase.getXNullLiteralAccess();
 	}
@@ -1999,8 +2149,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXNullLiteralAccess().getRule();
 	}
 	
-	//XNumberLiteral XExpression:
-	//	{XNumberLiteral} value=Number;
+	//XNumberLiteral returns XExpression :
+	//    {XNumberLiteral} value=Number;
 	public XbaseGrammarAccess.XNumberLiteralElements getXNumberLiteralAccess() {
 		return gaXbase.getXNumberLiteralAccess();
 	}
@@ -2009,8 +2159,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXNumberLiteralAccess().getRule();
 	}
 	
-	//XStringLiteral XExpression:
-	//	{XStringLiteral} value=STRING;
+	//XStringLiteral returns XExpression:
+	//    {XStringLiteral} value=STRING;
 	public XbaseGrammarAccess.XStringLiteralElements getXStringLiteralAccess() {
 		return gaXbase.getXStringLiteralAccess();
 	}
@@ -2019,8 +2169,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXStringLiteralAccess().getRule();
 	}
 	
-	//XTypeLiteral XExpression:
-	//	{XTypeLiteral} 'typeof' '(' type=[types::JvmType|QualifiedName] arrayDimensions+=ArrayBrackets* ')';
+	//XTypeLiteral returns XExpression :
+	//    {XTypeLiteral} 'typeof' '(' type=[types::JvmType|QualifiedName] (arrayDimensions+=ArrayBrackets)* ')'
+	//;
 	public XbaseGrammarAccess.XTypeLiteralElements getXTypeLiteralAccess() {
 		return gaXbase.getXTypeLiteralAccess();
 	}
@@ -2029,8 +2180,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXTypeLiteralAccess().getRule();
 	}
 	
-	//XThrowExpression XExpression:
-	//	{XThrowExpression} 'throw' expression=XExpression;
+	//XThrowExpression returns XExpression :
+	//    {XThrowExpression} 'throw' expression=XExpression;
 	public XbaseGrammarAccess.XThrowExpressionElements getXThrowExpressionAccess() {
 		return gaXbase.getXThrowExpressionAccess();
 	}
@@ -2039,8 +2190,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXThrowExpressionAccess().getRule();
 	}
 	
-	//XReturnExpression XExpression:
-	//	{XReturnExpression} 'return' -> expression=XExpression?;
+	//XReturnExpression returns XExpression :
+	//    {XReturnExpression} 'return' (->expression=XExpression)?;
 	public XbaseGrammarAccess.XReturnExpressionElements getXReturnExpressionAccess() {
 		return gaXbase.getXReturnExpressionAccess();
 	}
@@ -2049,11 +2200,15 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXReturnExpressionAccess().getRule();
 	}
 	
-	//XTryCatchFinallyExpression XExpression:
-	//	{XTryCatchFinallyExpression}
-	//	'try'
-	//	expression=XExpression (catchClauses+=XCatchClause+ (=> 'finally' finallyExpression=XExpression)?
-	//	| 'finally' finallyExpression=XExpression);
+	//XTryCatchFinallyExpression returns XExpression:
+	//    {XTryCatchFinallyExpression}
+	//    'try'
+	//        expression=XExpression
+	//    (
+	//        catchClauses+=XCatchClause+
+	//        (=>'finally' finallyExpression=XExpression)?
+	//    |    'finally' finallyExpression=XExpression
+	//    );
 	public XbaseGrammarAccess.XTryCatchFinallyExpressionElements getXTryCatchFinallyExpressionAccess() {
 		return gaXbase.getXTryCatchFinallyExpressionAccess();
 	}
@@ -2062,9 +2217,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXTryCatchFinallyExpressionAccess().getRule();
 	}
 	
-	//XSynchronizedExpression XExpression:
-	//	=> ({XSynchronizedExpression}
-	//	'synchronized' '(') param=XExpression ')' expression=XExpression;
+	//XSynchronizedExpression returns XExpression:
+	//    =>({XSynchronizedExpression}
+	//    'synchronized' '(') param=XExpression ')' expression=XExpression;
 	public XbaseGrammarAccess.XSynchronizedExpressionElements getXSynchronizedExpressionAccess() {
 		return gaXbase.getXSynchronizedExpressionAccess();
 	}
@@ -2073,8 +2228,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getXSynchronizedExpressionAccess().getRule();
 	}
 	
-	//XCatchClause:
-	//	=> 'catch' '(' declaredParam=FullJvmFormalParameter ')' expression=XExpression;
+	//XCatchClause :
+	//    =>'catch' '(' declaredParam=FullJvmFormalParameter ')' expression=XExpression;
 	public XbaseGrammarAccess.XCatchClauseElements getXCatchClauseAccess() {
 		return gaXbase.getXCatchClauseAccess();
 	}
@@ -2085,7 +2240,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//@Override
 	//QualifiedName:
-	//	ValidID (=> '.' ValidID)*;
+	//    ValidID (=>'.' ValidID)*;
 	public XbaseGrammarAccess.QualifiedNameElements getQualifiedNameAccess() {
 		return gaXbase.getQualifiedNameAccess();
 	}
@@ -2095,7 +2250,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Number hidden():
-	//	HEX | (INT | DECIMAL) ('.' (INT | DECIMAL))?;
+	//    HEX | (INT | DECIMAL) ('.' (INT | DECIMAL))?;
 	public XbaseGrammarAccess.NumberElements getNumberAccess() {
 		return gaXbase.getNumberAccess();
 	}
@@ -2107,8 +2262,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	///**
 	// * Dummy rule, for "better" downwards compatibility, since GrammarAccess generates non-static inner classes,
 	// * which makes downstream grammars break on classloading, when a rule is removed.
-	// */ StaticQualifier:
-	//	(ValidID '::')+;
+	// */
+	//StaticQualifier:
+	//    (ValidID '::')+
+	//;
 	public XbaseGrammarAccess.StaticQualifierElements getStaticQualifierAccess() {
 		return gaXbase.getStaticQualifierAccess();
 	}
@@ -2118,26 +2275,29 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal HEX:
-	//	('0x' | '0X') ('0'..'9' | 'a'..'f' | 'A'..'F' | '_')+ ('#' (('b' | 'B') ('i' | 'I') | ('l' | 'L')))?;
+	//    ('0x'|'0X') ('0'..'9'|'a'..'f'|'A'..'F'|'_')+
+	//    ('#' (('b'|'B')('i'|'I') | ('l'|'L')))?;
 	public TerminalRule getHEXRule() {
 		return gaXbase.getHEXRule();
 	}
 	
 	//terminal INT returns ecore::EInt:
-	//	'0'..'9' ('0'..'9' | '_')*;
+	//    '0'..'9' ('0'..'9'|'_')*;
 	public TerminalRule getINTRule() {
 		return gaXbase.getINTRule();
 	}
 	
 	//terminal DECIMAL:
-	//	INT (('e' | 'E') ('+' | '-')? INT)? (('b' | 'B') ('i' | 'I' | 'd' | 'D') | ('l' | 'L' | 'd' | 'D' | 'f' | 'F'))?;
+	//    INT
+	//    (('e'|'E') ('+'|'-')? INT)?
+	//    (('b'|'B')('i'|'I'|'d'|'D') | ('l'|'L'|'d'|'D'|'f'|'F'))?;
 	public TerminalRule getDECIMALRule() {
 		return gaXbase.getDECIMALRule();
 	}
 	
 	//JvmTypeReference:
-	//	JvmParameterizedTypeReference => ({JvmGenericArrayTypeReference.componentType=current} ArrayBrackets)*
-	//	| XFunctionTypeRef;
+	//    JvmParameterizedTypeReference =>({JvmGenericArrayTypeReference.componentType=current} ArrayBrackets)*
+	//    | XFunctionTypeRef;
 	public XtypeGrammarAccess.JvmTypeReferenceElements getJvmTypeReferenceAccess() {
 		return gaXtype.getJvmTypeReferenceAccess();
 	}
@@ -2146,8 +2306,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmTypeReferenceAccess().getRule();
 	}
 	
-	//ArrayBrackets:
-	//	'[' ']';
+	//ArrayBrackets :
+	//    '[' ']'
+	//;
 	public XtypeGrammarAccess.ArrayBracketsElements getArrayBracketsAccess() {
 		return gaXtype.getArrayBracketsAccess();
 	}
@@ -2157,7 +2318,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XFunctionTypeRef:
-	//	('(' (paramTypes+=JvmTypeReference (',' paramTypes+=JvmTypeReference)*)? ')')? '=>' returnType=JvmTypeReference;
+	//    ('(' (paramTypes+=JvmTypeReference (',' paramTypes+=JvmTypeReference)*)? ')')? '=>' returnType=JvmTypeReference;
 	public XtypeGrammarAccess.XFunctionTypeRefElements getXFunctionTypeRefAccess() {
 		return gaXtype.getXFunctionTypeRefAccess();
 	}
@@ -2167,9 +2328,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//JvmParameterizedTypeReference:
-	//	type=[JvmType|super::QualifiedName] (=> '<' arguments+=JvmArgumentTypeReference (','
-	//	arguments+=JvmArgumentTypeReference)* '>' (=> ({JvmInnerTypeReference.outer=current} '.') type=[JvmType|ValidID] (=>
-	//	'<' arguments+=JvmArgumentTypeReference (',' arguments+=JvmArgumentTypeReference)* '>')?)*)?;
+	//    type=[JvmType|QualifiedName] (
+	//        =>'<' arguments+=JvmArgumentTypeReference (',' arguments+=JvmArgumentTypeReference)* '>'
+	//        (=>({JvmInnerTypeReference.outer=current} '.') type=[JvmType|ValidID] (=>'<' arguments+=JvmArgumentTypeReference (',' arguments+=JvmArgumentTypeReference)* '>')?)*
+	//    )?;
 	public XtypeGrammarAccess.JvmParameterizedTypeReferenceElements getJvmParameterizedTypeReferenceAccess() {
 		return gaXtype.getJvmParameterizedTypeReferenceAccess();
 	}
@@ -2178,8 +2340,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmParameterizedTypeReferenceAccess().getRule();
 	}
 	
-	//JvmArgumentTypeReference JvmTypeReference:
-	//	JvmTypeReference | JvmWildcardTypeReference;
+	//JvmArgumentTypeReference returns JvmTypeReference:
+	//    JvmTypeReference | JvmWildcardTypeReference;
 	public XtypeGrammarAccess.JvmArgumentTypeReferenceElements getJvmArgumentTypeReferenceAccess() {
 		return gaXtype.getJvmArgumentTypeReferenceAccess();
 	}
@@ -2189,8 +2351,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//JvmWildcardTypeReference:
-	//	{JvmWildcardTypeReference} '?' (constraints+=JvmUpperBound constraints+=JvmUpperBoundAnded*
-	//	| constraints+=JvmLowerBound constraints+=JvmLowerBoundAnded*)?;
+	//    {JvmWildcardTypeReference} '?' (
+	//      constraints+=JvmUpperBound (constraints+=JvmUpperBoundAnded)*
+	//    | constraints+=JvmLowerBound (constraints+=JvmLowerBoundAnded)*
+	//    )?;
 	public XtypeGrammarAccess.JvmWildcardTypeReferenceElements getJvmWildcardTypeReferenceAccess() {
 		return gaXtype.getJvmWildcardTypeReferenceAccess();
 	}
@@ -2199,8 +2363,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmWildcardTypeReferenceAccess().getRule();
 	}
 	
-	//JvmUpperBound:
-	//	'extends' typeReference=JvmTypeReference;
+	//JvmUpperBound :
+	//    'extends' typeReference=JvmTypeReference;
 	public XtypeGrammarAccess.JvmUpperBoundElements getJvmUpperBoundAccess() {
 		return gaXtype.getJvmUpperBoundAccess();
 	}
@@ -2209,8 +2373,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmUpperBoundAccess().getRule();
 	}
 	
-	//JvmUpperBoundAnded JvmUpperBound:
-	//	'&' typeReference=JvmTypeReference;
+	//JvmUpperBoundAnded returns JvmUpperBound:
+	//    '&' typeReference=JvmTypeReference;
 	public XtypeGrammarAccess.JvmUpperBoundAndedElements getJvmUpperBoundAndedAccess() {
 		return gaXtype.getJvmUpperBoundAndedAccess();
 	}
@@ -2219,8 +2383,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmUpperBoundAndedAccess().getRule();
 	}
 	
-	//JvmLowerBound:
-	//	'super' typeReference=JvmTypeReference;
+	//JvmLowerBound :
+	//    'super' typeReference=JvmTypeReference;
 	public XtypeGrammarAccess.JvmLowerBoundElements getJvmLowerBoundAccess() {
 		return gaXtype.getJvmLowerBoundAccess();
 	}
@@ -2229,8 +2393,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmLowerBoundAccess().getRule();
 	}
 	
-	//JvmLowerBoundAnded JvmLowerBound:
-	//	'&' typeReference=JvmTypeReference;
+	//JvmLowerBoundAnded returns JvmLowerBound:
+	//    '&' typeReference=JvmTypeReference;
 	public XtypeGrammarAccess.JvmLowerBoundAndedElements getJvmLowerBoundAndedAccess() {
 		return gaXtype.getJvmLowerBoundAndedAccess();
 	}
@@ -2239,8 +2403,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmLowerBoundAndedAccess().getRule();
 	}
 	
-	//JvmTypeParameter:
-	//	name=ValidID (constraints+=JvmUpperBound constraints+=JvmUpperBoundAnded*)?;
+	//JvmTypeParameter :
+	//    name=ValidID
+	//    (constraints+=JvmUpperBound (constraints+=JvmUpperBoundAnded)*)?;
 	public XtypeGrammarAccess.JvmTypeParameterElements getJvmTypeParameterAccess() {
 		return gaXtype.getJvmTypeParameterAccess();
 	}
@@ -2249,8 +2414,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		return getJvmTypeParameterAccess().getRule();
 	}
 	
-	//QualifiedNameWithWildcard:
-	//	super::QualifiedName '.' '*';
+	//QualifiedNameWithWildcard :
+	//    QualifiedName  '.' '*';
 	public XtypeGrammarAccess.QualifiedNameWithWildcardElements getQualifiedNameWithWildcardAccess() {
 		return gaXtype.getQualifiedNameWithWildcardAccess();
 	}
@@ -2260,7 +2425,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ValidID:
-	//	ID;
+	//    ID;
 	public XtypeGrammarAccess.ValidIDElements getValidIDAccess() {
 		return gaXtype.getValidIDAccess();
 	}
@@ -2270,7 +2435,7 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XImportSection:
-	//	importDeclarations+=XImportDeclaration+;
+	//    importDeclarations+=XImportDeclaration+;
 	public XtypeGrammarAccess.XImportSectionElements getXImportSectionAccess() {
 		return gaXtype.getXImportSectionAccess();
 	}
@@ -2280,9 +2445,11 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//XImportDeclaration:
-	//	'import' (static?='static' extension?='extension'? importedType=[JvmDeclaredType|QualifiedNameInStaticImport]
-	//	(wildcard?='*' | memberName=ValidID) | importedType=[JvmDeclaredType|super::QualifiedName] |
-	//	importedNamespace=QualifiedNameWithWildcard) ';'?;
+	//    'import' (
+	//        (static?='static' extension?='extension'? importedType=[JvmDeclaredType|QualifiedNameInStaticImport] (wildcard?='*' | memberName=ValidID))
+	//        | importedType=[JvmDeclaredType|QualifiedName]
+	//        | importedNamespace=QualifiedNameWithWildcard) ';'?
+	//;
 	public XtypeGrammarAccess.XImportDeclarationElements getXImportDeclarationAccess() {
 		return gaXtype.getXImportDeclarationAccess();
 	}
@@ -2292,7 +2459,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//QualifiedNameInStaticImport:
-	//	(ValidID '.')+;
+	//    (ValidID '.')+
+	//;
 	public XtypeGrammarAccess.QualifiedNameInStaticImportElements getQualifiedNameInStaticImportAccess() {
 		return gaXtype.getQualifiedNameInStaticImportAccess();
 	}
@@ -2302,38 +2470,34 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal ID:
-	//	'^'? ('a'..'z' | 'A'..'Z' | '$' | '_') ('a'..'z' | 'A'..'Z' | '$' | '_' | '0'..'9')*;
+	//    '^'? ('a'..'z'|'A'..'Z'|'$'|'_') ('a'..'z'|'A'..'Z'|'$'|'_'|'0'..'9')*;
 	public TerminalRule getIDRule() {
 		return gaXtype.getIDRule();
 	}
 	
 	//terminal STRING:
-	//	'"' ('\\' . | !('\\' | '"'))* '"'? |
-	//	"'" ('\\' . | !('\\' | "'"))* "'"?;
+	//            '"' ( '\\' . /* ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') */ | !('\\'|'"') )* '"'? |
+	//            "'" ( '\\' . /* ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\') */ | !('\\'|"'") )* "'"?;
 	public TerminalRule getSTRINGRule() {
 		return gaXtype.getSTRINGRule();
 	}
 	
-	//terminal ML_COMMENT:
-	//	'/*'->'*/';
+	//terminal ML_COMMENT: '/*' -> '*/';
 	public TerminalRule getML_COMMENTRule() {
 		return gaXtype.getML_COMMENTRule();
 	}
 	
-	//terminal SL_COMMENT:
-	//	'//' !('\n' | '\r')* ('\r'? '\n')?;
+	//terminal SL_COMMENT: '//' !('\n'|'\r')* ('\r'? '\n')?;
 	public TerminalRule getSL_COMMENTRule() {
 		return gaXtype.getSL_COMMENTRule();
 	}
 	
-	//terminal WS:
-	//	' ' | '\t' | '\r' | '\n'+;
+	//terminal WS: (' '|'\t'|'\r'|'\n')+;
 	public TerminalRule getWSRule() {
 		return gaXtype.getWSRule();
 	}
 	
-	//terminal ANY_OTHER:
-	//	.;
+	//terminal ANY_OTHER: .;
 	public TerminalRule getANY_OTHERRule() {
 		return gaXtype.getANY_OTHERRule();
 	}
