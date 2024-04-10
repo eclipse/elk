@@ -10,6 +10,8 @@ xtend-gen/
 *.pdf
 *_trace
 *.sublime-workspace
+/**/src-gen/**/*Options.java
+/**/src-gen/**/*MetaDataProvider.java
 docs/content/reference/algorithms/
 docs/content/reference/options/
 docs/content/reference/groups/
