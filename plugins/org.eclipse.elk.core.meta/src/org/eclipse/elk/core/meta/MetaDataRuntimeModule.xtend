@@ -15,6 +15,8 @@ import org.eclipse.elk.core.meta.jvmmodel.MelkDocumentationGenerator
 import org.eclipse.xtext.generator.IOutputConfigurationProvider
 import org.eclipse.xtext.generator.OutputConfiguration
 import org.eclipse.xtext.generator.OutputConfigurationProvider
+import org.eclipse.elk.core.meta.validation.MelkUniqueClassNameValidator
+import org.eclipse.xtext.service.SingletonBinding
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -23,6 +25,11 @@ class MetaDataRuntimeModule extends AbstractMetaDataRuntimeModule {
     
     override bindIGenerator() {
         return MelkDocumentationGenerator
+    }
+    
+    @SingletonBinding(eager = true)
+    override bindUniqueClassNameValidator() {
+        return MelkUniqueClassNameValidator
     }
     
     // register MelkOutputConfigurationProvider that inserts a configuration used to read files in the project
