@@ -1033,10 +1033,26 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   public static final IProperty<Boolean> CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER = LayeredMetaDataProvider.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER;
 
   /**
+   * Used to store information about the type of Node. (Used in languages that support different node types such as
+   * Lingua Franca)
+   */
+  public static final IProperty<Integer> CONSIDER_MODEL_ORDER_GROUP_I_D = LayeredMetaDataProvider.CONSIDER_MODEL_ORDER_GROUP_I_D;
+
+  /**
    * If enabled position id and layer id are generated, which are usually only used internally
    * when setting the interactiveLayout option. This option should be specified on the root node.
    */
   public static final IProperty<Boolean> GENERATE_POSITION_AND_LAYER_IDS = LayeredMetaDataProvider.GENERATE_POSITION_AND_LAYER_IDS;
+
+  /**
+   * If the node is expanded this property is true
+   */
+  public static final IProperty<Boolean> EXPANDED = LayeredMetaDataProvider.EXPANDED;
+
+  /**
+   * If the node is expanded this property is true
+   */
+  public static final IProperty<String> NAME = LayeredMetaDataProvider.NAME;
 
   /**
    * Layouter-specific algorithm factory.
@@ -1763,8 +1779,23 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.considerModelOrder.groupID",
+        CONSIDER_MODEL_ORDER_GROUP_I_D.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.generatePositionAndLayerIds",
         GENERATE_POSITION_AND_LAYER_IDS.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.expanded",
+        EXPANDED.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.name",
+        NAME.getDefault()
     );
   }
 }

@@ -188,6 +188,34 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
 
   /**
+   * Default value for {@link #EXPANDED}.
+   */
+  private static final boolean EXPANDED_DEFAULT = false;
+
+  /**
+   * If the node is expanded this property is true
+   */
+  public static final IProperty<Boolean> EXPANDED = new Property<Boolean>(
+            "org.eclipse.elk.layered.expanded",
+            EXPANDED_DEFAULT,
+            null,
+            null);
+
+  /**
+   * Default value for {@link #NAME}.
+   */
+  private static final String NAME_DEFAULT = "result";
+
+  /**
+   * If the node is expanded this property is true
+   */
+  public static final IProperty<String> NAME = new Property<String>(
+            "org.eclipse.elk.layered.name",
+            NAME_DEFAULT,
+            null,
+            null);
+
+  /**
    * Default value for {@link #CYCLE_BREAKING_STRATEGY}.
    */
   private static final CycleBreakingStrategy CYCLE_BREAKING_STRATEGY_DEFAULT = CycleBreakingStrategy.GREEDY;
@@ -1262,6 +1290,21 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
 
   /**
+   * Default value for {@link #CONSIDER_MODEL_ORDER_GROUP_I_D}.
+   */
+  private static final int CONSIDER_MODEL_ORDER_GROUP_I_D_DEFAULT = (-1);
+
+  /**
+   * Used to store information about the type of Node. (Used in languages that support different node types such as
+   * Lingua Franca)
+   */
+  public static final IProperty<Integer> CONSIDER_MODEL_ORDER_GROUP_I_D = new Property<Integer>(
+            "org.eclipse.elk.layered.considerModelOrder.groupID",
+            CONSIDER_MODEL_ORDER_GROUP_I_D_DEFAULT,
+            null,
+            null);
+
+  /**
    * Required value for dependency between {@link #INTERACTIVE_REFERENCE_POINT} and {@link #CYCLE_BREAKING_STRATEGY}.
    */
   private static final CycleBreakingStrategy INTERACTIVE_REFERENCE_POINT_DEP_CYCLE_BREAKING_STRATEGY_0 = CycleBreakingStrategy.INTERACTIVE;
@@ -1591,6 +1634,30 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         .type(LayoutOptionData.Type.BOOLEAN)
         .optionClass(Boolean.class)
         .targets(EnumSet.of(LayoutOptionData.Target.PARENTS))
+        .visibility(LayoutOptionData.Visibility.ADVANCED)
+        .create()
+    );
+    registry.register(new LayoutOptionData.Builder()
+        .id("org.eclipse.elk.layered.expanded")
+        .group("")
+        .name("Node expansion state")
+        .description("If the node is expanded this property is true")
+        .defaultValue(EXPANDED_DEFAULT)
+        .type(LayoutOptionData.Type.BOOLEAN)
+        .optionClass(Boolean.class)
+        .targets(EnumSet.of(LayoutOptionData.Target.NODES))
+        .visibility(LayoutOptionData.Visibility.ADVANCED)
+        .create()
+    );
+    registry.register(new LayoutOptionData.Builder()
+        .id("org.eclipse.elk.layered.name")
+        .group("")
+        .name("Name of the File")
+        .description("If the node is expanded this property is true")
+        .defaultValue(NAME_DEFAULT)
+        .type(LayoutOptionData.Type.STRING)
+        .optionClass(String.class)
+        .targets(EnumSet.of(LayoutOptionData.Target.NODES))
         .visibility(LayoutOptionData.Visibility.ADVANCED)
         .create()
     );
@@ -2609,6 +2676,18 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered.considerModelOrder.crossingCounterPortInfluence",
         "org.eclipse.elk.layered.considerModelOrder.strategy",
         null
+    );
+    registry.register(new LayoutOptionData.Builder()
+        .id("org.eclipse.elk.layered.considerModelOrder.groupID")
+        .group("considerModelOrder")
+        .name("Group ID of the Node Type")
+        .description("Used to store information about the type of Node. (Used in languages that support different node types such as Lingua Franca)")
+        .defaultValue(CONSIDER_MODEL_ORDER_GROUP_I_D_DEFAULT)
+        .type(LayoutOptionData.Type.INT)
+        .optionClass(Integer.class)
+        .targets(EnumSet.of(LayoutOptionData.Target.NODES))
+        .visibility(LayoutOptionData.Visibility.VISIBLE)
+        .create()
     );
     new org.eclipse.elk.alg.layered.options.LayeredOptions().apply(registry);
   }
