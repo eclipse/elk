@@ -113,6 +113,7 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
             int maxModelOrder = Integer.MIN_VALUE;
             for (LNode n : stronglyConnectedComponents.get(i)) {
                 List<Integer> groupmask = new LinkedList<Integer>();
+//                FIXME this may not always work and should not be hard coded.
                 groupmask.add(1);
                 groupmask.add(4);
                 int groupID = n.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);

@@ -40,9 +40,16 @@ public class SCCConectivity extends SCCModelOrderCycleBreaker {
           int modelOrderMin = Integer.MAX_VALUE;
           int modelOrderMax = Integer.MIN_VALUE;
           for (LNode n : stronglyConnectedComponents.get(i)) {
+              // FIXME what is the layer mask? These are the group ids that are considered for this algorithm
+              // These have to be configurable!!
               List<Integer> layermask = new LinkedList<Integer>();
               layermask.add(1);
+              layermask.add(2);
+              layermask.add(3);
               layermask.add(4);
+              layermask.add(5);
+              layermask.add(6);
+              layermask.add(7);
               int groupID = n.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
               if (!layermask.contains(groupID)) {
                   continue;
