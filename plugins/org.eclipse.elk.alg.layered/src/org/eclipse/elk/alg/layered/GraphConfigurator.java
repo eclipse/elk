@@ -22,6 +22,8 @@ import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.NodeFlexibility;
+import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.options.OrderingStrategy;
 import org.eclipse.elk.alg.layered.options.Spacings;
@@ -279,6 +281,16 @@ final class GraphConfigurator {
         if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE)) {
             configuration.addBefore(LayeredPhases.P3_NODE_ORDERING,
                     IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
+        }
+        
+        // Multiple labels in one node are combined to fewer labels if the node width allows it
+        if (lgraph.getProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY) == NodePlacementStrategy.NETWORK_SIMPLEX
+                && (lgraph.getProperty(
+                        LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY) == NodeFlexibility.NODE_SIZE
+                        || lgraph.getProperty(
+                                LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY_DEFAULT) == NodeFlexibility.NODE_SIZE)) {
+            configuration.addBefore(LayeredPhases.P5_EDGE_ROUTING,
+                    IntermediateProcessorStrategy.ADJUST_LABELS_TO_NODE_WIDTH);
         }
 
         // Configure greedy switch
