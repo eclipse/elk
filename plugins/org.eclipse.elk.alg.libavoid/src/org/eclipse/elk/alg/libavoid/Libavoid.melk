@@ -56,6 +56,7 @@ algorithm libavoid(LibavoidLayoutProvider) {
     supports org.eclipse.elk.alg.libavoid.nudgeSharedPathsWithCommonEndPoint
     supports org.eclipse.elk.alg.libavoid.enableHyperedgesFromCommonSource
     supports org.eclipse.elk.alg.libavoid.isCluster
+    supports org.eclipse.elk.alg.libavoid.processTimeout
 }      
 
 // --- Layout Options
