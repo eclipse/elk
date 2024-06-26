@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.alg.common,
- com.google.guava
+ com.google.guava,
+ org.eclipse.elk.alg.force
 Automatic-Module-Name: org.eclipse.elk.alg.knot
 Bundle-RequiredExecutionEnvironment: JavaSE-17
