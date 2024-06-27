@@ -37,37 +37,40 @@ public class SCCConectivity extends SCCModelOrderCycleBreaker {
           }
           LNode min = null;
           LNode max = null;
+          int maxGroupModelOrder = 13;
           int modelOrderMin = Integer.MAX_VALUE;
           int modelOrderMax = Integer.MIN_VALUE;
+          int groupModelOrderMin = Integer.MAX_VALUE;
+          int groupModelOrderMax = Integer.MIN_VALUE;
           for (LNode n : stronglyConnectedComponents.get(i)) {
-              // FIXME what is the layer mask? These are the group ids that are considered for this algorithm
-              // These have to be configurable!!
-              List<Integer> layermask = new LinkedList<Integer>();
-              layermask.add(1);
-              layermask.add(2);
-              layermask.add(3);
-              layermask.add(4);
-              layermask.add(5);
-              layermask.add(6);
-              layermask.add(7);
-              int groupID = n.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
-              if (!layermask.contains(groupID)) {
-                  continue;
-              }
               if (min == null || max == null) {
                   min = n;
                   modelOrderMin = computeConstraintModelOrder(n,offset);
+                  groupModelOrderMin = computeConstraintGroupModelOrder(n, maxGroupModelOrder);
                   max = n;
                   modelOrderMax = modelOrderMin;
+                  groupModelOrderMax = groupModelOrderMin;
                   continue;
               }
               int modelOrderCurrent = computeConstraintModelOrder(n, offset);
-              if (modelOrderMin > modelOrderCurrent) {
+              int groupModelOrderCurrent = computeConstraintGroupModelOrder(n, maxGroupModelOrder);
+              if (groupModelOrderMin < groupModelOrderCurrent) {
                   min = n;
+                  groupModelOrderMin = groupModelOrderCurrent;
                   modelOrderMin = modelOrderCurrent;
-              }
-              else if(modelOrderMax < modelOrderCurrent) {
+              } else if (groupModelOrderMin == groupModelOrderCurrent) {                  
+                  if (modelOrderMin > modelOrderCurrent) {
+                      min = n;
+                      modelOrderMin = modelOrderCurrent;
+                  }
+              } else if (groupModelOrderMax == groupModelOrderCurrent) {
+                  if (modelOrderMax < modelOrderCurrent) {
+                      max = n;
+                      modelOrderMax = modelOrderCurrent;
+                  }
+              } else if (groupModelOrderMax > groupModelOrderCurrent) {
                   max = n;
+                  groupModelOrderMax = groupModelOrderCurrent;
                   modelOrderMax = modelOrderCurrent;
               }
           }

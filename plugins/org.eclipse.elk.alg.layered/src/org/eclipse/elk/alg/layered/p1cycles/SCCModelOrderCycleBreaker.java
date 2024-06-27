@@ -114,12 +114,10 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
             for (LNode n : stronglyConnectedComponents.get(i)) {
                 List<Integer> groupmask = new LinkedList<Integer>();
 //                FIXME this may not always work and should not be hard coded.
-                groupmask.add(1);
-                groupmask.add(4);
-                int groupID = n.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
-                if (!groupmask.contains(groupID)) {
-                    continue;
-                }
+//                int groupID = n.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
+//                if (!groupmask.contains(groupID)) {
+//                    continue;
+//                }
                 if (max == null) {
                     max = n;
                     maxModelOrder = computeConstraintModelOrder(n, offset);
@@ -173,6 +171,32 @@ public class SCCModelOrderCycleBreaker implements ILayoutPhase<LayeredPhases, LG
         }
         if (node.hasProperty(InternalProperties.MODEL_ORDER)) {
             modelOrder += node.getProperty(InternalProperties.MODEL_ORDER);
+        }
+        return modelOrder;
+    }
+
+protected int computeConstraintGroupModelOrder(final LNode node, final int offset) {
+        int modelOrder = 0;
+        switch (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT)) {
+        case FIRST_SEPARATE:
+            modelOrder = 2 * -offset + firstSeparateModelOrder;
+            firstSeparateModelOrder++;
+            break;
+        case FIRST:
+            modelOrder = -offset;
+            break;
+        case LAST:
+            modelOrder = offset;
+            break;
+        case LAST_SEPARATE:
+            modelOrder = 2 * offset + lastSeparateModelOrder;
+            lastSeparateModelOrder++;
+            break;
+        default:
+            break;
+        }
+        if (node.hasProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D)) {
+            modelOrder += node.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_GROUP_I_D);
         }
         return modelOrder;
     }
