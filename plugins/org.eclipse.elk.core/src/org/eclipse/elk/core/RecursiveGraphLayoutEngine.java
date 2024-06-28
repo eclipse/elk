@@ -252,8 +252,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 TopdownSizeApproximator approximator = 
                                         childNode.getProperty(CoreOptions.TOPDOWN_SIZE_APPROXIMATOR);
                                 KVector size = approximator.getSize(childNode);
-                                childNode.setDimensions(Math.max(childNode.getWidth(), size.x),
-                                        Math.max(childNode.getHeight(), size.y));
+                                ElkPadding padding = childNode.getProperty(CoreOptions.PADDING);
+                                childNode.setDimensions(Math.max(childNode.getWidth(), size.x + padding.left + padding.right),
+                                        Math.max(childNode.getHeight(), size.y + padding.top + padding.bottom));
                             }
                         }
                     }
