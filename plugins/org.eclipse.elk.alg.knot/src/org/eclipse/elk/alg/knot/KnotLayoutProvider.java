@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
@@ -36,7 +37,10 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
     /** implementation of stress majorization. */
     private StressMajorization stressMajorization = new StressMajorization();
-
+    
+    /** the distance which bend points around nodes must preserve. */
+    private final double bendPointDistance = 25;
+    
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         
@@ -116,28 +120,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         }
         */
         
-        
-        
-        
 
-        
-        /*
-        for (FEdge edge : fgraph.getEdges()) {
-            int count = edge.getProperty(ForceOptions.REPULSIVE_POWER);
-            if (count > 0) {
-                for (int i = 0; i < count; i++) {
-                    FBendpoint fbend = new FBendpoint(edge);
-                    bends.add(fbend);
-                    
-                }
-                edge.distributeBendpoints();
-            }
-        }
-        */
-        
-        
-        
-        
         
         
         // split the input graph into components
@@ -163,44 +146,132 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         graphImporter.applyLayout(fgraph);
 
         
+        ///////////////////////////////////////////////////////////////////////////
+        // Bend point positioning
         
         
-        // bendpoint distance
-        int bpd = 25;
         
-        // Hier eigene Bendpoints noch zufugen (nach Stress ausrichtung zum testen)
-        // create bend points for curved edges.
-        for (ElkNode node : layoutGraph.getChildren()) {
+        
+        
+        // Initialize bend points for outgoing edges around nodes. They need to get placed first.
+        for (ElkNode currNode : layoutGraph.getChildren()) {
             
-            
-            
-            List<ElkEdge> allEdges = new ArrayList<>();
-            
-            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
-                allEdges.add(edge);
+            // Check if node has correct amount of outgoing edges (always 2)
+            if (currNode.getOutgoingEdges().size() == 2) {
+                
+                
+                for (int i = 0; i < 2; i++) {
+
+                    double d = bendPointDistance * Math.pow(-1, i);
+                    
+                    // Outgoing edges share initially the same x coordinate as the node.
+                    ElkEdge oEdge = currNode.getOutgoingEdges().get(i);
+                    // We don't have hyperedges and therefore only one section.
+                    ElkGraphUtil.createBendPoint(oEdge.getSections().get(0), currNode.getX(), currNode.getY()+d);
+                    
+                    // TODO: Extra bend point.
+                    //ElkNode target = (ElkNode) oEdge.getTargets().get(0);
+                    //ElkGraphUtil.createBendPoint(oEdge.getSections().get(0), currNode.getX(), target.getY()); 
+                }
+                
+            } else {
+                System.out.println("Nope");
             }
-            for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
-                allEdges.add(edge);
-            }
             
-            
-            //allEdges.addAll(node.getOutgoingEdges());
-            
-            // Info about Edges of a node
-            System.out.println("All Edges: " + allEdges);
-            System.out.println("------------");
-            
-            // upper bendpoint
-            //ElkGraphUtil.createBendPoint(allEdges.get(0).getSections().get(0), node.getX(), node.getY()-bpd);
-            // right bendpoint
-            //ElkGraphUtil.createBendPoint(allEdges.get(1).getSections().get(0), node.getX()+bpd, node.getY());
-            // lower bendpoint
-            //ElkGraphUtil.createBendPoint(allEdges.get(2).getSections().get(0), node.getX(), node.getY()+bpd);
-            // left bendpoint
-            //ElkGraphUtil.createBendPoint(allEdges.get(3).getSections().get(0), node.getX()-bpd, node.getY());            
+
         }
+        
+        // Initialize bend points for incoming edges around nodes. They need to get placed last.
+        for (ElkNode currNode : layoutGraph.getChildren()) {
+            
+            // Check if node has correct amount of incoming edges (always 2)
+            if (currNode.getIncomingEdges().size() == 2) {
+            
+                
+                 // There should be always 4 edges per node: 2 outgoing + 2 incoming.
+                for (int i = 0; i < 2; i++) {
+                
+                
+                    double d = bendPointDistance * Math.pow(-1, i);
+                    
+                    // Outgoing edges share initially the same y coordinate as the node.
+                    ElkEdge iEdge = currNode.getIncomingEdges().get(i);
+                    // We don't have hyperedges and therefore only one section.
+                    ElkGraphUtil.createBendPoint(iEdge.getSections().get(0), currNode.getX()+d, currNode.getY());
+                    
+                    // TODO: Extra bend point.
+                    //ElkNode target = (ElkNode) iEdge.getTargets().get(0);
+                    //ElkGraphUtil.createBendPoint(iEdge.getSections().get(0), target.getX(), target.getY());
+    
+                
+                    
+                }
+            } else {
+                System.out.println("Nope");
+            }
+        }
+        
+        
+        
+        // TODO: Creating stress from angles between bend points of different nodes --> Adjust rotation.
+        
+        // Test rotation
+        rotateNode(layoutGraph.getChildren().get(0), 110);
+        rotateNode(layoutGraph.getChildren().get(1), 55); 
+        rotateNode(layoutGraph.getChildren().get(2),-10); 
         
         
         progressMonitor.done();
     }
+    
+    
+    
+    /**
+     * Rotates the 4 bend points around a given node, creating the illusion of actual rotating the node.
+     * 
+     * @param node to rotate.
+     * @param angle in degree.
+     * */
+    private void rotateNode(ElkNode node, double angle) {
+        // Check for correct amount of edges (2 outgoing + 2 incoming).
+        if (node.getOutgoingEdges().size() == 2 && node.getIncomingEdges().size() == 2) {
+            
+            for (ElkEdge oEdge : node.getOutgoingEdges()) {
+                // For outgoing edges, the first bend point needs to rotate.
+                ElkBendPoint bp = oEdge.getSections().get(0).getBendPoints().get(0);
+                rotateBendPointAroundPoint(bp, node.getX(), node.getY(), angle); 
+            }
+            
+            for (ElkEdge iEdge : node.getIncomingEdges()) {
+                // For incoming edges, the last bend point needs to rotate.
+                List<ElkBendPoint> bps = iEdge.getSections().get(0).getBendPoints();
+                ElkBendPoint bp = bps.get(bps.size()-1);
+                rotateBendPointAroundPoint(bp, node.getX(), node.getY(), angle);
+            }
+        }
+    }
+    
+    
+    /**
+     * Rotates the given bend point around another point with given coordinates by the angle provided
+     * in degrees. Rotation is clockwise.
+     * 
+     * @param bendPoint to rotate.
+     * @param x coordinate of the rotation point.
+     * @param y coordinate of the rotation point.
+     * @param angle in degree.
+     * */
+    private void rotateBendPointAroundPoint(ElkBendPoint bendPoint, double x, double y, double angle) {
+        // Shift rotation point to origin.
+        double bpx = bendPoint.getX() - x;
+        double bpy = bendPoint.getY() - y;
+
+        double sin = Math.sin(Math.toRadians(angle));
+        double cos = Math.cos(Math.toRadians(angle));
+        // Rotate bend point around origin, then shift back to new position.
+        bendPoint.setX((bpx * cos - bpy * sin) + x);
+        bendPoint.setY((bpy * cos + bpx * sin) + y);
+    }
+    
+    
 }
