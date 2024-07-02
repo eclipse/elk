@@ -105,7 +105,7 @@ public class DisCoPolyominoCompactor implements ICompactor {
         fill = cmpGraph.getProperty(PolyominoOptions.POLYOMINO_FILL);
         aspectRatio = cmpGraph.getProperty(CoreOptions.ASPECT_RATIO);
         if (aspectRatio == null) {
-            aspectRatio = new Double(1.0);
+            aspectRatio = Double.valueOf(1.0);
         }
 
         if (aspectRatio > 1.0) {
