@@ -123,6 +123,7 @@ public class LibavoidServerCommunicator {
 
         // start the libavoid server process, or retrieve the previously used process
         lvServer.initialize();
+        lvServer.setProcessTimeout(layoutNode.getProperty(LibavoidOptions.PROCESS_TIMEOUT));
 
         try {
             // retrieve the libavoid server input
