@@ -215,10 +215,64 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         
         // TODO: Creating stress from angles between bend points of different nodes --> Adjust rotation.
         
-        // Test rotation
-        rotateNode(layoutGraph.getChildren().get(0), 110);
-        rotateNode(layoutGraph.getChildren().get(1), 55); 
-        rotateNode(layoutGraph.getChildren().get(2),-10); 
+        // Test rotation 110, 55, -10
+        rotateNode(layoutGraph.getChildren().get(0), 0);
+        rotateNode(layoutGraph.getChildren().get(1), 0); 
+        rotateNode(layoutGraph.getChildren().get(2), 0);
+        
+        //rotateOutgoingAxis(layoutGraph.getChildren().get(0), 45);
+        //rotateNode(layoutGraph.getChildren().get(0), -45);
+        
+        // Testing angle calculation of node 2:
+        for (ElkEdge e : layoutGraph.getChildren().get(2).getOutgoingEdges()) {
+            ElkBendPoint bp =e.getSections().get(0).getBendPoints().get(0);
+
+            System.out.println("o bp = " + calculateBendPointAngle(bp, e));
+        }
+        System.out.println("-----------------");
+        for (ElkEdge e : layoutGraph.getChildren().get(2).getIncomingEdges()) {
+            ElkBendPoint bp =e.getSections().get(0).getBendPoints().get(1);
+            System.out.println("i bp = " + calculateBendPointAngle(bp, e));
+        }
+        System.out.println("-----------------");
+        // Testing stress calculation:
+        System.out.println("Befor stress n1: " + computeNodeStress(layoutGraph.getChildren().get(0)));
+        System.out.println("Befor stress n2: " + computeNodeStress(layoutGraph.getChildren().get(1)));
+        System.out.println("Befor stress n3: " + computeNodeStress(layoutGraph.getChildren().get(2)));
+        
+        
+        int count = 0;
+        double prevStress = Double.MAX_VALUE;
+        double angle =  1;
+        
+        do { 
+            for (ElkNode currNode : layoutGraph.getChildren()) {
+                
+                
+                // The more stress the greater the rotation should be
+                prevStress = computeNodeStress(currNode);
+                angle = prevStress / 10000;
+                rotateNode(currNode, angle);
+                
+                // When new stress larger, turn back
+                if (prevStress < computeNodeStress(currNode)) {
+                    // -2 even better
+                    rotateNode(currNode, - 2*angle);
+
+                }
+            }
+            count++;   
+        } while(count < 3600);
+        
+        
+        //rotateNode(layoutGraph.getChildren().get(2), 180);
+        
+        
+        System.out.println("-----------------");
+        // Testing stress calculation:
+        System.out.println("After stress n1: " + computeNodeStress(layoutGraph.getChildren().get(0)));
+        System.out.println("After stress n2: " + computeNodeStress(layoutGraph.getChildren().get(1)));
+        System.out.println("After stress n3: " + computeNodeStress(layoutGraph.getChildren().get(2)));
         
         
         progressMonitor.done();
@@ -226,22 +280,50 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     
     
     
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////
+    // Helping functions:
+    
     /**
-     * Rotates the 4 bend points around a given node, creating the illusion of actual rotating the node.
+     * Rotates the 4 bend points around a given node by the angle provided in degrees, creating the illusion
+     * of actual rotating the whole node. Rotation is clockwise. 
      * 
      * @param node to rotate.
      * @param angle in degree.
      * */
     private void rotateNode(ElkNode node, double angle) {
-        // Check for correct amount of edges (2 outgoing + 2 incoming).
-        if (node.getOutgoingEdges().size() == 2 && node.getIncomingEdges().size() == 2) {
-            
+        // Perform rotation on both axis simultaneously.
+        rotateOutgoingAxis(node, angle);
+        rotateIncomingAxis(node, angle); 
+    }
+    
+    
+    /**
+     * Rotates the axis of outgoing edges for the given node by the angle provided in degrees. Rotation is clockwise.
+     * @param node of which the outgoing axis will rotate.
+     * @param angle in degree.
+     * */
+    private void rotateOutgoingAxis(ElkNode node, double angle) {
+        // Check for correct amount of edges (2 outgoing).
+        if (node.getOutgoingEdges().size() == 2) {
             for (ElkEdge oEdge : node.getOutgoingEdges()) {
                 // For outgoing edges, the first bend point needs to rotate.
                 ElkBendPoint bp = oEdge.getSections().get(0).getBendPoints().get(0);
                 rotateBendPointAroundPoint(bp, node.getX(), node.getY(), angle); 
-            }
-            
+            }  
+        }
+    }
+    
+    
+    /**
+     * Rotates the axis of incoming edges for the given node by the angle provided in degrees. Rotation is clockwise.
+     * @param node of which the incoming axis will rotate.
+     * @param angle in degree.
+     * */
+    private void rotateIncomingAxis(ElkNode node, double angle) {
+        // Check for correct amount of edges (2 incoming).
+        if (node.getIncomingEdges().size() == 2) {
             for (ElkEdge iEdge : node.getIncomingEdges()) {
                 // For incoming edges, the last bend point needs to rotate.
                 List<ElkBendPoint> bps = iEdge.getSections().get(0).getBendPoints();
@@ -271,6 +353,94 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         // Rotate bend point around origin, then shift back to new position.
         bendPoint.setX((bpx * cos - bpy * sin) + x);
         bendPoint.setY((bpy * cos + bpx * sin) + y);
+    }
+    
+    
+    /**
+     * Calculates the angle at the given bend point between its previous and next points the along the given edge.
+     * 
+     * @param bendPoint of the desired angle.
+     * @param edge of the corresponding bend point.
+     * @return The angle at the given bend point in degree.
+     */
+    private double calculateBendPointAngle(ElkBendPoint bendPoint, ElkEdge edge) {
+        
+        List<ElkBendPoint> bps = edge.getSections().get(0).getBendPoints();
+        int i = bps.indexOf(bendPoint);
+        double x = bendPoint.getX();
+        double y = bendPoint.getY();
+        
+        // Vectors from the bend point (x,y) towards the previous and next point.
+        KVector prevPoint;
+        KVector nextPoint;
+        
+        // When it is the first bend point the previous point along the edge is the source node.
+        if(i == 0) {
+            ElkNode sNode = (ElkNode) edge.getSources().get(0);    
+            prevPoint = new KVector(sNode.getX() - x, sNode.getY() - y); 
+            nextPoint = new KVector(bps.get(i+1).getX() - x, bps.get(i+1).getY() - y);
+            
+        // When it is the last bend point the next point along the edge is the target node.    
+        } else if (i == bps.size()-1) {
+            ElkNode tNode = (ElkNode) edge.getTargets().get(0);
+            prevPoint = new KVector(bps.get(i-1).getX() - x, bps.get(i-1).getY() - y);    
+            nextPoint = new KVector(tNode.getX() - x, tNode.getY() - y);
+            
+        // Bend point is in between other bend points.
+        } else {
+            prevPoint = new KVector(bps.get(i-1).getX() - x,bps.get(i-1).getY() - y);   
+            nextPoint = new KVector(bps.get(i+1).getX() - x,bps.get(i+1).getY() - y);         
+        }
+        // Calculate angle between vectors.
+        return(Math.toDegrees(nextPoint.angle(prevPoint)));
+    }
+    
+    
+    /**
+     * Computes the stress value of a given node that is created by sharp angles of its corresponding edges.
+     * The outgoing edges as well as the incoming edges are taken into account. Sharper angles create more stress
+     * while angles of 180° would be perfect.
+     * 
+     * @param node of which the stress value is desired.
+     * @return The stress value as a Double.
+     */
+    private double computeNodeStress(ElkNode node) {
+       
+        checkEdgeCondition(node);
+        double stress = 0;
+        double angle = 0;
+       
+        for (ElkEdge oEdge : node.getOutgoingEdges()) {
+            // Calculate angle between source node <- first bend point -> next bend point.
+            ElkBendPoint bp = oEdge.getSections().get(0).getBendPoints().get(0);
+            // An angle of 180° would cause no stress.
+            angle = 180 - calculateBendPointAngle(bp, oEdge);
+            // Sharper angles must not be allowed, therefore exponentially causing more stress.
+            stress = stress + Math.pow(angle,2);
+            
+        }
+        for (ElkEdge iEdge : node.getIncomingEdges()) {
+            // Calculate angle between previous bend point <- last bend point -> target node.
+            List<ElkBendPoint> bps = iEdge.getSections().get(0).getBendPoints();
+            ElkBendPoint bp = bps.get(bps.size()-1);
+            angle = 180 - calculateBendPointAngle(bp, iEdge);
+            stress = stress + Math.pow(angle,2);  
+        }
+        return stress;
+    }
+    
+    
+    /**
+     * Checks if the edge condition of knot diagrams for a given node is satisfied. A node must always have
+     * 2 outgoing edges + 2 incoming edges, representing the overlapping and undergoing edge of a crossing.
+     * 
+     * @param node to check.
+     */
+    private void checkEdgeCondition(ElkNode node) {
+        // TODO: Causing abort.
+        if(node.getOutgoingEdges().size() != 2 && node.getIncomingEdges().size() != 2) {
+            System.out.println("Abort");
+        }
     }
     
     
