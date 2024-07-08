@@ -38,7 +38,7 @@ Follow these steps to add a metadata file to your layout algorithm project:
     See below for details on what this is doing.
 
 1. Add a folder `META-INF/services` inside one of your project's source folders (by default, we put it right inside of the `src` folder).
-1. In that folder, create a file named `ILayoutMetaDataProvider`.
+1. In that folder, create a file named `org.eclipse.elk.core.data.ILayoutMetaDataProvider` (the fully qualified name of the `ILayoutMetaDataProvider`).
 1. In that file, add a single line of text which contains the fully qualified name of the `ILayoutMetaDataProvider` that was generated for you by the ELK SDK.
 1. Save and close the editor.
 
