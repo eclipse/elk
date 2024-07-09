@@ -150,66 +150,14 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         // Bend point positioning
         
         
+        // The 4 bend points around each node.
+        initalizeBendPoints(layoutGraph);
         
         
         
-        // Initialize bend points for outgoing edges around nodes. They need to get placed first.
-        for (ElkNode currNode : layoutGraph.getChildren()) {
-            
-            // Check if node has correct amount of outgoing edges (always 2)
-            if (currNode.getOutgoingEdges().size() == 2) {
-                
-                
-                for (int i = 0; i < 2; i++) {
 
-                    double d = bendPointDistance * Math.pow(-1, i);
-                    
-                    // Outgoing edges share initially the same x coordinate as the node.
-                    ElkEdge oEdge = currNode.getOutgoingEdges().get(i);
-                    // We don't have hyperedges and therefore only one section.
-                    ElkGraphUtil.createBendPoint(oEdge.getSections().get(0), currNode.getX(), currNode.getY()+d);
-                    
-                    // TODO: Extra bend point.
-                    //ElkNode target = (ElkNode) oEdge.getTargets().get(0);
-                    //ElkGraphUtil.createBendPoint(oEdge.getSections().get(0), currNode.getX(), target.getY()); 
-                }
-                
-            } else {
-                System.out.println("Nope");
-            }
-            
-
-        }
         
-        // Initialize bend points for incoming edges around nodes. They need to get placed last.
-        for (ElkNode currNode : layoutGraph.getChildren()) {
-            
-            // Check if node has correct amount of incoming edges (always 2)
-            if (currNode.getIncomingEdges().size() == 2) {
-            
-                
-                 // There should be always 4 edges per node: 2 outgoing + 2 incoming.
-                for (int i = 0; i < 2; i++) {
-                
-                
-                    double d = bendPointDistance * Math.pow(-1, i);
-                    
-                    // Outgoing edges share initially the same y coordinate as the node.
-                    ElkEdge iEdge = currNode.getIncomingEdges().get(i);
-                    // We don't have hyperedges and therefore only one section.
-                    ElkGraphUtil.createBendPoint(iEdge.getSections().get(0), currNode.getX()+d, currNode.getY());
-                    
-                    // TODO: Extra bend point.
-                    //ElkNode target = (ElkNode) iEdge.getTargets().get(0);
-                    //ElkGraphUtil.createBendPoint(iEdge.getSections().get(0), target.getX(), target.getY());
-    
-                
-                    
-                }
-            } else {
-                System.out.println("Nope");
-            }
-        }
+
         
         
         
@@ -325,12 +273,13 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                     
                     System.out.println("Node: " + currNode + " vordert bp fuer o an");
                     addMiddleBendPoint(oEdge);
+                    shiftMiddlePoint(oEdge);
                 }
                     
              }
                 
          
-            
+            /*
             for(ElkEdge iEdge : currNode.getIncomingEdges()) {
                 
                 List<ElkBendPoint> bps = iEdge.getSections().get(0).getBendPoints();
@@ -345,14 +294,17 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                     
                 
             }
-        
+            */
         }
         
         // nochmal rotieren?
+        
+        
         count = 0;
         prevStress = Double.MAX_VALUE;
         angle =  1;
         
+        /*
         do { 
             for (ElkNode currNode : layoutGraph.getChildren()) {
                 
@@ -373,7 +325,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             count++;   
         } while(count < 3600);
         
-        
+        */
         
         
         
@@ -394,6 +346,64 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     
     //////////////////////////////////////////////////////////////////////////////////////////
     // Helping functions:
+    
+    
+    /**
+     * Initialize bend points around a node for each of it's 4 edges.
+     * @param graph the node that contains the graph.
+     */
+    private void initalizeBendPoints(ElkNode graph) {
+
+        // Initialize bend points for outgoing edges around nodes. They need to get placed first.
+        for (ElkNode currNode : graph.getChildren()) {
+            
+            // Check if node has correct amount of outgoing edges (always 2)
+            // There should be always 4 edges per node: 2 outgoing + 2 incoming.
+            checkEdgeCondition(currNode);
+            
+            
+            // First below node, second above node.
+            for (int i = 0; i < 2; i++) {
+
+                double d = bendPointDistance * Math.pow(-1, i);
+                
+                
+                
+                
+                // Outgoing edges share initially the same x coordinate as the node.
+                ElkEdge oEdge = currNode.getOutgoingEdges().get(i);
+                // We don't have hyperedges and therefore only one section.
+                ElkGraphUtil.createBendPoint(oEdge.getSections().get(0), currNode.getX(), currNode.getY()+d);
+                
+                // TODO: Extra bend point.
+                //ElkNode target = (ElkNode) oEdge.getTargets().get(0);
+                //ElkGraphUtil.createBendPoint(oEdge.getSections().get(0), currNode.getX(), target.getY()); 
+            }
+        }
+         
+        // Initialize bend points for incoming edges around nodes. They need to get placed last.
+        for (ElkNode currNode : graph.getChildren()) {
+   
+            // First right of node, second left of node
+            for (int i = 0; i < 2; i++) {
+            
+            
+                double d = bendPointDistance * Math.pow(-1, i);
+                
+                
+                // Outgoing edges share initially the same y coordinate as the node.
+                ElkEdge iEdge = currNode.getIncomingEdges().get(i);
+                // We don't have hyperedges and therefore only one section.
+                ElkGraphUtil.createBendPoint(iEdge.getSections().get(0), currNode.getX()+d, currNode.getY());
+                
+                // TODO: Extra bend point.
+                //ElkNode target = (ElkNode) iEdge.getTargets().get(0);
+                //ElkGraphUtil.createBendPoint(iEdge.getSections().get(0), target.getX(), target.getY());
+  
+            }
+        }
+    }
+    
     
     /**
      * Rotates the 4 bend points around a given node by the angle provided in degrees, creating the illusion
@@ -640,18 +650,18 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         
         List<ElkBendPoint>  bps = edge.getSections().get(0).getBendPoints();
         
-        
+        ElkBendPoint firstBp = bps.get(0);
         ElkBendPoint lastBp = bps.get(bps.size()-1); 
         
-        double x1 = bps.get(0).getX();
-        double y1 = bps.get(0).getY();
-        double x2 = bps.get(1).getX();
-        double y2 = bps.get(1).getY();
-        double x;
-        double y;
+        double x1 = firstBp.getX();
+        double y1 = firstBp.getY();
+        double x2 = lastBp.getX();
+        double y2 = lastBp.getY();
+
         
-        x = x2;
-        y = y1;
+        // Initial position in between.
+        double x = (x1 + x2)/2;
+        double y = (y1 + y2)/2;
         
         /*
         if (x1 < x2) {
@@ -669,6 +679,52 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         //TODO: von source -> bp1 -> newpos -> bpLast -> target
         
         
+        // Computing bend point position for optimal angle relaxation.
+        int count = 0;
+        
+        double prevAngle1;
+        double prevAngle2;
+        
+        
+        /*
+        do { 
+            
+            
+            prevAngle1 = calculateBendPointAngle(firstBp, edge);
+            prevAngle2 = calculateBendPointAngle(lastBp, edge);
+            
+            
+            x = x+2;
+            if(x > 90) {
+                x = x-2;
+            }
+            
+            
+            // Revert when one of the angles getting even smaller.
+            if(prevAngle1 >= calculateBendPointAngle(firstBp, edge) || 
+                    prevAngle2 >= calculateBendPointAngle(lastBp, edge)) {
+                x = x - 3;
+               
+            }
+            
+            /*
+            y = y+2;
+            // Revert when one of the angles getting even smaller.
+            if(prevAngle1 >= calculateBendPointAngle(firstBp, edge) || 
+                    prevAngle2 >= calculateBendPointAngle(lastBp, edge)) {
+                y = y - 4;
+               
+            }
+                
+            
+            
+            
+            count++;   
+        } while(count < 100);
+        */
+        
+        
+        
         
         ElkBendPoint newBp = ElkGraphUtil.createBendPoint(null, x, y); 
         
@@ -677,6 +733,94 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         bps.add(lastBp);
         
         
+        
+        
+    }
+    
+    private void shiftMiddlePoint(ElkEdge edge) {
+        
+        ElkNode source = (ElkNode) edge.getSources().get(0);
+        ElkNode target = (ElkNode) edge.getTargets().get(0);
+        
+        ElkBendPoint bp = edge.getSections().get(0).getBendPoints().get(1);
+        
+        // Computing bend point position for optimal angle relaxation.
+        int count = 0;
+        
+        double stressSource;
+        double stressTarget;
+        double x = bp.getX();
+        double y = bp.getY();
+        
+        do { 
+            
+            
+            // The more stress the greater the rotation should be
+            stressSource = computeNodeStress(source);
+            stressTarget = computeNodeStress(target);
+            
+            System.out.println("Count: " + count);
+            System.out.println("Stress S = " + stressSource);
+            System.out.println("Stress T = " + stressTarget);
+            System.out.println("Shift um x");
+            bp.setX(x+2);
+
+            System.out.println("Neu Stress S = " + computeNodeStress(source));
+            System.out.println("Neu Stress T = " + computeNodeStress(target));
+            
+            
+
+            
+            
+            //TODO: Problem: wird zu ausschweifend, Winkel werden kleiner und Stress weniger aber Schlaufe riesig.
+            // --> Einfach Iteration begrenzen? Funktioniert bislag
+            //TODO: Andere Nodes avoiden.
+            // --> Schnittpunkte mit anderen Kanten. Knoten umgehen, dessen meisten Kanten Schnittpunkte erzeugen?
+            
+            
+            // When new stress larger, turn back
+            if (stressSource < computeNodeStress(source) || stressTarget < computeNodeStress(target)) {
+                // -2 even better
+                bp.setX(x-3);
+                System.out.println("Shift back");
+
+            }
+            System.out.println("---------");
+            x = bp.getX();
+            
+            
+            
+            stressSource = computeNodeStress(source);
+            stressTarget = computeNodeStress(target);
+            
+            bp.setY(y+2);
+
+            // When new stress larger, turn back
+            if (stressSource < computeNodeStress(source) || stressTarget < computeNodeStress(target)) {
+                // -2 even better
+               bp.setY(y-3);
+
+            }
+            y = bp.getY();
+            
+            
+            /*
+            y = y+2;
+            // Revert when one of the angles getting even smaller.
+            if(prevAngle1 >= calculateBendPointAngle(firstBp, edge) || 
+                    prevAngle2 >= calculateBendPointAngle(lastBp, edge)) {
+                y = y - 4;
+               
+            }
+                */
+            
+            
+            
+            count++;   
+        } while(count < 10);
+        
+        bp.setX(x);
+        bp.setY(y);
         
         
     }
