@@ -48,7 +48,11 @@ public final class LNode extends LShape {
         /** a dummy node to represent a mid-label on an edge. */
         LABEL,
         /** a dummy node representing a breaking point used to 'wrap' graphs. */
-        BREAKING_POINT;
+        BREAKING_POINT,
+        /** a dummy node serving as a placeholder to reserve space*/
+        PLACEHOLDER,
+        /** a placeholder node that can't be shifted */
+        NONSHIFTING_PLACEHOLDER;
         
         /**
          * Return the color used when writing debug output graphs. The colors are given as strings of
