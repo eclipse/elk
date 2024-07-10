@@ -134,7 +134,7 @@ public class GeneralLayerUnzipper implements ILayoutProcessor<LGraph> {
         // If there are no incoming edges, the nodeindex will have to be decreased by one
         boolean noIncomingEdges = true; 
         List<LEdge> reversedIncomingEdges = Lists.reverse(Lists.newArrayList(node.getIncomingEdges()));
-        for (LEdge incomingEdge : reversedIncomingEdges) { // backwards?
+        for (LEdge incomingEdge : reversedIncomingEdges) {
             noIncomingEdges = false;
             LEdge nextEdgeToSplit = incomingEdge;
             for (int layerIndex = 0; layerIndex < targetLayer; layerIndex++) {
