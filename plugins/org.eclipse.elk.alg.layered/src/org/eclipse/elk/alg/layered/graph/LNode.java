@@ -49,9 +49,10 @@ public final class LNode extends LShape {
         LABEL,
         /** a dummy node representing a breaking point used to 'wrap' graphs. */
         BREAKING_POINT,
-        /** a dummy node serving as a placeholder to reserve space*/
+        /** a dummy node serving as a placeholder to reserve space when 'unzipping' graphs. 
+         * this is used when there are no edges. */
         PLACEHOLDER,
-        /** a placeholder node that can't be shifted */
+        /** a placeholder node that can't be shifted when 'unzipping' graphs. this is used in front of extra edges. */
         NONSHIFTING_PLACEHOLDER;
         
         /**

@@ -37,7 +37,9 @@ import com.google.common.collect.Lists;
  * <dt>Preconditions:</dt>
  *   <dd>A layered graph whose node order has been decided.</dd>
  * <dt>Postconditions:</dt>
- *   <dd>Layers are split up into multiple layers with the nodes alternating between them.</dd>
+ *   <dd>Layers are split up into multiple layers with the nodes alternating between them. For example, if layerSplit
+ *   is set to 3 and there are 5 nodes in a layer, then node 1 is placed in sublayer 1, node 2 in sublayer 2, node 3 in
+ *   sublayer 3, node 4 in sublayer 1 and node 5 in sublayer 2.</dd>
  * <dt>Slots:</dt>
  *   <dd>Before phase 4.</dd>
  * <dt>Same-slot dependencies:</dt>
