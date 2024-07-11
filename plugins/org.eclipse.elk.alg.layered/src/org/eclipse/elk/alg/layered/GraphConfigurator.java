@@ -298,7 +298,7 @@ final class GraphConfigurator {
             configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT, internalGreedyType);
         }
         
-        switch (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_LAYER_UNZIPPING_STRATEGY)) {
+        switch (lgraph.getProperty(LayeredOptions.LAYER_UNZIPPING_STRATEGY)) {
         case N_LAYERS:
             configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LAYER_UNZIPPER);
             break;

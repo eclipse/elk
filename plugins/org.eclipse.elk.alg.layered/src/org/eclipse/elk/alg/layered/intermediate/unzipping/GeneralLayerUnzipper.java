@@ -56,7 +56,8 @@ public class GeneralLayerUnzipper implements ILayoutProcessor<LGraph> {
         List<Pair<Layer, Integer>> newLayers = new ArrayList<>();
         for (int i = 0; i < graph.getLayers().size(); i++) {
             
-            int N = graph.getLayers().get(i).getProperty(LayeredOptions.CROSSING_MINIMIZATION_LAYER_UNZIPPING_LAYER_SPLIT);
+            int N = graph.getLayers().get(i).getProperty(LayeredOptions.LAYER_UNZIPPING_LAYER_SPLIT);
+            boolean resetOnLongEdges = graph.getLayers().get(i).getProperty(LayeredOptions.LAYER_UNZIPPING_RESET_ON_LONG_EDGES);
             
             // only split if there are more nodes than the resulting sub-layers
             // an alternative would be to reduce N for this layer, this may or may
@@ -74,12 +75,17 @@ public class GeneralLayerUnzipper implements ILayoutProcessor<LGraph> {
                 insertionLayerOffset += N - 1;
                 
                 int nodesInLayer = subLayers.get(0).getNodes().size();
-                for (int j = 0, nodeIndex = 0; j < nodesInLayer; j++, nodeIndex++) {
+                for (int j = 0, nodeIndex = 0, targetLayer = 0; j < nodesInLayer; j++, nodeIndex++, targetLayer++) {
                     LNode node = subLayers.get(0).getNodes().get(nodeIndex);
                     if (node.getType() != NodeType.NONSHIFTING_PLACEHOLDER) {
-                        nodeIndex += shiftNode(graph, subLayers, j % N, nodeIndex);
+                        nodeIndex += shiftNode(graph, subLayers, targetLayer % N, nodeIndex);
                     } else {
                         j -= 1;
+                        targetLayer -= 1;
+                    }
+                    if (resetOnLongEdges && node.getType() == NodeType.LONG_EDGE) {
+                        // reset next iterations target layer to 0
+                        targetLayer = -1;
                     }
                     
                 }
@@ -109,8 +115,24 @@ public class GeneralLayerUnzipper implements ILayoutProcessor<LGraph> {
      */
     private void processLayerSplitProperty(LGraph graph) {
         for (Layer layer : graph.getLayers()) {
-            layer.setProperty(LayeredOptions.CROSSING_MINIMIZATION_LAYER_UNZIPPING_LAYER_SPLIT, 
-                    layer.getNodes().get(0).getProperty(LayeredOptions.CROSSING_MINIMIZATION_LAYER_UNZIPPING_LAYER_SPLIT));
+            boolean setLayerSplit = false;
+            boolean setResetOnLongEdges = false;
+            for (LNode node : layer.getNodes()) {
+                if (!setLayerSplit && node.hasProperty(LayeredOptions.LAYER_UNZIPPING_LAYER_SPLIT)) {
+                    layer.setProperty(LayeredOptions.LAYER_UNZIPPING_LAYER_SPLIT, 
+                            node.getProperty(LayeredOptions.LAYER_UNZIPPING_LAYER_SPLIT));
+                    setLayerSplit = true;
+                }
+                if (!setResetOnLongEdges && node.hasProperty(LayeredOptions.LAYER_UNZIPPING_RESET_ON_LONG_EDGES)) {
+                    layer.setProperty(LayeredOptions.LAYER_UNZIPPING_RESET_ON_LONG_EDGES, 
+                            node.getProperty(LayeredOptions.LAYER_UNZIPPING_RESET_ON_LONG_EDGES));
+                    setResetOnLongEdges = true;
+                }
+                if (setLayerSplit && setResetOnLongEdges) {
+                    // all options have been set and we can skip the remaining nodes of the layer
+                    break;
+                }
+            }
         }
         
     }
