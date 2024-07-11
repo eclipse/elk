@@ -189,60 +189,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         System.out.println("Befor stress n3: " + computeNodeStress(layoutGraph.getChildren().get(2)));
         
         
-        int count = 0;
-        double prevStress = Double.MAX_VALUE;
-        double angle =  1;
-        
-        do { 
-            for (ElkNode currNode : layoutGraph.getChildren()) {
-                
-                
-                // The more stress the greater the rotation should be
-                prevStress = computeNodeStress(currNode);
-                angle = prevStress / 10000;
-                rotateNode(currNode, angle);
-                
-                // When new stress larger, turn back
-                if (prevStress < computeNodeStress(currNode)) {
-                    // -2 even better
-                    rotateNode(currNode, - 2*angle);
 
-                }
-                
-                
-                /* AXIS ROTATION:
-                // Whole rotation + individual axis rotation works well (only axis not so well)
-                // Somehow, checking node stress for out axis but stress for in axis works good.
-                // The more stress the greater the rotation should be
-                prevStress = computeOutAxisStress(currNode);
-                angle = prevStress / 10000;
-                rotateOutgoingAxis(currNode, angle);
-                
-                // When new stress larger, turn back
-                if (prevStress < computeNodeStress(currNode)) {
-                    // -2 even better
-                    rotateOutgoingAxis(currNode, - 2*angle);
-
-                }
-                
-                // The more stress the greater the rotation should be
-                prevStress = computeInAxisStress(currNode);
-                angle = prevStress / 10000;
-                rotateIncomingAxis(currNode, angle);
-                
-                // When new stress larger, turn back
-                if (prevStress < computeInAxisStress(currNode)) {
-                    // -2 even better
-                    rotateIncomingAxis(currNode, - 2*angle);
-
-                }
-                */
-                
-                
-                
-            }
-            count++;   
-        } while(count < 3600);
         
         
         //TODO: When bend points still have sharp angles --> add another bend point in between
@@ -258,6 +205,74 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         //      2 Edges checken indem durch alle ihre Kontrollpunkt-Segmente durchiteriert wird.
         
         
+        
+        // INITIAL ROTATION
+        for(ElkNode n : layoutGraph.getChildren()) {
+            //stressMinimizingShift(n);
+            stressMinimizingRotation(n);
+        }
+        /*
+        */
+
+        
+        
+        // nochmal rotieren?
+        
+        
+        //count = 0;
+        //prevStress = Double.MAX_VALUE;
+        //angle =  1;
+        
+        /*
+        do { 
+            for (ElkNode currNode : layoutGraph.getChildren()) {
+                
+                
+                // The more stress the greater the rotation should be
+                prevStress = computeNodeStress(currNode);
+                angle = prevStress / 10000;
+                rotateNode(currNode, angle);
+                
+                // When new stress larger, turn back
+                if (prevStress < computeNodeStress(currNode)) {
+                    // -2 even better
+                    rotateNode(currNode, - 2*angle);
+
+                }
+
+            }
+            count++;   
+        } while(count < 3600);
+        
+        */
+        
+        //TODO: Shifting nodes when most angles at their bend points are sharp
+        
+        
+        // STRESS MINIMIZATION:
+        
+        
+        int count = 0;
+        do {
+            
+            for(ElkNode n : layoutGraph.getChildren()) {
+                
+                // This node has many sharp angles, could use a shift.
+                if (computeNodeAngles(n) < 420) {
+                    stressMinimizingShift(n);
+                }
+                
+                stressMinimizingRotation(n);
+            }
+            
+            count++;
+        } while(count < 5);
+        /*
+        */
+
+        ////////
+        // Create additional pylons- ehm... bend points
+        /*
         double angleThreshold = 85;
         
         for (ElkNode currNode : layoutGraph.getChildren()) {
@@ -294,39 +309,9 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                     
                 
             }
-            */
+           
         }
-        
-        // nochmal rotieren?
-        
-        
-        count = 0;
-        prevStress = Double.MAX_VALUE;
-        angle =  1;
-        
-        /*
-        do { 
-            for (ElkNode currNode : layoutGraph.getChildren()) {
-                
-                
-                // The more stress the greater the rotation should be
-                prevStress = computeNodeStress(currNode);
-                angle = prevStress / 10000;
-                rotateNode(currNode, angle);
-                
-                // When new stress larger, turn back
-                if (prevStress < computeNodeStress(currNode)) {
-                    // -2 even better
-                    rotateNode(currNode, - 2*angle);
-
-                }
-
-            }
-            count++;   
-        } while(count < 3600);
-        
         */
-        
         
         
         
@@ -538,6 +523,27 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     }
     
     
+    private double computeNodeAngles(ElkNode node) {
+        
+        double sum = 0;
+        
+        for (ElkEdge oEdge : node.getOutgoingEdges()) {
+            // Calculate angle between source node <- first bend point -> next bend point.
+            ElkBendPoint bp = oEdge.getSections().get(0).getBendPoints().get(0);
+            sum = sum + calculateBendPointAngle(bp, oEdge);
+            
+        }
+        for (ElkEdge iEdge : node.getIncomingEdges()) {
+            // Calculate angle between previous bend point <- last bend point -> target node.
+            List<ElkBendPoint> bps = iEdge.getSections().get(0).getBendPoints();
+            ElkBendPoint bp = bps.get(bps.size()-1);
+            sum = sum + calculateBendPointAngle(bp, iEdge);
+        }
+        
+        return sum;
+    }
+    
+    
     /**
      * Computes the stress value of a given node that is created by sharp angles of its corresponding edges.
      * The outgoing edges as well as the incoming edges are taken into account. Sharper angles create more stress
@@ -568,7 +574,6 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             angle = 180 - calculateBendPointAngle(bp, iEdge);
             stress = stress + Math.pow(angle,2);  
         }
-        
         
         return stress;
     }
@@ -739,6 +744,9 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     
     private void shiftMiddlePoint(ElkEdge edge) {
         
+        
+        // TODO: Schnittpunkte berechnen -> schieben bis keine Schnittpunkte mit anderen Kanten
+        
         ElkNode source = (ElkNode) edge.getSources().get(0);
         ElkNode target = (ElkNode) edge.getTargets().get(0);
         
@@ -824,6 +832,143 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         
         
     }
+    
+    
+    private void stressMinimizingShift(ElkNode node) { 
+        
+        int count = 0;
+        double prevStress = Double.MAX_VALUE;
+        
+        do { 
+            
+            
+            //TODO: Bend Point Abstand beruecksichtigen.
+            //TODO: Evtl andere Nodes wegdruecken um sich dazwischen zu packen.
+            
+            
+            // The more stress the greater the rotation should be
+            prevStress = computeNodeStress(node);
+            moveNode(node, node.getX() + 2, node.getY());
+            
+            // When new stress larger, turn back
+            if (prevStress < computeNodeStress(node)) {
+                // -2 even better
+                moveNode(node, node.getX() - 3, node.getY());
+
+            }
+            
+            prevStress = computeNodeStress(node);
+            moveNode(node, node.getX(), node.getY() + 2);
+            
+            // When new stress larger, turn back
+            if (prevStress < computeNodeStress(node)) {
+                // -2 even better
+                moveNode(node, node.getX(), node.getY() - 3);
+
+            }
+            
+            
+            
+            count++;   
+        } while(count < 100);
+        
+        
+        
+    }
+    
+    /**
+     * Move node with its 4 bend points.
+     * @param node
+     * @param x
+     * @param y
+     */
+    private void moveNode(ElkNode node, double x, double y) {
+        
+        
+        double distX = x - node.getX();
+        double distY = y - node.getY();
+        
+        
+        for (ElkEdge oEdge : node.getOutgoingEdges()) {
+            
+            
+            ElkBendPoint bp = oEdge.getSections().get(0).getBendPoints().get(0);
+            bp.set(bp.getX() + distX, bp.getY() + distY);
+            
+        }
+        
+        for (ElkEdge iEdge : node.getIncomingEdges()) {
+            
+            List<ElkBendPoint>  bps = iEdge.getSections().get(0).getBendPoints();
+            ElkBendPoint bp = bps.get(bps.size()-1);
+            bp.set(bp.getX() + distX, bp.getY() + distY);
+            
+        }
+        
+        node.setLocation(x, y);
+        
+        
+    }
+    
+    
+    private void stressMinimizingRotation(ElkNode node) {
+        int count = 0;
+        double prevStress = Double.MAX_VALUE;
+        double angle =  1;
+        
+        do { 
+            
+            
+            // The more stress the greater the rotation should be
+            prevStress = computeNodeStress(node);
+            angle = prevStress / 4000;
+            rotateNode(node, angle);
+            
+            // When new stress larger, turn back
+            if (prevStress < computeNodeStress(node)) {
+                // -2 even better
+                rotateNode(node, - 2*angle);
+
+            }
+            
+            
+            /* AXIS ROTATION:
+            // Whole rotation + individual axis rotation works well (only axis not so well)
+            // Somehow, checking node stress for out axis but stress for in axis works good.
+            // The more stress the greater the rotation should be
+            // TODO: Rather devastating then helpful in its current state.
+            
+            prevStress = computeOutAxisStress(node);
+            angle = prevStress / 10000;
+            rotateOutgoingAxis(node, angle);
+            
+            // When new stress larger, turn back
+            if (prevStress < computeNodeStress(node)) {
+                // -2 even better
+                rotateOutgoingAxis(node, - 2*angle);
+
+            }
+            
+            // The more stress the greater the rotation should be
+            prevStress = computeInAxisStress(node);
+            angle = prevStress / 10000;
+            rotateIncomingAxis(node, angle);
+            
+            // When new stress larger, turn back
+            if (prevStress < computeInAxisStress(node)) {
+                // -2 even better
+                rotateIncomingAxis(node, - 2*angle);
+
+            }
+            */
+            
+            
+            
+        
+            count++;   
+        } while(count < 3600);
+    }
+    
     
     
     /**
