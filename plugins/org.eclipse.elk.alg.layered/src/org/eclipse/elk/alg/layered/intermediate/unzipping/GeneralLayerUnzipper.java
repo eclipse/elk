@@ -132,7 +132,7 @@ public class GeneralLayerUnzipper implements ILayoutProcessor<LGraph> {
                 }
                 if (setLayerSplit && setResetOnLongEdges) {
                     // all options have been set and we can skip the remaining nodes of the layer
-                    break;
+                    return;
                 }
             }
         }
