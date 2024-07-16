@@ -230,6 +230,7 @@ public class GeneralLayerUnzipper implements ILayoutProcessor<LGraph> {
     }
 
     /**
+     * Creates a dummy node for an edge that should be split into a long edge.
      * @param graph
      * @param nextEdgeToSplit
      * @return
