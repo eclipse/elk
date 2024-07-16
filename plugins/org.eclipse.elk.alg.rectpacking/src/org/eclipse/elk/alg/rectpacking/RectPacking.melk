@@ -159,6 +159,7 @@ group whiteSpaceElimination {
         description
             "Strategy for expanding nodes such that whitespace in the parent is eliminated."
         targets parents
+        default = WhiteSpaceEliminationStrategy.NONE
     }
 }
 
