@@ -180,6 +180,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 // Check whether one of them is a helper dummy node.
                 int comparedWithLongEdgeFeedback = handleHelperDummyNodes(n1, n2);
                 if (comparedWithLongEdgeFeedback != 0) {
+                    if (comparedWithLongEdgeFeedback > 0) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                    } else {
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                    }
                     return comparedWithLongEdgeFeedback;
                 }
                 
@@ -203,6 +208,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 // Check whether one of them is a helper dummy node.
                 int comparedWithLongEdgeFeedback = handleHelperDummyNodes(n1, n2);
                 if (comparedWithLongEdgeFeedback != 0) {
+                    if (comparedWithLongEdgeFeedback > 0) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                    } else {
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                    }
                     return comparedWithLongEdgeFeedback;
                 }
             }
@@ -218,12 +228,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             int n2ModelOrder = n2.getProperty(InternalProperties.MODEL_ORDER);
             if (n1ModelOrder > n2ModelOrder) {
                 updateBiggerAndSmallerAssociations(n1, n2);
+                return 1;
             } else {
                 updateBiggerAndSmallerAssociations(n2, n1);
+                return -1;
             }
-            return Integer.compare(
-                    n1ModelOrder,
-                    n2ModelOrder);
         } else {
             return 0;
         }
@@ -371,5 +380,13 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     
     private LPort getFirstOutgoingSourcePortOfNode(LNode node) {
         return getFirstOutgoingPortOfNode(node).getOutgoingEdges().get(0).getTarget();
+    }
+    
+    /**
+     * Clears the transitive ordering.
+     */
+    public void clearTransitiveOrdering() {
+        this.biggerThan = new HashMap<>();
+        this.smallerThan = new HashMap<>();
     }
 }
