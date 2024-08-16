@@ -55,6 +55,9 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                 + graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY), 1);
         int layerIndex = 0;
         for (Layer layer : graph) {
+            // The layer.id is necessary to check whether nodes really connect to the previous layer.
+            // Feedback long edge dummies do might have a long-edge dummy in the same layer.
+            layer.id = layerIndex;
             final int previousLayerIndex = layerIndex == 0 ? 0 : layerIndex - 1;
             Layer previousLayer = graph.getLayers().get(previousLayerIndex);
             for (LNode node : layer.getNodes()) {
