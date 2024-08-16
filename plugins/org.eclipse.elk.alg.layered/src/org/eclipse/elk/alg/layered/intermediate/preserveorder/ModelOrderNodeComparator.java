@@ -215,16 +215,20 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
         }
         // Order nodes by their order in the model.
         // This is also the fallback case if one of the nodes is not connected to the previous layer.
-        int n1ModelOrder = n1.getProperty(InternalProperties.MODEL_ORDER);
-        int n2ModelOrder = n2.getProperty(InternalProperties.MODEL_ORDER);
-        if (n1ModelOrder > n2ModelOrder) {
-            updateBiggerAndSmallerAssociations(n1, n2);
+        if (n1.hasProperty(InternalProperties.MODEL_ORDER) && n2.hasProperty(InternalProperties.MODEL_ORDER)) {
+            int n1ModelOrder = n1.getProperty(InternalProperties.MODEL_ORDER);
+            int n2ModelOrder = n2.getProperty(InternalProperties.MODEL_ORDER);
+            if (n1ModelOrder > n2ModelOrder) {
+                updateBiggerAndSmallerAssociations(n1, n2);
+            } else {
+                updateBiggerAndSmallerAssociations(n2, n1);
+            }
+            return Integer.compare(
+                    n1ModelOrder,
+                    n2ModelOrder);
         } else {
-            updateBiggerAndSmallerAssociations(n2, n1);
+            return 0;
         }
-        return Integer.compare(
-                n1ModelOrder,
-                n2ModelOrder);
     }
     
     /**
