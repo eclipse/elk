@@ -127,36 +127,32 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         
         // Sort incoming edges by sorting their ports by the order of the nodes they connect to.
         if (!p1.getIncomingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
-
-            LPort p1SourcePort = p1.getIncomingEdges().get(0).getSource();
-            LPort p2SourcePort = p2.getIncomingEdges().get(0).getSource();
-            LNode p1Node = p1SourcePort.getNode();
-            LNode p2Node = p2SourcePort.getNode();
-            if (p1.getSide() == PortSide.WEST && p2.getSide() == PortSide.WEST && p1SourcePort.getSide() != PortSide.SOUTH
-                    && p2SourcePort.getSide() != PortSide.SOUTH                       
-                    || p1.getSide() == PortSide.NORTH && p2.getSide() == PortSide.NORTH && p1SourcePort.getSide() != PortSide.SOUTH
-                        && p2SourcePort.getSide() != PortSide.SOUTH
-                    || p1.getSide() == PortSide.SOUTH && p2.getSide() == PortSide.SOUTH && p1SourcePort.getSide() != PortSide.SOUTH
-                        && p2SourcePort.getSide() != PortSide.SOUTH
-                    || p1.getSide() == PortSide.EAST && p2.getSide() == PortSide.EAST && p1SourcePort.getSide() != PortSide.SOUTH
-                        && p2SourcePort.getSide() != PortSide.SOUTH) {
+            if (p1.getSide() == PortSide.WEST && p2.getSide() == PortSide.WEST                      
+                    || p1.getSide() == PortSide.NORTH && p2.getSide() == PortSide.NORTH
+                    || p1.getSide() == PortSide.SOUTH && p2.getSide() == PortSide.SOUTH) {
                 // Some ports are ordered in the way around.
                 // Previously this did not matter, since the north south processor did override the ordering.
                 LPort temp = p1;
                 p1 = p2;
                 p2 = temp;
             }
+
+            LPort p1SourcePort = p1.getIncomingEdges().get(0).getSource();
+            LPort p2SourcePort = p2.getIncomingEdges().get(0).getSource();
+            LNode p1Node = p1SourcePort.getNode();
+            LNode p2Node = p2SourcePort.getNode();
             if (p1Node.equals(p2Node)) {
-                
-                int p1MO = p1.getIncomingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
-                int p2MO = p2.getIncomingEdges().get(0).getProperty(InternalProperties.MODEL_ORDER);
-                if (p1MO > p2MO) {
-                    updateBiggerAndSmallerAssociations(p1, p2);
-                } else {
-                    updateBiggerAndSmallerAssociations(p2, p1);
+                // If both connect to the same node, check their occurrence order since these ports have to be handled
+                // first and should hence be sorted.
+                for (LPort port : p1Node.getPorts()) {
+                    if (p1SourcePort.equals(port)) {
+                        updateBiggerAndSmallerAssociations(p2, p1);
+                        return -1;
+                    } else if (p2SourcePort.equals(port)) {
+                        updateBiggerAndSmallerAssociations(p1, p2);
+                        return 1;
+                    }
                 }
-                // In this case both incoming edges must have a model order set. Check it.
-                return Integer.compare(p1MO, p2MO);
             }
             // If both ports connect to long edges in the same layer, reverse the order.
             if (p1SourcePort.getNode().getType() == NodeType.LONG_EDGE
@@ -168,17 +164,20 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                 // |__2__||
                 // ___1___|
                 //
-                // The difference to the other cases above is that a EAST port uses dummy nodes, while a
-                // NORTH or SOUTH port uses none since they are later created by the NorthSouthProcessor.
                 Layer previousLayer = p1Node.getLayer();
                 int inPreviousLayer =  checkReferenceLayer(previousLayer, p1Node, p2Node, p1, p2);
                 if (inPreviousLayer != 0) {
+                    if (inPreviousLayer > 0) {
+                        updateBiggerAndSmallerAssociations(p1, p2);
+                    } else {
+                        updateBiggerAndSmallerAssociations(p1, p2);
+                    }
                     return inPreviousLayer;
                 }
             }
             
             // Check which of the nodes connects first to the previous layer.
-            int inPreviousLayer =  checkReferenceLayer(Arrays.stream(previousLayer).collect(Collectors.toList()), p2Node, p1Node, p2, p1);
+            int inPreviousLayer =  checkReferenceLayer(Arrays.stream(previousLayer).collect(Collectors.toList()), p1Node, p2Node, p1, p2);
             if (inPreviousLayer != 0) {
                 return inPreviousLayer;
             }
@@ -188,9 +187,9 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             if (portModelOrder) {
                 int result =  checkPortModelOrder(p1, p2);
                 if (result != 0) {
-                    if (result == -1) {
+                    if (result < 0) {
                         updateBiggerAndSmallerAssociations(p2, p1);
-                    } else if (result == 1) {
+                    } else if (result > 0) {
                         updateBiggerAndSmallerAssociations(p1, p2);
                     }
                     return result;
@@ -250,16 +249,6 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             
             // If both ports have the same target nodes, make sure that the backward edge is below the normal edge.
             if (p1TargetNode != null && p1TargetNode.equals(p2TargetNode)) {
-//                // Backward edges below
-//                if (p1.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)
-//                        && !p2.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)) {
-//                    updateBiggerAndSmallerAssociations(p1, p2);
-//                    return 1;
-//                } else if (!p1.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)
-//                        && p2.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)) {
-//                    updateBiggerAndSmallerAssociations(p2, p1);
-//                    return -1;
-//                }
                 // If both edges are reversed or not reversed, just use their model order.
                 if (p1Order > p2Order) {
                     updateBiggerAndSmallerAssociations(p1, p2);
@@ -384,5 +373,13 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             return Integer.compare(ps1.ordinal(), ps2.ordinal());
         }
         
+    }
+    
+    /**
+     * Clears the transitive ordering.
+     */
+    public void clearTransitiveOrdering() {
+        this.biggerThan = new HashMap<>();
+        this.smallerThan = new HashMap<>();
     }
 }

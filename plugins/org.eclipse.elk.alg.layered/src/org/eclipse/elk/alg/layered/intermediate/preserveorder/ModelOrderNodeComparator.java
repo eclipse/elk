@@ -117,7 +117,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             for (LPort p : n1.getPorts()) {
                 // Get the first port that actually connects to a previous layer.
                 if (!p.getIncomingEdges().isEmpty()) {
-                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer() != n1.getLayer()) {
+                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer().id == (n1.getLayer().id - 1)) {
                         p1SourcePort = p.getIncomingEdges().get(0).getSource();
                         break;
                     }
@@ -128,7 +128,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             for (LPort p : n2.getPorts()) {
                 // Get the first port that actually connects to a previous layer.
                 if (!p.getIncomingEdges().isEmpty()) {
-                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer() != n2.getLayer()) {
+                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer().id == (n2.getLayer().id - 1)) {
                         p2SourcePort = p.getIncomingEdges().get(0).getSource();
                         break;
                     }
@@ -182,6 +182,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 // Check whether one of them is a helper dummy node.
                 int comparedWithLongEdgeFeedback = handleHelperDummyNodes(n1, n2);
                 if (comparedWithLongEdgeFeedback != 0) {
+                    if (comparedWithLongEdgeFeedback > 0) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                    } else {
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                    }
                     return comparedWithLongEdgeFeedback;
                 }
                 
@@ -205,6 +210,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 // Check whether one of them is a helper dummy node.
                 int comparedWithLongEdgeFeedback = handleHelperDummyNodes(n1, n2);
                 if (comparedWithLongEdgeFeedback != 0) {
+                    if (comparedWithLongEdgeFeedback > 0) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                    } else {
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                    }
                     return comparedWithLongEdgeFeedback;
                 }
             }
@@ -220,12 +230,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             int n2ModelOrder = n2.getProperty(InternalProperties.MODEL_ORDER);
             if (n1ModelOrder > n2ModelOrder) {
                 updateBiggerAndSmallerAssociations(n1, n2);
+                return 1;
             } else {
                 updateBiggerAndSmallerAssociations(n2, n1);
+                return -1;
             }
-            return Integer.compare(
-                    n1ModelOrder,
-                    n2ModelOrder);
         } else {
             return 0;
         }
@@ -311,7 +320,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 LNode dummyNodeTargetNode = dummyNodeTargetPort.getNode();
                 if (dummyNodeTargetNode.equals(n1)) {
                     updateBiggerAndSmallerAssociations(n2, n1);
-                    return 1;
+                    return -1;
                 }
                 
                 // If the two nodes are not the same, order them based on the source model order.
@@ -373,5 +382,13 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
     
     private LPort getFirstOutgoingSourcePortOfNode(LNode node) {
         return getFirstOutgoingPortOfNode(node).getOutgoingEdges().get(0).getTarget();
+    }
+    
+    /**
+     * Clears the transitive ordering.
+     */
+    public void clearTransitiveOrdering() {
+        this.biggerThan = new HashMap<>();
+        this.smallerThan = new HashMap<>();
     }
 }
