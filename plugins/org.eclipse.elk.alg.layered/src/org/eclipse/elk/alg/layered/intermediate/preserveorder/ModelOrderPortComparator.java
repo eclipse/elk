@@ -250,16 +250,6 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             
             // If both ports have the same target nodes, make sure that the backward edge is below the normal edge.
             if (p1TargetNode != null && p1TargetNode.equals(p2TargetNode)) {
-//                // Backward edges below
-//                if (p1.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)
-//                        && !p2.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)) {
-//                    updateBiggerAndSmallerAssociations(p1, p2);
-//                    return 1;
-//                } else if (!p1.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)
-//                        && p2.getOutgoingEdges().get(0).getProperty(InternalProperties.REVERSED)) {
-//                    updateBiggerAndSmallerAssociations(p2, p1);
-//                    return -1;
-//                }
                 // If both edges are reversed or not reversed, just use their model order.
                 if (p1Order > p2Order) {
                     updateBiggerAndSmallerAssociations(p1, p2);
