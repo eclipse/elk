@@ -117,7 +117,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             for (LPort p : n1.getPorts()) {
                 // Get the first port that actually connects to a previous layer.
                 if (!p.getIncomingEdges().isEmpty()) {
-                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer() != n1.getLayer()) {
+                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer().id == (n1.getLayer().id - 1)) {
                         p1SourcePort = p.getIncomingEdges().get(0).getSource();
                     }
                 }
@@ -127,7 +127,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             for (LPort p : n2.getPorts()) {
                 // Get the first port that actually connects to a previous layer.
                 if (!p.getIncomingEdges().isEmpty()) {
-                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer() != n2.getLayer()) {
+                    if (p.getIncomingEdges().get(0).getSource().getNode().getLayer().id == (n2.getLayer().id - 1)) {
                         p2SourcePort = p.getIncomingEdges().get(0).getSource();
                     }
                 }
@@ -318,7 +318,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 LNode dummyNodeTargetNode = dummyNodeTargetPort.getNode();
                 if (dummyNodeTargetNode.equals(n1)) {
                     updateBiggerAndSmallerAssociations(n2, n1);
-                    return 1;
+                    return -1;
                 }
                 
                 // If the two nodes are not the same, order them based on the source model order.
