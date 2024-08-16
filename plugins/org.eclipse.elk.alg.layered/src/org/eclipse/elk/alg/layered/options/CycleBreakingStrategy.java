@@ -62,11 +62,6 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
     GREEDY_MODEL_ORDER,
     
     /**
-     * Uses Group Model Order too look for a node of the same type, further down the graph.
-     */
-    MODEL_ORDER_LOOK_AHEAD,
-    
-    /**
      *  Uses the Strongly Connected Component approach and selects the minima/maxima based on in-/outdegree.
      */
     SCC_CONNECTIVITY,
@@ -109,9 +104,6 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
             
         case GREEDY_MODEL_ORDER:
             return new GreedyModelOrderCycleBreaker();
-            
-        case MODEL_ORDER_LOOK_AHEAD:
-            return new ModelOrderLookAHeadCycleBreaker(); 
             
         case SCC_CONNECTIVITY:
             return new SCCConectivity();

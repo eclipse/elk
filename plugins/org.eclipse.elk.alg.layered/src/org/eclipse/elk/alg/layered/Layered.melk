@@ -205,8 +205,6 @@ algorithm layered(LayeredLayoutProvider) {
     supports considerModelOrder.portModelOrder
     supports considerModelOrder.groupID
     supports generatePositionAndLayerIds
-    supports expanded
-    supports name
 }
 
 /* ------------------------
@@ -1146,20 +1144,4 @@ advanced option generatePositionAndLayerIds: boolean {
     default = false
     targets parents
         
-}
-
-advanced option expanded: boolean {
-  label "Node expansion state"
-  description
-    "If the node is expanded this property is true"
-  default = false
-  targets nodes
-}
-
-advanced option name: String{
-  label "Name of the File"
-  description
-    "If the node is expanded this property is true"
-  default = "result"
-  targets nodes
 }
