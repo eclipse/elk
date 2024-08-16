@@ -56,6 +56,7 @@ algorithm libavoid(LibavoidLayoutProvider) {
     supports org.eclipse.elk.alg.libavoid.nudgeSharedPathsWithCommonEndPoint
     supports org.eclipse.elk.alg.libavoid.enableHyperedgesFromCommonSource
     supports org.eclipse.elk.alg.libavoid.isCluster
+    supports org.eclipse.elk.alg.libavoid.processTimeout
 }      
 
 // --- Layout Options
@@ -247,4 +248,13 @@ advanced option isCluster: boolean {
     	Edges into or out of the cluster must be added across the cluster's borders, without the use of hierarchical ports."
     default = false
     targets nodes
+}
+
+advanced option processTimeout: int {
+    label "Default process timeout."
+    description 
+        "Default timeout for waiting for the libavoid server to give some output. This option is read from
+        the root of the graph."
+    default = 10000
+    targets parents
 }

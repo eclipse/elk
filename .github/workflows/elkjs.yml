@@ -19,35 +19,36 @@ jobs:
 
     steps:
     # Checkout the repository of both elk and elkjs, place them next to each other. 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         path: elk
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         repository: kieler/elkjs
         path: elkjs
     # Prepare and use caches for both gradle and npm.
     - name: Cache gradle packages
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
     - name: Cache npm 
-      uses: actions/cache@v1
+      uses: actions/cache@v4
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
         restore-keys: ${{ runner.os }}-node-
     # elkjs (or rather GWT) requires Java 1.8
     - name: Set up JDK ${{ matrix.java-version }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v4
       with:
+        distribution: 'zulu'
         java-version: ${{ matrix.java-version }}
     - name: Grant execute permission for gradlew
       run: chmod +x $GITHUB_WORKSPACE/elkjs/gradlew
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     # Finally build elkjs and run its tests

@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -177,23 +178,43 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             }
             
             // One node has no source port
-            if (!n1.hasProperty(InternalProperties.MODEL_ORDER) || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
-                int n1ModelOrder = getModelOrderFromConnectedEdges(n1);
-                int n2ModelOrder = getModelOrderFromConnectedEdges(n2);
-                if (n1ModelOrder > n2ModelOrder) {
-                    updateBiggerAndSmallerAssociations(n1, n2);
-                } else {
-                    updateBiggerAndSmallerAssociations(n2, n1);
+            if (p1SourcePort != null && p2SourcePort == null || p1SourcePort == null && p2SourcePort != null) {
+                // Check whether one of them is a helper dummy node.
+                int comparedWithLongEdgeFeedback = handleHelperDummyNodes(n1, n2);
+                if (comparedWithLongEdgeFeedback != 0) {
+                    return comparedWithLongEdgeFeedback;
                 }
-                return Integer.compare(
-                        n1ModelOrder,
-                        n2ModelOrder);
+                
+                // Otherwise use the model order of the connected edges if one of them is no dummy node.
+                if (!n1.hasProperty(InternalProperties.MODEL_ORDER) || !n2.hasProperty(InternalProperties.MODEL_ORDER)) {
+                    int n1ModelOrder = getModelOrderFromConnectedEdges(n1);
+                    int n2ModelOrder = getModelOrderFromConnectedEdges(n2);
+                    if (n1ModelOrder > n2ModelOrder) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                    } else {
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                    }
+                    return Integer.compare(
+                            n1ModelOrder,
+                            n2ModelOrder);
+                }
             }
+
+            // Both nodes are not connected to the previous layer
+            if (p1SourcePort == null && p2SourcePort == null) {
+                // Check whether one of them is a helper dummy node.
+                int comparedWithLongEdgeFeedback = handleHelperDummyNodes(n1, n2);
+                if (comparedWithLongEdgeFeedback != 0) {
+                    return comparedWithLongEdgeFeedback;
+                }
+            }
+            
             // Fall through case.
             // Both nodes are not connected to the previous layer. Therefore, they must be normal nodes.
             // The model order shall be used to order them.
         }
         // Order nodes by their order in the model.
+        // This is also the fallback case if one of the nodes is not connected to the previous layer.
         int n1ModelOrder = n1.getProperty(InternalProperties.MODEL_ORDER);
         int n2ModelOrder = n2.getProperty(InternalProperties.MODEL_ORDER);
         if (n1ModelOrder > n2ModelOrder) {
@@ -248,5 +269,105 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             biggerThan.get(veryBig).add(smaller);
             biggerThan.get(veryBig).addAll(smallerNodeBiggerThan);
         }
+    }
+    
+    private int handleHelperDummyNodes(LNode n1, LNode n2) {
+        if (n1.getType() == NodeType.LONG_EDGE && n2.getType() == NodeType.NORMAL) {
+            // n1 is a long edge node feedback node.
+            
+            LPort dummyNodeSourcePort = getFirstIncomingSourcePortOfNode(n1);
+            LNode dummyNodeSourceNode = dummyNodeSourcePort.getNode();
+            // Case the source of the dummy is the same node as n2, than the dummy node is routed below.
+            if (dummyNodeSourceNode.equals(n2)) {
+                updateBiggerAndSmallerAssociations(n1, n2);
+                return 1;
+            } else {
+                // Calculate whether the dummy node leads to the target node.
+                LPort dummyNodeTargetPort = getFirstOutgoingSourcePortOfNode(n1);
+                LNode dummyNodeTargetNode = dummyNodeTargetPort.getNode();
+                if (dummyNodeTargetNode.equals(n2)) {
+                    updateBiggerAndSmallerAssociations(n1, n2);
+                    return 1;
+                }
+                
+                // If the two nodes are not the same, order them based on the source model order.
+                return this.compare(dummyNodeSourceNode, n2);
+            }
+        } else if (n1.getType() == NodeType.NORMAL && n2.getType() == NodeType.LONG_EDGE) {
+            // n2 is a long edge node feedback node.
+            LPort dummyNodeSourcePort = getFirstIncomingSourcePortOfNode(n2);
+            LNode dummyNodeSourceNode = dummyNodeSourcePort.getNode();
+            // Case the source of the dummy is the same node as n2, than the dummy node is routed below.
+            if (dummyNodeSourceNode.equals(n1)) {
+                updateBiggerAndSmallerAssociations(n2, n1);
+                return -1;
+            } else {
+                // Calculate whether the dummy node leads to the target node.
+                LPort dummyNodeTargetPort = getFirstOutgoingSourcePortOfNode(n2);
+                LNode dummyNodeTargetNode = dummyNodeTargetPort.getNode();
+                if (dummyNodeTargetNode.equals(n1)) {
+                    updateBiggerAndSmallerAssociations(n2, n1);
+                    return 1;
+                }
+                
+                // If the two nodes are not the same, order them based on the source model order.
+                return this.compare(n1, dummyNodeSourceNode);
+            }
+        } else if (n1.getType() == NodeType.LONG_EDGE && n2.getType() == NodeType.LONG_EDGE) {
+            // both are long edge feedback nodes.
+            LPort n1dummyNodeSourcePort = getFirstIncomingSourcePortOfNode(n1);
+            LPort n2dummyNodeSourcePort = getFirstIncomingSourcePortOfNode(n2);
+            // Case both are on the same node, sort them in reverse order of their ports.
+            if (n1dummyNodeSourcePort.getNode().equals(n2dummyNodeSourcePort.getNode())) {
+                // Find the first port that occurs on the node. Since it has to be a WEST port (check this) reverse
+                // the order.
+                for (LPort port : n1dummyNodeSourcePort.getNode().getPorts()) {
+                    if (n1dummyNodeSourcePort.equals(port)) {
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                        return -1;
+                    } else if (n2dummyNodeSourcePort.equals(port)) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                        return 1;
+                    }
+                }
+            }
+            
+            // Case both edges connect to separate nodes.
+            // In this case comapare the order of their nodes in their layer.
+            LNode n1dummyNodeSourceNode = n1dummyNodeSourcePort.getNode();
+            LNode n2dummyNodeSourceNode = n2dummyNodeSourcePort.getNode();
+            Layer dummySourceLayer = n1dummyNodeSourceNode.getLayer();
+            // Find the first node that occurs in the layer and order the nodes in reverse.
+            for (LNode node : dummySourceLayer) {
+                if (n1dummyNodeSourceNode.equals(node)) {
+                    updateBiggerAndSmallerAssociations(n2, n1);
+                    return -1;
+                } else if (n2dummyNodeSourceNode.equals(node)) {
+                    updateBiggerAndSmallerAssociations(n1, n2);
+                    return 1;
+                }
+            }
+            // This cannot occur.
+            return 0;
+        } else {
+            // These nodes are just two normal nodes
+            return 0;
+        }
+    }
+    
+    private LPort getFirstIncomingPortOfNode(LNode node) {
+        return node.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty()).findFirst().orElse(null);
+    }
+    
+    private LPort getFirstIncomingSourcePortOfNode(LNode node) {
+        return getFirstIncomingPortOfNode(node).getIncomingEdges().get(0).getSource();
+    }
+    
+    private LPort getFirstOutgoingPortOfNode(LNode node) {
+        return node.getPorts().stream().filter(p -> !p.getOutgoingEdges().isEmpty()).findFirst().orElse(null);
+    }
+    
+    private LPort getFirstOutgoingSourcePortOfNode(LNode node) {
+        return getFirstOutgoingPortOfNode(node).getOutgoingEdges().get(0).getTarget();
     }
 }
