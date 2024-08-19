@@ -89,6 +89,17 @@ public class ConcreteSortByInputModelTest {
         assertTrue("p1 above p2", p1.getY() < p2.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+        
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
     }
 
     @Test
@@ -142,6 +153,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+        
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
     }
 
     @Test
@@ -189,6 +210,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+        
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -249,6 +280,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+        
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
     }
 
     @Test
@@ -296,6 +337,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+        
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -356,6 +407,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
     }
 
     @Test
@@ -405,6 +466,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -467,6 +538,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
     }
 
     @Test
@@ -514,6 +595,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -578,6 +669,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
     }
 
     @Test
@@ -625,6 +726,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -690,6 +801,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
     }
 
     @Test
@@ -739,6 +860,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -802,6 +933,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
     }
 
     @Test
@@ -853,6 +994,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -917,6 +1068,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
     }
 
     @Test
@@ -964,6 +1125,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -1027,6 +1198,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
     }
 
     @Test
@@ -1078,6 +1259,16 @@ public class ConcreteSortByInputModelTest {
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
         layoutProvider.layout(parent, new NullElkProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
         // Assert the ordering of p3 and p4. 
@@ -1141,6 +1332,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
     }
 
     @Test
@@ -1188,6 +1389,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -1251,6 +1462,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
     }
 
     @Test
@@ -1300,6 +1521,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
@@ -1364,6 +1595,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
     }
 
     @Test
@@ -1412,6 +1653,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -1473,6 +1724,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
     }
 
     @Test
@@ -1523,6 +1784,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -1586,6 +1857,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
     }
 
     @Test
@@ -1634,6 +1915,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -1696,6 +1987,16 @@ public class ConcreteSortByInputModelTest {
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 before p3", p4.getX() < p3.getX());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
     }
 
     @Test
@@ -1744,6 +2045,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of p1 and p2.
+        assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
@@ -1802,6 +2113,16 @@ public class ConcreteSortByInputModelTest {
         ElkGraphUtil.createSimpleEdge(p2, p3);
         
         LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+        
+        // Check for port model order, which should result in the same graph.
+
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, true);
+
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of n1 and ni.
         assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
