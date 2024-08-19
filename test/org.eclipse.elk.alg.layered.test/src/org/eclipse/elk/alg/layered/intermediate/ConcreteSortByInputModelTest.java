@@ -92,6 +92,59 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingEastIncomingWestMultipleNodes() {
+        // n1:p1--->p4
+        //            n2
+        //       |--p3
+        // ni:p2<-
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+    }
+
+    @Test
     public void testOutgoingEastIncomingNorth() {
         //   p1---------
         // n1           |
@@ -144,6 +197,61 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingEastIncomingNorthMultipleNodes() {
+        //n1:p1---------
+        //              |
+        //ni:p2<----    |
+        //         |    v
+        //         p3  p4
+        //           n2
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+    }
+
+    @Test
     public void testOutgoingEastIncomingSouth() {
         //           n2
         //         p4  p3
@@ -191,6 +299,61 @@ public class ConcreteSortByInputModelTest {
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 above p2", p1.getY() < p2.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+    }
+
+    @Test
+    public void testOutgoingEastIncomingSouthMultipleNodes() {
+        //           n2
+        //         p4  p3
+        //         A    |
+        //n1:p1-----    |
+        //              |
+        //ni:p2<--------
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 before p3", p4.getX() < p3.getX());
     }
@@ -250,6 +413,63 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingEastIncomingEastMultipleNodes() {
+        //        p3<----
+        //      n2      |
+        //        p4<-  |
+        //           |  |
+        //           |  |
+        //n1:p1------   |
+        //              |
+        //ni:p2<--------
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+    }
+
+    @Test
     public void testOutgoingNorthIncomingWest() {
         //  ------>p4
         // |         n2
@@ -302,6 +522,65 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingNorthIncomingWestMultipleNodes() {
+        //  |--|
+        //  |  |
+        // p1  |
+        // n1  |
+        //     |--->p4
+        //            n2
+        //  |-------p3
+        //  v
+        // p2
+        // ni
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+    }
+
+    @Test
     public void testOutgoingNorthIncomingNorth() {
         //  ----------
         // |          |
@@ -349,6 +628,66 @@ public class ConcreteSortByInputModelTest {
         layoutProvider.layout(parent, new BasicProgressMonitor());
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+    }
+
+    @Test
+    public void testOutgoingNorthIncomingNorthMultipleNodes() {
+        //  |--|
+        //  |  |
+        // p1  |
+        // n1  |
+        //     |-------
+        //            |
+        //  |------|  |
+        //  |     p3  p4
+        //  v       n2
+        // p2
+        // ni
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 before p4", p3.getX() < p4.getX());
     }
@@ -408,6 +747,64 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingNorthIncomingSouthMultipleNodes() {
+        //          n2
+        //        p4  p3
+        //  |------|  |
+        // p1         |
+        // n1         |
+        //  |---------|
+        //  v
+        // p2
+        // ni
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+    }
+
+    @Test
     public void testOutgoingNorthIncomingEast() {
         //    p3----
         //  n2      |
@@ -460,7 +857,66 @@ public class ConcreteSortByInputModelTest {
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
         // Assert the ordering of p3 and p4. 
-        assertTrue("p3 above p3", p3.getY() < p4.getY());
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
+    }
+
+    @Test
+    public void testOutgoingNorthIncomingEastMultipleNodes() {
+        //      p3----|
+        //    n1      |
+        //      p4<|  |
+        //  |------|  |
+        // p1         |
+        // n1         |
+        //  |---------|
+        //  v
+        // p2
+        // ni
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
     }
 
     @Test
@@ -513,6 +969,64 @@ public class ConcreteSortByInputModelTest {
         assertTrue("p1 before p2", p1.getX() < p2.getX());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 above p4", p3.getY() < p4.getY());
+    }
+
+    @Test
+    public void testOutgoingSouthIncomingWestMultipleNodes() {
+        // n1
+        // p1
+        // |----->p4
+        // ni       n2
+        // p2  |--p3
+        // A---|
+        //
+        //
+        //
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
     }
 
     @Test
@@ -571,6 +1085,65 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingSouthIncomingNorthMultipleNodes() {
+        // n1
+        // p1
+        // |-----------
+        //             |
+        // ni          |
+        // p2          |
+        // A--------|  |
+        //         p3  p4
+        //           n2
+        //
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new NullElkProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+    }
+
+    @Test
     public void testOutgoingSouthIncomingSouth() {
         //  n1     n2
         //p1  p2 p3  p4
@@ -620,6 +1193,64 @@ public class ConcreteSortByInputModelTest {
         assertTrue("p1 before p2", p1.getX() < p2.getX());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 before p4", p3.getX() < p4.getX());
+    }
+
+    @Test
+    public void testOutgoingSouthIncomingSouthMultipleNodes() {
+        //n1       n2
+        //p1     p4  p3
+        // |      |  A
+        // |------|  |
+        //           |
+        //ni         |
+        //p2         |
+        //A          |
+        //-----------|
+        
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
     }
 
     @Test
@@ -673,7 +1304,66 @@ public class ConcreteSortByInputModelTest {
         // Assert the ordering of p1 and p2.
         assertTrue("p1 before p2", p1.getX() < p2.getX());
         // Assert the ordering of p3 and p4. 
-        assertTrue("p4 abive p3", p4.getY() < p3.getY());
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
+    }
+
+    @Test
+    public void testOutgoingSouthIncomingEastMultipleNodes() {
+        //       p3--|
+        //n1   n2    |
+        //p1     p4< |
+        // |       | |
+        // |-------- |
+        //           |
+        //ni         |
+        //p2         |
+        //A          |
+        //-----------|
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
     }
 
     @Test
@@ -727,6 +1417,62 @@ public class ConcreteSortByInputModelTest {
         assertTrue("p1 above p2", p1.getY() < p2.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p3 above p4", p3.getY() < p4.getY());
+    }
+
+    @Test
+    public void testOutgoingWestIncomingWestMultipleNodes() {
+        // |-p1:n1
+        // |       
+        // |-------->p4
+        //             n2
+        // |>p2:ni |-p3
+        // |       |
+        // |-------|
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 above p3", p4.getY() < p3.getY());
     }
 
     @Test
@@ -785,6 +1531,64 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingWestIncomingNorthMultipleNodes() {
+        // |-p1:n1
+        // |       
+        // |-----------|
+        //             |
+        // |>p2:ni     |
+        // |           |
+        // |--------|  v
+        //         p3  p4
+        //           n2
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.NORTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 before p4", p3.getX() < p4.getX());
+    }
+
+    @Test
     public void testOutgoingWestIncomingSouth() {
         // |-----p1
         // |       n1
@@ -838,6 +1642,63 @@ public class ConcreteSortByInputModelTest {
     }
 
     @Test
+    public void testOutgoingWestIncomingSouthMultipleNodes() {
+        // |-----p1:n1    n2
+        // |            p4  p3
+        // |            A   |
+        // |------------|   |
+        //                  |
+        // |-----p2:ni      |
+        // |                |
+        // |----------------|
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.SOUTH);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p4 before p3", p4.getX() < p3.getX());
+    }
+
+    @Test
     public void testOutgoingWestIncomingEast() {
         // |-----p1     p4<----|
         // |       n1 n2       |
@@ -888,5 +1749,63 @@ public class ConcreteSortByInputModelTest {
         assertTrue("p1 above p2", p1.getY() < p2.getY());
         // Assert the ordering of p3 and p4. 
         assertTrue("p4 above p3", p4.getY() < p3.getY());
+    }
+
+    @Test
+    public void testOutgoingWestIncomingEastMultipleNodes() {
+        //                 p3-----|
+        //               n2       |
+        //    |--p1:n1     p4<-|  |
+        //    |                |  |
+        //    |----------------|  |
+        //                        |
+        //    |->p2:ni            |
+        //    |                   |
+        //    |-------------------|
+
+        ElkNode parent = ElkGraphUtil.createGraph();
+        ElkNode n1 = ElkGraphUtil.createNode(parent);
+        ElkNode ni = ElkGraphUtil.createNode(parent);
+        ElkNode n2 = ElkGraphUtil.createNode(parent);
+        n1.setDimensions(20, 20);
+        ni.setDimensions(20, 20);
+        n2.setDimensions(20, 20);
+
+        parent.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+        // Model order configuration.
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY, OrderingStrategy.PREFER_EDGES);
+        parent.setProperty(LayeredOptions.CONSIDER_MODEL_ORDER_PORT_MODEL_ORDER, false);
+        // No crossing minimization, hence only model order is used.
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, CrossingMinimizationStrategy.NONE);
+        parent.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+        // For presentation.
+        parent.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+        parent.setProperty(CoreOptions.PADDING, new ElkPadding(0.0));
+        parent.setProperty(CoreOptions.SPACING_NODE_NODE, 10.0);
+        parent.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 20.0);
+        n1.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        ni.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        n2.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        // Make sure that the order is correct.
+        parent.setProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY, CycleBreakingStrategy.MODEL_ORDER);
+        
+        ElkPort p1 = ElkGraphUtil.createPort(n1);
+        p1.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p2 = ElkGraphUtil.createPort(ni);
+        p2.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
+        ElkPort p3 = ElkGraphUtil.createPort(n2);
+        p3.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+        ElkPort p4 = ElkGraphUtil.createPort(n2);
+        p4.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
+
+        ElkGraphUtil.createSimpleEdge(p1, p4);
+        ElkGraphUtil.createSimpleEdge(p2, p3);
+        
+        LayeredLayoutProvider layoutProvider = new LayeredLayoutProvider();
+        layoutProvider.layout(parent, new BasicProgressMonitor());
+        // Assert the ordering of n1 and ni.
+        assertTrue("Node order of n1 and ni", n1.getY() < ni.getY());
+        // Assert the ordering of p3 and p4. 
+        assertTrue("p3 above p4", p3.getY() < p4.getY());
     }
 }
