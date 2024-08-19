@@ -30,6 +30,8 @@ import org.eclipse.elk.core.options.PortSide;
  * This takes into account that ports that connect to the same (long edge) target should be ordered next to each other.
  * Outgoing ports are ordered before incoming ports.
  * Incoming ports choose a position that does not create conflicts with the previous layer.
+ * FIXME optimize this by setting ids on all already handled nodes in the previous and current layer (e.g. after the 
+ * node order was set) to avoid searching for the correct order and using the ids instead to compare.
  */
 public class ModelOrderPortComparator implements Comparator<LPort> {
 
