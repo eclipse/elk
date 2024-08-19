@@ -9,14 +9,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p1cycles;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
 
 import com.google.common.collect.Iterables;
 
@@ -37,12 +31,14 @@ public class SCCConectivity extends SCCModelOrderCycleBreaker {
           }
           LNode min = null;
           LNode max = null;
-          int maxGroupModelOrder = 13;
+          int maxGroupModelOrder = 30; // This makes calculating the ordering values easier. FIXME
           int modelOrderMin = Integer.MAX_VALUE;
           int modelOrderMax = Integer.MIN_VALUE;
           int groupModelOrderMin = Integer.MAX_VALUE;
           int groupModelOrderMax = Integer.MIN_VALUE;
+          // Iterate over all stringly connected components to find the maximum/minimum node to reverse edges.
           for (LNode n : stronglyConnectedComponents.get(i)) {
+              // First calculate initial values FIXME why???
               if (min == null || max == null) {
                   min = n;
                   modelOrderMin = computeConstraintModelOrder(n,offset);
@@ -52,6 +48,8 @@ public class SCCConectivity extends SCCModelOrderCycleBreaker {
                   groupModelOrderMax = groupModelOrderMin;
                   continue;
               }
+              // For all not first nodes find the group model order and model order with constraints and update the
+              // minimum and maximum node.
               int modelOrderCurrent = computeConstraintModelOrder(n, offset);
               int groupModelOrderCurrent = computeConstraintGroupModelOrder(n, maxGroupModelOrder);
               if (groupModelOrderMin < groupModelOrderCurrent) {
@@ -74,7 +72,11 @@ public class SCCConectivity extends SCCModelOrderCycleBreaker {
                   modelOrderMax = modelOrderCurrent;
               }
           }
+          // If a minimum and maximum node are found, there must a node for which we reverse the edges.
           if (min != null && max != null) {
+              // If the minimum node has more incoming edges than the maximum node has outgoing edges,
+              // reverse all edges to the minimum node and remove it from the strongly connected component.
+              // If it is the other wayaround, reverse all outgoing edges of the maximum node.
               if (Iterables.size(min.getIncomingEdges()) > 
                       Iterables.size(max.getOutgoingEdges())) {
                   for (LEdge edge : min.getIncomingEdges()) {
