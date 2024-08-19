@@ -62,6 +62,11 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             layer.id = layerIndex;
             final int previousLayerIndex = layerIndex == 0 ? 0 : layerIndex - 1;
             Layer previousLayer = graph.getLayers().get(previousLayerIndex);
+            // Sort nodes before port sorting to have sorted nodes for in-layer feedback edge dummies.
+            ModelOrderNodeComparator comparator = new ModelOrderNodeComparator(previousLayer,
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY));
+            SortByInputModelProcessor.insertionSort(layer.getNodes(), comparator);
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_ORDER
                         && node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_POS) {
@@ -79,7 +84,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                 }
             }
             // Sort nodes.
-            ModelOrderNodeComparator comparator = new ModelOrderNodeComparator(previousLayer,
+            comparator = new ModelOrderNodeComparator(previousLayer,
                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY));
             SortByInputModelProcessor.insertionSort(layer.getNodes(), comparator);
