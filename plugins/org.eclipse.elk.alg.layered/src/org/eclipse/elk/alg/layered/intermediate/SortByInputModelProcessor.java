@@ -75,7 +75,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     // Therefore all ports that connect to the same node should have the same
                     // (their minimal) model order.
                     // Get minimal model order for target node
-                    insertionSortPorts(node.getPorts(),
+                    Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer,
                                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
                                     longEdgeTargetNodePreprocessing(node),
@@ -160,21 +160,6 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                 j--;
             }
             layer.set(j, temp);
-        }
-        comparator.clearTransitiveOrdering();
-    }
-    
-    public static void insertionSortPorts(final List<LPort> ports,
-            final ModelOrderPortComparator comparator) {
-        LPort temp;
-        for (int i = 1; i < ports.size(); i++) {
-            temp = ports.get(i);
-            int j = i;
-            while (j > 0 && comparator.compare(ports.get(j - 1), temp) > 0) {
-                ports.set(j, ports.get(j - 1));
-                j--;
-            }
-            ports.set(j, temp);
         }
         comparator.clearTransitiveOrdering();
     }
