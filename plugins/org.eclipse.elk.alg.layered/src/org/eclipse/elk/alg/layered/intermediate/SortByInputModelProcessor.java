@@ -10,7 +10,6 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             ModelOrderNodeComparator comparator = new ModelOrderNodeComparator(previousLayer,
                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY));
-            SortByInputModelProcessor.insertionSort(layer.getNodes(), comparator);
+            Collections.sort(layer.getNodes(), comparator);
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_ORDER
                         && node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_POS) {
@@ -83,11 +82,6 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     progressMonitor.log("Node " + node + " ports: " + node.getPorts());
                 }
             }
-            // Sort nodes.
-            comparator = new ModelOrderNodeComparator(previousLayer,
-                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
-                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY));
-            SortByInputModelProcessor.insertionSort(layer.getNodes(), comparator);
                     
             progressMonitor.log("Layer " + layerIndex + ": " + layer);
             layerIndex++;
@@ -152,6 +146,21 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
     public static void insertionSort(final List<LNode> layer,
             final ModelOrderNodeComparator comparator) {
         LNode temp;
+        for (int i = 1; i < layer.size(); i++) {
+            temp = layer.get(i);
+            int j = i;
+            while (j > 0 && comparator.compare(layer.get(j - 1), temp) > 0) {
+                layer.set(j, layer.get(j - 1));
+                j--;
+            }
+            layer.set(j, temp);
+        }
+        comparator.clearTransitiveOrdering();
+    }
+    
+    public static void insertionSortPort(final List<LPort> layer,
+            final ModelOrderPortComparator comparator) {
+        LPort temp;
         for (int i = 1; i < layer.size(); i++) {
             temp = layer.get(i);
             int j = i;
