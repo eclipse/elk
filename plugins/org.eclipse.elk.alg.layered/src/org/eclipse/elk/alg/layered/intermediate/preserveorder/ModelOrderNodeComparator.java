@@ -142,7 +142,8 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 // layer should be used to order them.
                 if (p1Node != null && p1Node.equals(p2Node)) {
                     // We are not allowed to look at the model order of the edges but we have to look at the actual
-                    // port ordering.
+                    // port ordering since the edge order might be broken here.
+                    // If we have long edges the edge model order might not respect the ordering.
                     for (LPort port : p1Node.getPorts()) {
                         if (port.equals(p1SourcePort)) {
                             // Case the port is the one connecting to n1, therefore, n1 has a smaller model order
@@ -156,13 +157,21 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                     }
                     assert (false);
                     // Cannot happen, since both nodes have a connection to the previous layer.
-                    return Integer.compare(
-                            getModelOrderFromConnectedEdges(n1),
-                            getModelOrderFromConnectedEdges(n2));
+                    // Nevertheless, if it does happen provide well defined behavior and use the model order of the edges.
+                    int n1EdgeOrder = getModelOrderFromConnectedEdges(n1);
+                    int n2EdgeOrder = getModelOrderFromConnectedEdges(n2);
+                    if (n1EdgeOrder > n2EdgeOrder) {
+                        updateBiggerAndSmallerAssociations(n1, n2);
+                        return 1;
+                    } else {
+                        // I assume that equal is not an alternative here.
+                        updateBiggerAndSmallerAssociations(n2, n1);
+                        return -1;
+                    }
                 }
                 
-                // Else the nodes are ordered by the nodes they connect to.
-                // One can disregard the model order here
+                // If the nodes do not connect to the same node, the nodes are ordered by the nodes they connect to.
+                // One can disregard the model order here 
                 // since the ordering in the previous layer does already reflect it.
                 for (LNode previousNode : previousLayer) {
                     if (previousNode.equals(p1Node)) {
@@ -173,6 +182,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                         return 1;
                     }
                 }
+                // Again, I assume that such a node must exist, and I should never get here.
             }
             
             // One node has no source port
@@ -194,12 +204,11 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                     int n2ModelOrder = getModelOrderFromConnectedEdges(n2);
                     if (n1ModelOrder > n2ModelOrder) {
                         updateBiggerAndSmallerAssociations(n1, n2);
+                        return -1;
                     } else {
                         updateBiggerAndSmallerAssociations(n2, n1);
+                        return 1;
                     }
-                    return Integer.compare(
-                            n1ModelOrder,
-                            n2ModelOrder);
                 }
             }
 
@@ -218,8 +227,8 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             }
             
             // Fall through case.
-            // Both nodes are not connected to the previous layer. Therefore, they must be normal nodes.
-            // The model order shall be used to order them.
+            // Both nodes are not connected to the previous layer and are normal nodes.
+            // The node model order shall be used to order them.
         }
         // Order nodes by their order in the model.
         // This is also the fallback case if one of the nodes is not connected to the previous layer.
@@ -234,7 +243,10 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
                 return -1;
             }
         } else {
-            return 0;
+            // If they have no model order, I should still make an ordering decision that I save somehow.
+            // This decision is somehow random I just sort the first one before the second one.
+            updateBiggerAndSmallerAssociations(n2, n1);
+            return -1;
         }
     }
     
@@ -344,7 +356,7 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             }
             
             // Case both edges connect to separate nodes.
-            // In this case comapare the order of their nodes in their layer.
+            // In this case compare the order of their nodes in their layer.
             LNode n1dummyNodeSourceNode = n1dummyNodeSourcePort.getNode();
             LNode n2dummyNodeSourceNode = n2dummyNodeSourcePort.getNode();
             Layer dummySourceLayer = n1dummyNodeSourceNode.getLayer();
@@ -361,23 +373,48 @@ public class ModelOrderNodeComparator implements Comparator<LNode> {
             // This cannot occur.
             return 0;
         } else {
-            // These nodes are just two normal nodes
+            // These nodes are just two normal nodes and need to be handled by node model order.
             return 0;
         }
     }
     
+    /**
+     * Helper method to get the first incoming port of a node.
+     * 
+     * @param node The node
+     * @return The first incoming port.
+     */
     private LPort getFirstIncomingPortOfNode(LNode node) {
         return node.getPorts().stream().filter(p -> !p.getIncomingEdges().isEmpty()).findFirst().orElse(null);
     }
+
     
+    /**
+     * Helper method to get the source port of the first incoming port of a node.
+     * 
+     * @param node The node
+     * @return The source port of the first incoming port.
+     */
     private LPort getFirstIncomingSourcePortOfNode(LNode node) {
         return getFirstIncomingPortOfNode(node).getIncomingEdges().get(0).getSource();
     }
-    
+
+    /**
+     * Helper method to get the first outgoing port of a node.
+     * 
+     * @param node The node
+     * @return The first outgoing port.
+     */
     private LPort getFirstOutgoingPortOfNode(LNode node) {
         return node.getPorts().stream().filter(p -> !p.getOutgoingEdges().isEmpty()).findFirst().orElse(null);
     }
-    
+
+    /**
+     * Helper method to get the target port of the first outgoing port of a node.
+     * 
+     * @param node The node
+     * @return The target port of the first outgoing port.
+     */
     private LPort getFirstOutgoingSourcePortOfNode(LNode node) {
         return getFirstOutgoingPortOfNode(node).getOutgoingEdges().get(0).getTarget();
     }
