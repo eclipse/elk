@@ -117,12 +117,13 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         if (p1.getSide() != p2.getSide()) {
             int result =  new PortSideComparator().compare(p1.getSide(), p2.getSide());
             if (result > 0) {
-                updateBiggerAndSmallerAssociations(p1, p2);
+                updateBiggerAndSmallerAssociations(p1, p2, 1);
             } else {
-                updateBiggerAndSmallerAssociations(p2, p1);
+                updateBiggerAndSmallerAssociations(p2, p1, 1);
             }
             return result;
         }
+        int reverseOrder = 1;
         
         // Sort incoming edges by sorting their ports by the order of the nodes they connect to.
         if (!p1.getIncomingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
@@ -131,9 +132,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                     || p1.getSide() == PortSide.SOUTH && p2.getSide() == PortSide.SOUTH) {
                 // Some ports are ordered in the way around.
                 // Previously this did not matter, since the north south processor did override the ordering.
-                LPort temp = p1;
-                p1 = p2;
-                p2 = temp;
+                reverseOrder = -reverseOrder;
             }
 
             LPort p1SourcePort = p1.getIncomingEdges().get(0).getSource();
@@ -145,11 +144,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                 // first and should hence be sorted.
                 for (LPort port : p1Node.getPorts()) {
                     if (p1SourcePort.equals(port)) {
-                        updateBiggerAndSmallerAssociations(p2, p1);
-                        return -1;
+                        updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                        return -reverseOrder;
                     } else if (p2SourcePort.equals(port)) {
-                        updateBiggerAndSmallerAssociations(p1, p2);
-                        return 1;
+                        updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                        return reverseOrder;
                     }
                 }
             }
@@ -171,14 +170,15 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                     if (p1.getSide() == PortSide.EAST && p2.getSide() == PortSide.EAST) {
                         // Some ports are ordered in the way around.
                         // Previously this did not matter, since the north south processor did override the ordering.
-                        inPreviousLayer = -inPreviousLayer;
+                        reverseOrder = -reverseOrder;
                     }
                     if (inPreviousLayer > 0) {
-                        updateBiggerAndSmallerAssociations(p1, p2);
+                        updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                        return reverseOrder;
                     } else {
-                        updateBiggerAndSmallerAssociations(p2, p1);
+                        updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                        return -reverseOrder;
                     }
-                    return inPreviousLayer;
                 }
             }
             
@@ -187,11 +187,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             int inPreviousLayer =  checkReferenceLayer(Arrays.stream(previousLayer).collect(Collectors.toList()), p1Node, p2Node, p1, p2);
             if (inPreviousLayer != 0) {
                 if (inPreviousLayer > 0) {
-                    updateBiggerAndSmallerAssociations(p1, p2);
-                    return 1;
+                    updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                    return reverseOrder;
                 } else {
-                    updateBiggerAndSmallerAssociations(p2, p1);
-                    return -1;
+                    updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                    return -reverseOrder;
                 }
             }
             // If both ports do not connect to the previous layer, use the port model order.
@@ -201,11 +201,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                 int result =  checkPortModelOrder(p1, p2);
                 if (result != 0) {
                     if (result > 0) {
-                        updateBiggerAndSmallerAssociations(p1, p2);
-                        return 1;
+                        updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                        return reverseOrder;
                     } else {
-                        updateBiggerAndSmallerAssociations(p2, p1);
-                        return -1;
+                        updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                        return -reverseOrder;
                     }
                 }
             }
@@ -231,11 +231,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                 int p1MO = p1TargetNode.getProperty(InternalProperties.MODEL_ORDER);
                 int p2MO = p2TargetNode.getProperty(InternalProperties.MODEL_ORDER);
                 if (p1MO > p2MO) {
-                    updateBiggerAndSmallerAssociations(p1, p2);
-                    return 1;
+                    updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                    return reverseOrder;
                 } else {
-                    updateBiggerAndSmallerAssociations(p2, p1);
-                    return -1;
+                    updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                    return -reverseOrder;
                 }
             }
 
@@ -245,11 +245,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                 int result =  checkPortModelOrder(p1, p2);
                 if (result != 0) {
                     if (result > 0) {
-                        updateBiggerAndSmallerAssociations(p1, p2);
-                        return 1;
+                        updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                        return reverseOrder;
                     } else {
-                        updateBiggerAndSmallerAssociations(p2, p1);
-                        return -1;
+                        updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                        return -reverseOrder;
                     }
                 }
                 // If one of the ports has no model order, find something else to compare them which is the edge order.
@@ -268,11 +268,11 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             if (p1TargetNode != null && p1TargetNode.equals(p2TargetNode)) {
                 // If both edges are reversed or not reversed, just use their model order.
                 if (p1Order > p2Order) {
-                    updateBiggerAndSmallerAssociations(p1, p2);
-                    return 1;
+                    updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                    return reverseOrder;
                 } else {
-                    updateBiggerAndSmallerAssociations(p2, p1);
-                    return -1;
+                    updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                    return -reverseOrder;
                 }
             }
             // Use precomputed ordering value if possible to utilize order inheritence of edges connected to a node.
@@ -287,20 +287,20 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             }
             // If the nodes have different targets just use their order.
             if (p1Order > p2Order) {
-                updateBiggerAndSmallerAssociations(p1, p2);
-                return 1;
+                updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                return reverseOrder;
             } else {
-                updateBiggerAndSmallerAssociations(p2, p1);
-                return -1;
+                updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                return -reverseOrder;
             }
             
         }
         // Sort outgoing ports before incoming ports.
         if (!p1.getIncomingEdges().isEmpty() && !p2.getOutgoingEdges().isEmpty()) {
-            updateBiggerAndSmallerAssociations(p1, p2);
+            updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
             return 1;
         } else if (!p1.getOutgoingEdges().isEmpty() && !p2.getIncomingEdges().isEmpty()) {
-            updateBiggerAndSmallerAssociations(p2, p1);
+            updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
             return -1;
         } else if (p1.hasProperty(InternalProperties.MODEL_ORDER) && p2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // The ports have no edges.
@@ -308,15 +308,15 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             int p1MO = p1.getProperty(InternalProperties.MODEL_ORDER);
             int p2MO = p2.getProperty(InternalProperties.MODEL_ORDER);
             if (p1MO > p2MO) {
-                updateBiggerAndSmallerAssociations(p1, p2);
-                return 1;
+                updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
+                return reverseOrder;
             } else {
-                updateBiggerAndSmallerAssociations(p2, p1);
-                return -1;
+                updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+                return -reverseOrder;
             }
         } else {
-            updateBiggerAndSmallerAssociations(p2, p1);
-            return -1;
+            updateBiggerAndSmallerAssociations(p2, p1, reverseOrder);
+            return -reverseOrder;
         }
     }
     
@@ -338,7 +338,13 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
         return 0;
     }
     
-    private void updateBiggerAndSmallerAssociations(final LPort bigger, final LPort smaller) {
+    private void updateBiggerAndSmallerAssociations(final LPort biggerOri, final LPort smallerOri, int reverseOrder) {
+        LPort bigger = biggerOri;
+        LPort smaller = smallerOri;
+        if (reverseOrder < 0) {
+            bigger = smallerOri;
+            smaller = biggerOri;
+        }
         HashSet<LPort> biggerPortBiggerThan = biggerThan.get(bigger);
         HashSet<LPort> smallerPortBiggerThan = biggerThan.get(smaller);
         HashSet<LPort> biggerPortSmallerThan = smallerThan.get(bigger);
