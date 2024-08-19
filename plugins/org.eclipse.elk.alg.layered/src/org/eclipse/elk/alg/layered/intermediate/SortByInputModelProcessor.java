@@ -82,6 +82,11 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     progressMonitor.log("Node " + node + " ports: " + node.getPorts());
                 }
             }
+            // Sort nodes after port sorting to also sort dummy feedback nodes from the current layer correctly.
+            comparator = new ModelOrderNodeComparator(previousLayer,
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY));
+            Collections.sort(layer.getNodes(), comparator);
                     
             progressMonitor.log("Layer " + layerIndex + ": " + layer);
             layerIndex++;
