@@ -1,3 +1,4 @@
+.project
 .DS_Store
 *.class
 bin/
@@ -19,3 +20,5 @@ docs/static/img_gen/
 docs/public
 org.eclipse.core.resources.prefs
 org.eclipse.m2e.core.prefs
+build/org.eclipse.elk.targetplatform/org.eclipse.elk.targetplatform.target
+
