@@ -553,10 +553,10 @@ final class JsonImporter {
         if (jsonObj === null) {
             throw formatError("Node did not exist in input.")
         }
-        // Compute global coords, to support coordinate adjustments.
+        // Compute global coordinates, to support coordinate adjustments.
         val parent = node.getParent
-        val dx = nodeGlobalXMap.get(parent) ?: 0
-        val dy = nodeGlobalYMap.get(parent) ?: 0
+        val dx = parent.globalX ?: 0
+        val dy = parent.globalY ?: 0
         nodeGlobalXMap.put(node, node.x + dx)
         nodeGlobalYMap.put(node, node.y + dy)
         
