@@ -302,6 +302,19 @@ advanced option omitNodeMicroLayout: boolean {
     targets parents
 }
 
+// --- JSON
+group json {
+    
+    option edgeCoords: EdgeCoords {
+        label "Edge Coords"
+        description
+            "Specify the coordinate system for edge route points."
+        default = EdgeCoords.INHERIT
+        targets parents
+    }
+    
+}
+
 // --- SPACING
 group spacing {
     

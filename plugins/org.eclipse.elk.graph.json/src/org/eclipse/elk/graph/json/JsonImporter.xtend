@@ -17,6 +17,7 @@ import com.google.common.collect.Multimap
 import java.util.Map
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.EdgeCoords
 import org.eclipse.elk.core.util.IndividualSpacings
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
@@ -572,6 +573,20 @@ final class JsonImporter {
         // transfer positions and dimension
         port.transferShapeLayout(jsonObj)
     }
+    
+    private def EdgeCoords getEdgeCoordsMode(ElkNode node) {
+        var ancestor = node
+        var ecm = ancestor.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
+        while (ecm === EdgeCoords.INHERIT) {
+            ancestor = ancestor.getParent
+            if (ancestor !== null) {
+                ecm = ancestor.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
+            } else {
+                ecm = EdgeCoords.CONTAINER
+            }
+        }
+        return ecm
+    }
 
     private def dispatch transferLayoutInt2(ElkEdge edge) {
         val jsonObj = edgeJsonMap.get(edge).toJsonObject
@@ -580,6 +595,10 @@ final class JsonImporter {
         }
         
         val edgeId = jsonObj.id
+        
+        val originalParent = edgeOriginalParentMap.get(edgeId)
+        val edgeCoordsMode = originalParent.getEdgeCoordsMode
+        jsonObj.addJsonObj("edgeCoords", edgeCoordsMode.ordinal)
                 
         // what we need to transfer are the edge sections
         if (!edge.sections.nullOrEmpty) {
