@@ -613,8 +613,6 @@ final class JsonImporter {
         val edgeId = jsonObj.id
         
         val ecm = edge.originalParent.getEdgeCoordsMode
-        
-        jsonObj.addJsonObj("edgeCoords", ecm.ordinal)
                 
         // what we need to transfer are the edge sections
         if (!edge.sections.nullOrEmpty) {
@@ -704,8 +702,6 @@ final class JsonImporter {
         }
 
         jsonObj.addJsonObj("container", edge.getContainingNode.identifier)
-        
-        jsonObj.addJsonObj("originalParent", edge.originalParent.identifier)
     }
     
     private def dispatch transferLayoutInt1(ElkLabel label) {
@@ -721,18 +717,6 @@ final class JsonImporter {
     
     private def dispatch transferLayoutInt2(Object obj) {
         // don't care about the rest
-    }
-
-    private def transferShapeLayout(ElkNode shape, Object jsonObjA) {
-        val jsonObj = jsonObjA.toJsonObject
-        // pos and dimension
-        jsonObj.addJsonObj("x", shape.x)
-        jsonObj.addJsonObj("y", shape.y)
-        jsonObj.addJsonObj("width", shape.width)
-        jsonObj.addJsonObj("height", shape.height)
-        
-        jsonObj.addJsonObj("x_g", nodeGlobalXMap.get(shape))
-        jsonObj.addJsonObj("y_g", nodeGlobalYMap.get(shape))
     }
 
     private def transferShapeLayout(ElkShape shape, Object jsonObjA) {
