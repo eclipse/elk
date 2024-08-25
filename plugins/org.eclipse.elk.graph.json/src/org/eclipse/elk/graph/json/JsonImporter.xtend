@@ -58,6 +58,11 @@ final class JsonImporter {
     val Map<ElkEdge, Object> edgeJsonMap = Maps.newHashMap
     val Map<ElkEdgeSection, Object> edgeSectionJsonMap = Maps.newHashMap
     val Map<ElkLabel, Object> labelJsonMap = Maps.newHashMap
+    
+    /* Maps to help in adjusting coordinates */
+    val Map<Object, ElkNode> edgeOriginalParentMap = Maps.newHashMap
+    val Map<ElkNode, Double> nodeGlobalXMap = Maps.newHashMap
+    val Map<ElkNode, Double> nodeGlobalYMap = Maps.newHashMap
 
     var Object inputModel
 
@@ -91,11 +96,16 @@ final class JsonImporter {
         portIdMap.clear 
         edgeIdMap.clear
         edgeSectionIdMap.clear
+        
         nodeJsonMap.clear
         portJsonMap.clear
         edgeJsonMap.clear
         edgeSectionJsonMap.clear
         labelJsonMap.clear
+        
+        edgeOriginalParentMap.clear
+        nodeGlobalXMap.clear
+        nodeGlobalYMap.clear
     }
 
     private def transformChildNodes(Object jsonNodeA, ElkNode parent) {
@@ -528,20 +538,30 @@ final class JsonImporter {
     def transferLayout(ElkNode graph) {
         // transfer layout of all elements (including root)
         ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
-            element.transferLayoutInt
+            element.transferLayoutInt1
+        ]
+        ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
+            element.transferLayoutInt2
         ]
     }
 
-    private def dispatch transferLayoutInt(ElkNode node) {
+    private def dispatch transferLayoutInt1(ElkNode node) {
         val jsonObj = nodeJsonMap.get(node)
         if (jsonObj === null) {
             throw formatError("Node did not exist in input.")
         }
+        // Compute global coords, to support coordinate adjustments.
+        val parent = node.getParent
+        val dx = nodeGlobalXMap.get(parent) ?: 0
+        val dy = nodeGlobalYMap.get(parent) ?: 0
+        nodeGlobalXMap.put(node, node.x + dx)
+        nodeGlobalYMap.put(node, node.y + dy)
+        
         // transfer positions and dimension
         node.transferShapeLayout(jsonObj)
     }
 
-    private def dispatch transferLayoutInt(ElkPort port) {
+    private def dispatch transferLayoutInt1(ElkPort port) {
         val jsonObj = portJsonMap.get(port)
         if (jsonObj === null) {
             throw formatError("Port did not exist in input.")
@@ -551,7 +571,7 @@ final class JsonImporter {
         port.transferShapeLayout(jsonObj)
     }
 
-    private def dispatch transferLayoutInt(ElkEdge edge) {
+    private def dispatch transferLayoutInt2(ElkEdge edge) {
         val jsonObj = edgeJsonMap.get(edge).toJsonObject
         if (jsonObj === null) {
             throw formatError("Edge did not exist in input.")
@@ -646,18 +666,36 @@ final class JsonImporter {
             }
         }
 
-        jsonObj.addJsonObj("container", edge.getContainingNode().identifier)
+        jsonObj.addJsonObj("container", edge.getContainingNode.identifier)
+        
+        jsonObj.addJsonObj("originalParent", edgeOriginalParentMap.get(edgeId).identifier)
     }
     
-    private def dispatch transferLayoutInt(ElkLabel label) {
+    private def dispatch transferLayoutInt1(ElkLabel label) {
         val jsonObj = labelJsonMap.get(label)
 
         // transfer positions and dimension
         label.transferShapeLayout(jsonObj)
     }
     
-    private def dispatch transferLayoutInt(Object obj) {
+    private def dispatch transferLayoutInt1(Object obj) {
         // don't care about the rest
+    }
+    
+    private def dispatch transferLayoutInt2(Object obj) {
+        // don't care about the rest
+    }
+
+    private def transferShapeLayout(ElkNode shape, Object jsonObjA) {
+        val jsonObj = jsonObjA.toJsonObject
+        // pos and dimension
+        jsonObj.addJsonObj("x", shape.x)
+        jsonObj.addJsonObj("y", shape.y)
+        jsonObj.addJsonObj("width", shape.width)
+        jsonObj.addJsonObj("height", shape.height)
+        
+        jsonObj.addJsonObj("x_g", nodeGlobalXMap.get(shape))
+        jsonObj.addJsonObj("y_g", nodeGlobalYMap.get(shape))
     }
 
     private def transferShapeLayout(ElkShape shape, Object jsonObjA) {
@@ -709,6 +747,7 @@ final class JsonImporter {
 
         edgeIdMap.put(id, edge)
         edgeJsonMap.put(edge, obj)
+        edgeOriginalParentMap.put(id, edge.getContainingNode)
 
         return edge
     }
