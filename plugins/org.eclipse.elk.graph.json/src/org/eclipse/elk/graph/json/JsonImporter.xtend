@@ -576,15 +576,15 @@ final class JsonImporter {
     
     private def EdgeCoords getEdgeCoordsMode(ElkNode node) {
         var ancestor = node
-        var ecm = ancestor.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
-        while (ecm === EdgeCoords.INHERIT) {
-            ancestor = ancestor.getParent
+        var ecm = EdgeCoords.INHERIT
+        do {
             if (ancestor !== null) {
                 ecm = ancestor.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
             } else {
                 ecm = EdgeCoords.CONTAINER
             }
-        }
+            ancestor = ancestor.getParent
+        } while (ecm === EdgeCoords.INHERIT)
         return ecm
     }
     
