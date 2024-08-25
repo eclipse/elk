@@ -536,10 +536,12 @@ final class JsonImporter {
       * Transfer the layout back to the formerly imported graph, using {@link #transform(Object)}.
       */
     def transferLayout(ElkNode graph) {
-        // transfer layout of all elements (including root)
+        // First pass handles everything except edges, and computes global coordinates for all nodes.
         ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
             element.transferLayoutInt1
         ]
+        
+        // Second pass handles edges.
         ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
             element.transferLayoutInt2
         ]
