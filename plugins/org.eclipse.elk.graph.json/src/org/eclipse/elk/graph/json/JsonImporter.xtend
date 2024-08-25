@@ -94,7 +94,8 @@ final class JsonImporter {
         nodeJsonMap.clear
         portJsonMap.clear
         edgeJsonMap.clear
-        edgeSectionJsonMap.clear 
+        edgeSectionJsonMap.clear
+        labelJsonMap.clear
     }
 
     private def transformChildNodes(Object jsonNodeA, ElkNode parent) {
