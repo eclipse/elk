@@ -219,9 +219,7 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
                     || p1.getSide() == PortSide.SOUTH && p2.getSide() == PortSide.SOUTH) {
                 // Some ports are ordered in the way around.
                 // Previously this did not matter, since the north south processor did override the ordering.
-                  LPort temp = p1;
-                  p1 = p2;
-                  p2 = temp;
+                reverseOrder = -reverseOrder;
             }
             LNode p1TargetNode = p1.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
             LNode p2TargetNode = p2.getProperty(InternalProperties.LONG_EDGE_TARGET_NODE);
@@ -306,9 +304,19 @@ public class ModelOrderPortComparator implements Comparator<LPort> {
             return -1;
         } else if (p1.hasProperty(InternalProperties.MODEL_ORDER) && p2.hasProperty(InternalProperties.MODEL_ORDER)) {
             // The ports have no edges.
-            // Use the port model order to compare them.
+            // Use the port model order to compare them. This can always be very bad since these unconnected ports
+            // can transitively order nodes that should be ordered differently.
+            // This can only be prevented, if one handles the sorting such that unconnected ports are handled last.
             int p1MO = p1.getProperty(InternalProperties.MODEL_ORDER);
             int p2MO = p2.getProperty(InternalProperties.MODEL_ORDER);
+            // Still check the side, since WEST and SOUTH must be the other way around.
+            if (p1.getSide() == PortSide.WEST && p2.getSide() == PortSide.WEST
+                    || p1.getSide() == PortSide.SOUTH && p2.getSide() == PortSide.SOUTH) {
+                // Some ports are ordered in the way around.
+                // Previously this did not matter, since the north south processor did override the ordering.
+                reverseOrder = -reverseOrder;
+            }
+            
             if (p1MO > p2MO) {
                 updateBiggerAndSmallerAssociations(p1, p2, reverseOrder);
                 return reverseOrder;
