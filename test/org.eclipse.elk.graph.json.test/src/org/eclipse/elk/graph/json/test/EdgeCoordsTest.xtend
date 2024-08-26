@@ -141,8 +141,7 @@ class EdgeCoordsTest {
             val mode = p.get(0)
             val expectedString = p.get(1)
             
-            val parser = new JsonParser()
-            val jsonGraph = parser.parse(graph).asJsonObject
+            val jsonGraph = JsonParser.parseString(graph).asJsonObject
             
             jsonGraph.get("properties").asJsonObject.addProperty(
                 "org.eclipse.elk.json.edgeCoords", mode
@@ -166,7 +165,7 @@ class EdgeCoordsTest {
             val computedSec = edge2.get("sections").asJsonArray
                            .get(0).asJsonObject
             
-            val expectedSec = parser.parse(expectedString).asJsonObject
+            val expectedSec = JsonParser.parseString(expectedString).asJsonObject
             
             assertEquals(expectedSec, computedSec)
         }
