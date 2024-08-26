@@ -580,10 +580,10 @@ final class JsonImporter {
         do {
             if (ancestor !== null) {
                 ecm = ancestor.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
+                ancestor = ancestor.getParent
             } else {
                 ecm = EdgeCoords.CONTAINER
             }
-            ancestor = ancestor.getParent
         } while (ecm === EdgeCoords.INHERIT)
         return ecm
     }
