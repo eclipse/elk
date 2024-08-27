@@ -10,11 +10,13 @@
 package org.eclipse.elk.graph.json.test
 
 import com.google.gson.JsonParser
+import org.eclipse.elk.alg.test.PlainJavaInitialization
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine
 import org.eclipse.elk.core.util.BasicProgressMonitor
 import org.eclipse.elk.core.util.Maybe
 import org.eclipse.elk.graph.json.ElkGraphJson
 import org.eclipse.elk.graph.json.JsonImporter
+import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
@@ -22,7 +24,11 @@ import static org.junit.Assert.*
 /**
  */
 class EdgeCoordsTest {
-    
+        
+    @BeforeClass
+    static def void init() {
+        PlainJavaInitialization.initializePlainJavaLayout
+    }
     val graph = '''
     {
         "id": "root",
