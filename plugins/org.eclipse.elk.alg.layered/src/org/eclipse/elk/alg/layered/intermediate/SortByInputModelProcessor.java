@@ -10,7 +10,6 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +61,11 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
             layer.id = layerIndex;
             final int previousLayerIndex = layerIndex == 0 ? 0 : layerIndex - 1;
             Layer previousLayer = graph.getLayers().get(previousLayerIndex);
+            // Sort nodes before port sorting to have sorted nodes for in-layer feedback edge dummies.
+            ModelOrderNodeComparator comparator = new ModelOrderNodeComparator(previousLayer,
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY), true);
+            SortByInputModelProcessor.insertionSort(layer.getNodes(), comparator);
             for (LNode node : layer.getNodes()) {
                 if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_ORDER
                         && node.getProperty(LayeredOptions.PORT_CONSTRAINTS) != PortConstraints.FIXED_POS) {
@@ -70,7 +74,7 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     // Therefore all ports that connect to the same node should have the same
                     // (their minimal) model order.
                     // Get minimal model order for target node
-                    insertionSortPorts(node.getPorts(),
+                    Collections.sort(node.getPorts(),
                             new ModelOrderPortComparator(previousLayer,
                                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
                                     longEdgeTargetNodePreprocessing(node),
@@ -78,10 +82,10 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
                     progressMonitor.log("Node " + node + " ports: " + node.getPorts());
                 }
             }
-            // Sort nodes.
-            ModelOrderNodeComparator comparator = new ModelOrderNodeComparator(previousLayer,
+            // Sort nodes after port sorting to also sort dummy feedback nodes from the current layer correctly.
+            comparator = new ModelOrderNodeComparator(previousLayer,
                     graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_STRATEGY),
-                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY));
+                    graph.getProperty(LayeredOptions.CONSIDER_MODEL_ORDER_LONG_EDGE_STRATEGY), false);
             SortByInputModelProcessor.insertionSort(layer.getNodes(), comparator);
                     
             progressMonitor.log("Layer " + layerIndex + ": " + layer);
@@ -159,17 +163,17 @@ public class SortByInputModelProcessor implements ILayoutProcessor<LGraph> {
         comparator.clearTransitiveOrdering();
     }
     
-    public static void insertionSortPorts(final List<LPort> ports,
+    public static void insertionSortPort(final List<LPort> layer,
             final ModelOrderPortComparator comparator) {
         LPort temp;
-        for (int i = 1; i < ports.size(); i++) {
-            temp = ports.get(i);
+        for (int i = 1; i < layer.size(); i++) {
+            temp = layer.get(i);
             int j = i;
-            while (j > 0 && comparator.compare(ports.get(j - 1), temp) > 0) {
-                ports.set(j, ports.get(j - 1));
+            while (j > 0 && comparator.compare(layer.get(j - 1), temp) > 0) {
+                layer.set(j, layer.get(j - 1));
                 j--;
             }
-            ports.set(j, temp);
+            layer.set(j, temp);
         }
         comparator.clearTransitiveOrdering();
     }
