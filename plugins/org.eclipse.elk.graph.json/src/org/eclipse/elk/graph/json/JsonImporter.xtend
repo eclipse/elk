@@ -539,12 +539,13 @@ final class JsonImporter {
       * Transfer the layout back to the formerly imported graph, using {@link #transform(Object)}.
       */
     def transferLayout(ElkNode graph) {
-        // First pass handles everything except edges, and computes global coordinates for all nodes.
+        // First pass handles nodes and ports, and
+        // determines global coordinates and coordinate modes for all nodes.
         ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
             element.transferLayoutInt1
         ]
         
-        // Second pass handles edges.
+        // Second pass handles edges and labels.
         ElkGraphUtil.propertiesSkippingIteratorFor(graph, true).forEach [ element |
             element.transferLayoutInt2
         ]
@@ -681,11 +682,12 @@ final class JsonImporter {
         jsonObj.addJsonObj("container", edge.getContainingNode.identifier)
     }
     
-    private def dispatch transferLayoutInt1(ElkLabel label) {
+    private def dispatch transferLayoutInt2(ElkLabel label) {
         val jsonObj = labelJsonMap.get(label)
 
         // transfer positions and dimension
-        label.transferShapeLayout(jsonObj)
+        val parent = label.getParent
+        parent.transferLabelLayout(label, jsonObj)
     }
     
     private def dispatch transferLayoutInt1(Object obj) {
@@ -703,6 +705,19 @@ final class JsonImporter {
         jsonObj.addJsonObj("y", shape.y)
         jsonObj.addJsonObj("width", shape.width)
         jsonObj.addJsonObj("height", shape.height)
+    }
+    
+    private def dispatch transferLabelLayout(ElkEdge edge, ElkLabel label, Object jsonObjA) {
+        val jsonObj = jsonObjA.toJsonObject
+        // pos and dimension
+        jsonObj.addJsonObj("x", edge.adjustX(label.x))
+        jsonObj.addJsonObj("y", edge.adjustY(label.y))
+        jsonObj.addJsonObj("width", label.width)
+        jsonObj.addJsonObj("height", label.height)
+    }
+    
+    private def dispatch transferLabelLayout(ElkGraphElement element, ElkLabel label, Object jsonObjA) {
+        transferShapeLayout(label, jsonObjA)
     }
     
     private def Double adjustX(ElkEdge edge, Double x) {

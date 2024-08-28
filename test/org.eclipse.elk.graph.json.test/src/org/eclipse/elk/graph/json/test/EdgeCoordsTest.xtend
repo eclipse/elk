@@ -47,7 +47,11 @@ class EdgeCoordsTest {
                     ],
                     "edges": [
                         { "id": "e1", "sources": [ "y" ], "targets": [ "z" ] },
-                        { "id": "e2", "sources": [ "x" ], "targets": [ "z" ] }
+                        { "id": "e2", "sources": [ "x" ], "targets": [ "z" ],
+                          "labels": [
+                              { "text": "Foo", "width": 30, "height": 12 }
+                          ]
+                        }
                     ]
                   }
               ]
@@ -64,16 +68,16 @@ class EdgeCoordsTest {
       "y": 124
      },
      "endPoint": {
-      "x": 169,
+      "x": 219,
       "y": 99
      },
      "bendPoints": [
       {
-       "x": 159,
+       "x": 209,
        "y": 124
       },
       {
-       "x": 159,
+       "x": 209,
        "y": 99
       }
      ],
@@ -82,11 +86,21 @@ class EdgeCoordsTest {
     }
     '''
     
+    val labelContainer = '''
+    {
+     "text": "Foo",
+     "width": 30,
+     "height": 12,
+     "x": 82,
+     "y": 127
+    }
+    '''
+    
     val secParent = '''
     {
      "id": "e2_s0",
      "startPoint": {
-      "x": -25,
+      "x": -75,
       "y": 112
      },
      "endPoint": {
@@ -108,6 +122,16 @@ class EdgeCoordsTest {
     }
     '''
     
+    val labelParent = '''
+    {
+     "text": "Foo",
+     "width": 30,
+     "height": 12,
+     "x": -55,
+     "y": 115
+    }
+    '''
+    
     val secRoot = '''
     {
      "id": "e2_s0",
@@ -116,16 +140,16 @@ class EdgeCoordsTest {
       "y": 136
      },
      "endPoint": {
-      "x": 181,
+      "x": 231,
       "y": 111
      },
      "bendPoints": [
       {
-       "x": 171,
+       "x": 221,
        "y": 136
       },
       {
-       "x": 171,
+       "x": 221,
        "y": 111
       }
      ],
@@ -133,19 +157,30 @@ class EdgeCoordsTest {
      "outgoingShape": "z"
     }
     '''
+    
+    val labelRoot = '''
+    {
+     "text": "Foo",
+     "width": 30,
+     "height": 12,
+     "x": 94,
+     "y": 139
+    }
+    '''
             
     @Test
     def void edgeCoordsTest() {
         
         val cases = #[
-            #['CONTAINER', secContainer],
-            #['PARENT', secParent],
-            #['ROOT', secRoot]
+            #['CONTAINER', secContainer, labelContainer],
+            #['PARENT', secParent, labelParent],
+            #['ROOT', secRoot, labelRoot]
         ]
         
         for (p : cases) {
             val mode = p.get(0)
-            val expectedString = p.get(1)
+            val expectedSecString = p.get(1)
+            val expectedLabelString = p.get(2)
             
             val jsonGraph = JsonParser.parseString(graph).asJsonObject
             
@@ -170,10 +205,14 @@ class EdgeCoordsTest {
                              .get(1).asJsonObject
             val computedSec = edge2.get("sections").asJsonArray
                            .get(0).asJsonObject
+            val computedLabel = edge2.get("labels").asJsonArray
+                           .get(0).asJsonObject
             
-            val expectedSec = JsonParser.parseString(expectedString).asJsonObject
+            val expectedSec = JsonParser.parseString(expectedSecString).asJsonObject
+            val expectedLabel = JsonParser.parseString(expectedLabelString).asJsonObject
             
             assertEquals(expectedSec, computedSec)
+            assertEquals(expectedLabel, computedLabel)
         }
 
     }
