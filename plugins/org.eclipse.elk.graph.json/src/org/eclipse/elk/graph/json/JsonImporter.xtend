@@ -64,6 +64,7 @@ final class JsonImporter {
     val Map<ElkEdge, ElkNode> edgeOriginalParentMap = Maps.newHashMap
     val Map<ElkNode, Double> nodeGlobalXMap = Maps.newHashMap
     val Map<ElkNode, Double> nodeGlobalYMap = Maps.newHashMap
+    val Map<ElkNode, EdgeCoords> nodeEdgeCoordsMap = Maps.newHashMap
 
     var Object inputModel
 
@@ -107,6 +108,7 @@ final class JsonImporter {
         edgeOriginalParentMap.clear
         nodeGlobalXMap.clear
         nodeGlobalYMap.clear
+        nodeEdgeCoordsMap.clear
     }
 
     private def transformChildNodes(Object jsonNodeA, ElkNode parent) {
@@ -560,6 +562,13 @@ final class JsonImporter {
         nodeGlobalXMap.put(node, node.x + dx)
         nodeGlobalYMap.put(node, node.y + dy)
         
+        // Determine coordinate mode in force at this node.
+        var ecm = node.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
+        if (ecm === EdgeCoords.INHERIT) {
+            ecm = parent.edgeCoordsMode ?: EdgeCoords.CONTAINER
+        }
+        nodeEdgeCoordsMap.put(node, ecm)
+        
         // transfer positions and dimension
         node.transferShapeLayout(jsonObj)
     }
@@ -572,20 +581,6 @@ final class JsonImporter {
         
         // transfer positions and dimension
         port.transferShapeLayout(jsonObj)
-    }
-    
-    private def EdgeCoords getEdgeCoordsMode(ElkNode node) {
-        var ancestor = node
-        var ecm = EdgeCoords.INHERIT
-        do {
-            if (ancestor !== null) {
-                ecm = ancestor.getProperty(CoreOptions.JSON_EDGE_COORDS) ?: EdgeCoords.INHERIT
-                ancestor = ancestor.getParent
-            } else {
-                ecm = EdgeCoords.CONTAINER
-            }
-        } while (ecm === EdgeCoords.INHERIT)
-        return ecm
     }
     
     private def Double adjustX(ElkEdge edge, EdgeCoords mode, Double x) {
@@ -612,7 +607,7 @@ final class JsonImporter {
         
         val edgeId = jsonObj.id
         
-        val ecm = edge.originalParent.getEdgeCoordsMode
+        val ecm = edge.originalParent.edgeCoordsMode
                 
         // what we need to transfer are the edge sections
         if (!edge.sections.nullOrEmpty) {
@@ -792,6 +787,10 @@ final class JsonImporter {
     
     private def Double globalY(ElkNode node) {
         return nodeGlobalYMap.get(node)
+    }
+    
+    private def EdgeCoords edgeCoordsMode(ElkNode node) {
+        return nodeEdgeCoordsMap.get(node)
     }
 
 }
