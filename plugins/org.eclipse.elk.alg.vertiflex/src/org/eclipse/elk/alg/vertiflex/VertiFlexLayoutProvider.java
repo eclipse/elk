@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023 Kiel University and others.
+ * Copyright (c) 2023, 2024 Kiel University and others.
  * 
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -11,6 +11,7 @@ package org.eclipse.elk.alg.vertiflex;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.NodeMicroLayout;
 import org.eclipse.elk.alg.vertiflex.options.VertiFlexOptions;
 import org.eclipse.elk.alg.vertiflex.p1yplacement.NodeYPlacerStrategy;
 import org.eclipse.elk.alg.vertiflex.p2relative.RelativeXPlacerStrategy;
@@ -46,6 +47,12 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
         
         nodeNodeSpacing = graph.getProperty(CoreOptions.SPACING_NODE_NODE);
         
+        // if requested, compute nodes's dimensions, place node labels, ports, port labels, etc.
+        if (!graph.getProperty(VertiFlexOptions.OMIT_NODE_MICRO_LAYOUT)) {
+            NodeMicroLayout.forGraph(graph)
+                           .execute();
+        }
+        
         // pre calculate the root node and save it
         ElkNode root = VertiFlexUtil.findRoot(graph);
         graph.setProperty(InternalProperties.ROOT_NODE, root);
@@ -59,6 +66,9 @@ public final class VertiFlexLayoutProvider extends AbstractLayoutProvider {
             if (numberOfParents > 1) {
                 throw new UnsupportedConfigurationException("The given graph is not an acyclic tree!");
             }
+            
+            // reset position
+            child.setLocation(0, 0);
         }
         
         // check that vertical constraints are ordered in valid manner i.e. children always have higher vertical 
