@@ -12,30 +12,30 @@ jobs:
     strategy:
       matrix:
         # We check LTS versions and the latest release
-        # 8  - LTS
         # 11 - LTS
-        # 14 - latest
-        java-version: [ 8, 11, 14 ]
+        # 17 - LTS
+        java-version: [ 11, 17 ]
 
     steps:
     # Checkout the reposity of both elk and elk-models (the latter is required for the tests)
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         path: elk
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         repository: eclipse/elk-models
         path: elk-models
     # Prepare and use a cache for maven
-    - uses: actions/cache@v1
+    - uses: actions/cache@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Set up Java version ${{ matrix.java-version }}
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v4
       with:
+        distribution: 'zulu'
         java-version: ${{ matrix.java-version }}
     - name: Build and verify with maven
       # Run mvn in the 'build' folder

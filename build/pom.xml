@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2019 Kiel University and others.
+  Copyright (c) 2019-2024 Kiel University and others.
   This program and the accompanying materials are made available under the
   terms of the Eclipse Public License 2.0 which is available at
   http://www.eclipse.org/legal/epl-2.0.
@@ -14,16 +14,16 @@
   <groupId>org.eclipse.elk</groupId>
   <name>Eclipse Layout Kernel</name>
   <url>https://www.eclipse.org/elk/</url>
-  <version>0.9.0-SNAPSHOT</version>
+  <version>0.10.0-SNAPSHOT</version>
   <description>An infrastructure for automatic graph layout and implementations of different layout algorithms.</description>
   <packaging>pom</packaging>
 
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <targetJdk>1.8</targetJdk>
-    <tycho-version>1.6.0</tycho-version>
-    <xtext-version>2.20.0</xtext-version>
+    <targetJdk>11</targetJdk>
+    <tycho-version>2.7.3</tycho-version>
+    <xtext-version>2.28.0</xtext-version>
     <elk-version>${project.version}</elk-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
@@ -179,6 +179,27 @@
               <arch>x86_64</arch>
             </environment>
           </environments>
+          <dependency-resolution>
+            <extraRequirements>
+              <!-- to force the same version of jdt.compiler.apt
+                and jdt.core (for xtext-maven-plugin) -->
+              <requirement>
+                <type>eclipse-plugin</type>
+                <id>org.eclipse.jdt.compiler.apt</id>
+                <versionRange>0.0.0</versionRange>
+              </requirement>
+            </extraRequirements>
+          </dependency-resolution>
+        </configuration>
+      </plugin>
+
+      <!-- skip generating poms for P2 dependencies managed by tycho. Avoids this issue: https://www.eclipse.org/forums/index.php?t=msg&th=1111563&goto=1854788&  --> 
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-packaging-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <skipPomGeneration>true</skipPomGeneration>
         </configuration>
       </plugin>
 
@@ -344,6 +365,8 @@
                     <versionRange>${tycho-version}</versionRange>
                     <goals>
                       <goal>compile</goal>
+                      <goal>testCompile</goal>
+                      <goal>validate-classpath</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
@@ -377,6 +400,19 @@
                   </pluginExecutionFilter>
                   <action>
                     <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>target-platform-configuration</artifactId>
+                    <versionRange>[2.7.3,)</versionRange>
+                    <goals>
+                      <goal>target-platform</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

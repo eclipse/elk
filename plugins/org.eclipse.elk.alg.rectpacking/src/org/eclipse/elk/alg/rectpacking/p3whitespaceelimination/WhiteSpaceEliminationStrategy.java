@@ -19,8 +19,23 @@ import org.eclipse.elk.graph.ElkNode;
  *
  */
 public enum WhiteSpaceEliminationStrategy implements ILayoutPhaseFactory<RectPackingLayoutPhases, ElkNode> {
+    /**
+     * The packing that is divided into rows, stacks, blocks, and subrows equally divides available space between this
+     * structures by moving the structures and the rectangles before expanding the rectangles such that all gaps are
+     * filled.
+     * The size of the parent remains unchanged.
+     */
     EQUAL_BETWEEN_STRUCTURES,
-    TO_ASPECT_RATIO;
+    /**
+     * Same as the equal between structures but the strategy expands to the desired aspect ratio.
+     * Hence, this increases the size of the parent.
+     */
+    TO_ASPECT_RATIO,
+    /**
+     * Explicitly set that no whitespace elimination is done.
+     * This can be done explicitly, since some language do not support the use of null.
+     */
+    NONE;
 
     /* (non-Javadoc)
      * @see org.eclipse.elk.core.alg.ILayoutPhaseFactory#create()
@@ -32,6 +47,7 @@ public enum WhiteSpaceEliminationStrategy implements ILayoutPhaseFactory<RectPac
             return new EqualWhitespaceEliminator();
         case TO_ASPECT_RATIO:
             return new ToAspectratioNodeExpander();
+        case NONE:
         default:
             return null;
         }

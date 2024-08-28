@@ -216,6 +216,14 @@ public class LibavoidServer {
             }
         }
     }
+    
+    /**
+     * Sets the timeout to an externally defined value.
+     * @param timeout Time to wait for the server to return any output.
+     */
+    public void setProcessTimeout(int timeout) {
+        processTimeout = timeout;
+    }
 
     /**
      * Return the stream that is used to give input to Libavoid.
