@@ -27,6 +27,7 @@
     <module>org.eclipse.elk.alg.disco.test</module>
     <module>org.eclipse.elk.alg.force.test</module>
     <module>org.eclipse.elk.alg.layered.test</module>
+    <module>org.eclipse.elk.alg.mrtree.test</module>
     <module>org.eclipse.elk.alg.radial.test</module>
     <module>org.eclipse.elk.alg.rectpacking.test</module>
     <module>org.eclipse.elk.alg.spore.test</module>
