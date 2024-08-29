@@ -10,19 +10,17 @@
 package org.eclipse.elk.core.options;
 
 /**
- * Edge coordinate systems for JSON output. To be accessed using {@link CoreOptions#JSON_EDGE_COORDS}.
- * Applies to edges, and to labels of edges.
+ * Shape coordinate systems for JSON output. To be accessed using {@link CoreOptions#JSON_SHAPE_COORDS}.
+ * Applies to nodes, ports, and labels of nodes and ports.
  */
-public enum EdgeCoords {
+public enum ShapeCoords {
 
     /**
-     * Inherit the parent node's coordinate system. The root node has no parent node; here, this setting defaults to
-     * {@link #CONTAINER}.
+     * Inherit the parent shape's coordinate system. The root node has no parent shape; here, this setting defaults to
+     * {@link #PARENT}.
      */
     INHERIT,
-    /** relative to the edge's proper container node. */
-    CONTAINER,
-    /** relative to the edge's JSON parent node. */
+    /** relative to the shape's JSON parent shape. */
     PARENT,
     /** relative to the root node, a.k.a. global coordinates. */
     ROOT;
