@@ -412,8 +412,7 @@ class EdgeCoordsTest {
              "incomingShape": "y",
              "outgoingShape": "z"
             }
-           ],
-           "container": "B"
+           ]
           },
           {
            "id": "e2",
@@ -464,8 +463,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "z"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e3",
@@ -489,8 +487,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "p"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e4",
@@ -514,8 +511,7 @@ class EdgeCoordsTest {
              "incomingShape": "p",
              "outgoingShape": "y"
             }
-           ],
-           "container": "B"
+           ]
           }
          ],
          "x": 143,
@@ -625,8 +621,7 @@ class EdgeCoordsTest {
              "incomingShape": "y",
              "outgoingShape": "z"
             }
-           ],
-           "container": "B"
+           ]
           },
           {
            "id": "e2",
@@ -677,8 +672,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "z"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e3",
@@ -702,8 +696,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "p"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e4",
@@ -727,8 +720,7 @@ class EdgeCoordsTest {
              "incomingShape": "p",
              "outgoingShape": "y"
             }
-           ],
-           "container": "B"
+           ]
           }
          ],
          "x": 143,
@@ -1051,8 +1043,7 @@ class EdgeCoordsTest {
              "incomingShape": "y",
              "outgoingShape": "z"
             }
-           ],
-           "container": "B"
+           ]
           },
           {
            "id": "e2",
@@ -1103,8 +1094,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "z"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e3",
@@ -1128,8 +1118,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "p"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e4",
@@ -1153,8 +1142,7 @@ class EdgeCoordsTest {
              "incomingShape": "p",
              "outgoingShape": "y"
             }
-           ],
-           "container": "B"
+           ]
           }
          ],
          "x": 155,
@@ -1265,8 +1253,7 @@ class EdgeCoordsTest {
              "incomingShape": "y",
              "outgoingShape": "z"
             }
-           ],
-           "container": "B"
+           ]
           },
           {
            "id": "e2",
@@ -1317,8 +1304,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "z"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e3",
@@ -1342,8 +1328,7 @@ class EdgeCoordsTest {
              "incomingShape": "x",
              "outgoingShape": "p"
             }
-           ],
-           "container": "A"
+           ]
           },
           {
            "id": "e4",
@@ -1367,8 +1352,7 @@ class EdgeCoordsTest {
              "incomingShape": "p",
              "outgoingShape": "y"
             }
-           ],
-           "container": "B"
+           ]
           }
          ],
          "x": 155,

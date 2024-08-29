@@ -49,12 +49,16 @@ There are four possible values:
 * `PARENT`: Coordinates are relative to the node in which the edge was defined in the given JSON.
 * `ROOT`: Coordinates are relative to the root node, i.e. global coordinates.
 
-The default value is `INHERIT`, except at the root node, where the default is `CONTAINER`.
+The default value is `INHERIT`, except at the root node, where the default is (for historical reasons) `CONTAINER`.
 Thus, the default behavior is as described at the top of this page.
 
-Edge containment is a tricky subject, and the definition of an edge's proper container is given at the end
-of the page on the
+The definition of an edge's proper container is given at the end of the page on the
 [_Graph Data Structure_]({{< relref "documentation/tooldevelopers/graphdatastructure.md" >}}).
-Since you are allowed to define an edge under any node whatsoever in the input JSON, the edge's *parent* node
-(the one it is defined under) may be different from the edge's *container*. Therefore, while `CONTAINER` is the
-default mode for historical reasons, users may find it easier to use `PARENT` or `ROOT`.
+It involves lowest common ancestors, and can be tricky to compute correctly.
+In particular, since you are allowed to define an edge under any node whatsoever in the input JSON, the edge's
+*parent* node (the one it is defined under) may be different from its container.
+
+If you elect to work in `CONTAINER` mode, ELK helps you by writing a `container` property into each edge after layout,
+giving the `id` of the edge's container node. This can then be used to interpret the coordinates.
+
+If you elect to work in `PARENT` or `ROOT` mode instead, then you do not need to know about edge containers at all.

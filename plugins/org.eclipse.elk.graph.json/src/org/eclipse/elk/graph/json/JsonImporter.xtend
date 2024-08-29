@@ -670,7 +670,9 @@ final class JsonImporter {
             }
         }
 
-        jsonObj.addJsonObj("container", edge.getContainingNode.identifier)
+        if (edge.originalParent.edgeCoordsMode === EdgeCoords.CONTAINER) {
+            jsonObj.addJsonObj("container", edge.getContainingNode.identifier)
+        }
     }
     
     private def dispatch transferLayoutInt2(ElkLabel label) {
