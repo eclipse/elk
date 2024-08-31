@@ -308,7 +308,8 @@ group json {
     option shapeCoords: ShapeCoords {
         label "Shape Coords"
         description
-            "Specify the coordinate system for shapes."
+            "For layouts transferred into JSON graphs, specify the coordinate system
+             to be used for nodes, ports, and labels of nodes and ports."
         default = ShapeCoords.INHERIT
         targets parents
     }
@@ -316,7 +317,8 @@ group json {
     option edgeCoords: EdgeCoords {
         label "Edge Coords"
         description
-            "Specify the coordinate system for edge route points."
+            "For layouts transferred into JSON graphs, specify the coordinate system
+             to be used for edge route points and edge labels."
         default = EdgeCoords.INHERIT
         targets parents
     }
