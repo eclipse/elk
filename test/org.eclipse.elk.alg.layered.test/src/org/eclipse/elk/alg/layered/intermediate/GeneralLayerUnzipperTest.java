@@ -10,8 +10,6 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.options.LayerUnzippingStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
