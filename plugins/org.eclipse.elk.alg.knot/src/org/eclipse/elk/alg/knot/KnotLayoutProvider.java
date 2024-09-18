@@ -1,9 +1,11 @@
+/**
+ * @author Jean-Pierre Runge (stu224382) (Mat: 1150750)
+ */
 package org.eclipse.elk.alg.knot;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
@@ -39,9 +41,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     private StressMajorization stressMajorization = new StressMajorization();
     
     /** The distance which bend points around nodes must preserve. */
-    private double nodeRadius = 25; //25;
-    /** Enable if the algorithm is allowed to change the bend point distance around nodes. */
-    private boolean enableFlexibleNodeRadius = false;
+    private double nodeRadius = 25; //25 got overall best results;
     /** The sum of all four bend point angles on a node must be lower in order to perform a shift movement. */
     private double shiftThreshold = 420;
     /** Desired distance between connected nodes (should at least be nodeRadius). */
@@ -61,12 +61,15 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     private double curveHeight = 50;
     /** Factor on how near the helping bend points are positioned for spline visualization. Influences the curve width. */
     private double curveWidthFactor = 0.2;
+    /** Enable if the algorithm is allowed to change the bend point distance around nodes. */
+    private boolean enableFlexibleNodeRadius = false;
     
-    
-    /** Epsilon for terminating the stress minimizing process. */
-    private double epsilon = 2;
     /** Maximum number of iterations of each stress reducing process. */
     private int iterationLimit = 200;
+    /** Epsilon for terminating the stress minimizing process. */
+    //TODO: Try implementing stress depending termination criterion.
+    private double epsilon;
+
     
     
     @Override
@@ -74,12 +77,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         
         ////////////////////////////////////////////////////////////////////////////////////////////////
         // Initialization:
-        
-        //TODO
-        //this.iterationLimit = graph.getProperty(StressOptions.ITERATION_LIMIT);
-        //this.epsilon = graph.getProperty(StressOptions.EPSILON);
-        
-        
+
         // Start progress monitor
         progressMonitor.begin("ELK Knot", 2);
         progressMonitor.log("Knot algorithm start");
@@ -106,6 +104,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             node.setHeight(0.0000000000001);
             node.setWidth(0.0000000000001);
         }
+        
         
         // Apply options.
         this.nodeRadius = layoutGraph.getProperty(KnotOptions.NODE_RADIUS);
@@ -161,13 +160,9 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         ////////////////////////////////////////////////////////////////////////////////////////////////
         // Main process:
 
-        
-        // TODO: Messuring Stress and stop loop when there is no further reduction after 3 iterations.
-        //        System.out.println("Befor stress n1: " + computeNodeStress(layoutGraph.getChildren().get(0)));
-
-        
-
         // SETUP ROTATION:
+        
+        // First improvement that will already reduce the stress significantly.
         for(ElkNode node : layoutGraph.getChildren()) {
             stressMinimizingRotation(node);
         }
@@ -176,88 +171,55 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         
         // STRESS MINIMIZATION:
         
-        //TODO: Einfach nur richtige Abfolge und Werte finden
-        
-        double prevStress = 0;
-        double currStress = Double.MAX_VALUE;
+        // The main sequence of moving and rotating nodes in order to reduce stress values and bringing
+        // the components into the right position. Multiple iterations improving the results
         int count = 0;
-        
-        // The sequence of moving and rotating nodes. Multiple iterations improving the results
         do {
             
-            prevStress = currStress;
-
-            
+            // Every node in order.
             for(ElkNode node : layoutGraph.getChildren()) {
-                
+                // Rotation before shifting had better results.
                 stressMinimizingRotation(node);
                 
-                // This node has many sharp angles, could use a shift.
+                // If this node has many sharp angles, it could use a shift.
                 if (computeNodeAngles(node) < shiftThreshold) {
                     stressMinimizingShift(layoutGraph, node);
                 }
-
-                
             }
             
             progressMonitor.logGraph(layoutGraph, "Stress reduction on iteration " + count);
             count++;
-            
-            for(ElkNode node : layoutGraph.getChildren()) {
-                currStress =+ computeAngleStress(node) + computeDistanceStress(layoutGraph, node);
-            }
-            //System.out.println("Count: "+ count);
-            //System.out.println("prevStress: " + prevStress);
-            //System.out.println("currStress: " + currStress);
-            //System.out.println("improvement: " + ((prevStress - currStress) / prevStress));
-            
-            // Can happen that in one iteration the stress gets worse, but over multiple iterations it gets better
+
+        // Can happen that in one iteration the stress gets worse, but over multiple iterations it gets better.
+        // Therefore no further termination criterion.
         } while((count <= iterationLimit));
             
         
         
-        
-         
-        // (((prevStress - currStress) / prevStress) < epsilon) || 
-
-
-
-        //      * Done if either stress improvement is small than {@link StressOptions#EPSILON} or the
-        //* {@link StressOptions#ITERATION_LIMIT} is reached.
-        //(prevStress - curStress) / prevStress) < epsilon
-        
-        
-        
         // FURTHER OPTIMIZATIONS:
         
-        // Create additional bend points on edges which existing bend points have a certain angle.
+        // Create additional bend points on edges when the existing bend points have a certain angle.
         // Proceed to move the new bend point in order to relax those angles.
         if (enableAdditionalBendPoints) {
             for (ElkNode currNode : layoutGraph.getChildren()) {
-                for(ElkEdge oEdge : currNode.getOutgoingEdges()) {
-                    
+                // Consider only outgoing nodes so there are no duplicates.
+                for(ElkEdge oEdge : currNode.getOutgoingEdges()) {        
                     addMiddleBendPoint(oEdge);
                 }
             }
+            progressMonitor.logGraph(layoutGraph, "Additional middle bend points");
         }
         
-        
-                
-// TODO: Groessere Boegen durch wachsende nodeRadius bis Angles schlimm werden. Individuell fuer jeden node
-//      Letzte Moeglichkeit
-//      Kontrollpunkt in groesser werdender Spirale bewegen, position behalten, wenn die Linie zu
-//      Nachbarpunkten weniger Schnittpunkte mit anderen Kanten aufweist
-//      2 Edges checken indem durch alle ihre Kontrollpunkt-Segmente durchiteriert wird.
-        if(enableFlexibleNodeRadius) {
-            // Wenn dann als eigener Optimierungsschritt für einzelne Nodes
-            
-            // TODO Wachsel lassen, bis Kanten overstreched
+        if(enableFlexibleNodeRadius) {      
+            // TODO: Larger curves by growing nodeRadius until angles hitting a critical range.
+            // Individual for each node.
         }
         
         progressMonitor.done();
-        
     }
     
+    
+    // TODO: Adjust the image size to the new coordinates.
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -517,9 +479,8 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                 angle = rotationValue*(prevStress / 10000);
                 rotateOutgoingAxis(node, angle);
                 
-                // TODO: Test: Somehow, checking node stress for out axis but stress for in axis works good.
                 // When the new stress is larger, turn back.
-                if (prevStress < computeAngleStress(node)) {
+                if (prevStress < computeOutAxisStress(node)) {
                     rotateOutgoingAxis(node, - 2*angle);
                 }
             
@@ -575,11 +536,6 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             if (prevStress < (computeAngleStress(node) + computeDistanceStress(graph, node))) {
                 moveNode(node, node.getX(), node.getY() - 2*shiftValue);
             }
-                    
-            // Bei jeder bewegung checken ob zu nah an anderen node.
-            // MUSS die anderen wegdruecken damit er posi einnehmen kann fuer minimal Stress
-            // TODO: Nach bewegen andere pushen wenn zu nah
-            //keepDistance(graph, node);
             
             count++;   
         } while(count < iterationLimit); 
@@ -590,113 +546,69 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     // Additional improvement functions:
 
     /**
+    * Adds an additional bend point on the middle of a given edge if the angle on the outer bend points
+    * are to sharp and below the 'additionalBendPointsThreshold'.
+    * 
+    * @param edge to which an additional middle bend point is desired.
     */
     private void addMiddleBendPoint(ElkEdge edge) {
         
-        
+        // Checks if the outer bend point angles are below the threshold.
         if (needsMidPoint(edge)){
 
             List<ElkBendPoint>  bps = edge.getSections().get(0).getBendPoints();
-        
+            
             double x1 = bps.get(0).getX();
             double y1 = bps.get(0).getY();
             double x2 = bps.get(bps.size()-1).getX();
             double y2 = bps.get(bps.size()-1).getY();
-
+            
             // Initial position is in the center of the edge.
             double x = (x1 + x2)/2;
             double y = (y1 + y2)/2;
-        
-        
+             
             // Create the bend point and adds it to the list in between the others.
             ElkBendPoint middleBp = ElkGraphUtil.createBendPoint(null, x, y); 
-            //ElkBendPoint newBp2 = ElkGraphUtil.createBendPoint(null, x, y);
-        
             bps.add(1, middleBp);
-            //bps.add(indexBP1 + 2, newBp2);
-        
-        
-            //shiftMiddlePoint(edge);
-            // Shift the new bend point to relax angles of others.
+            
+            // Shift the new bend point to relax angles of others but keep an equal distance to each side.
             shiftBendPoint(bps.get(1), edge);
                 
-                
-            // Create 2 additional bend points to help visualizing smooth splines.
+            
+            // Further create 2 bend points to help visualizing smooth splines.
+            
+            // After the creation of an additional middle bend point, the final visualization consist of
+            // 5 Points in total. For the creation of a bézier curve, these get split up into a 3-point and
+            // a 2-point bézier curve, resulting in having a smooth curve into a sharp edge.
+            // These 2 helper bend points will be opposite of each other next to the new middle point and
+            // therefore using the same technique to have a smooth edge transition like the nodes.
             
             ElkBendPoint helperBp1 = ElkGraphUtil.createBendPoint(null, x, y); 
             ElkBendPoint helperBp2 = ElkGraphUtil.createBendPoint(null, x, y); 
-                
-            // Position them opposite of each other next to the new middle bend point.
-
             
-            // Vector from first bp to last bp.
+            // Use vector to mimic the direction from first bp to last bp.
             KVector directionVector = new KVector(x2 - x1, y2 - y1);
-            // Used as direction for helper bend points.
+            // Distance from the middle bend point to the helpers, large factor results in wider curves.
             directionVector.scale(curveWidthFactor);
             
-            // Addjust helper bend point positions
+            // Position helper bend points opposite of each other next to the new middle bend point.
             helperBp1.set(bps.get(1).getX() + directionVector.x, bps.get(1).getY() + directionVector.y);
             directionVector.scale(-1);
             helperBp2.set(bps.get(1).getX() + directionVector.x, bps.get(1).getY() + directionVector.y);
             
+            // Adds them to the list in the right order.
             bps.add(2, helperBp1);
             bps.add(1, helperBp2);
-            /*
-            */
-            
-            
-            
-            // END
-            
-            //bps.get(3).set(bps.get(2).getX() + distanceVector.x, bps.get(2).getY() + distanceVector.y);
-            
-                /*
-                addMiddleBendPoint(edge, 0, 1);
-                shiftBendPoint(bps.get(1), edge);
-                //shiftMiddlePoint(edge);
-                
-                addMiddleBendPoint(edge, 2, 3);
-                shiftBendPoint(bps.get(3), edge);
-                
-                
-                shiftBendPoint(bps.get(2), edge);
-                
-                
-                
-                
-                // Trick um eine Spitze bei Splines zu vermeiden, einen der bend points (vorletzter) auf eine Achse
-                // mit dem Mittlerem und seinen vorherigen bend point bringen. Ahnliches konzept wie bei den nodes.
-                
-                double dx = bps.get(1).getX() - bps.get(2).getX();
-                double dy = bps.get(1).getY() - bps.get(2).getY();
-                
-                // vector from this bp to other bp.
-                KVector distanceVector = new KVector(dx, dy);
-                distanceVector.scale(-1);
-                
-                
-                bps.get(3).set(bps.get(2).getX() + distanceVector.x, bps.get(2).getY() + distanceVector.y);
-                
-                */
-                
-                //shiftBendPoint(bps.get(1), edge);
-                //shiftBendPoint(bps.get(3), edge);
-                //shiftBendPoint(bps.get(2), edge);
-                //shiftMiddlePoint(edge);
-                
-                
-                //shiftBendPoint(bps.get(i+1), edge);
-            }
-     }
+        }
+    }
     
     
-    
-     /**
-     * Whether an given edge needs an additional bend point helping to relax the angles on the outer bend points.
-     *
-     * @param edge in question.
-     * @return If the given edge needs a middle bend point.
-     */
+    /**
+    * Whether an given edge needs an additional bend point helping to relax the angles on the outer bend points.
+    *
+    * @param edge in question.
+    * @return If the given edge needs a middle bend point.
+    */
     private boolean needsMidPoint(ElkEdge edge) {
         
         List<ElkBendPoint> bps = edge.getSections().get(0).getBendPoints();
@@ -710,172 +622,65 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     }
     
     
-    
-    
     /**
+    * Perform a stress reducing shift for a bend point, depending on the angles and distances
+    * of the outer bend points.
+    * 
+    * @param bp to shift.
+    * @param edge of corresponding bend point.
     */
     private void shiftBendPoint(ElkBendPoint bp, ElkEdge edge) {
-        
-        double distanceThreshold = 15;
-        double desiredBendPointDistance = 15;
-        
+         
         List<ElkBendPoint> bps = edge.getSections().get(0).getBendPoints();
         int bpIndex = bps.indexOf(bp);
         
         // Only shifts bend point if it is not one of the outer ones.
         if (bpIndex != 0 && bpIndex != bps.size()-1) {
-            
-            ElkBendPoint prevPoint = bps.get(bpIndex - 1);
-            ElkBendPoint nextPoint = bps.get(bpIndex + 1);
-            
-            double anglePrev;
-            double angleNext;
-            
-            double distPrev;
-            double distNext;
-            
+                    
             double x = bp.getX();
             double y = bp.getY();
-            
             double prevStress = 0;
-            double stress = 0;
             
-            // How much the bend point can distance itself (the bigger the curve gets).
-            double maxDist = 60;
+            // Remember start position calculate the height of the new bend point.
             ElkBendPoint startPos = ElkGraphUtil.createBendPoint(null, x, y);
-            
-            
-
-            //double dx = target.getX() - node.getX();
-            //double dy = target.getY() - node.getY();
-            
-            
-            // Vector from this node to neighbor node.
-            //KVector distanceVector = new KVector(dx, dy);
-            
-            
-            //double distance = distanceVector.length();
-            
-            distPrev = calculateBendPointDistance(bp, prevPoint);
-            distNext = calculateBendPointDistance(bp, nextPoint);
-            
-            
-            
-
-            
-            
-            
-            
+                
+            // Shift middle bend point.
             int count = 0;
-            double difference;
-            
             do {
+                // MOVEMENT on x-Axis:
                 
-                distPrev = calculateBendPointDistance(bp, prevPoint);
-                distNext = calculateBendPointDistance(bp, nextPoint);
-                
-                anglePrev = calculateBendPointAngle(prevPoint, edge);
-                angleNext = calculateBendPointAngle(nextPoint, edge);
-    
-                // Stress depending on equal distance towards each bend point.
-                prevStress =  Math.pow(Math.abs(distNext - distPrev), 3);
-                System.out.println("distance = " + (distNext - distPrev));
-                prevStress = prevStress +  Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2);
-                
-                
-                // X Shift
+                // Stress depends on the angles of outer bend points + equal distance towards them.
+                prevStress = bendPointStress(bp, edge);
                 bp.setX(x+1);
                 
-                distPrev = calculateBendPointDistance(bp, prevPoint);
-                distNext = calculateBendPointDistance(bp, nextPoint);
-                
-                anglePrev = calculateBendPointAngle(prevPoint, edge);
-                angleNext = calculateBendPointAngle(nextPoint, edge);
-                
-                stress = Math.pow(Math.abs(distNext - distPrev), 3);
-                stress = stress + Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2);
-                
-                // When angle smaller or distance to other bps to great, shift back
-                if (stress > prevStress) {
-                    // -2 even better
-                    bp.setX(x-2);
-                    
-
-                } else {
-                    
-//                    distPrev = calculateBendPointDistance(bp, prevPoint);
-//                    distNext = calculateBendPointDistance(bp, nextPoint);
-//                    difference = Math.abs(distPrev - distNext);
-//                    
-//                    if (distPrev > distanceThreshold || distNext > distanceThreshold) {
-//                        bp.setX(x-2);
-//                    }
+                // When angle smaller or distance to other bps to great, shift back.
+                if (bendPointStress(bp, edge) > prevStress) {
+                    bp.setX(x-2);  
                 }
-                //if (distPrev > distanceThreshold || distNext > distanceThreshold) {
-                //    bp.setY(x-2);
-                //}
-                
                 x = bp.getX();
                 
-                distPrev = calculateBendPointDistance(bp, prevPoint);
-                distNext = calculateBendPointDistance(bp, nextPoint);
                 
-                anglePrev = calculateBendPointAngle(prevPoint, edge);
-                angleNext = calculateBendPointAngle(nextPoint, edge);
+                // MOVEMENT on y-Axis:
                 
-                prevStress = Math.pow(Math.abs(distNext - distPrev), 3);
-                prevStress = prevStress + Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2);
-                
-
-                // Y Shift
+                // Compute stress anew with freshly changed position of the bend point.
+                prevStress = bendPointStress(bp, edge);
                 bp.setY(y+1);
-                    
-                distPrev = calculateBendPointDistance(bp, prevPoint);
-                distNext = calculateBendPointDistance(bp, nextPoint);
-                
-                anglePrev = calculateBendPointAngle(prevPoint, edge);
-                angleNext = calculateBendPointAngle(nextPoint, edge);
-                
-                
-                stress = Math.pow(Math.abs(distNext - distPrev), 3);
-                stress = stress + Math.pow((180- anglePrev), 2) + Math.pow((180 - angleNext), 2);
-                
-                
-                // When angle smaller or distance to other bps to great, shift back
-                if (stress > prevStress) {
-                    // -2 even better
+                        
+                // When angle smaller or distance to other bps to great, shift back.
+                if (bendPointStress(bp, edge) > prevStress) {
                     bp.setY(y-2);
-                    
-
-                } else {
-//                    
-//                    distPrev = calculateBendPointDistance(bp, prevPoint);
-//                    distNext = calculateBendPointDistance(bp, nextPoint);
-//                    difference = Math.abs(distPrev - distNext);
-//                    if (distPrev > distanceThreshold || distNext > distanceThreshold) {
-//                        bp.setY(y-2);
-//                    }
-                }
-                
-                
-                //if (distPrev > distanceThreshold || distNext > distanceThreshold) {
-                //    bp.setY(y-2);
-                //}
-                
+                }   
                 y = bp.getY();
                 
-                
-                System.out.println("Dist von Start zu BP: " + calculateBendPointDistance(bp, startPos));
                 count++;   
-            } while(count < iterationLimit && calculateBendPointDistance(bp, startPos) <= curveHeight);
-            
+                
+                // How much the bend point is allowed distance itself (the bigger the curve gets).
+                // Otherwise it would relax the angles by keep shifting further away.
+            } while(count < iterationLimit && (calculateBendPointDistance(bp, startPos) <= curveHeight));
             
             bp.setX(x);
             bp.setY(y);
-            
         }
-
-        
     }
     
     
@@ -910,89 +715,13 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             stress = Math.pow((180 - anglePrevBp), 2) + Math.pow((180 - angleNextBp), 2);
             
             // It's desired to have equal distances towards neighbor bend points.
-            stress = stress + Math.pow(Math.abs(distNextBp - distPrevBp), 1.5);
+            stress = stress + Math.pow(Math.abs(distNextBp - distPrevBp), 3);
 
         }   
         return stress;
     }
     
     
-    
-    
-    //TODO: Behalten?
-    /**
-    */
-    private void keepDistance(ElkNode graph, ElkNode node) {
-        
-        double minimalDist = 2 * nodeRadius;// + nodeNodeDistace;
-        
-        for (ElkNode currNode : graph.getChildren()) {
-            if (currNode == node) {
-                continue;
-            }
-            
-            
-            
-            double dx = currNode.getX() - node.getX();
-            double dy = currNode.getY() - node.getY();
-            
-            // vector from this node to other node.
-            KVector distanceVector = new KVector(dx, dy);
-            KVector otherNodeVector = new KVector(currNode.getX(), currNode.getY());
-            double distance = distanceVector.length();
-            
-            
-            
-            // if dist between nodes to small, push other node in vector direction
-            if (distance < minimalDist) {
-                
-                double pushDist = minimalDist - distance;
-                
-                double pw = (pushDist / minimalDist)+1;
-                System.out.println("MiniDist: " + minimalDist + " | dist: " + distance + " | pushDist: " + pushDist);
-                System.out.println("Prozent: " + pw);
-                
-                //otherNodeVector.add(distanceVector);
-                //otherNodeVector.scaleToLength(0.1);
-                moveNode(currNode, currNode.getX() + dx*pw, currNode.getY() + dy*pw);
-                // recursively check if they getting pushed into other nodes
-                System.out.println("Node: " + node + " pushed -> " + currNode);
-                keepDistance(graph, currNode);
-            }
-
-        }
-
-        /*
-        // GEHT NOCH NICHT
-        for (ElkNode currNode : graph.getChildren()) {
-            
-            if(currNode == node) {
-                
-                continue;
-            }
-  
-            nodeNodeVector = new KVector(currNode.getX() - node.getX(), currNode.getY() - node.getY());  
-            
-            
-            // If to close, push other nodes
-            double dist = (2 * bendPointDistance + nodeNodeDistace) - nodeNodeVector.length();
-            // positive distance mean nodes are to close
-            if(nodeNodeVector.length()  < 2 * bendPointDistance + nodeNodeDistace) {
-                
-                // push in direction
-                currNode.setX(nodeNodeVector.x * dist);
-                currNode.setY(nodeNodeVector.y * dist);
-                
-                
-                
-            }
-            
-        }
-        
-        */
-
-
-    }    
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1170,120 +899,8 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         }
         return sum;
     }
-
-    
-
-    //TODO: Behalten?
-    private void shiftMiddlePoint(ElkEdge edge) {
-        
-        
-        // TODO: Schnittpunkte berechnen -> schieben bis keine Schnittpunkte mit anderen Kanten
-        // TODO: Fuer mehr als einen mid bend point ermoeglichen
-        
-        ElkNode source = (ElkNode) edge.getSources().get(0);
-        ElkNode target = (ElkNode) edge.getTargets().get(0);
-        
-        ElkBendPoint bp = edge.getSections().get(0).getBendPoints().get(1);
-        
-        // Computing bend point position for optimal angle relaxation.
-        int count = 0;
-        
-        double stressSource;
-        double stressTarget;
-        double x = bp.getX();
-        double y = bp.getY();
-        
-        do { 
-            
-            
-            // The more stress the greater the rotation should be
-            stressSource = computeAngleStress(source);
-            stressTarget = computeAngleStress(target);
-            
-            //System.out.println("Count: " + count);
-            //System.out.println("Stress S = " + stressSource);
-            //System.out.println("Stress T = " + stressTarget);
-            //System.out.println("Shift um x");
-            bp.setX(x+2);
-
-            //System.out.println("Neu Stress S = " + computeNodeStress(source));
-            //System.out.println("Neu Stress T = " + computeNodeStress(target));
-            
-            
-
-            
-            
-            //TODO: Problem: wird zu ausschweifend, Winkel werden kleiner und Stress weniger aber Schlaufe riesig.
-            // --> Einfach Iteration begrenzen? Funktioniert bislag
-            //TODO: Andere Nodes avoiden.
-            // --> Schnittpunkte mit anderen Kanten. Knoten umgehen, dessen meisten Kanten Schnittpunkte erzeugen?
-            
-            //TODO: Bestimmte Distance zwischen beiden Punkten  + MAXIMALE Distance einhalten
-            
-            
-            // When new stress larger, turn back
-            if (stressSource < computeAngleStress(source) || stressTarget < computeAngleStress(target)) {
-                // -2 even better
-                bp.setX(x-3);
-                //System.out.println("Shift back");
-
-            }
-            //System.out.println("---------");
-            x = bp.getX();
-            
-            
-            
-            stressSource = computeAngleStress(source);
-            stressTarget = computeAngleStress(target);
-            
-            bp.setY(y+2);
-
-            // When new stress larger, turn back
-            if (stressSource < computeAngleStress(source) || stressTarget < computeAngleStress(target)) {
-                // -2 even better
-               bp.setY(y-3);
-
-            }
-            y = bp.getY();
-            
-            
-            /*
-            y = y+2;
-            // Revert when one of the angles getting even smaller.
-            if(prevAngle1 >= calculateBendPointAngle(firstBp, edge) || 
-                    prevAngle2 >= calculateBendPointAngle(lastBp, edge)) {
-                y = y - 4;
-               
-            }
-                */
-            
-            
-            
-            count++;   
-        } while(count < 10);
-        
-        bp.setX(x);
-        bp.setY(y);
-        
-        /*
-        List<ElkBendPoint>  bps = edge.getSections().get(0).getBendPoints();
-        ElkBendPoint newBp = ElkGraphUtil.createBendPoint(null, x, y);
-        
-        bps.add(bps.indexOf(bp) + 1, newBp);
-        */
-        
-        
-    }
-    
-    
-
-    
-
-    
-
-    
+ 
 }
-
 
 
 
