@@ -2,6 +2,7 @@ package org.eclipse.elk.alg.knot
 
 import org.eclipse.elk.alg.knot.KnotLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.EdgeRouting
 
 bundle {
     metadataClass KnotMetadataProvider
@@ -26,4 +27,5 @@ algorithm Knot(KnotLayoutProvider) {
     supports org.eclipse.elk.spacing.edgeEdge = 5
     supports org.eclipse.elk.spacing.edgeNode = 10
     supports org.eclipse.elk.spacing.nodeNode = 10
+    supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
 }
