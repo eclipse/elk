@@ -19,8 +19,12 @@ option reverseInput : boolean {
 }
 
 algorithm Knot(KnotLayoutProvider) {
-    label "Knot"
-    description "Please insert a short but informative description here"
+    label "ELK Knot"
+    description
+        "Creating a knot diagram of a layout by using stress majorization.
+        Stress exists if the connected edges consist of sharp or if the distance
+        between a pair of nodes doesn't match their desired distance. 
+        The method allows to specify individual sizes and distances."
     metadataClass options.KnotOptions
     supports reverseInput
     supports org.eclipse.elk.padding = new ElkPadding(10)
@@ -28,4 +32,118 @@ algorithm Knot(KnotLayoutProvider) {
     supports org.eclipse.elk.spacing.edgeNode = 10
     supports org.eclipse.elk.spacing.nodeNode = 10
     supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
+    supports nodeRadius
+    supports shiftThreshold
+    supports desiredNodeDistance
+    supports separateAxisRotation
+    supports rotationValue
+    supports shiftValue
+    supports enableAdditionalBendPoints
+    supports additionalBendPointsThreshold
+    supports curveHeight
+    supports curveWidthFactor
+    supports iterationLimit
 }
+
+
+option nodeRadius: double {
+    label "Node radius"
+    description
+        "The distances of bend points around a node. A larger radius creates
+        greater curves and therefore increasing the graph size.
+        To small or to large sizes may cause problems."
+    default = 25
+    targets parents
+}
+
+option shiftThreshold: double {
+    label "Shift threshold"
+    description
+        "Condition for the moving operation for nodes. Only nodes where the angles at
+        their four bend points is in sum below that threshold are allowed to move.
+        Keeping nodes from moving to much can improve the graph. Angle in degree."
+    default = 420
+    targets parents
+}
+
+option desiredNodeDistance: double {
+    label "Desired distance between nodes"
+    description
+        "The distances between connected nodes that should be preserved.
+        Should be at minimum the same as the node radius."
+    default = 25
+    targets parents
+}
+
+option separateAxisRotation: boolean {
+    label "Allow separate axis rotation"
+    description
+        "Whether the outgoing edges and the incoming edges can be rotated separately."
+    default = false
+    targets parents
+}
+
+option rotationValue: double {
+    label "Rotation step size"
+    description
+        "Weighted step size for node rotations."
+    default = 1
+    targets parents
+}
+
+option shiftValue: double {
+    label "Shift step size"
+    description
+        "Weighted step size for node shift movements."
+    default = 1
+    targets parents
+}
+
+option enableAdditionalBendPoints: boolean {
+    label "Enable additional bend points"
+    description
+        "Whether the algorithm is allowed to create new bend points in the middle of edges
+        and move them in order to relax angles at the outer bend points.
+        Helps creating larger curves."
+    default = false
+    targets parents
+}
+
+option additionalBendPointsThreshold: double {
+    label "Threshold for additional bend points"
+    description
+        "When the bend point angles of an edge are below this threshold the edge
+        is considered overstretched. If additional bend points are enabled the algorithm
+        will add further bend points in the middle of edges when the outer bend points have
+        an angle below this threshold in degree ."
+    default = 100
+    targets parents
+}
+
+option curveHeight: double {
+    label "Curve Height"
+    description
+        "Maximum distance that the additional bend points can distance themselves and therefore influences
+        the altitude of the curve they create."
+    default = 30
+    targets parents
+}
+
+option curveWidthFactor: double {
+    label "Curve Width"
+    description
+        "Scale factor for the distance of helper bend points towards the additional bend points. It influences
+        the width and pointedness of the curve they create."
+    default = 0.2
+    targets parents
+}
+
+option iterationLimit: int {
+    label "Iteration Limit"
+    description
+        "Maximum number of iterations of each stress reducing process."
+    default = 200
+    targets parents
+}
+
+

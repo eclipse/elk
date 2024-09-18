@@ -39,11 +39,11 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     private StressMajorization stressMajorization = new StressMajorization();
     
     /** The distance which bend points around nodes must preserve. */
-    private double nodeRadius = 45; //25;
+    private double nodeRadius = 25; //25;
     /** Enable if the algorithm is allowed to change the bend point distance around nodes. */
     private boolean enableFlexibleNodeRadius = false;
     /** The sum of all four bend point angles on a node must be lower in order to perform a shift movement. */
-    private double shiftThreshold = 450;
+    private double shiftThreshold = 420;
     /** Desired distance between connected nodes (should at least be nodeRadius). */
     private double desiredNodeDistance = nodeRadius;
     /** Whether the outgoing and incoming edges can be rotated separately. */
@@ -56,11 +56,16 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     /** Whether the algorithm is allowed to create new bend points to relax overstretched edges. */
     private boolean enableAdditionalBendPoints = true;
     /** When the bend point angles of an edge are below this threshold the edge is considered overstretched. */
-    private double additionalBendPointsThreshold = 10;
+    private double additionalBendPointsThreshold = 100;
+    /** How much the additional bend points can distance themselves. Influences the curve height. */
+    private double curveHeight = 50;
+    /** Factor on how near the helping bend points are positioned for spline visualization. Influences the curve width. */
+    private double curveWidthFactor = 0.2;
+    
     
     /** Epsilon for terminating the stress minimizing process. */
     private double epsilon = 2;
-    /** Maximum number of iterations of each stress reducing process (overrides the {@link #epsilon}). */
+    /** Maximum number of iterations of each stress reducing process. */
     private int iterationLimit = 200;
     
     
@@ -101,6 +106,20 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             node.setHeight(0.0000000000001);
             node.setWidth(0.0000000000001);
         }
+        
+        // Apply options.
+        this.nodeRadius = layoutGraph.getProperty(KnotOptions.NODE_RADIUS);
+        this.shiftThreshold = layoutGraph.getProperty(KnotOptions.SHIFT_THRESHOLD);
+        this.desiredNodeDistance = layoutGraph.getProperty(KnotOptions.DESIRED_NODE_DISTANCE);
+        this.separateAxisRotation = layoutGraph.getProperty(KnotOptions.SEPARATE_AXIS_ROTATION);
+        this.rotationValue = layoutGraph.getProperty(KnotOptions.ROTATION_VALUE);
+        this.shiftValue = layoutGraph.getProperty(KnotOptions.SHIFT_VALUE);
+        this.enableAdditionalBendPoints = layoutGraph.getProperty(KnotOptions.ENABLE_ADDITIONAL_BEND_POINTS);
+        this.additionalBendPointsThreshold = layoutGraph.getProperty(KnotOptions.ADDITIONAL_BEND_POINTS_THRESHOLD);
+        this.curveHeight = layoutGraph.getProperty(KnotOptions.CURVE_HEIGHT);
+        this.curveWidthFactor = layoutGraph.getProperty(KnotOptions.CURVE_WIDTH_FACTOR);
+        this.iterationLimit = layoutGraph.getProperty(KnotOptions.ITERATION_LIMIT);
+        
         
         
         // -------- Use stress layout as initial layout. (reused section) --------
@@ -187,10 +206,10 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             for(ElkNode node : layoutGraph.getChildren()) {
                 currStress =+ computeAngleStress(node) + computeDistanceStress(layoutGraph, node);
             }
-            System.out.println("Count: "+ count);
-            System.out.println("prevStress: " + prevStress);
-            System.out.println("currStress: " + currStress);
-            System.out.println("improvement: " + ((prevStress - currStress) / prevStress));
+            //System.out.println("Count: "+ count);
+            //System.out.println("prevStress: " + prevStress);
+            //System.out.println("currStress: " + currStress);
+            //System.out.println("improvement: " + ((prevStress - currStress) / prevStress));
             
             // Can happen that in one iteration the stress gets worse, but over multiple iterations it gets better
         } while((count <= iterationLimit));
@@ -217,13 +236,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             for (ElkNode currNode : layoutGraph.getChildren()) {
                 for(ElkEdge oEdge : currNode.getOutgoingEdges()) {
                     
-
-                    if(needsMidPoint(oEdge)) {
-                        
-                        //needsMidPoint(oEdge, angleThreshold);
-                        //addMiddleBendPoint(oEdge);
-                        //shiftMiddlePoint(oEdge);
-                    }        
+                    addMiddleBendPoint(oEdge);
                 }
             }
         }
@@ -310,7 +323,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         // Additional stress relative to other axis.
         // An angle of 90° between the two axis would be perfect while an angle close to 0° is prohibited.
         angle = 90 - calculateAxisAngle(node);
-        stress = stress + Math.pow(angle,2.2);
+        stress = stress + Math.pow(angle,2);
         
         return stress;
     }
@@ -342,7 +355,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         // Additional stress relative to other axis.
         // An angle of 90° between the two axis would be perfect while an angle close to 0° is prohibited.
         angle = 90 - calculateAxisAngle(node);
-        stress = stress + Math.pow(angle,2.2);
+        stress = stress + Math.pow(angle,2);
         
         return stress;
     }
@@ -475,6 +488,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
     private void stressMinimizingRotation(ElkNode node) {
         
         int count = 0;
+        double angle = 0;
         double prevStress = Double.MAX_VALUE;
         
         do {    
@@ -483,13 +497,13 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             // Save previous stress for comparision after rotation.
             prevStress = computeAngleStress(node);
             // The more stress the greater the rotation should be.
-            rotationValue = prevStress / 2500;
-            rotateNode(node, rotationValue);
+            angle = rotationValue*(prevStress / 2500);
+            rotateNode(node, angle);
             
             // When the new stress is larger, turn back.
             if (prevStress < computeAngleStress(node)) {
                 // A greater rotation here allows adjustments in both directions.
-                rotateNode(node, - 2*rotationValue);
+                rotateNode(node, - 2*angle);
             }
             
             
@@ -500,23 +514,23 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                  
                 prevStress = computeOutAxisStress(node);
                 // The more stress the greater the rotation should be.
-                rotationValue = prevStress / 10000;
-                rotateOutgoingAxis(node, rotationValue);
+                angle = rotationValue*(prevStress / 10000);
+                rotateOutgoingAxis(node, angle);
                 
                 // TODO: Test: Somehow, checking node stress for out axis but stress for in axis works good.
                 // When the new stress is larger, turn back.
                 if (prevStress < computeAngleStress(node)) {
-                    rotateOutgoingAxis(node, - 2*rotationValue);
+                    rotateOutgoingAxis(node, - 2*angle);
                 }
             
                 // Stress of incoming axis depends on the freshly changed angle of the outgoing axis.
                 prevStress = computeInAxisStress(node);
-                rotationValue = prevStress / 10000;
-                rotateIncomingAxis(node, rotationValue);
+                angle = rotationValue*(prevStress / 10000);
+                rotateIncomingAxis(node, angle);
             
                 // When the new stress is larger, turn back.
                 if (prevStress < computeInAxisStress(node)) {
-                    rotateIncomingAxis(node, - 2*rotationValue);
+                    rotateIncomingAxis(node, - 2*angle);
                 }
             }
     
@@ -537,33 +551,29 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         int count = 0;
         double prevStress = Double.MAX_VALUE;
         
-        //TODO: test
-        double shift = shiftValue;
-         
         do { 
-            // Stress depends on the angles of bend points + position relative to connected nodes.
-            prevStress = computeAngleStress(node) + computeDistanceStress(graph, node);
-            
             // MOVEMENT on x-Axis:
             
-            // The more stress the greater the shift movement should be.
-            moveNode(node, node.getX() + 2, node.getY());
+            // Stress depends on the angles of bend points + position relative to connected nodes.
+            prevStress = computeAngleStress(node) + computeDistanceStress(graph, node);
+
+            moveNode(node, node.getX() + shiftValue, node.getY());
             
             // When the new stress is larger, shift back.
             if (prevStress < (computeAngleStress(node) + computeDistanceStress(graph, node))) {
                 // A greater movement here allows adjustments in both directions.
-                moveNode(node, node.getX() - 3, node.getY());
+                moveNode(node, node.getX() - 2*shiftValue, node.getY());
             }
             
             // MOVEMENT on y-Axis:
             
             // Compute stress anew with freshly changed position of the node.
             prevStress = computeAngleStress(node) + computeDistanceStress(graph, node);
-            moveNode(node, node.getX(), node.getY() + 2);
+            moveNode(node, node.getX(), node.getY() + shiftValue);
             
             // When the new stress is larger, shift back.
             if (prevStress < (computeAngleStress(node) + computeDistanceStress(graph, node))) {
-                moveNode(node, node.getX(), node.getY() - 3);
+                moveNode(node, node.getX(), node.getY() - 2*shiftValue);
             }
                     
             // Bei jeder bewegung checken ob zu nah an anderen node.
@@ -612,7 +622,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                 
                 
             // Create 2 additional bend points to help visualizing smooth splines.
-            /*
+            
             ElkBendPoint helperBp1 = ElkGraphUtil.createBendPoint(null, x, y); 
             ElkBendPoint helperBp2 = ElkGraphUtil.createBendPoint(null, x, y); 
                 
@@ -622,7 +632,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             // Vector from first bp to last bp.
             KVector directionVector = new KVector(x2 - x1, y2 - y1);
             // Used as direction for helper bend points.
-            directionVector.scale(0.1);
+            directionVector.scale(curveWidthFactor);
             
             // Addjust helper bend point positions
             helperBp1.set(bps.get(1).getX() + directionVector.x, bps.get(1).getY() + directionVector.y);
@@ -630,7 +640,8 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             helperBp2.set(bps.get(1).getX() + directionVector.x, bps.get(1).getY() + directionVector.y);
             
             bps.add(2, helperBp1);
-            bps.add(1, helperBp1);
+            bps.add(1, helperBp2);
+            /*
             */
             
             
@@ -726,10 +737,11 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             double x = bp.getX();
             double y = bp.getY();
             
+            double prevStress = 0;
             double stress = 0;
             
             // How much the bend point can distance itself (the bigger the curve gets).
-            double maxDist = 40;
+            double maxDist = 60;
             ElkBendPoint startPos = ElkGraphUtil.createBendPoint(null, x, y);
             
             
@@ -749,9 +761,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             
             
             
-            // Stress depending on equal distance towards each bend point.
-            //stress = stress + Math.pow(Math.abs(distNext - distPrev), 1.5);
-            //stress = stress + Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2)
+
             
             
             
@@ -761,15 +771,32 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             
             do {
                 
+                distPrev = calculateBendPointDistance(bp, prevPoint);
+                distNext = calculateBendPointDistance(bp, nextPoint);
+                
                 anglePrev = calculateBendPointAngle(prevPoint, edge);
                 angleNext = calculateBendPointAngle(nextPoint, edge);
     
+                // Stress depending on equal distance towards each bend point.
+                prevStress =  Math.pow(Math.abs(distNext - distPrev), 3);
+                System.out.println("distance = " + (distNext - distPrev));
+                prevStress = prevStress +  Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2);
+                
+                
                 // X Shift
-                bp.setX(x+4);
+                bp.setX(x+1);
+                
+                distPrev = calculateBendPointDistance(bp, prevPoint);
+                distNext = calculateBendPointDistance(bp, nextPoint);
+                
+                anglePrev = calculateBendPointAngle(prevPoint, edge);
+                angleNext = calculateBendPointAngle(nextPoint, edge);
+                
+                stress = Math.pow(Math.abs(distNext - distPrev), 3);
+                stress = stress + Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2);
                 
                 // When angle smaller or distance to other bps to great, shift back
-                if (anglePrev > calculateBendPointAngle(prevPoint, edge) ||
-                        angleNext > calculateBendPointAngle(nextPoint, edge)) {
+                if (stress > prevStress) {
                     // -2 even better
                     bp.setX(x-2);
                     
@@ -790,16 +817,32 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                 
                 x = bp.getX();
                 
+                distPrev = calculateBendPointDistance(bp, prevPoint);
+                distNext = calculateBendPointDistance(bp, nextPoint);
+                
                 anglePrev = calculateBendPointAngle(prevPoint, edge);
                 angleNext = calculateBendPointAngle(nextPoint, edge);
                 
-                // Y Shift
-                bp.setY(y+4);
-                    
+                prevStress = Math.pow(Math.abs(distNext - distPrev), 3);
+                prevStress = prevStress + Math.pow((180 - anglePrev), 2) + Math.pow((180 - angleNext), 2);
+                
 
+                // Y Shift
+                bp.setY(y+1);
+                    
+                distPrev = calculateBendPointDistance(bp, prevPoint);
+                distNext = calculateBendPointDistance(bp, nextPoint);
+                
+                anglePrev = calculateBendPointAngle(prevPoint, edge);
+                angleNext = calculateBendPointAngle(nextPoint, edge);
+                
+                
+                stress = Math.pow(Math.abs(distNext - distPrev), 3);
+                stress = stress + Math.pow((180- anglePrev), 2) + Math.pow((180 - angleNext), 2);
+                
+                
                 // When angle smaller or distance to other bps to great, shift back
-                if (anglePrev > calculateBendPointAngle(prevPoint, edge) ||
-                        angleNext > calculateBendPointAngle(nextPoint, edge)) {
+                if (stress > prevStress) {
                     // -2 even better
                     bp.setY(y-2);
                     
@@ -824,7 +867,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
                 
                 System.out.println("Dist von Start zu BP: " + calculateBendPointDistance(bp, startPos));
                 count++;   
-            } while(count < iterationLimit && calculateBendPointDistance(bp, startPos) < maxDist);
+            } while(count < iterationLimit && calculateBendPointDistance(bp, startPos) <= curveHeight);
             
             
             bp.setX(x);
