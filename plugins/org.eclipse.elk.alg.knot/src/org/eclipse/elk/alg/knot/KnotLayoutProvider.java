@@ -156,10 +156,9 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.logGraph(layoutGraph, "Initialization");
         
         
-        
         ////////////////////////////////////////////////////////////////////////////////////////////////
         // Main process:
-
+        
         // SETUP ROTATION:
         
         // First improvement that will already reduce the stress significantly.
@@ -192,8 +191,13 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
 
         // Can happen that in one iteration the stress gets worse, but over multiple iterations it gets better.
         // Therefore no further termination criterion.
-        } while((count <= iterationLimit));
+        } while((count < iterationLimit));
             
+        // Closing rotation after the last shift movement:
+        for(ElkNode node : layoutGraph.getChildren()) {
+            stressMinimizingRotation(node);
+        }
+        
         
         
         // FURTHER OPTIMIZATIONS:
@@ -215,7 +219,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             // Individual for each node.
         }
         
-        progressMonitor.done();
+        progressMonitor.done(); /**/
     }
     
     
