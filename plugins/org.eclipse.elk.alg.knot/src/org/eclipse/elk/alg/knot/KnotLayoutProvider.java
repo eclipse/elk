@@ -3,16 +3,12 @@
  */
 package org.eclipse.elk.alg.knot;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
-import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.elk.alg.common.NodeMicroLayout;
@@ -20,11 +16,7 @@ import org.eclipse.elk.alg.force.ComponentsProcessor;
 import org.eclipse.elk.alg.force.ElkGraphImporter;
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.IGraphImporter;
-import org.eclipse.elk.alg.force.graph.FBendpoint;
-import org.eclipse.elk.alg.force.graph.FEdge;
 import org.eclipse.elk.alg.force.graph.FGraph;
-import org.eclipse.elk.alg.force.graph.FNode;
-import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressMajorization;
 import org.eclipse.elk.alg.knot.options.KnotOptions;
@@ -119,7 +111,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
         this.curveWidthFactor = layoutGraph.getProperty(KnotOptions.CURVE_WIDTH_FACTOR);
         this.iterationLimit = layoutGraph.getProperty(KnotOptions.ITERATION_LIMIT);
         
-        
+        epsilon = 10e-4;
         
         // -------- Use stress layout as initial layout. (reused section) --------
         // transform the input graph
@@ -500,7 +492,7 @@ public class KnotLayoutProvider extends AbstractLayoutProvider {
             }
     
             count++;   
-        } while(count < iterationLimit);
+        } while(count < iterationLimit && epsilon < 2);
     }
     
     
