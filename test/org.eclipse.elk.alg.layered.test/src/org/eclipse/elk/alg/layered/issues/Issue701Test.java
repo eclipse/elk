@@ -10,7 +10,6 @@
 package org.eclipse.elk.alg.layered.issues;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
-import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
