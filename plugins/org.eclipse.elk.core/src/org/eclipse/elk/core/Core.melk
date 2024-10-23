@@ -716,6 +716,17 @@ programmatic option labelManager: ILabelManager {
     targets parents, labels
 }
 
+option softwrappingFuzziness: double {
+    label "Softwrapping Fuzziness"
+    description
+        "Determines the amount of fuzziness to be used when performing softwrapping on labels.
+         The value expresses the percent of overhang that is permitted for each line.
+         If the next line would take up less space than this threshold, it is appended to the
+         current line instead of being placed in a new line."
+    default = 0.0
+    targets labels
+}
+
 option margins: ElkMargin {
     label "Margins"
     description
