@@ -255,6 +255,15 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                                 ElkPadding padding = childNode.getProperty(CoreOptions.PADDING);
                                 childNode.setDimensions(Math.max(childNode.getWidth(), size.x + padding.left + padding.right),
                                         Math.max(childNode.getHeight(), size.y + padding.top + padding.bottom));
+                            } else {
+                                // If no approximator is set, use the set sizes for atomic nodes and use the properties
+                                // that have been set for nodes containing further children
+                                if (childNode.getChildren().size() != 0) {
+                                    childNode.setDimensions(
+                                            layoutNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH), 
+                                            layoutNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH) /
+                                            layoutNode.getProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO));
+                                }
                             }
                         }
                     }
