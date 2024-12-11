@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.rectpacking.intermediate;
 
-import java.util.Collections;
-
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -26,6 +24,7 @@ import org.eclipse.emf.common.util.ECollections;
  *   <dt>Slots:</dt>
  *     <dd>Before phase 1.</dd>
  *   <dt>Same-slot dependencies:</dt>
+ *     <dd>Before Interactive Node Reorderer</dd>
  * </dl>
  */
 public class NodeSizeReorderer implements ILayoutProcessor<ElkNode> {
