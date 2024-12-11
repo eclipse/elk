@@ -52,8 +52,8 @@ public class TopdownLayoutTest {
         toplevel.setProperty(CoreOptions.PADDING, new ElkPadding());
         toplevel.setProperty(CoreOptions.SPACING_NODE_NODE, 0.0);
         // set size of node so that children will be scaled down 
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 20.0);
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 0.4);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 20.0);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 0.4);
         
         ElkNode child1 = ElkGraphUtil.createNode(toplevel);
         child1.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
@@ -106,8 +106,8 @@ public class TopdownLayoutTest {
         toplevel.setProperty(CoreOptions.PADDING, new ElkPadding());
         toplevel.setProperty(CoreOptions.SPACING_NODE_NODE, 0.0);
         // set size of node so that children will be scaled down
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 40.0);
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 1.33333);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 40.0);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 1.33333);
         
         ElkNode child1 = ElkGraphUtil.createNode(toplevel);
         child1.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
@@ -161,8 +161,8 @@ public class TopdownLayoutTest {
         toplevel.setProperty(CoreOptions.PADDING, new ElkPadding());
         toplevel.setProperty(CoreOptions.SPACING_NODE_NODE, 0.0);
         // set size of node so that children will be scaled down
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 300.0);
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 1.0);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 300.0);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 1.0);
         
         ElkNode child1 = ElkGraphUtil.createNode(toplevel);
         child1.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
@@ -215,8 +215,8 @@ public class TopdownLayoutTest {
         toplevel.setProperty(CoreOptions.PADDING, new ElkPadding());
         toplevel.setProperty(CoreOptions.SPACING_NODE_NODE, 0.0);
         // set size of node so that children will be scaled down
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 300.0);
-        graph.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 1.0);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_WIDTH, 300.0);
+        toplevel.setProperty(CoreOptions.TOPDOWN_HIERARCHICAL_NODE_ASPECT_RATIO, 1.0);
         
         ElkNode child1 = ElkGraphUtil.createNode(toplevel);
         child1.setProperty(CoreOptions.TOPDOWN_LAYOUT, true);
