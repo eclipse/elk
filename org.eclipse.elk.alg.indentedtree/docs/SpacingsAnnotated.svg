@@ -1,0 +1,81 @@
+<?xml version="1.0" standalone="no"?>
+
+<svg 
+     version="1.1"
+     baseProfile="full"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:ev="http://www.w3.org/2001/xml-events"
+     xmlns:klighd="http://de.cau.cs.kieler/klighd"
+     x="0px"
+     y="0px"
+     width="397px"
+     height="490px"
+     viewBox="0 0 397 490"
+     >
+<title></title>
+<desc>Creator: FreeHEP Graphics2D Driver Producer: de.cau.cs.kieler.klighd.piccolo.freehep.SemanticSVGGraphics2D Revision Source:  Date: Tuesday, December 10, 2024 at 3:58:10 PM Central European Standard Time</desc>
+<g stroke-dashoffset="0" stroke-linejoin="miter" stroke-dasharray="none" stroke-width="1" stroke-linecap="butt" stroke-miterlimit="10">
+<g fill="#ffffff" fill-rule="nonzero" fill-opacity="1" stroke="none">
+  <path d="M 0 0 L 397 0 L 397 490 L 0 490 L 0 0 z"/>
+</g>
+<g transform="matrix(1, 0, 0, 1, 4, 0)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 19, 20)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 21, 40)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 14.5 0.5 L 14.5 19.5 L 0.5 19.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 36, 65)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 36, 105)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 51, 85)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 10, 125)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g transform="matrix(1, 0, 0, 1, 25, 145)">
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 0.5 0.5 L 9.5 0.5 L 9.5 9.5 L 0.5 9.5 L 0.5 0.5 z"/>
+</g>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 9 10 L 9 25 L 19 25"/>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 9 10 L 9 50 L 21 50"/>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 26 60 L 26 70 L 36 70"/>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 26 60 L 26 110 L 36 110"/>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 41 75 L 41 90 L 51 90"/>
+</g>
+<g stroke-opacity="1" fill="none" stroke="#000000">
+  <path d="M 15 135 L 15 150 L 25 150"/>
+</g>
+</g>
+</svg>
