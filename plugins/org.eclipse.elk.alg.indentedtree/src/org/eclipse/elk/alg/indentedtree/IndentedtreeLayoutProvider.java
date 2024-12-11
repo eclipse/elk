@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
@@ -15,8 +16,8 @@ import org.eclipse.elk.alg.indentedtree.options.IndentedtreeOptions;
 import org.eclipse.elk.alg.indentedtree.options.InternalProperties;
 
 /**
- * A layout algorithm for creating a filesystem-like layout. 
- * This assumes that the graph is a tree and that no ports exist
+ * A layout algorithm for creating a filesystem-like layout. This assumes that the graph is a tree
+ * and that no ports exist
  * 
  * @author tobias
  */
@@ -104,16 +105,28 @@ public class IndentedtreeLayoutProvider extends AbstractLayoutProvider {
                 // create one section for the new edge
                 ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
 
+                
+
+                // if horizontal edge indentation is set, use that, otherwise, use half of the
+                // parent's width
+                double horizontalEdgeIndentation;
+                if (source.hasProperty(IndentedtreeOptions.HORIZONTAL_EDGE_INDENTATION)) {
+                    horizontalEdgeIndentation =
+                            source.getProperty(IndentedtreeOptions.HORIZONTAL_EDGE_INDENTATION);
+                } else {
+                    horizontalEdgeIndentation = source.getWidth() / 2;
+                }
+                
+                // throw error if edge would have to be placed far away from the parent node
+                if (source.getWidth() < horizontalEdgeIndentation) {
+                    throw new UnsupportedGraphException(
+                            "Horizontal Edge Indentation is larger than its parent node's width");
+                }
+
                 // set starting location for new edge
-                // Math.min(...) ensures that the starting location is not further to the right than
-                // the right border of the source node.
-                // Omitting Math.min(...) and leaving only the horizontalEdgeIndentation will cause
-                // diagonal edges if source node is narrower than horizontalEdgeIndentation.
-                section.setStartLocation(
-                        source.getX() + Math.min(source.getWidth(),
-                                source.getProperty(
-                                        IndentedtreeOptions.HORIZONTAL_EDGE_INDENTATION)),
+                section.setStartLocation(source.getX() + horizontalEdgeIndentation,
                         source.getY() + source.getHeight());
+
                 // end location: middle of left border of target
                 section.setEndLocation(target.getX(), target.getY() + target.getHeight() / 2);
 
@@ -164,7 +177,7 @@ public class IndentedtreeLayoutProvider extends AbstractLayoutProvider {
         for (ElkEdge out : origin.getOutgoingEdges()) {
             // recursion
             dfs(ElkGraphUtil.connectableShapeToNode(out.getTargets().get(0)), list,
-                    depth + origin.getProperty(IndentedtreeOptions.HORIZONTAL_EDGE_INDENTATION));
+                    depth + (origin.hasProperty(IndentedtreeOptions.HORIZONTAL_EDGE_INDENTATION) ? origin.getProperty(IndentedtreeOptions.HORIZONTAL_EDGE_INDENTATION) : origin.getWidth()/2));
         }
         return list;
     }

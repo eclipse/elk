@@ -7,4 +7,4 @@ This algorithm allows the user to set three main parameters:
 - relative Indentation, which decides how far a should should be indented horizontally relative to the position of its incoming edge. 
 - vertical Node Spacing, which determines the vertical distance between a node and its immediate successor, independent of hierarchy.
 The horizontal Edge Intentation of its parent and the relative Indentation add up to give the total indentation of a node.
-![Interpretation of Properties](SpacingsAnnotated.svg)
+![Interpretation of Properties](Spacings.svg)
