@@ -222,6 +222,11 @@ public class RectPackingLayoutProvider extends AbstractLayoutProvider {
                     IntermediateProcessorStrategy.INTERACTIVE_NODE_REORDERER);
         }
         
+        if (layoutGraph.getProperty(RectPackingOptions.ORDER_BY_SIZE)) {
+            configuration.addBefore(RectPackingLayoutPhases.P1_WIDTH_APPROXIMATION,
+                    IntermediateProcessorStrategy.NODE_SIZE_REORDERER);
+        }
+        
         return configuration;
     }
 }

@@ -31,6 +31,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
      */
     INTERACTIVE_NODE_REORDERER,
     MIN_SIZE_PRE_PROCESSOR,
+    NODE_SIZE_REORDERER,
     
     /*
      * Before Phase 2
@@ -49,6 +50,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Elk
             return new MinSizePreProcessor();
         case MIN_SIZE_POST_PROCESSOR:
             return new MinSizePostProcessor();
+        case NODE_SIZE_REORDERER:
+            return new NodeSizeReorderer();
 
         default:
             break;
