@@ -8,23 +8,21 @@ bundle {
     idPrefix org.eclipse.elk.alg.indentedtree
 }
 
-
-
 algorithm indentedtree(IndentedtreeLayoutProvider) {
     label "indentedtree"
-    description "Create a filesystem-like layout for trees. Assume that the graph is a tree and that no ports exist."
+    description
+        "Create a filesystem-like layout for trees. Assume that the graph is a tree and that no ports exist."
     metadataClass options.IndentedtreeOptions
     supports org.eclipse.elk.padding = new ElkPadding(10)
-    
     supports verticalNodeSpacing
     supports relativeIndentation
     supports horizontalEdgeIndentation
 }
 
-
 option relativeIndentation: double {
     label "relativeIndentation"
-    description "indentation relative to the vertical edge to the left of this node"
+    description
+        "indentation relative to the vertical edge to the left of this node"
     default = 5.0
     lowerBound = 0.0
     targets nodes
@@ -32,15 +30,17 @@ option relativeIndentation: double {
 
 option horizontalEdgeIndentation: double {
     label "horizontalEdgeIndentation"
-    description "horizontal indentation of the edge leading from a node to its children"
-    default = 5.0
+    description
+        "horizontal indentation of the edge leading from a node to its children"
     lowerBound = 0.0
+    // no default value, as that is dynamically set to half the parent node's width if option is not set
     targets nodes
 }
 
 option verticalNodeSpacing: double {
     label "verticalNodeSpacing"
-    description "vertical spacing between a node and its successor"
+    description
+        "vertical spacing between a node and its successor"
     default = 5.0
     lowerBound = 0.0
     targets nodes
