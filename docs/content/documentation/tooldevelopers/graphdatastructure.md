@@ -66,7 +66,7 @@ Inclusion trees capture the hierarchical structure of a graph. See below for the
 
 ### The Meta Model
 
-The ELK Graph meta modelh looks like this:
+The ELK Graph meta model looks like this:
 
 {{< image src="graph_metamodel.png" alt="The ELK Graph meta model." >}}
 
