@@ -14,7 +14,7 @@ import java.util.Comparator;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Node size comparator to compare nodes by their size
+ * Node size comparator to compare nodes by their height
  *
  */
 public class NodeSizeComparator implements Comparator<ElkNode> {
@@ -24,10 +24,7 @@ public class NodeSizeComparator implements Comparator<ElkNode> {
      */
     @Override
     public int compare(ElkNode node0, ElkNode node1) {
-        double area0 = node0.getWidth() * node0.getHeight();
-        double area1 = node1.getWidth() * node1.getHeight();
-        
-        return Double.compare(area1, area0);
+        return Double.compare(node1.getHeight(), node0.getHeight());
     }
 
 }
