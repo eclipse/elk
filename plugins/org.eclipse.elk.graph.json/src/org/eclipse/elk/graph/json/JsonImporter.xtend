@@ -627,6 +627,7 @@ final class JsonImporter {
                 }
                 
             ]
+            jsonObj.removeJsonObj("sections")
             jsonObj.addJsonObj("sections", sections)
         }
         
