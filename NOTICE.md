@@ -35,7 +35,7 @@ This project leverages the following third party content.
 
 Dependencies automatically captured by the license-check-plugin: [DEPENDENCIES](DEPENDENCIES)
 
-The following third-party content and licences are either not automatically captured or are used in the [elk-models](https://github.com/eclipse/elk-models) repository.
+The following third-party content and licences are either not automatically captured or are used in the [elk-models](https://github.com/eclipse-elk/elk-models) repository.
 
 libavoid (0.3.1)
 
