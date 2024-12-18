@@ -140,6 +140,21 @@
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
     <plugins>
+    
+      <!-- license-check plugin to automatically generate dependency list -->
+      <plugin>
+        <groupId>org.eclipse.dash</groupId>
+        <artifactId>license-tool-plugin</artifactId>
+        <version>1.1.0</version>
+        <executions>
+          <execution>
+          <id>license-check</id>
+          <goals>
+            <goal>license-check</goal>
+          </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- We need tycho to build eclipse plugins -->
       <plugin>
@@ -427,6 +442,14 @@
 
   <!-- Maven plugin repositories -->
   <pluginRepositories>
+    <pluginRepository>
+      <id>dash-licenses-releases</id>
+      <url>https://repo.eclipse.org/content/repositories/dash-licenses-releases/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+	  
     <pluginRepository>
       <id>central</id>
       <name>Maven Plugin Repository</name>
