@@ -447,9 +447,9 @@
 
   <!-- Information about where the ELK code lives. -->
   <scm>
-    <connection>scm:git:git://github.com/eclipse/elk.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:eclipse/elk.git</developerConnection>
-    <url>https://github.com/eclipse/elk</url>
+    <connection>scm:git:git://github.com/eclipse-elk/elk.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:eclipse-elk/elk.git</developerConnection>
+    <url>https://github.com/eclipse-elk/elk</url>
   </scm>
 
 

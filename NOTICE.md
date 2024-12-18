@@ -26,8 +26,8 @@ SPDX-License-Identifier: EPL-2.0
 
 The project maintains the following source code repositories:
 
-* https://github.com/eclipse/elk
-* https://github.com/eclipse/elk-models
+* https://github.com/eclipse-elk/elk
+* https://github.com/eclipse-elk/elk-models
 
 ## Third-party Content
 

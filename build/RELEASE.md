@@ -66,5 +66,5 @@ This is a summary of the information on [this page](https://central.sonatype.org
 
 ## GitHub Management
 
-1. Close the release milestone [on GitHub](https://github.com/eclipse/elk/milestones).
-1. Create a new release [on GitHub](https://github.com/eclipse/elk/releases) with a release tag named `vVERSION` (for instance, `v0.4.0`).
+1. Close the release milestone [on GitHub](https://github.com/eclipse-elk/elk/milestones).
+1. Create a new release [on GitHub](https://github.com/eclipse-elk/elk/releases) with a release tag named `vVERSION` (for instance, `v0.4.0`).
